@@ -86,7 +86,7 @@ class GoogleMapV3Helper extends AppHelper {
 	 *
 	 * @var array
 	 */
-	public $helpers = array('Html', 'Js');
+	public $helpers = array('Html');
 
 	/**
 	 * Google maker config instance variable

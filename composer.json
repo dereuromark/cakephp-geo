@@ -1,9 +1,9 @@
 {
-	"name": "dereuromark/cakephp-tools",
+	"name": "dereuromark/cakephp-geo",
 	"type": "cakephp-plugin",
-	"description": "A CakePHP plugin containing lots of useful and reusable tools",
-	"keywords": ["cakephp", "plugin", "tools", "utils", "helpers", "components", "behaviors", "datasources"],
-	"homepage": "https://github.com/dereuromark/cakephp-tools",
+	"description": "A CakePHP plugin around geocoding tools and helpers.",
+	"keywords": ["cakephp", "plugin", "geocoding", "helpers", "maps"],
+	"homepage": "https://github.com/dereuromark/cakephp-geo",
 	"license": "MIT",
 	"authors": [
 		{
@@ -13,13 +13,27 @@
 		}
 	],
 	"require": {
-		"php": ">=5.3",
-		"composer/installers": "*"
+		"php": ">=5.4",
+		"cakephp/cakephp": "3.0.x-dev"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "*"
 	},
 	"support": {
-		"source": "https://github.com/dereuromark/cakephp-tools"
+		"source": "https://github.com/dereuromark/cakephp-geo"
+	},
+	"autoload": {
+		"psr-4": {
+			"TinyAuth\\": "src"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"TinyAuth\\Test\\": "tests",
+			"Cake\\Test\\Fixture\\": "vendor/cakephp/cakephp/tests/Fixture"
+		}
 	},
 	"extra": {
-		"installer-name": "Tools"
+		"installer-name": "Geo"
 	}
 }
