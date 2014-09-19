@@ -1,7 +1,8 @@
 <?php
 /**
  * Group test - Tools
- */
+ */namespace Tools\Test\Case;
+
 class AllHelperTestsTest extends PHPUnit_Framework_TestSuite {
 
 	/**

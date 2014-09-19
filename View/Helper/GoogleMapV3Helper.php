@@ -1,8 +1,11 @@
 <?php
 /**
  * PHP5 / CakePHP 2.x
- */
-App::uses('AppHelper', 'View/Helper');
+ */namespace Tools\View\Helper;
+
+use Cake\Core\Configure;
+use Cake\Routing\Router;
+use App\View\Helper\AppHelper;
 
 /**
  * This is a CakePHP helper that helps users to integrate GoogleMap v3

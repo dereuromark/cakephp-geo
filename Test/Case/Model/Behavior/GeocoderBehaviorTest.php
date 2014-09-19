@@ -1,11 +1,12 @@
 <?php
-App::uses('GeocoderBehavior', 'Tools.Model/Behavior');
-App::uses('Set', 'Utility');
-App::uses('AppModel', 'Model');
-App::uses('AppController', 'Controller');
-App::uses('MyCakeTestCase', 'Tools.TestSuite');
+namespace Tools\Test\Case\Model\Behavior;
+use Tools\Model\Behavior\GeocoderBehavior;
+use App\Utility\Set;
+use App\Model\AppModel;
+use App\Controller\AppController;
+use Tools\TestSuite\MyTestCase;
 
-class GeocoderBehaviorTest extends MyCakeTestCase {
+class GeocoderBehaviorTest extends MyTestCase {
 
 	public $fixtures = array(
 		'core.comment', 'plugin.tools.address', 'core.cake_session'
@@ -91,7 +92,7 @@ class GeocoderBehaviorTest extends MyCakeTestCase {
 	 * @return void
 	 */
 	public function testPagination() {
-		$this->Controller = new TestController(new CakeRequest(null, false), null);
+		$this->Controller = new TestController(new Request(null, false), null);
 		$this->Controller->constructClasses();
 		$this->Controller->Address->Behaviors->load('Tools.Geocoder');
 		$this->Controller->Address->setDistanceAsVirtualField(13.3, 19.2);

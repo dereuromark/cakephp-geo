@@ -1,7 +1,8 @@
 <?php
 /**
  * Tools Plugin - All plugin tests
- */
+ */namespace Tools\Test\Case;
+
 class AllToolsTest extends PHPUnit_Framework_TestSuite {
 
 	/**

@@ -1,6 +1,8 @@
 <?php
-App::uses('ModelBehavior', 'Model');
-App::uses('GeocodeLib', 'Tools.Lib');
+namespace Tools\Model\Behavior;
+
+use Cake\Model\ModelBehavior;
+use Tools\Lib\GeocodeLib;
 
 /**
  * A geocoding behavior for CakePHP to easily geocode addresses.

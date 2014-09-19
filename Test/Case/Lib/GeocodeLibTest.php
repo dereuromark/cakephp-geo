@@ -1,7 +1,8 @@
 <?php
 
-App::uses('GeocodeLib', 'Tools.Lib');
-App::uses('MyCakeTestCase', 'Tools.TestSuite');
+namespace Tools\Test\Case\Lib;
+use Tools\GeocodeLib;
+use Tools\TestSuite\MyTestCase;
 
 # google maps
 Configure::write('Google', array(
@@ -13,7 +14,7 @@ Configure::write('Google', array(
 	'type' => 'G_NORMAL_MAP'
 ));
 
-class GeocodeLibTest extends MyCakeTestCase {
+class GeocodeLibTest extends MyTestCase {
 
 	public $apiMockupReverseGeocode40206 = array(
 		'reverseGeocode' => array(

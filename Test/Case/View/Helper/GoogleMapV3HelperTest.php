@@ -1,10 +1,11 @@
 <?php
 
-App::uses('GoogleMapV3Helper', 'Tools.View/Helper');
-App::uses('MyCakeTestCase', 'Tools.TestSuite');
-App::uses('View', 'View');
+namespace Tools\Test\Case\View\Helper;
+use Tools\View\Helper\GoogleMapV3Helper;
+use Tools\TestSuite\MyTestCase;
+use Cake\View\View;
 
-class GoogleMapV3HelperTest extends MyCakeTestCase {
+class GoogleMapV3HelperTest extends MyTestCase {
 
 	public function setUp() {
 		parent::setUp();
