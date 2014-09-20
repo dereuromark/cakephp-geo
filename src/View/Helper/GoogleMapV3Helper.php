@@ -1,11 +1,12 @@
 <?php
 /**
  * PHP5 / CakePHP 2.x
- */namespace Tools\View\Helper;
+ */
+namespace Geo\View\Helper;
 
 use Cake\Core\Configure;
 use Cake\Routing\Router;
-use App\View\Helper\AppHelper;
+use Cake\View\Helper;
 
 /**
  * This is a CakePHP helper that helps users to integrate GoogleMap v3
@@ -38,7 +39,7 @@ use App\View\Helper\AppHelper;
  * Markers can be open now by default on page load. Works for both single and multi window mode.
  * Lots of cleanup and CS corrections.
  */
-class GoogleMapV3Helper extends AppHelper {
+class GoogleMapV3Helper extends Helper {
 
 	public static $mapCount = 0;
 
@@ -255,7 +256,7 @@ class GoogleMapV3Helper extends AppHelper {
 			$defaults['localImages'] = $google['localImages'];
 		}
 
-		$this->settings = $defaults;
+		$config += $defaults;
 		parent::__construct($View, $config);
 	}
 
@@ -281,10 +282,10 @@ class GoogleMapV3Helper extends AppHelper {
 			$url .= '&language=' . $language;
 		}
 		if (!empty($api)) {
-			$this->settings['map']['api'] = $api;
+			$this->_config['map']['api'] = $api;
 		}
-		if (!empty($this->settings['map']['api'])) {
-			$url .= '&v=' . $this->settings['map']['api'];
+		if (!empty($this->_config['map']['api'])) {
+			$url .= '&v=' . $this->_config['map']['api'];
 		}
 		if (!empty($append)) {
 			$url .= $append;
@@ -313,7 +314,7 @@ class GoogleMapV3Helper extends AppHelper {
 	 * @return string currentContainerId
 	 */
 	public function id() {
-		return $this->settings['div']['id'];
+		return $this->_config['div']['id'];
 	}
 
 	/**
@@ -326,7 +327,7 @@ class GoogleMapV3Helper extends AppHelper {
 		static::$markerCount = static::$infoWindowCount = 0;
 		$this->markers = $this->infoWindows = array();
 		if ($full) {
-			$this->settings = $this->_defaultOptions;
+			$this->_config = $this->_defaultOptions;
 		}
 	}
 
@@ -345,19 +346,19 @@ class GoogleMapV3Helper extends AppHelper {
 	 */
 	public function setControls($options = array()) {
 		if (isset($options['streetView'])) {
-			$this->settings['map']['streetViewControl'] = $options['streetView'];
+			$this->_config['map']['streetViewControl'] = $options['streetView'];
 		}
 		if (isset($options['zoom'])) {
-			$this->settings['map']['scaleControl'] = $options['zoom'];
+			$this->_config['map']['scaleControl'] = $options['zoom'];
 		}
 		if (isset($options['scrollwheel'])) {
-			$this->settings['map']['scrollwheel'] = $options['scrollwheel'];
+			$this->_config['map']['scrollwheel'] = $options['scrollwheel'];
 		}
 		if (isset($options['keyboardShortcuts'])) {
-			$this->settings['map']['keyboardShortcuts'] = $options['keyboardShortcuts'];
+			$this->_config['map']['keyboardShortcuts'] = $options['keyboardShortcuts'];
 		}
 		if (isset($options['type'])) {
-			$this->settings['map']['type'] = $options['type'];
+			$this->_config['map']['type'] = $options['type'];
 		}
 	}
 
@@ -370,32 +371,32 @@ class GoogleMapV3Helper extends AppHelper {
 	 */
 	public function map($options = array()) {
 		$this->reset();
-		$this->settings = Set::merge($this->settings, $options);
-		$this->settings['map'] = array_merge($this->settings['map'], array('zoom' => $this->settings['zoom'], 'lat' => $this->settings['lat'], 'lng' => $this->settings['lng'], 'type' => $this->settings['type']), $options);
-		if (!$this->settings['map']['lat'] || !$this->settings['map']['lng']) {
-			$this->settings['map']['lat'] = $this->settings['map']['defaultLat'];
-			$this->settings['map']['lng'] = $this->settings['map']['defaultLng'];
-			$this->settings['map']['zoom'] = $this->settings['map']['defaultZoom'];
-		} elseif (!$this->settings['map']['zoom']) {
-			$this->settings['map']['zoom'] = $this->settings['map']['defaultZoom'];
+		$this->_config = Set::merge($this->_config, $options);
+		$this->_config['map'] = array_merge($this->_config['map'], array('zoom' => $this->_config['zoom'], 'lat' => $this->_config['lat'], 'lng' => $this->_config['lng'], 'type' => $this->_config['type']), $options);
+		if (!$this->_config['map']['lat'] || !$this->_config['map']['lng']) {
+			$this->_config['map']['lat'] = $this->_config['map']['defaultLat'];
+			$this->_config['map']['lng'] = $this->_config['map']['defaultLng'];
+			$this->_config['map']['zoom'] = $this->_config['map']['defaultZoom'];
+		} elseif (!$this->_config['map']['zoom']) {
+			$this->_config['map']['zoom'] = $this->_config['map']['defaultZoom'];
 		}
 
 		$result = '';
 
 		// autoinclude js?
-		if (!empty($this->settings['autoScript']) && !$this->_apiIncluded) {
-			$res = $this->Html->script($this->apiUrl(), array('inline' => $this->settings['inline']));
+		if (!empty($this->_config['autoScript']) && !$this->_apiIncluded) {
+			$res = $this->Html->script($this->apiUrl(), array('inline' => $this->_config['inline']));
 
-			if ($this->settings['inline']) {
+			if ($this->_config['inline']) {
 				$result .= $res . PHP_EOL;
 			}
 			// usually already included
 			//http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js
 		}
 		// still not very common: http://code.google.com/intl/de-DE/apis/maps/documentation/javascript/basics.html
-		if (false && !empty($this->settings['autoScript']) && !$this->_gearsIncluded) {
-			$res = $this->Html->script($this->gearsUrl(), array('inline' => $this->settings['inline']));
-			if ($this->settings['inline']) {
+		if (false && !empty($this->_config['autoScript']) && !$this->_gearsIncluded) {
+			$res = $this->Html->script($this->gearsUrl(), array('inline' => $this->_config['inline']));
+			if ($this->_config['inline']) {
 				$result .= $res . PHP_EOL;
 			}
 		}
@@ -412,30 +413,30 @@ class GoogleMapV3Helper extends AppHelper {
 		";
 
 		#rename "map_canvas" to "map_canvas1", ... if multiple maps on one page
-		while (in_array($this->settings['div']['id'], $this->_mapIds)) {
-			$this->settings['div']['id'] .= '-1'; //TODO: improve
+		while (in_array($this->_config['div']['id'], $this->_mapIds)) {
+			$this->_config['div']['id'] .= '-1'; //TODO: improve
 		}
-		$this->_mapIds[] = $this->settings['div']['id'];
+		$this->_mapIds[] = $this->_config['div']['id'];
 
 		$map .= "
-			var " . $this->name() . " = new google.maps.Map(document.getElementById(\"" . $this->settings['div']['id'] . "\"), myOptions);
+			var " . $this->name() . " = new google.maps.Map(document.getElementById(\"" . $this->_config['div']['id'] . "\"), myOptions);
 			";
 		$this->map = $map;
 
-		$this->settings['div']['style'] = '';
-		if (is_numeric($this->settings['div']['width'])) {
-			$this->settings['div']['width'] .= 'px';
+		$this->_config['div']['style'] = '';
+		if (is_numeric($this->_config['div']['width'])) {
+			$this->_config['div']['width'] .= 'px';
 		}
-		if (is_numeric($this->settings['div']['height'])) {
-			$this->settings['div']['height'] .= 'px';
+		if (is_numeric($this->_config['div']['height'])) {
+			$this->_config['div']['height'] .= 'px';
 		}
 
-		$this->settings['div']['style'] .= 'width: ' . $this->settings['div']['width'] . ';';
-		$this->settings['div']['style'] .= 'height: ' . $this->settings['div']['height'] . ';';
-		unset($this->settings['div']['width']); unset($this->settings['div']['height']);
+		$this->_config['div']['style'] .= 'width: ' . $this->_config['div']['width'] . ';';
+		$this->_config['div']['style'] .= 'height: ' . $this->_config['div']['height'] . ';';
+		unset($this->_config['div']['width']); unset($this->_config['div']['height']);
 
-		$defaultText = isset($this->settings['content']) ? $this->settings['content'] : __('Map cannot be displayed!');
-		$result .= $this->Html->tag('div', $defaultText, $this->settings['div']);
+		$defaultText = isset($this->_config['content']) ? $this->_config['content'] : __('Map cannot be displayed!');
+		$result .= $this->Html->tag('div', $defaultText, $this->_config['div']);
 
 		return $result;
 	}
@@ -446,10 +447,10 @@ class GoogleMapV3Helper extends AppHelper {
 	 * @return string
 	 */
 	protected function _initialLocation() {
-		if ($this->settings['map']['lat'] && $this->settings['map']['lng']) {
-			return "new google.maps.LatLng(" . $this->settings['map']['lat'] . ", " . $this->settings['map']['lng'] . ")";
+		if ($this->_config['map']['lat'] && $this->_config['map']['lng']) {
+			return "new google.maps.LatLng(" . $this->_config['map']['lat'] . ", " . $this->_config['map']['lng'] . ")";
 		}
-		$this->settings['autoCenter'] = true;
+		$this->_config['autoCenter'] = true;
 		return 'false';
 	}
 
@@ -468,7 +469,7 @@ class GoogleMapV3Helper extends AppHelper {
 	 * @throws CakeException
 	 */
 	public function addMarker($options) {
-		$defaults = $this->settings['marker'];
+		$defaults = $this->_config['marker'];
 		if (isset($options['icon']) && is_array($options['icon'])) {
 			$defaults = array_merge($defaults, $options['icon']);
 			unset($options['icon']);
@@ -554,19 +555,19 @@ function geocodeAddress(address) {
 		}
 
 		// Fill popup windows
-		if (!empty($options['content']) && $this->settings['infoWindow']['useMultiple']) {
+		if (!empty($options['content']) && $this->_config['infoWindow']['useMultiple']) {
 			$x = $this->addInfoWindow(array('content' => $options['content']));
 			$this->addEvent(static::$markerCount, $x, $options['open']);
 
 		} elseif (!empty($options['content'])) {
-			if (!isset($this->settings['marker']['infoWindow'])) {
-				$this->settings['marker']['infoWindow'] = $this->addInfoWindow();
+			if (!isset($this->_config['marker']['infoWindow'])) {
+				$this->_config['marker']['infoWindow'] = $this->addInfoWindow();
 			}
 
 			$x = $this->addInfoContent($options['content']);
 			$event = "
-			gInfoWindows" . static::$mapCount . "[" . $this->settings['marker']['infoWindow'] . "]. setContent(gWindowContents" . static::$mapCount . "[" . $x . "]);
-			gInfoWindows" . static::$mapCount . "[" . $this->settings['marker']['infoWindow'] . "].open(" . $this->name() . ", gMarkers" . static::$mapCount . "[" . $x . "]);
+			gInfoWindows" . static::$mapCount . "[" . $this->_config['marker']['infoWindow'] . "]. setContent(gWindowContents" . static::$mapCount . "[" . $x . "]);
+			gInfoWindows" . static::$mapCount . "[" . $this->_config['marker']['infoWindow'] . "].open(" . $this->name() . ", gMarkers" . static::$mapCount . "[" . $x . "]);
 			";
 			$this->addCustomEvent(static::$markerCount, $event);
 
@@ -667,11 +668,11 @@ function geocodeAddress(address) {
 			$color = 'red';
 		}
 
-		if (!empty($this->settings['localImages'])) {
-			$this->setIcons['color'] = $this->settings['localImages'] . 'marker%s.png';
-			$this->setIcons['alpha'] = $this->settings['localImages'] . 'marker%s%s.png';
-			$this->setIcons['numeric'] = $this->settings['localImages'] . '%s%s.png';
-			$this->setIcons['special'] = $this->settings['localImages'] . '%s.png';
+		if (!empty($this->_config['localImages'])) {
+			$this->setIcons['color'] = $this->_config['localImages'] . 'marker%s.png';
+			$this->setIcons['alpha'] = $this->_config['localImages'] . 'marker%s%s.png';
+			$this->setIcons['numeric'] = $this->_config['localImages'] . '%s%s.png';
+			$this->setIcons['special'] = $this->_config['localImages'] . '%s.png';
 		}
 
 		if (!empty($char)) {
@@ -798,7 +799,7 @@ var iconShape = {
 	 * @return int windowCount
 	 */
 	public function addInfoWindow($options = array()) {
-		$defaults = $this->settings['infoWindow'];
+		$defaults = $this->_config['infoWindow'];
 		$options += $defaults;
 
 		if (!empty($options['lat']) && !empty($options['lng'])) {
@@ -887,7 +888,7 @@ var iconShape = {
 	 */
 	public function addDirections($from, $to, $options = array()) {
 		$id = 'd' . static::$markerCount++;
-		$defaults = $this->settings['directions'];
+		$defaults = $this->_config['directions'];
 		$options += $defaults;
 		$travelMode = $this->travelModes[$options['travelMode']];
 
@@ -957,7 +958,7 @@ var iconShape = {
 			$to = '\'' . h($to) . '\'';
 		}
 
-		$defaults = $this->settings['polyline'];
+		$defaults = $this->_config['polyline'];
 		$options += $defaults;
 
 		$id = 'p' . static::$markerCount++;
@@ -1029,15 +1030,15 @@ var iconShape = {
 		';
 
 		$script .= $this->map;
-		if ($this->settings['geolocate']) {
+		if ($this->_config['geolocate']) {
 			$script .= $this->_geolocate();
 		}
 
-		if ($this->settings['showMarker'] && !empty($this->markers) && is_array($this->markers)) {
+		if ($this->_config['showMarker'] && !empty($this->markers) && is_array($this->markers)) {
 			$script .= implode($this->markers, " ");
 		}
 
-		if ($this->settings['autoCenter']) {
+		if ($this->_config['autoCenter']) {
 			$script .= $this->_autoCenter();
 		}
 		$script .= '
@@ -1059,10 +1060,10 @@ var iconShape = {
 	 */
 	public function geolocateCallback($js) {
 		if ($js === false) {
-			$this->settings['callbacks']['geolocate'] = false;
+			$this->_config['callbacks']['geolocate'] = false;
 			return;
 		}
-		$this->settings['callbacks']['geolocate'] = $js;
+		$this->_config['callbacks']['geolocate'] = $js;
 	}
 
 	/**
@@ -1109,7 +1110,7 @@ var iconShape = {
 	}
 
 	protected function _geolocationCallback() {
-		if (($js = $this->settings['callbacks']['geolocate']) === false) {
+		if (($js = $this->_config['callbacks']['geolocate']) === false) {
 			return '';
 		}
 		if ($js === null) {
@@ -1137,7 +1138,7 @@ var iconShape = {
 	 * @return json like js string
 	 */
 	protected function _mapOptions() {
-		$options = array_merge($this->settings, $this->settings['map']);
+		$options = array_merge($this->_config, $this->_config['map']);
 
 		$mapOptions = array_intersect_key($options, array(
 			'streetViewControl' => null,
@@ -1544,7 +1545,7 @@ var iconShape = {
 	 * @return string protocol base (including ://)
 	 */
 	protected function _protocol() {
-		if (($https = $this->settings['https']) === null) {
+		if (($https = $this->_config['https']) === null) {
 			$https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
 		}
 		return ($https ? 'https' : 'http') . '://';
@@ -1659,7 +1660,7 @@ function Fluster2ProjectionOverlay(map) {google.maps.OverlayView.call(this);this
 	 * @param array pointX
 	 * @param array pointY
 	 * @return int distance: in km
-	 * @DEPRECATED - use GeocodeLib::distance() instead!
+	 * @DEPRECATED - use Geocode::distance() instead!
 	 */
 	public function distance($pointX, $pointY) {
 		/*

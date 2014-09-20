@@ -1,8 +1,10 @@
 <?php
+namespace Geo\Test\Geocode;
 
-namespace Tools\Test\Case\Lib;
-use Tools\GeocodeLib;
-use Tools\TestSuite\MyTestCase;
+use Geo\Geocode\Geocode;
+use Cake\Core\Configure;
+use Cake\TestSuite\TestCase;
+use ReflectionClass;
 
 # google maps
 Configure::write('Google', array(
@@ -14,7 +16,7 @@ Configure::write('Google', array(
 	'type' => 'G_NORMAL_MAP'
 ));
 
-class GeocodeLibTest extends MyTestCase {
+class GeocodeTest extends TestCase {
 
 	public $apiMockupReverseGeocode40206 = array(
 		'reverseGeocode' => array(
@@ -64,7 +66,7 @@ class GeocodeLibTest extends MyTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$this->Geocode = new GeocodeLib();
+		$this->Geocode = new Geocode();
 	}
 
 	public function tearDown() {
@@ -74,11 +76,11 @@ class GeocodeLibTest extends MyTestCase {
 
 	public function testObject() {
 		$this->assertTrue(is_object($this->Geocode));
-		$this->assertInstanceOf('GeocodeLib', $this->Geocode);
+		$this->assertInstanceOf('Geo\Geocode\Geocode', $this->Geocode);
 	}
 
 	/**
-	 * GeocodeLibTest::testReverseGeocode()
+	 * GeocodeTest::testReverseGeocode()
 	 *
 	 * @return void
 	 */
@@ -112,7 +114,7 @@ class GeocodeLibTest extends MyTestCase {
 	public function testGeocodeInconclusive() {
 		$address = 'Bibersfeld';
 
-		$this->Geocode->setOptions(array('allow_inconclusive' => true, 'min_accuracy' => GeocodeLib::ACC_POSTAL));
+		$this->Geocode->setOptions(array('allow_inconclusive' => true, 'min_accuracy' => Geocode::ACC_POSTAL));
 		$is = $this->Geocode->geocode($address);
 		$this->assertTrue($is);
 		$res = $this->Geocode->getResult();
@@ -142,7 +144,7 @@ class GeocodeLibTest extends MyTestCase {
 	public function testGeocodeInconclusiveMinAccuracy() {
 		$address = 'Bibersfeld';
 
-		$this->Geocode->setOptions(array('allow_inconclusive' => true, 'min_accuracy' => GeocodeLib::ACC_STREET));
+		$this->Geocode->setOptions(array('allow_inconclusive' => true, 'min_accuracy' => Geocode::ACC_STREET));
 		$is = $this->Geocode->geocode($address);
 		$this->assertFalse($is);
 	}
@@ -161,19 +163,19 @@ class GeocodeLibTest extends MyTestCase {
 
 		$this->Geocode->setOptions(array(
 			'allow_inconclusive' => true,
-			'expect' => array(GeocodeLib::ACC_POSTAL, GeocodeLib::ACC_LOC, GeocodeLib::ACC_SUBLOC)));
+			'expect' => array(Geocode::ACC_POSTAL, Geocode::ACC_LOC, Geocode::ACC_SUBLOC)));
 		$is = $this->Geocode->geocode($address);
 		$this->assertTrue($is);
 
 		$this->Geocode->setOptions(array(
 			'allow_inconclusive' => true,
-			'expect' => array(GeocodeLib::ACC_POSTAL, GeocodeLib::ACC_LOC)));
+			'expect' => array(Geocode::ACC_POSTAL, Geocode::ACC_LOC)));
 		$is = $this->Geocode->geocode($address);
 		$this->assertFalse($is);
 	}
 
 	/**
-	 * GeocodeLibTest::testDistance()
+	 * GeocodeTest::testDistance()
 	 *
 	 * @return void
 	 */
@@ -189,7 +191,7 @@ class GeocodeLibTest extends MyTestCase {
 			$this->assertEquals($coord['d'], $is);
 		}
 
-		$is = $this->Geocode->distance($coords[0]['x'], $coords[0]['y'], GeocodeLib::UNIT_MILES);
+		$is = $this->Geocode->distance($coords[0]['x'], $coords[0]['y'], Geocode::UNIT_MILES);
 		$this->assertEquals(142, $is);
 
 		// String directly
@@ -198,7 +200,7 @@ class GeocodeLibTest extends MyTestCase {
 	}
 
 	/**
-	 * GeocodeLibTest::testBlur()
+	 * GeocodeTest::testBlur()
 	 *
 	 * @return void
 	 */
@@ -216,7 +218,7 @@ class GeocodeLibTest extends MyTestCase {
 	}
 
 	/**
-	 * GeocodeLibTest::testConvert()
+	 * GeocodeTest::testConvert()
 	 *
 	 * @return void
 	 */
@@ -233,21 +235,21 @@ class GeocodeLibTest extends MyTestCase {
 	}
 
 	/**
-	 * GeocodeLibTest::testUrl()
+	 * GeocodeTest::testUrl()
 	 *
 	 * @return void
 	 */
 	public function testUrl() {
-		$ReflectionClass = new ReflectionClass('GeocodeLib');
+		$ReflectionClass = new ReflectionClass('Geo\Geocode\Geocode');
 		$Method = $ReflectionClass->getMethod('_url');
 		$Method->setAccessible(true);
 
 		$is = $Method->invoke($this->Geocode);
-		$this->assertPattern('#https://maps.googleapis.com/maps/api/geocode/json#', $is);
+		$this->assertRegExp('#https://maps.googleapis.com/maps/api/geocode/json#', $is);
 	}
 
 	/**
-	 * GeocodeLibTest::testSetParams()
+	 * GeocodeTest::testSetParams()
 	 *
 	 * @return void
 	 */
@@ -255,7 +257,7 @@ class GeocodeLibTest extends MyTestCase {
 	}
 
 	/**
-	 * GeocodeLibTest::testSetOptions()
+	 * GeocodeTest::testSetOptions()
 	 *
 	 * @return void
 	 */
@@ -263,7 +265,7 @@ class GeocodeLibTest extends MyTestCase {
 		$this->Geocode->setOptions(array('host' => 'maps.google.it'));
 
 		// should now be ".it"
-		$ReflectionClass = new ReflectionClass('GeocodeLib');
+		$ReflectionClass = new ReflectionClass('Geo\Geocode\Geocode');
 		$Method = $ReflectionClass->getMethod('_url');
 		$Method->setAccessible(true);
 
@@ -272,7 +274,7 @@ class GeocodeLibTest extends MyTestCase {
 	}
 
 	/**
-	 * GeocodeLibTest::testGeocode()
+	 * GeocodeTest::testGeocode()
 	 *
 	 * @return void
 	 */
@@ -325,7 +327,7 @@ class GeocodeLibTest extends MyTestCase {
 	}
 
 	/**
-	 * GeocodeLibTest::testGeocodeBadApiKey()
+	 * GeocodeTest::testGeocodeBadApiKey()
 	 *
 	 * @return void
 	 */
@@ -339,7 +341,7 @@ class GeocodeLibTest extends MyTestCase {
 	}
 
 	/**
-	 * GeocodeLibTest::testGeocodeInvalid()
+	 * GeocodeTest::testGeocodeInvalid()
 	 *
 	 * @return void
 	 */
@@ -353,35 +355,35 @@ class GeocodeLibTest extends MyTestCase {
 	}
 
 	/**
-	 * GeocodeLibTest::testGetMaxAddress()
+	 * GeocodeTest::testGetMaxAddress()
 	 *
 	 * @return void
 	 */
 	public function testGetMaxAddress() {
-		$ReflectionClass = new ReflectionClass('GeocodeLib');
+		$ReflectionClass = new ReflectionClass('Geo\Geocode\Geocode');
 		$Method = $ReflectionClass->getMethod('_getMaxAccuracy');
 		$Method->setAccessible(true);
 
 		$result = $Method->invoke($this->Geocode, array('street_address' => 'abc'));
-		$this->assertSame(GeocodeLib::ACC_STREET, $result);
+		$this->assertSame(Geocode::ACC_STREET, $result);
 
 		$result = $Method->invoke($this->Geocode, array('intersection' => 'abc'));
-		$this->assertSame(GeocodeLib::ACC_INTERSEC, $result);
+		$this->assertSame(Geocode::ACC_INTERSEC, $result);
 
 		$result = $Method->invoke($this->Geocode, array('route' => 'abc'));
-		$this->assertSame(GeocodeLib::ACC_ROUTE, $result);
+		$this->assertSame(Geocode::ACC_ROUTE, $result);
 
 		$result = $Method->invoke($this->Geocode, array('sublocality' => 'abc'));
-		$this->assertSame(GeocodeLib::ACC_SUBLOC, $result);
+		$this->assertSame(Geocode::ACC_SUBLOC, $result);
 
 		$result = $Method->invoke($this->Geocode, array('locality' => 'abc'));
-		$this->assertSame(GeocodeLib::ACC_LOC, $result);
+		$this->assertSame(Geocode::ACC_LOC, $result);
 
 		$result = $Method->invoke($this->Geocode, array('postal_code' => 'abc'));
-		$this->assertSame(GeocodeLib::ACC_POSTAL, $result);
+		$this->assertSame(Geocode::ACC_POSTAL, $result);
 
 		$result = $Method->invoke($this->Geocode, array('country' => 'abc'));
-		$this->assertSame(GeocodeLib::ACC_COUNTRY, $result);
+		$this->assertSame(Geocode::ACC_COUNTRY, $result);
 
 		$result = $Method->invoke($this->Geocode, array());
 		$this->assertSame(null, $result);
@@ -393,18 +395,18 @@ class GeocodeLibTest extends MyTestCase {
 			'locality' => '',
 			'street_address' => '',
 		));
-		$this->assertSame(GeocodeLib::ACC_POSTAL, $result);
+		$this->assertSame(Geocode::ACC_POSTAL, $result);
 	}
 
 	/**
-	 * GeocodeLibTest::testGeocodeMinAcc()
+	 * GeocodeTest::testGeocodeMinAcc()
 	 *
 	 * @return void
 	 */
 	public function testGeocodeMinAcc() {
 		// address = postal_code, minimum = street level
 		$address = 'Deutschland';
-		$this->Geocode->setOptions(array('min_accuracy' => GeocodeLib::ACC_STREET));
+		$this->Geocode->setOptions(array('min_accuracy' => Geocode::ACC_STREET));
 		$is = $this->Geocode->geocode($address);
 		$this->assertFalse($is);
 		$is = $this->Geocode->error();
@@ -412,12 +414,12 @@ class GeocodeLibTest extends MyTestCase {
 	}
 
 	/**
-	 * GeocodeLibTest::testTransformData()
+	 * GeocodeTest::testTransformData()
 	 *
 	 * @return void
 	 */
 	public function testTransformData() {
-		$ReflectionClass = new ReflectionClass('GeocodeLib');
+		$ReflectionClass = new ReflectionClass('Geo\Geocode\Geocode');
 		$Method = $ReflectionClass->getMethod('_transformData');
 		$Method->setAccessible(true);
 
@@ -428,7 +430,7 @@ class GeocodeLibTest extends MyTestCase {
 		$this->assertEquals($data, $Method->invoke($this->Geocode, $data));
 
 		// Full record
-		$ReflectionClass = new ReflectionClass('GeocodeLib');
+		$ReflectionClass = new ReflectionClass('Geo\Geocode\Geocode');
 		$Method = $ReflectionClass->getMethod('_transform');
 		$Method->setAccessible(true);
 		$data = json_decode($this->apiMockupReverseGeocode40206['raw'], true);
@@ -516,6 +518,21 @@ class GeocodeLibTest extends MyTestCase {
 		$result = $Method->invoke($this->Geocode, $data);
 
 		$this->assertEquals($expected, $result);
+	}
+
+	/**
+	 * Opposite wrapper method of assertWithinMargin.
+	 *
+	 * @param float $result
+	 * @param float $expected
+	 * @param float $margin
+	 * @param string $message
+	 * @return void
+	 */
+	protected static function assertNotWithinMargin($result, $expected, $margin, $message = '') {
+		$upper = $result + $margin;
+		$lower = $result - $margin;
+		return static::assertFalse((($expected <= $upper) && ($expected >= $lower)), $message);
 	}
 
 }

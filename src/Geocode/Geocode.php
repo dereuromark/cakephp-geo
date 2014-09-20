@@ -1,8 +1,10 @@
 <?php
-namespace Tools\Lib;
+namespace Geo\Geocode;
 
 use Cake\Utility\String;
+use Cake\Core\Configure;
 use Cake\Network\Http\Client;
+use Cake\Log\Log;
 
 /**
  * Geocode via google (UPDATE: api3)
@@ -16,7 +18,7 @@ use Cake\Network\Http\Client;
  * @author Mark Scherer
  * @licence MIT
  */
-class GeocodeLib {
+class Geocode {
 
 	const BASE_URL = 'https://{host}/maps/api/geocode/json?';
 	const DEFAULT_HOST = 'maps.googleapis.com';
@@ -250,7 +252,7 @@ class GeocodeLib {
 			$result = $this->_fetch($requestUrl, $this->params);
 			if ($result === false || $result === null) {
 				$this->setError('Could not retrieve url');
-				Log::write('geocode', 'Geocoder could not retrieve url with \'' . $address . '\'');
+				Log::write('debug', 'Geocoder could not retrieve url with \'' . $address . '\'', ['geocode']);
 				return false;
 			}
 
@@ -259,7 +261,7 @@ class GeocodeLib {
 
 			if (!is_array($result)) {
 				$this->setError('Result parsing failed');
-				Log::write('geocode', __('Failed geocode parsing of \'%s\'', $address));
+				Log::write('debug', __('Failed geocode parsing of \'%s\'', $address));
 				return false;
 			}
 
@@ -272,14 +274,14 @@ class GeocodeLib {
 
 				// save Result
 				if ($this->options['log']) {
-					Log::write('geocode', __('Address \'%s\' has been geocoded', $address));
+					Log::write('debug', __('Address \'%s\' has been geocoded', $address));
 				}
 				break;
 
 			} elseif ($status == static::STATUS_TOO_MANY_QUERIES) {
 				// sent geocodes too fast, delay +0.1 seconds
 				if ($this->options['log']) {
-					Log::write('geocode', __('Delay necessary for address \'%s\'', $address));
+					Log::write('debug', __('Delay necessary for address \'%s\'', $address));
 				}
 				$count++;
 			} else {
@@ -295,14 +297,14 @@ class GeocodeLib {
 				$this->setError('Error ' . $status . ' (' . $errorMessage . ')');
 
 				if ($this->options['log']) {
-					Log::write('geocode', __('Could not geocode \'%s\'', $address));
+					Log::write('debug', __('Could not geocode \'%s\'', $address));
 				}
 				return false; # for now...
 			}
 
 			if ($count > 5) {
 				if ($this->options['log']) {
-					Log::write('geocode', __('Aborted after too many trials with \'%s\'', $address));
+					Log::write('debug', __('Aborted after too many trials with \'%s\'', $address));
 				}
 				$this->setError('Too many trials - abort');
 				return false;
@@ -334,7 +336,7 @@ class GeocodeLib {
 			$result = $this->_fetch($requestUrl, $this->params);
 			if ($result === false || $result === null) {
 				$this->setError('Could not retrieve url');
-				Log::write('geocode', __('Could not retrieve url with \'%s\'', $latlng));
+				Log::write('debug', __('Could not retrieve url with \'%s\'', $latlng));
 				return false;
 			}
 
@@ -342,7 +344,7 @@ class GeocodeLib {
 			$result = $this->_transform($result);
 			if (!is_array($result)) {
 				$this->setError('Result parsing failed');
-				Log::write('geocode', __('Failed reverseGeocode parsing of \'%s\'', $latlng));
+				Log::write('debug', __('Failed reverseGeocode parsing of \'%s\'', $latlng));
 				return false;
 			}
 
@@ -355,14 +357,14 @@ class GeocodeLib {
 
 				// save Result
 				if ($this->options['log']) {
-					Log::write('geocode', __('Address \'%s\' has been geocoded', $latlng));
+					Log::write('debug', __('Address \'%s\' has been geocoded', $latlng));
 				}
 				break;
 
 			} elseif ($status == static::STATUS_TOO_MANY_QUERIES) {
 				// sent geocodes too fast, delay +0.1 seconds
 				if ($this->options['log']) {
-					Log::write('geocode', __('Delay necessary for \'%s\'', $latlng));
+					Log::write('debug', __('Delay necessary for \'%s\'', $latlng));
 				}
 				$count++;
 
@@ -371,13 +373,13 @@ class GeocodeLib {
 				$this->setError('Error ' . $status . (isset($this->statusCodes[$status]) ? ' (' . $this->statusCodes[$status] . ')' : ''));
 
 				if ($this->options['log']) {
-					Log::write('geocode', __('Could not geocode \'%s\'', $latlng));
+					Log::write('debug', __('Could not geocode \'%s\'', $latlng));
 				}
 				return false; # for now...
 			}
 			if ($count > 5) {
 				if ($this->options['log']) {
-					Log::write('geocode', __('Aborted after too many trials with \'%s\'', $latlng));
+					Log::write('debug', __('Aborted after too many trials with \'%s\'', $latlng));
 				}
 				$this->setError(__('Too many trials - abort'));
 				return false;
@@ -389,7 +391,7 @@ class GeocodeLib {
 	}
 
 	/**
-	 * GeocodeLib::_process()
+	 * Geocode::_process()
 	 *
 	 * @param mixed $result
 	 * @return bool Success
@@ -445,7 +447,7 @@ class GeocodeLib {
 	}
 
 	/**
-	 * GeocodeLib::accuracyTypes()
+	 * Geocode::accuracyTypes()
 	 *
 	 * @param mixed $value
 	 * @return mixed Type or types
@@ -501,7 +503,7 @@ class GeocodeLib {
 	}
 
 	/**
-	 * GeocodeLib::_transform()
+	 * Geocode::_transform()
 	 *
 	 * @param string|array $record JSON string or array
 	 * @return array
@@ -729,7 +731,7 @@ class GeocodeLib {
 		}
 		$unit = strtoupper($unit);
 		if (!isset($this->units[$unit])) {
-			throw new CakeException(__('Invalid Unit: %s', $unit));
+			throw new \Exception(__('Invalid Unit: %s', $unit));
 		}
 
 		$res = $this->calculateDistance($pointX, $pointY);
@@ -740,7 +742,7 @@ class GeocodeLib {
 	}
 
 	/**
-	 * GeocodeLib::calculateDistance()
+	 * Geocode::calculateDistance()
 	 *
 	 * @param array $pointX
 	 * @param array $pointY
@@ -773,7 +775,7 @@ class GeocodeLib {
 	 */
 	public function convert($value, $fromUnit, $toUnit) {
 		if (!isset($this->units[($fromUnit = strtoupper($fromUnit))]) || !isset($this->units[($toUnit = strtoupper($toUnit))])) {
-			throw new CakeException(__('Invalid Unit'));
+			throw new \Exception(__('Invalid Unit'));
 		}
 		if ($fromUnit === 'M') {
 			$value *= $this->units[$toUnit];
@@ -818,7 +820,7 @@ class GeocodeLib {
 			case 5:
 				break;
 			default:
-				throw new CakeException(__('Invalid level \'%s\'', $level));
+				throw new \Exception(__('Invalid level \'%s\'', $level));
 		}
 		$scrambleVal = 0.000001 * mt_rand(1000, 2000) * (mt_rand(0, 1) === 0 ? 1 : -1);
 

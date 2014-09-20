@@ -1,11 +1,15 @@
 <?php
+namespace Geo\Test\View\Helper;
 
-namespace Tools\Test\Case\View\Helper;
-use Tools\View\Helper\GoogleMapV3Helper;
-use Tools\TestSuite\MyTestCase;
+use Geo\View\Helper\GoogleMapV3Helper;
+use Cake\TestSuite\TestCase;
 use Cake\View\View;
+use Cake\Core\Configure;
 
-class GoogleMapV3HelperTest extends MyTestCase {
+/**
+ * @backupGlobals disabled
+ */
+class GoogleMapV3HelperTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
@@ -33,7 +37,7 @@ class GoogleMapV3HelperTest extends MyTestCase {
 		Configure::write('Google.zoom', 8);
 		$this->GoogleMapV3 = new GoogleMapV3Helper(new View(null), $config);
 
-		$result = $this->GoogleMapV3->settings;
+		$result = $this->GoogleMapV3->config();
 		$this->assertEquals('foo', $result['map']['type']);
 		$this->assertEquals(8, $result['map']['zoom']);
 	}

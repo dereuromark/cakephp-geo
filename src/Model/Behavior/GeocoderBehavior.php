@@ -1,8 +1,8 @@
 <?php
-namespace Tools\Model\Behavior;
+namespace Geo\Model\Behavior;
 
 use Cake\Model\ModelBehavior;
-use Tools\Lib\GeocodeLib;
+use Geo\Geocode\Geocode;
 
 /**
  * A geocoding behavior for CakePHP to easily geocode addresses.
@@ -26,7 +26,7 @@ class GeocoderBehavior extends ModelBehavior {
 		'lat' => 'lat', 'lng' => 'lng', 'formatted_address' => 'formatted_address',
 		'host' => null, 'language' => 'de', 'region' => '', 'bounds' => '',
 		'overwrite' => false, 'update' => array(), 'before' => 'save',
-		'min_accuracy' => GeocodeLib::ACC_COUNTRY, 'allow_inconclusive' => true, 'unit' => GeocodeLib::UNIT_KM,
+		'min_accuracy' => Geocode::ACC_COUNTRY, 'allow_inconclusive' => true, 'unit' => Geocode::UNIT_KM,
 		'log' => true, // log successfull results to geocode.log (errors will be logged to error.log in either case)
 	);
 
@@ -57,14 +57,14 @@ class GeocoderBehavior extends ModelBehavior {
 	 * @param array $config Settings to override for model.
 	 */
 	public function setup(Model $Model, $config = array()) {
-		$this->settings[$Model->alias] = $this->_defaultConfig;
-		$this->settings[$Model->alias] = $config + $this->settings[$Model->alias];
+		$this->_config[$Model->alias] = $this->_defaultConfig;
+		$this->_config[$Model->alias] = $config + $this->_config[$Model->alias];
 	}
 
 	public function beforeValidate(Model $Model, $options = array()) {
 		parent::beforeValidate($Model, $options);
 
-		if ($this->settings[$Model->alias]['before'] === 'validate') {
+		if ($this->_config[$Model->alias]['before'] === 'validate') {
 			return $this->geocode($Model);
 		}
 
@@ -74,7 +74,7 @@ class GeocoderBehavior extends ModelBehavior {
 	public function beforeSave(Model $Model, $options = array()) {
 		parent::beforeSave($Model, $options);
 
-		if ($this->settings[$Model->alias]['before'] === 'save') {
+		if ($this->_config[$Model->alias]['before'] === 'save') {
 			return $this->geocode($Model);
 		}
 
@@ -89,15 +89,15 @@ class GeocoderBehavior extends ModelBehavior {
 	 */
 	public function geocode(Model $Model, $return = true) {
 		// Make address fields an array
-		if (!is_array($this->settings[$Model->alias]['address'])) {
-			$addressfields = array($this->settings[$Model->alias]['address']);
+		if (!is_array($this->_config[$Model->alias]['address'])) {
+			$addressfields = array($this->_config[$Model->alias]['address']);
 		} else {
-			$addressfields = $this->settings[$Model->alias]['address'];
+			$addressfields = $this->_config[$Model->alias]['address'];
 		}
 		$addressfields = array_unique($addressfields);
 
 		// Make sure all address fields are available
-		if ($this->settings[$Model->alias]['real']) {
+		if ($this->_config[$Model->alias]['real']) {
 			foreach ($addressfields as $field) {
 				if (!$Model->hasField($field)) {
 					return $return;
@@ -114,17 +114,17 @@ class GeocoderBehavior extends ModelBehavior {
 
 		$Model->data[$Model->alias]['geocoder_result'] = array();
 
-		if ((!$this->settings[$Model->alias]['real'] || ($Model->hasField($this->settings[$Model->alias]['lat']) && $Model->hasField($this->settings[$Model->alias]['lng']))) &&
-			($this->settings[$Model->alias]['overwrite'] || empty($Model->data[$Model->alias][$this->settings[$Model->alias]['lat']]) || ((int)$Model->data[$Model->alias][$this->settings[$Model->alias]['lat']] === 0 && (int)$Model->data[$Model->alias][$this->settings[$Model->alias]['lng']] === 0))
+		if ((!$this->_config[$Model->alias]['real'] || ($Model->hasField($this->_config[$Model->alias]['lat']) && $Model->hasField($this->_config[$Model->alias]['lng']))) &&
+			($this->_config[$Model->alias]['overwrite'] || empty($Model->data[$Model->alias][$this->_config[$Model->alias]['lat']]) || ((int)$Model->data[$Model->alias][$this->_config[$Model->alias]['lat']] === 0 && (int)$Model->data[$Model->alias][$this->_config[$Model->alias]['lng']] === 0))
 		) {
-			if (!empty($Model->whitelist) && (!in_array($this->settings[$Model->alias]['lat'], $Model->whitelist) || !in_array($this->settings[$Model->alias]['lng'], $Model->whitelist))) {
+			if (!empty($Model->whitelist) && (!in_array($this->_config[$Model->alias]['lat'], $Model->whitelist) || !in_array($this->_config[$Model->alias]['lng'], $Model->whitelist))) {
 				return $return;
 			}
 		}
 
-		$geocode = $this->_geocode($addressData, $this->settings[$Model->alias]);
+		$geocode = $this->_geocode($addressData, $this->_config[$Model->alias]);
 
-		if (empty($geocode) && !empty($this->settings[$Model->alias]['allowEmpty'])) {
+		if (empty($geocode) && !empty($this->_config[$Model->alias]['allowEmpty'])) {
 			return true;
 		}
 		if (empty($geocode)) {
@@ -134,14 +134,14 @@ class GeocoderBehavior extends ModelBehavior {
 		// If both are 0, thats not valid, otherwise continue
 		if (empty($geocode['lat']) && empty($geocode['lng'])) {
 			// Prevent 0 inserts of incorrect runs
-			if (isset($Model->data[$Model->alias][$this->settings[$Model->alias]['lat']])) {
-				unset($Model->data[$Model->alias][$this->settings[$Model->alias]['lat']]);
+			if (isset($Model->data[$Model->alias][$this->_config[$Model->alias]['lat']])) {
+				unset($Model->data[$Model->alias][$this->_config[$Model->alias]['lat']]);
 			}
-			if (isset($Model->data[$Model->alias][$this->settings[$Model->alias]['lng']])) {
-				unset($Model->data[$Model->alias][$this->settings[$Model->alias]['lng']]);
+			if (isset($Model->data[$Model->alias][$this->_config[$Model->alias]['lng']])) {
+				unset($Model->data[$Model->alias][$this->_config[$Model->alias]['lng']]);
 			}
-			if ($this->settings[$Model->alias]['require']) {
-				if ($fields = $this->settings[$Model->alias]['invalidate']) {
+			if ($this->_config[$Model->alias]['require']) {
+				if ($fields = $this->_config[$Model->alias]['invalidate']) {
 					$Model->invalidate($fields[0], $fields[1], isset($fields[2]) ? $fields[2] : true);
 				}
 				return false;
@@ -150,22 +150,22 @@ class GeocoderBehavior extends ModelBehavior {
 		}
 
 		// Valid lat/lng found
-		$Model->data[$Model->alias][$this->settings[$Model->alias]['lat']] = $geocode['lat'];
-		$Model->data[$Model->alias][$this->settings[$Model->alias]['lng']] = $geocode['lng'];
+		$Model->data[$Model->alias][$this->_config[$Model->alias]['lat']] = $geocode['lat'];
+		$Model->data[$Model->alias][$this->_config[$Model->alias]['lng']] = $geocode['lng'];
 
-		if (!empty($this->settings[$Model->alias]['formatted_address'])) {
-			$Model->data[$Model->alias][$this->settings[$Model->alias]['formatted_address']] = $geocode['formatted_address'];
+		if (!empty($this->_config[$Model->alias]['formatted_address'])) {
+			$Model->data[$Model->alias][$this->_config[$Model->alias]['formatted_address']] = $geocode['formatted_address'];
 		} else {
-			if (isset($Model->data[$Model->alias][$this->settings[$Model->alias]['formatted_address']])) {
-				unset($Model->data[$Model->alias][$this->settings[$Model->alias]['formatted_address']]);
+			if (isset($Model->data[$Model->alias][$this->_config[$Model->alias]['formatted_address']])) {
+				unset($Model->data[$Model->alias][$this->_config[$Model->alias]['formatted_address']]);
 			}
 		}
 
 		$Model->data[$Model->alias]['geocoder_result'] = $geocode;
 		$Model->data[$Model->alias]['geocoder_result']['address_data'] = implode(' ', $addressData);
 
-		if (!empty($this->settings[$Model->alias]['update'])) {
-			foreach ($this->settings[$Model->alias]['update'] as $key => $field) {
+		if (!empty($this->_config[$Model->alias]['update'])) {
+			foreach ($this->_config[$Model->alias]['update'] as $key => $field) {
 				if (!empty($geocode[$key])) {
 					$Model->data[$Model->alias][$field] = $geocode[$key];
 				}
@@ -196,16 +196,16 @@ class GeocoderBehavior extends ModelBehavior {
 	 */
 	public function distance(Model $Model, $lat, $lng, $fieldLat = null, $fieldLng = null, $modelName = null) {
 		if ($fieldLat === null) {
-			$fieldLat = $this->settings[$Model->alias]['lat'];
+			$fieldLat = $this->_config[$Model->alias]['lat'];
 		}
 		if ($fieldLng === null) {
-			$fieldLng = $this->settings[$Model->alias]['lng'];
+			$fieldLng = $this->_config[$Model->alias]['lng'];
 		}
 		if ($modelName === null) {
 			$modelName = $Model->alias;
 		}
 
-		$value = $this->_calculationValue($this->settings[$Model->alias]['unit']);
+		$value = $this->_calculationValue($this->_config[$Model->alias]['unit']);
 
 		return $value . ' * ACOS(COS(PI()/2 - RADIANS(90 - ' . $modelName . '.' . $fieldLat . ')) * ' .
 			'COS(PI()/2 - RADIANS(90 - ' . $lat . ')) * ' .
@@ -221,10 +221,10 @@ class GeocoderBehavior extends ModelBehavior {
 	 */
 	public function distanceConditions(Model $Model, $distance = null, $fieldName = null, $fieldLat = null, $fieldLng = null, $modelName = null) {
 		if ($fieldLat === null) {
-			$fieldLat = $this->settings[$Model->alias]['lat'];
+			$fieldLat = $this->_config[$Model->alias]['lat'];
 		}
 		if ($fieldLng === null) {
-			$fieldLng = $this->settings[$Model->alias]['lng'];
+			$fieldLng = $this->_config[$Model->alias]['lng'];
 		}
 		if ($modelName === null) {
 			$modelName = $Model->alias;
@@ -322,7 +322,7 @@ class GeocoderBehavior extends ModelBehavior {
 	}
 
 	/**
-	 * Uses the GeocodeLib to query
+	 * Uses the Geocode class to query
 	 *
 	 * @param array $addressFields (simple array of address pieces)
 	 * @return array
@@ -338,7 +338,7 @@ class GeocoderBehavior extends ModelBehavior {
 			'expect' => $options['expect'], 'allow_inconclusive' => $options['allow_inconclusive'],
 			'host' => $options['host']
 		);
-		$this->Geocode = new GeocodeLib($geocodeOptions);
+		$this->Geocode = new Geocode($geocodeOptions);
 
 		$config = array('language' => $options['language']);
 		if (!$this->Geocode->geocode($address, $config)) {
@@ -356,9 +356,9 @@ class GeocoderBehavior extends ModelBehavior {
 	 */
 	protected function _calculationValue($unit) {
 		if (!isset($this->Geocode)) {
-			$this->Geocode = new GeocodeLib();
+			$this->Geocode = new Geocode();
 		}
-		return $this->Geocode->convert(6371.04, GeocodeLib::UNIT_KM, $unit);
+		return $this->Geocode->convert(6371.04, Geocode::UNIT_KM, $unit);
 	}
 
 }
