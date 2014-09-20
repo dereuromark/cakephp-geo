@@ -29,6 +29,9 @@ class GeocoderBehavior extends Behavior {
 		'overwrite' => false, 'update' => array(), 'before' => 'save',
 		'min_accuracy' => Geocode::ACC_COUNTRY, 'allow_inconclusive' => true, 'unit' => Geocode::UNIT_KM,
 		'log' => true, // log successfull results to geocode.log (errors will be logged to error.log in either case)
+		'implementedFinders' => [
+			'distance' => 'findDistance',
+		]
 	);
 
 	public $Geocode;
@@ -194,14 +197,38 @@ class GeocoderBehavior extends Behavior {
 	}
 
 	/**
+	 * Custom finder for distance.
+	 *
+	 * Used to be a virtual field in 2.x via setDistanceAsVirtualField()
+	 *
+	 * Options:
+	 * - lat
+	 * - lng
+	 * - tableName
+	 *
+	 * @param \Cake\ORM\Query $query Query.
+	 * @param array $options Array of options as described above
+	 * @return \Cake\ORM\Query
+	 */
+	public function findDistance(Query $query, array $options) {
+		$options += array('tableName' => null);
+		$sql = $this->distance($options['lat'], $options['lng'], null, null, $options['tableName']);
+		// ?
+
+		return $query->order(['distance' => 'ASC']);
+	}
+
+	/**
 	 * Adds the distance to this point as a virtual field.
+	 * Make sure you have set configs lat/lng field names.
 	 *
 	 * @param string|float $lat Fieldname (Model.lat) or float value
 	 * @param string|float $lng Fieldname (Model.lng) or float value
 	 * @return void
+	 * @deprecated
 	 */
-	public function setDistanceAsVirtualField($lat, $lng, $modelName = null) {
-		$this->_table->virtualFields['distance'] = $this->distance($lat, $lng, null, null, $modelName);
+	public function setDistanceAsVirtualField($lat, $lng, $tableName = null) {
+		$this->_table->virtualFields['distance'] = $this->distance($lat, $lng, null, null, $tableName);
 	}
 
 	/**
@@ -211,23 +238,23 @@ class GeocoderBehavior extends Behavior {
 	 * @param string|float $lng Fieldname (Model.lng) or float value
 	 * @return string
 	 */
-	public function distance($lat, $lng, $fieldLat = null, $fieldLng = null, $modelName = null) {
+	public function distance($lat, $lng, $fieldLat = null, $fieldLng = null, $tableName = null) {
 		if ($fieldLat === null) {
 			$fieldLat = $this->_config['lat'];
 		}
 		if ($fieldLng === null) {
 			$fieldLng = $this->_config['lng'];
 		}
-		if ($modelName === null) {
-			$modelName = $this->_table->alias();
+		if ($tableName === null) {
+			$tableName = $this->_table->alias();
 		}
 
 		$value = $this->_calculationValue($this->_config['unit']);
 
-		return $value . ' * ACOS(COS(PI()/2 - RADIANS(90 - ' . $modelName . '.' . $fieldLat . ')) * ' .
+		return $value . ' * ACOS(COS(PI()/2 - RADIANS(90 - ' . $tableName . '.' . $fieldLat . ')) * ' .
 			'COS(PI()/2 - RADIANS(90 - ' . $lat . ')) * ' .
-			'COS(RADIANS(' . $modelName . '.' . $fieldLng . ') - RADIANS(' . $lng . ')) + ' .
-			'SIN(PI()/2 - RADIANS(90 - ' . $modelName . '.' . $fieldLat . ')) * ' .
+			'COS(RADIANS(' . $tableName . '.' . $fieldLng . ') - RADIANS(' . $lng . ')) + ' .
+			'SIN(PI()/2 - RADIANS(90 - ' . $tableName . '.' . $fieldLat . ')) * ' .
 			'SIN(PI()/2 - RADIANS(90 - ' . $lat . ')))';
 	}
 
@@ -236,23 +263,23 @@ class GeocoderBehavior extends Behavior {
 	 *
 	 * @return array
 	 */
-	public function distanceConditions($distance = null, $fieldName = null, $fieldLat = null, $fieldLng = null, $modelName = null) {
+	public function distanceConditions($distance = null, $fieldName = null, $fieldLat = null, $fieldLng = null, $tableName = null) {
 		if ($fieldLat === null) {
 			$fieldLat = $this->_config['lat'];
 		}
 		if ($fieldLng === null) {
 			$fieldLng = $this->_config['lng'];
 		}
-		if ($modelName === null) {
-			$modelName = $this->_table->alias();
+		if ($tableName === null) {
+			$tableName = $this->_table->alias();
 		}
 		$conditions = array(
-			$modelName . '.' . $fieldLat . ' <> 0',
-			$modelName . '.' . $fieldLng . ' <> 0',
+			$tableName . '.' . $fieldLat . ' <> 0',
+			$tableName . '.' . $fieldLng . ' <> 0',
 		);
 		$fieldName = !empty($fieldName) ? $fieldName : 'distance';
 		if ($distance !== null) {
-			$conditions[] = '1=1 HAVING ' . $modelName . '.' . $fieldName . ' < ' . intval($distance);
+			$conditions[] = '1=1 HAVING ' . $tableName . '.' . $fieldName . ' < ' . intval($distance);
 		}
 		return $conditions;
 	}
@@ -262,12 +289,12 @@ class GeocoderBehavior extends Behavior {
 	 *
 	 * @return string
 	 */
-	public function distanceField($lat, $lng, $fieldName = null, $modelName = null) {
-		if ($modelName === null) {
-			$modelName = $this->_table->alias();
+	public function distanceField($lat, $lng, $fieldName = null, $tableName = null) {
+		if ($tableName === null) {
+			$tableName = $this->_table->alias();
 		}
 		$fieldName = (!empty($fieldName) ? $fieldName : 'distance');
-		return $this->distance($lat, $lng, null, null, $modelName) . ' AS ' . $modelName . '.' . $fieldName;
+		return $this->distance($lat, $lng, null, null, $tableName) . ' AS ' . $tableName . '.' . $fieldName;
 	}
 
 	/**
@@ -276,9 +303,9 @@ class GeocoderBehavior extends Behavior {
 	 *
 	 * @return string
 	 */
-	public function distanceByField($lat, $lng, $byFieldName = null, $fieldName = null, $modelName = null) {
-		if ($modelName === null) {
-			$modelName = $this->_table->alias();
+	public function distanceByField($lat, $lng, $byFieldName = null, $fieldName = null, $tableName = null) {
+		if ($tableName === null) {
+			$tableName = $this->_table->alias();
 		}
 		if ($fieldName === null) {
 			$fieldName = 'distance';
@@ -287,7 +314,7 @@ class GeocoderBehavior extends Behavior {
 			$byFieldName = 'radius';
 		}
 
-		return $this->distance($lat, $lng, null, null, $modelName) . ' ' . $byFieldName;
+		return $this->distance($lat, $lng, null, null, $tableName) . ' ' . $byFieldName;
 	}
 
 	/**

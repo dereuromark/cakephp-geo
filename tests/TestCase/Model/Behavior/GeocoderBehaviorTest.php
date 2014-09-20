@@ -87,9 +87,12 @@ class GeocoderBehaviorTest extends TestCase {
 	public function testSetDistanceAsVirtualField() {
 		$this->Addresses = TableRegistry::get('Addresses');
 		$this->Addresses->addBehavior('Geo.Geocoder');
-		$this->Addresses->setDistanceAsVirtualField(13.3, 19.2);
-		$options = array('order' => array('Address.distance' => 'ASC'));
-		$res = $this->Addresses->find('all', $options);
+		//$this->Addresses->setDistanceAsVirtualField(13.3, 19.2);
+
+		$options = array(); //array('order' => array('Address.distance' => 'ASC'));
+		$res = $this->Addresses->find()->find('distance')->find('all', $options);
+		debug($res);die();
+
 		$this->assertTrue($res[0]['Address']['distance'] < $res[1]['Address']['distance']);
 		$this->assertTrue($res[1]['Address']['distance'] < $res[2]['Address']['distance']);
 		$this->assertTrue($res[0]['Address']['distance'] > 640 && $res[0]['Address']['distance'] < 650);
@@ -103,9 +106,12 @@ class GeocoderBehaviorTest extends TestCase {
 	public function testSetDistanceAsVirtualFieldInMiles() {
 		$this->Addresses = TableRegistry::get('Addresses');
 		$this->Addresses->addBehavior('Geo.Geocoder', array('unit' => Geocode::UNIT_MILES));
-		$this->Addresses->setDistanceAsVirtualField(13.3, 19.2);
-		$options = array('order' => array('Address.distance' => 'ASC'));
-		$res = $this->Addresses->find('all', $options);
+		//$this->Addresses->setDistanceAsVirtualField(13.3, 19.2);
+
+		$options = array(); //$options = array('order' => array('Address.distance' => 'ASC'));
+		$res = $this->Addresses->find()->find('distance')->find('all', $options);
+		debug($res);die();
+
 		$this->assertTrue($res[0]['Address']['distance'] < $res[1]['Address']['distance']);
 		$this->assertTrue($res[1]['Address']['distance'] < $res[2]['Address']['distance']);
 		$this->assertTrue($res[0]['Address']['distance'] > 390 && $res[0]['Address']['distance'] < 410);
