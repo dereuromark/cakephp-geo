@@ -10,7 +10,7 @@ use Cake\Log\Log;
  * Geocode via google (UPDATE: api3)
  * @see https://developers.google.com/maps/documentation/geocoding/
  *
- * Used by Tools.GeocoderBehavior
+ * Used by Geo.GeocoderBehavior
  *
  * TODOS (since 1.2):
  * - Work with exceptions in 2.x

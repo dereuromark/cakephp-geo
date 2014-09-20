@@ -11,7 +11,7 @@ use Cake\ORM\TableRegistry;
 class GeocoderBehaviorTest extends TestCase {
 
 	public $fixtures = array(
-		'core.comment', 'plugin.tools.address'
+		'core.comment', 'plugin.geo.address'
 	);
 
 	public function setUp() {
@@ -19,7 +19,7 @@ class GeocoderBehaviorTest extends TestCase {
 
 		$this->Comment = TableRegistry::get('Comments');
 
-		$this->Comment->Behaviors->load('Tools.Geocoder', array('real' => false));
+		$this->Comment->Behaviors->load('Geo.Geocoder', array('real' => false));
 	}
 
 	/**
@@ -33,13 +33,13 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->assertEquals($expected, $res);
 
 		$this->Comment->Behaviors->unload('Geocoder');
-		$this->Comment->Behaviors->load('Tools.Geocoder', array('lat' => 'x', 'lng' => 'y'));
+		$this->Comment->Behaviors->load('Geo.Geocoder', array('lat' => 'x', 'lng' => 'y'));
 		$res = $this->Comment->distance(12.1, 14.2);
 		$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Comment.x)) * COS(PI()/2 - RADIANS(90 - 12.1)) * COS(RADIANS(Comment.y) - RADIANS(14.2)) + SIN(PI()/2 - RADIANS(90 - Comment.x)) * SIN(PI()/2 - RADIANS(90 - 12.1)))';
 		$this->assertEquals($expected, $res);
 
 		$this->Comment->Behaviors->unload('Geocoder');
-		$this->Comment->Behaviors->load('Tools.Geocoder', array('lat' => 'x', 'lng' => 'y'));
+		$this->Comment->Behaviors->load('Geo.Geocoder', array('lat' => 'x', 'lng' => 'y'));
 		$res = $this->Comment->distance('User.lat', 'User.lng');
 		$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Comment.x)) * COS(PI()/2 - RADIANS(90 - User.lat)) * COS(RADIANS(Comment.y) - RADIANS(User.lng)) + SIN(PI()/2 - RADIANS(90 - Comment.x)) * SIN(PI()/2 - RADIANS(90 - User.lat)))';
 		$this->assertEquals($expected, $res);
@@ -63,7 +63,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testSetDistanceAsVirtualField() {
 		$this->Address = TableRegistry::get('Addresses');
-		$this->Address->Behaviors->load('Tools.Geocoder');
+		$this->Address->Behaviors->load('Geo.Geocoder');
 		$this->Address->setDistanceAsVirtualField(13.3, 19.2);
 		$options = array('order' => array('Address.distance' => 'ASC'));
 		$res = $this->Address->find('all', $options);
@@ -79,7 +79,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testSetDistanceAsVirtualFieldInMiles() {
 		$this->Address = TableRegistry::get('Addresses');
-		$this->Address->Behaviors->load('Tools.Geocoder', array('unit' => Geocode::UNIT_MILES));
+		$this->Address->Behaviors->load('Geo.Geocoder', array('unit' => Geocode::UNIT_MILES));
 		$this->Address->setDistanceAsVirtualField(13.3, 19.2);
 		$options = array('order' => array('Address.distance' => 'ASC'));
 		$res = $this->Address->find('all', $options);
@@ -96,7 +96,7 @@ class GeocoderBehaviorTest extends TestCase {
 	public function testPagination() {
 		$this->Controller = new TestController(new Request(null, false), null);
 		$this->Controller->constructClasses();
-		$this->Controller->Address->Behaviors->load('Tools.Geocoder');
+		$this->Controller->Address->Behaviors->load('Geo.Geocoder');
 		$this->Controller->Address->setDistanceAsVirtualField(13.3, 19.2);
 		$this->Controller->paginate = array(
 			'conditions' => array('distance <' => 3000),
@@ -192,7 +192,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testMinAccLow() {
 		$this->Comment->Behaviors->unload('Geocoder');
-		$this->Comment->Behaviors->load('Tools.Geocoder', array('real' => false, 'min_accuracy' => Geocode::ACC_COUNTRY));
+		$this->Comment->Behaviors->load('Geo.Geocoder', array('real' => false, 'min_accuracy' => Geocode::ACC_COUNTRY));
 		$data = array(
 			'city' => 'Deutschland'
 		);
@@ -208,7 +208,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testMinAccHigh() {
 		$this->Comment->Behaviors->unload('Geocoder');
-		$this->Comment->Behaviors->load('Tools.Geocoder', array('real' => false, 'min_accuracy' => Geocode::ACC_POSTAL));
+		$this->Comment->Behaviors->load('Geo.Geocoder', array('real' => false, 'min_accuracy' => Geocode::ACC_POSTAL));
 		$data = array(
 			'city' => 'Deutschland'
 		);
@@ -224,7 +224,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testMinInc() {
 		$this->Comment->Behaviors->unload('Geocoder');
-		$this->Comment->Behaviors->load('Tools.Geocoder', array('real' => false, 'min_accuracy' => Geocode::ACC_SUBLOC));
+		$this->Comment->Behaviors->load('Geo.Geocoder', array('real' => false, 'min_accuracy' => Geocode::ACC_SUBLOC));
 
 		$this->assertEquals(Geocode::ACC_SUBLOC, $this->Comment->Behaviors->Geocoder->settings['Comment']['min_accuracy']);
 
@@ -245,7 +245,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testMinIncAllowed() {
 		$this->Comment->Behaviors->unload('Geocoder');
-		$this->Comment->Behaviors->load('Tools.Geocoder', array('real' => false, 'allow_inconclusive' => true));
+		$this->Comment->Behaviors->load('Geo.Geocoder', array('real' => false, 'allow_inconclusive' => true));
 
 		$data = array(
 			'city' => 'Neustadt'
@@ -263,7 +263,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testExpect() {
 		$this->Comment->Behaviors->unload('Geocoder');
-		$this->Comment->Behaviors->load('Tools.Geocoder', array('real' => false, 'expect' => array('postal_code')));
+		$this->Comment->Behaviors->load('Geo.Geocoder', array('real' => false, 'expect' => array('postal_code')));
 
 		$data = array(
 			'city' => 'Bibersfeld'

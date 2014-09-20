@@ -1,5 +1,5 @@
 <?php
-/* Address Fixture generated on: 2011-11-20 21:58:38 : 1321822718 */namespace Tools\Test\Fixture;
+namespace Geo\Test\Fixture;
 
 
 /**
