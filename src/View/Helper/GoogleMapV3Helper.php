@@ -259,7 +259,7 @@ class GoogleMapV3Helper extends Helper {
 			$defaults['localImages'] = $google['localImages'];
 		}
 
-		$config += $defaults;
+		$config = Hash::merge($defaults, $config);
 		parent::__construct($View, $config);
 	}
 

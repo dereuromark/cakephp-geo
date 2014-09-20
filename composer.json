@@ -24,12 +24,12 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"TinyAuth\\": "src"
+			"Geo\\": "src"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"TinyAuth\\Test\\": "tests",
+			"Geo\\Test\\": "tests",
 			"Cake\\Test\\Fixture\\": "vendor/cakephp/cakephp/tests/Fixture"
 		}
 	},
