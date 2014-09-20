@@ -89,8 +89,8 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->Addresses->addBehavior('Geo.Geocoder');
 		//$this->Addresses->setDistanceAsVirtualField(13.3, 19.2);
 
-		$options = array(); //array('order' => array('Address.distance' => 'ASC'));
-		$res = $this->Addresses->find()->find('distance')->find('all', $options);
+		$options = array('lat' => 13.3, 'lng' => 19.2); //array('order' => array('Address.distance' => 'ASC'));
+		$res = $this->Addresses->find()->find('distance', $options)->find('all');
 		debug($res);die();
 
 		$this->assertTrue($res[0]['Address']['distance'] < $res[1]['Address']['distance']);
@@ -108,8 +108,8 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->Addresses->addBehavior('Geo.Geocoder', array('unit' => Geocode::UNIT_MILES));
 		//$this->Addresses->setDistanceAsVirtualField(13.3, 19.2);
 
-		$options = array(); //$options = array('order' => array('Address.distance' => 'ASC'));
-		$res = $this->Addresses->find()->find('distance')->find('all', $options);
+		$options = array('lat' => 13.3, 'lng' => 19.2); //$options = array('order' => array('Address.distance' => 'ASC'));
+		$res = $this->Addresses->find()->find('distance', $options)->find('all');
 		debug($res);die();
 
 		$this->assertTrue($res[0]['Address']['distance'] < $res[1]['Address']['distance']);
@@ -126,6 +126,9 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->Controller = new TestController();
 		$this->Controller->Address->addBehavior('Geo.Geocoder');
 		$this->Controller->Address->setDistanceAsVirtualField(13.3, 19.2);
+		$options = array('lat' => 13.3, 'lng' => 19.2, 'distance' => 3000);
+		// find()->find('distance', $options)->find('all')
+
 		$this->Controller->paginate = array(
 			'conditions' => array('distance <' => 3000),
 			'order' => array('distance' => 'ASC')
