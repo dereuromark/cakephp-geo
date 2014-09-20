@@ -19,13 +19,30 @@ class GeocoderBehaviorTest extends TestCase {
 
 	public $Comments;
 
-	public $Address;
+	public $Addresses;
 
+	/**
+	 * setUp
+	 *
+	 * @return void
+	 */
 	public function setUp() {
 		parent::setUp();
 
 		$this->Comments = TableRegistry::get('Comments');
 		$this->Comments->addBehavior('Geo.Geocoder', array('real' => false));
+	}
+
+	/**
+	 * teardown
+	 *
+	 * @return void
+	 */
+	public function tearDown() {
+		parent::tearDown();
+
+		unset($this->Comments, $this->Addresses);
+		TableRegistry::clear();
 	}
 
 	/**
