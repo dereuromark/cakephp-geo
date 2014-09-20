@@ -52,3 +52,4 @@ Please see the original [Tools plugin](https://github.com/dereuromark/cakephp-to
 ### TODOs
 
 * Documentation and 2.x migration guide
+* Maybe include https://github.com/Pollenizer/CakePHP-GeoIP-Plugin as 3.x version

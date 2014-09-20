@@ -40,13 +40,6 @@ class Geocode {
 	const UNIT_INCHES = 'I';
 	const UNIT_MILES = 'M';
 
-	// First tries with curl, then cake, then php
-	public $use = array(
-		'curl' => true,
-		'cake' => true,
-		'php' => true
-	);
-
 	public $units = array(
 		self::UNIT_KM => 1.609344,
 		self::UNIT_NAUTICAL => 0.868976242,
@@ -681,6 +674,7 @@ class Geocode {
 			}
 		}
 		if ($res = $this->Client->get($url, $query)) {
+			die(debug($res->body));
 			return $res->body;
 		}
 		$errorCode = $this->Client->response->code;
