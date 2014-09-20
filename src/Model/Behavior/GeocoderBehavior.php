@@ -79,7 +79,7 @@ class GeocoderBehavior extends Behavior {
  */
 	public function beforeValidate(Event $event, Entity $entity, ArrayObject $options) {
 		if ($this->_config['before'] === 'validate') {
-			return $this->geocode($Model);
+			return $this->geocode();
 		}
 
 		return true;
@@ -93,7 +93,7 @@ class GeocoderBehavior extends Behavior {
  */
 	public function beforeSave(Event $event, Entity $entity, ArrayObject $options) {
 		if ($this->_config['before'] === 'save') {
-			return $this->geocode($Model);
+			return $this->geocode();
 		}
 
 		return true;
@@ -102,7 +102,7 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * Run before a model is saved, used to set up slug for model.
 	 *
-	 * @param object $Model Model about to be saved.
+	 * @param bool $return Value it should return as default (fallback).
 	 * @return bool True if save should proceed, false otherwise
 	 */
 	public function geocode($return = true) {
@@ -201,7 +201,7 @@ class GeocoderBehavior extends Behavior {
 	 * @return void
 	 */
 	public function setDistanceAsVirtualField($lat, $lng, $modelName = null) {
-		$this->_table->virtualFields['distance'] = $this->distance($Model, $lat, $lng, null, null, $modelName);
+		$this->_table->virtualFields['distance'] = $this->distance($lat, $lng, null, null, $modelName);
 	}
 
 	/**
@@ -219,7 +219,7 @@ class GeocoderBehavior extends Behavior {
 			$fieldLng = $this->_config['lng'];
 		}
 		if ($modelName === null) {
-			$modelName = $this->_table->alias;
+			$modelName = $this->_table->alias();
 		}
 
 		$value = $this->_calculationValue($this->_config['unit']);
@@ -244,7 +244,7 @@ class GeocoderBehavior extends Behavior {
 			$fieldLng = $this->_config['lng'];
 		}
 		if ($modelName === null) {
-			$modelName = $this->_table->alias;
+			$modelName = $this->_table->alias();
 		}
 		$conditions = array(
 			$modelName . '.' . $fieldLat . ' <> 0',
@@ -264,10 +264,10 @@ class GeocoderBehavior extends Behavior {
 	 */
 	public function distanceField($lat, $lng, $fieldName = null, $modelName = null) {
 		if ($modelName === null) {
-			$modelName = $this->_table->alias;
+			$modelName = $this->_table->alias();
 		}
 		$fieldName = (!empty($fieldName) ? $fieldName : 'distance');
-		return $this->distance($Model, $lat, $lng, null, null, $modelName) . ' AS ' . $modelName . '.' . $fieldName;
+		return $this->distance($lat, $lng, null, null, $modelName) . ' AS ' . $modelName . '.' . $fieldName;
 	}
 
 	/**
@@ -278,7 +278,7 @@ class GeocoderBehavior extends Behavior {
 	 */
 	public function distanceByField($lat, $lng, $byFieldName = null, $fieldName = null, $modelName = null) {
 		if ($modelName === null) {
-			$modelName = $this->_table->alias;
+			$modelName = $this->_table->alias();
 		}
 		if ($fieldName === null) {
 			$fieldName = 'distance';
@@ -287,7 +287,7 @@ class GeocoderBehavior extends Behavior {
 			$byFieldName = 'radius';
 		}
 
-		return $this->distance($Model, $lat, $lng, null, null, $modelName) . ' ' . $byFieldName;
+		return $this->distance($lat, $lng, null, null, $modelName) . ' ' . $byFieldName;
 	}
 
 	/**
@@ -312,7 +312,6 @@ class GeocoderBehavior extends Behavior {
 	 * Returns if a latitude is valid or not.
 	 * validation rule for models
 	 *
-	 * @param Model
 	 * @param float $latitude
 	 * @return bool
 	 */
@@ -327,7 +326,6 @@ class GeocoderBehavior extends Behavior {
 	 * Returns if a longitude is valid or not.
 	 * validation rule for models
 	 *
-	 * @param Model
 	 * @param float $longitude
 	 * @return bool
 	 */
