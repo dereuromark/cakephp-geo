@@ -202,9 +202,10 @@ class GeocoderBehavior extends Behavior {
 	 * Used to be a virtual field in 2.x via setDistanceAsVirtualField()
 	 *
 	 * Options:
-	 * - lat
-	 * - lng
+	 * - lat (required)
+	 * - lng (required)
 	 * - tableName
+	 * - distance
 	 *
 	 * @param \Cake\ORM\Query $query Query.
 	 * @param array $options Array of options as described above
@@ -213,8 +214,10 @@ class GeocoderBehavior extends Behavior {
 	public function findDistance(Query $query, array $options) {
 		$options += array('tableName' => null);
 		$sql = $this->distance($options['lat'], $options['lng'], null, null, $options['tableName']);
-		// ?
-
+		$query->select(['distance' => $q->newExpr($sql)]);
+		if (isset($options['distance'])) {
+			$query->where(['distance <' => $options['distance']]);
+		}
 		return $query->order(['distance' => 'ASC']);
 	}
 
@@ -225,7 +228,7 @@ class GeocoderBehavior extends Behavior {
 	 * @param string|float $lat Fieldname (Model.lat) or float value
 	 * @param string|float $lng Fieldname (Model.lng) or float value
 	 * @return void
-	 * @deprecated
+	 * @deprecated Use custom finder / findDistance instead.
 	 */
 	public function setDistanceAsVirtualField($lat, $lng, $tableName = null) {
 		$this->_table->virtualFields['distance'] = $this->distance($lat, $lng, null, null, $tableName);
