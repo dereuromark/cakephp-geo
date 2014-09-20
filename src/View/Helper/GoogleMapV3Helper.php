@@ -1,12 +1,11 @@
 <?php
-/**
- * PHP5 / CakePHP 2.x
- */
 namespace Geo\View\Helper;
 
 use Cake\Core\Configure;
 use Cake\Routing\Router;
 use Cake\View\Helper;
+use Cake\Utility\Hash;
+use Geo\View\Helper\JsBaseEngineTrait;
 
 /**
  * This is a CakePHP helper that helps users to integrate GoogleMap v3
@@ -32,14 +31,18 @@ use Cake\View\Helper;
  * v1.4: Better handling of script output and directions added
  * You can now either keep map() + script(), or you can now write the script to the buffer with
  * map() + finalize(). You can then decide wether the JS should be in the head or the footer of your layout.
- * Don't forget to put `echo $this->Js->writeBuffer(array('inline' => true));` somewhere in your layout then, though.
+ * Don't forget to put `echo $this->Html->block('script');` somewhere in your layout then, though.
  * You can now also add directions using addDirections().
  *
  * v1.5: "open" for markers
  * Markers can be open now by default on page load. Works for both single and multi window mode.
  * Lots of cleanup and CS corrections.
+ *
+ * v1.6 CakePHP3.x compatible
  */
 class GoogleMapV3Helper extends Helper {
+
+	use JsBaseEngineTrait;
 
 	public static $mapCount = 0;
 
@@ -371,7 +374,7 @@ class GoogleMapV3Helper extends Helper {
 	 */
 	public function map($options = array()) {
 		$this->reset();
-		$this->_config = Set::merge($this->_config, $options);
+		$this->_config = Hash::merge($this->_config, $options);
 		$this->_config['map'] = array_merge($this->_config['map'], array('zoom' => $this->_config['zoom'], 'lat' => $this->_config['lat'], 'lng' => $this->_config['lng'], 'type' => $this->_config['type']), $options);
 		if (!$this->_config['map']['lat'] || !$this->_config['map']['lng']) {
 			$this->_config['map']['lat'] = $this->_config['map']['defaultLat'];
@@ -1048,7 +1051,7 @@ var iconShape = {
 		if ($return) {
 			return $script;
 		}
-		$this->Js->buffer($script);
+		$this->Html->scriptBlock($script, array('block' => true));
 	}
 
 	/**
@@ -1151,7 +1154,7 @@ var iconShape = {
 		));
 		$res = array();
 		foreach ($mapOptions as $key => $mapOption) {
-			$res[] = $key . ': ' . $this->Js->value($mapOption);
+			$res[] = $key . ': ' . $this->value($mapOption);
 		}
 		if (empty($options['autoCenter'])) {
 			$res[] = 'center: initialLocation';

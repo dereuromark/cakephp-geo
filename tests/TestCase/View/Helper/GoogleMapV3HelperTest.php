@@ -20,7 +20,7 @@ class GoogleMapV3HelperTest extends TestCase {
 	}
 
 	public function testObject() {
-		$this->assertInstanceOf('GoogleMapV3Helper', $this->GoogleMapV3);
+		$this->assertInstanceOf('Geo\View\Helper\GoogleMapV3Helper', $this->GoogleMapV3);
 	}
 
 	/**
@@ -233,7 +233,7 @@ class GoogleMapV3HelperTest extends TestCase {
 		$expected = '<div id="map_canvas" class="map"';
 		$this->assertTextContains($expected, $result);
 
-		$expected = '<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false';
+		$expected = '<script src="http://maps.google.com/maps/api/js?sensor=false';
 		$this->assertTextContains($expected, $result);
 
 		$expected = 'var map0 = new google.maps.Map(document.getElementById("map_canvas"), myOptions);';
@@ -245,10 +245,10 @@ class GoogleMapV3HelperTest extends TestCase {
 	 */
 	public function testDynamic() {
 		//echo '<h2>Map 1</h2>';
-		//echo '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>';
+		//echo '<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>';
 		//echo $this->GoogleMapV3->map($defaul, array('style'=>'width:100%; height: 800px'));
-		//echo '<script type="text/javascript" src="'.$this->GoogleMapV3->apiUrl().'"></script>';
-		//echo '<script type="text/javascript" src="'.$this->GoogleMapV3->gearsUrl().'"></script>';
+		//echo '<script src="'.$this->GoogleMapV3->apiUrl().'"></script>';
+		//echo '<script src="'.$this->GoogleMapV3->gearsUrl().'"></script>';
 
 		$options = array(
 			'zoom' => 6,
