@@ -674,7 +674,6 @@ class Geocode {
 			}
 		}
 		if ($res = $this->Client->get($url, $query)) {
-			die(debug($res->body));
 			return $res->body;
 		}
 		$errorCode = $this->Client->response->code;
