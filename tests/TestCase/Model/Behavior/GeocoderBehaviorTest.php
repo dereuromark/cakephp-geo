@@ -85,7 +85,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testSetDistanceAsVirtualField() {
-		$this->Addresses = TableRegistry::get('Addresses');
+		$this->Addresses = TableRegistry::get('Geo.Addresses');
 		die(debug($this->Addresses->schema()));
 		$this->Addresses->addBehavior('Geo.Geocoder');
 		//$this->Addresses->setDistanceAsVirtualField(13.3, 19.2);
@@ -105,7 +105,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testSetDistanceAsVirtualFieldInMiles() {
-		$this->Addresses = TableRegistry::get('Addresses');
+		$this->Addresses = TableRegistry::get('Geo.Addresses');
 		$this->Addresses->addBehavior('Geo.Geocoder', array('unit' => Geocode::UNIT_MILES));
 		//$this->Addresses->setDistanceAsVirtualField(13.3, 19.2);
 
@@ -329,6 +329,6 @@ class GeocoderBehaviorTest extends TestCase {
 
 class TestController extends Controller {
 
-	public $modelClass = 'Addresses';
+	public $modelClass = 'Geo.Addresses';
 
 }
