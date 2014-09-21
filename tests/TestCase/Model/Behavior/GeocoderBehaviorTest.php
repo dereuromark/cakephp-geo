@@ -86,6 +86,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testSetDistanceAsVirtualField() {
 		$this->Addresses = TableRegistry::get('Addresses');
+		die(debug($this->Addresses->schema()));
 		$this->Addresses->addBehavior('Geo.Geocoder');
 		//$this->Addresses->setDistanceAsVirtualField(13.3, 19.2);
 
@@ -124,8 +125,8 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testPagination() {
 		$this->Controller = new TestController();
-		$this->Controller->Address->addBehavior('Geo.Geocoder');
-		$this->Controller->Address->setDistanceAsVirtualField(13.3, 19.2);
+		$this->Controller->Addresses->addBehavior('Geo.Geocoder');
+		$this->Controller->Addresses->setDistanceAsVirtualField(13.3, 19.2);
 		$options = array('lat' => 13.3, 'lng' => 19.2, 'distance' => 3000);
 		// find()->find('distance', $options)->find('all')
 
@@ -134,6 +135,8 @@ class GeocoderBehaviorTest extends TestCase {
 			'order' => array('distance' => 'ASC')
 		);
 		$res = $this->Controller->paginate();
+		debug($res);die();
+
 		$this->assertEquals(2, count($res));
 		$this->assertTrue($res[0]['Address']['distance'] < $res[1]['Address']['distance']);
 	}
@@ -326,6 +329,6 @@ class GeocoderBehaviorTest extends TestCase {
 
 class TestController extends Controller {
 
-	public $modelClass = 'Address';
+	public $modelClass = 'Addresses';
 
 }

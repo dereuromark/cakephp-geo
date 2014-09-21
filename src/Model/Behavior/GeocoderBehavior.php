@@ -4,6 +4,9 @@ namespace Geo\Model\Behavior;
 use Cake\ORM\Behavior;
 use Geo\Geocode\Geocode;
 use Cake\ORM\Table;
+use Cake\ORM\Entity;
+use Cake\Event\Event;
+use \ArrayObject;
 
 /**
  * A geocoding behavior for CakePHP to easily geocode addresses.
@@ -96,7 +99,7 @@ class GeocoderBehavior extends Behavior {
  */
 	public function beforeSave(Event $event, Entity $entity, ArrayObject $options) {
 		if ($this->_config['before'] === 'save') {
-			return $this->geocode();
+			return $this->geocode($entity);
 		}
 
 		return true;
@@ -108,7 +111,7 @@ class GeocoderBehavior extends Behavior {
 	 * @param bool $return Value it should return as default (fallback).
 	 * @return bool True if save should proceed, false otherwise
 	 */
-	public function geocode($return = true) {
+	public function geocode($entity) {
 		// Make address fields an array
 		if (!is_array($this->_config['address'])) {
 			$addressfields = array($this->_config['address']);
@@ -121,29 +124,33 @@ class GeocoderBehavior extends Behavior {
 		if ($this->_config['real']) {
 			foreach ($addressfields as $field) {
 				if (!$this->_table->hasField($field)) {
-					return $return;
+					return $entity;
 				}
 			}
 		}
 
 		$addressData = array();
 		foreach ($addressfields as $field) {
-			if (!empty($this->_table->data[$this->_table->alias][$field])) {
-				$addressData[] = $this->_table->data[$this->_table->alias][$field];
+			$fieldData = $entity->get($field);
+			if (!empty($fieldData)) {
+				$addressData[] = $fieldData;
 			}
 		}
 
-		$this->_table->data[$this->_table->alias]['geocoder_result'] = array();
+		$entityData['geocoder_result'] = array();
 
 		if ((!$this->_config['real'] || ($this->_table->hasField($this->_config['lat']) && $this->_table->hasField($this->_config['lng']))) &&
-			($this->_config['overwrite'] || empty($this->_table->data[$this->_table->alias][$this->_config['lat']]) || ((int)$this->_table->data[$this->_table->alias][$this->_config['lat']] === 0 && (int)$this->_table->data[$this->_table->alias][$this->_config['lng']] === 0))
+			($this->_config['overwrite'] || !$entity->get($this->_config['lat']) || ((int)$entity->get($this->_config['lat']) === 0 && (int)$entity->get($this->_config['lng']) === 0))
 		) {
+			/*
+			//FIXME: whitelist in 3.x?
 			if (!empty($this->_table->whitelist) && (!in_array($this->_config['lat'], $this->_table->whitelist) || !in_array($this->_config['lng'], $this->_table->whitelist))) {
-				return $return;
+				return $entity;
 			}
+			*/
 		}
 
-		$geocode = $this->_geocode($addressData, $this->_config);
+		$geocode = $this->_geocode($addressData);
 
 		if (empty($geocode) && !empty($this->_config['allowEmpty'])) {
 			return true;
@@ -154,6 +161,7 @@ class GeocoderBehavior extends Behavior {
 
 		// If both are 0, thats not valid, otherwise continue
 		if (empty($geocode['lat']) && empty($geocode['lng'])) {
+			/*
 			// Prevent 0 inserts of incorrect runs
 			if (isset($this->_table->data[$this->_table->alias][$this->_config['lat']])) {
 				unset($this->_table->data[$this->_table->alias][$this->_config['lat']]);
@@ -161,39 +169,39 @@ class GeocoderBehavior extends Behavior {
 			if (isset($this->_table->data[$this->_table->alias][$this->_config['lng']])) {
 				unset($this->_table->data[$this->_table->alias][$this->_config['lng']]);
 			}
+			*/
 			if ($this->_config['require']) {
 				if ($fields = $this->_config['invalidate']) {
-					$this->_table->invalidate($fields[0], $fields[1], isset($fields[2]) ? $fields[2] : true);
+					//FIXME
+					//$this->_table->invalidate($fields[0], $fields[1], isset($fields[2]) ? $fields[2] : true);
 				}
-				return false;
+				//return false;
 			}
-			return true;
+			return $geocode;
 		}
 
 		// Valid lat/lng found
-		$this->_table->data[$this->_table->alias][$this->_config['lat']] = $geocode['lat'];
-		$this->_table->data[$this->_table->alias][$this->_config['lng']] = $geocode['lng'];
+		$entityData[$this->_config['lat']] = $geocode['lat'];
+		$entityData[$this->_config['lng']] = $geocode['lng'];
 
 		if (!empty($this->_config['formatted_address'])) {
-			$this->_table->data[$this->_table->alias][$this->_config['formatted_address']] = $geocode['formatted_address'];
-		} else {
-			if (isset($this->_table->data[$this->_table->alias][$this->_config['formatted_address']])) {
-				unset($this->_table->data[$this->_table->alias][$this->_config['formatted_address']]);
-			}
+			$entityData[$this->_config['formatted_address']] = $geocode['formatted_address'];
 		}
 
-		$this->_table->data[$this->_table->alias]['geocoder_result'] = $geocode;
-		$this->_table->data[$this->_table->alias]['geocoder_result']['address_data'] = implode(' ', $addressData);
+		$entityData['geocoder_result'] = $geocode;
+		$entityData['geocoder_result']['address_data'] = implode(' ', $addressData);
 
 		if (!empty($this->_config['update'])) {
 			foreach ($this->_config['update'] as $key => $field) {
 				if (!empty($geocode[$key])) {
-					$this->_table->data[$this->_table->alias][$field] = $geocode[$key];
+					$entityData[$field] = $geocode[$key];
 				}
 			}
 		}
 
-		return $return;
+		$entity->set($entityData);
+
+		return $entity;
 	}
 
 	/**
@@ -372,20 +380,20 @@ class GeocoderBehavior extends Behavior {
 	 * @param array $addressFields (simple array of address pieces)
 	 * @return array
 	 */
-	protected function _geocode($addressFields, $options = array()) {
+	protected function _geocode($addressFields) {
 		$address = implode(' ', $addressFields);
 		if (empty($address)) {
 			return array();
 		}
 
 		$geocodeOptions = array(
-			'log' => $options['log'], 'min_accuracy' => $options['min_accuracy'],
-			'expect' => $options['expect'], 'allow_inconclusive' => $options['allow_inconclusive'],
-			'host' => $options['host']
+			'log' => $this->_config['log'], 'min_accuracy' => $this->_config['min_accuracy'],
+			'expect' => $this->_config['expect'], 'allow_inconclusive' => $this->_config['allow_inconclusive'],
+			'host' => $this->_config['host']
 		);
 		$this->Geocode = new Geocode($geocodeOptions);
 
-		$config = array('language' => $options['language']);
+		$config = array('language' => $this->_config['language']);
 		if (!$this->Geocode->geocode($address, $config)) {
 			return array('lat' => null, 'lng' => null, 'formatted_address' => '');
 		}

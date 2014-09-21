@@ -1,12 +1,13 @@
 <?php
 namespace Geo\Test\Fixture;
 
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * AddressFixture
  *
  */
-class AddressFixture extends CakeTestFixture {
+class AddressFixture extends TestFixture {
 
 	/**
 	 * Fields
@@ -14,7 +15,7 @@ class AddressFixture extends CakeTestFixture {
 	 * @var array
 	 */
 	public $fields = array(
-		'id' => ['type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'collate' => null, 'comment' => ''],
+		'id' => ['type' => 'integer'],
 		'foreign_id' => ['type' => 'string', 'null' => true, 'default' => null, 'length' => 36, 'collate' => 'utf8_unicode_ci', 'comment' => '', 'charset' => 'utf8'],
 		'model' => ['type' => 'string', 'null' => false, 'default' => null, 'length' => 30, 'collate' => 'utf8_unicode_ci', 'comment' => '', 'charset' => 'utf8'],
 		'country_id' => ['type' => 'integer', 'null' => true, 'default' => null, 'length' => 10, 'collate' => null, 'comment' => 'redundance purposely'],
@@ -30,8 +31,7 @@ class AddressFixture extends CakeTestFixture {
 		'created' => ['type' => 'datetime', 'null' => true, 'default' => null, 'collate' => null, 'comment' => ''],
 		'modified' => ['type' => 'datetime', 'null' => true, 'default' => null, 'collate' => null, 'comment' => ''],
 		'type_id' => ['type' => 'integer', 'null' => true, 'default' => null, 'length' => 4, 'collate' => null, 'comment' => ''],
-		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']], 'PRIMARY' => ['type' => 'unique', 'columns' => 'id']],
-		'_options' => []
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 	/**
