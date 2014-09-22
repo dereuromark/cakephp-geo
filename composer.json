@@ -24,7 +24,8 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Geo\\": "src"
+			"Geo\\": "src",
+			"Geo\\Test\\Fixture\\": "tests\\Fixture"
 		}
 	},
 	"autoload-dev": {

@@ -5,6 +5,7 @@ use Cake\ORM\Behavior;
 use Geo\Geocode\Geocode;
 use Cake\ORM\Table;
 use Cake\ORM\Entity;
+use Cake\ORM\Query;
 use Cake\Event\Event;
 use \ArrayObject;
 
@@ -85,10 +86,8 @@ class GeocoderBehavior extends Behavior {
  */
 	public function beforeValidate(Event $event, Entity $entity, ArrayObject $options) {
 		if ($this->_config['before'] === 'validate') {
-			return $this->geocode();
+			$this->geocode($entity);
 		}
-
-		return true;
 	}
 
 /**
@@ -99,19 +98,17 @@ class GeocoderBehavior extends Behavior {
  */
 	public function beforeSave(Event $event, Entity $entity, ArrayObject $options) {
 		if ($this->_config['before'] === 'save') {
-			return $this->geocode($entity);
+			$this->geocode($entity);
 		}
-
-		return true;
 	}
 
 	/**
 	 * Run before a model is saved, used to set up slug for model.
 	 *
-	 * @param bool $return Value it should return as default (fallback).
+	 * @param \Cake\ORM\Entity $entity The entity that is going to be saved
 	 * @return bool True if save should proceed, false otherwise
 	 */
-	public function geocode($entity) {
+	public function geocode(Entity $entity) {
 		// Make address fields an array
 		if (!is_array($this->_config['address'])) {
 			$addressfields = array($this->_config['address']);
@@ -222,7 +219,7 @@ class GeocoderBehavior extends Behavior {
 	public function findDistance(Query $query, array $options) {
 		$options += array('tableName' => null);
 		$sql = $this->distance($options['lat'], $options['lng'], null, null, $options['tableName']);
-		$query->select(['distance' => $q->newExpr($sql)]);
+		$query->select(['distance' => $query->newExpr($sql)]);
 		if (isset($options['distance'])) {
 			$query->where(['distance <' => $options['distance']]);
 		}

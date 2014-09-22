@@ -4,6 +4,14 @@ require dirname(__DIR__) . '/vendor/cakephp/cakephp/src/basics.php';
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 define('DS', DIRECTORY_SEPARATOR);
+if (!defined('WINDOWS')) {
+	if (DS == '\\' || substr(PHP_OS, 0, 3) === 'WIN') {
+		define('WINDOWS', true);
+	} else {
+		define('WINDOWS', false);
+	}
+}
+
 define('ROOT', dirname(__DIR__));
 define('APP_DIR', 'src');
 
@@ -62,17 +70,20 @@ if (!getenv('db_class')) {
 	putenv('db_dsn=sqlite::memory:');
 }
 
-Cake\Datasource\ConnectionManager::config('default', [
-	'className' => 'Cake\Database\Connection',
-	'driver' => getenv('db_class'),
-	'dsn' => getenv('db_dsn'),
-	'database' => getenv('db_database'),
-	'login' => getenv('db_login'),
-	'password' => getenv('db_password'),
-	'timezone' => 'UTC',
-	'quoteIdentifiers' => true,
-	'cacheMetadata' => true,
-]);
+if (WINDOWS) {
+	Cake\Datasource\ConnectionManager::config('test', [
+		'className' => 'Cake\Database\Connection',
+		'driver' => 'Cake\Database\Driver\Mysql',
+		'database' => 'cake_test',
+		'login' => 'root',
+		'password' => '',
+		'timezone' => 'UTC',
+		'quoteIdentifiers' => true,
+		'cacheMetadata' => true,
+	]);
+	return;
+}
+
 Cake\Datasource\ConnectionManager::config('test', [
 	'className' => 'Cake\Database\Connection',
 	'driver' => getenv('db_class'),
