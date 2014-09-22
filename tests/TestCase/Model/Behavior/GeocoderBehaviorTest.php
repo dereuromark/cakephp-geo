@@ -14,10 +14,8 @@ use Geo\Model\Behavior\GeocoderBehavior;
 class GeocoderBehaviorTest extends TestCase {
 
 	public $fixtures = array(
-		'core.comment', 'plugin.geo.addresses'
+		'plugin.geo.addresses'
 	);
-
-	public $Comments;
 
 	public $Addresses;
 
@@ -29,8 +27,8 @@ class GeocoderBehaviorTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$this->Comments = TableRegistry::get('Geo.Addresses');
-		$this->Comments->addBehavior('Geo.Geocoder', array('real' => false));
+		$this->Addresses = TableRegistry::get('Geo.Addresses');
+		$this->Addresses->addBehavior('Geo.Geocoder', array('real' => false));
 
 		$this->db = ConnectionManager::get('test');
 	}
@@ -43,7 +41,7 @@ class GeocoderBehaviorTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 
-		unset($this->Comments, $this->Addresses);
+		unset($this->Addresses, $this->Addresses);
 		TableRegistry::clear();
 	}
 
@@ -53,19 +51,19 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testDistance() {
-		$res = $this->Comments->distance(12, 14);
+		$res = $this->Addresses->distance(12, 14);
 		$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.lat)) * COS(PI()/2 - RADIANS(90 - 12)) * COS(RADIANS(Addresses.lng) - RADIANS(14)) + SIN(PI()/2 - RADIANS(90 - Addresses.lat)) * SIN(PI()/2 - RADIANS(90 - 12)))';
 		$this->assertEquals($expected, $res);
 
-		$this->Comments->removeBehavior('Geocoder');
-		$this->Comments->addBehavior('Geo.Geocoder', array('lat' => 'x', 'lng' => 'y'));
-		$res = $this->Comments->distance(12.1, 14.2);
+		$this->Addresses->removeBehavior('Geocoder');
+		$this->Addresses->addBehavior('Geo.Geocoder', array('lat' => 'x', 'lng' => 'y'));
+		$res = $this->Addresses->distance(12.1, 14.2);
 		$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.x)) * COS(PI()/2 - RADIANS(90 - 12.1)) * COS(RADIANS(Addresses.y) - RADIANS(14.2)) + SIN(PI()/2 - RADIANS(90 - Addresses.x)) * SIN(PI()/2 - RADIANS(90 - 12.1)))';
 		$this->assertEquals($expected, $res);
 
-		$this->Comments->removeBehavior('Geocoder');
-		$this->Comments->addBehavior('Geo.Geocoder', array('lat' => 'x', 'lng' => 'y'));
-		$res = $this->Comments->distance('User.lat', 'User.lng');
+		$this->Addresses->removeBehavior('Geocoder');
+		$this->Addresses->addBehavior('Geo.Geocoder', array('lat' => 'x', 'lng' => 'y'));
+		$res = $this->Addresses->distance('User.lat', 'User.lng');
 		$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.x)) * COS(PI()/2 - RADIANS(90 - User.lat)) * COS(RADIANS(Addresses.y) - RADIANS(User.lng)) + SIN(PI()/2 - RADIANS(90 - Addresses.x)) * SIN(PI()/2 - RADIANS(90 - User.lat)))';
 		$this->assertEquals($expected, $res);
 	}
@@ -76,7 +74,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testDistanceField() {
-		$res = $this->Comments->distanceField(12, 14);
+		$res = $this->Addresses->distanceField(12, 14);
 		$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.lat)) * COS(PI()/2 - RADIANS(90 - 12)) * COS(RADIANS(Addresses.lng) - RADIANS(14)) + SIN(PI()/2 - RADIANS(90 - Addresses.lat)) * SIN(PI()/2 - RADIANS(90 - 12))) AS Addresses.distance';
 		$this->assertEquals($expected, $res);
 	}
@@ -89,9 +87,6 @@ class GeocoderBehaviorTest extends TestCase {
 	public function testSetDistanceAsVirtualField() {
 		$driver = $this->db->driver();
 		$this->skipIf(!($driver instanceof Mysql), 'The virtualFields test is only compatible with Mysql.');
-
-		$this->Addresses = TableRegistry::get('Geo.Addresses');
-		$this->Addresses->addBehavior('Geo.Geocoder');
 
 		$options = array('lat' => 13.3, 'lng' => 19.2); //array('order' => array('Address.distance' => 'ASC'));
 		$res = $this->Addresses->find()->find('distance', $options)->find('all')->toArray();
@@ -110,7 +105,6 @@ class GeocoderBehaviorTest extends TestCase {
 		$driver = $this->db->driver();
 		$this->skipIf(!($driver instanceof Mysql), 'The virtualFields test is only compatible with Mysql.');
 
-		$this->Addresses = TableRegistry::get('Geo.Addresses');
 		$this->Addresses->removeBehavior('Geocoder'); //FIXME: Shouldnt be necessary ideally
 		$this->Addresses->addBehavior('Geo.Geocoder', array('unit' => Geocode::UNIT_MILES));
 		//$this->Addresses->setDistanceAsVirtualField(13.3, 19.2);
@@ -154,24 +148,24 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testValidate() {
-		$is = $this->Comments->validateLatitude(44);
+		$is = $this->Addresses->validateLatitude(44);
 		$this->assertTrue($is);
 
-		$is = $this->Comments->validateLatitude(110);
+		$is = $this->Addresses->validateLatitude(110);
 		$this->assertFalse($is);
 
-		$is = $this->Comments->validateLongitude(150);
+		$is = $this->Addresses->validateLongitude(150);
 		$this->assertTrue($is);
 
-		$is = $this->Comments->validateLongitude(-190);
+		$is = $this->Addresses->validateLongitude(-190);
 		$this->assertFalse($is);
 
 
 		$driver = $this->db->driver();
 		$this->skipIf(!($driver instanceof Mysql), 'The virtualFields test is only compatible with Mysql.');
 
-		$this->Comments->validator()->add('lat', 'validateLatitude', array('rule' => 'validateLatitude', 'message' => 'validateLatitudeError'));
-		$this->Comments->validator()->add('lng', 'validateLongitude', array('rule' => 'validateLongitude', 'message' => 'validateLongitudeError'));
+		$this->Addresses->validator()->add('lat', 'validateLatitude', array('rule' => 'validateLatitude', 'message' => 'validateLatitudeError'));
+		$this->Addresses->validator()->add('lng', 'validateLongitude', array('rule' => 'validateLongitude', 'message' => 'validateLongitudeError'));
 		$data = array(
 			'lat' => 44,
 			'lng' => 190,
@@ -181,12 +175,12 @@ class GeocoderBehaviorTest extends TestCase {
 		//FIXME
 		return;
 
-		$res = $this->Comments->validates();
+		$res = $this->Addresses->validates();
 		$this->assertFalse($res);
 		$expectedErrors = array(
 			'lng' => array(__('validateLongitudeError'))
 		);
-		$this->assertEquals($expectedErrors, $this->Comments->validationErrors);
+		$this->assertEquals($expectedErrors, $this->Addresses->validationErrors);
 	}
 
 	/**
@@ -204,7 +198,7 @@ class GeocoderBehaviorTest extends TestCase {
 			'city' => 'Bibersfeld'
 		);
 		$entity = $this->_getEntity($data);
-		$res = $this->Comments->save($entity);
+		$res = $this->Addresses->save($entity);
 
 		$this->assertTrue(!empty($res['lat']) && !empty($res['lng']) && round($res['lat']) === 49.0 && round($res['lng']) === 10.0);
 
@@ -214,8 +208,8 @@ class GeocoderBehaviorTest extends TestCase {
 			'city' => 'München'
 		);
 		$entity = $this->_getEntity($data);
-		$res = $this->Comments->save($entity);
-		$this->assertEquals('', $this->Comments->behaviors()->Geocoder->Geocode->error());
+		$res = $this->Addresses->save($entity);
+		$this->assertEquals('', $this->Addresses->behaviors()->Geocoder->Geocode->error());
 
 		$this->assertTrue(!empty($res['lat']) && !empty($res['lng']));
 		$this->assertEquals('München, Deutschland', $res['geocoder_result']['formatted_address']);
@@ -224,10 +218,10 @@ class GeocoderBehaviorTest extends TestCase {
 			'city' => 'Bibersfeld'
 		);
 		$entity = $this->_getEntity($data);
-		$res = $this->Comments->save($entity);
+		$res = $this->Addresses->save($entity);
 
 		$this->assertTrue(!empty($res));
-		$this->assertEquals('', $this->Comments->behaviors()->Geocoder->Geocode->error());
+		$this->assertEquals('', $this->Addresses->behaviors()->Geocoder->Geocode->error());
 	}
 
 	/**
@@ -236,13 +230,13 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testMinAccLow() {
-		$this->Comments->removeBehavior('Geocoder');
-		$this->Comments->addBehavior('Geo.Geocoder', array('real' => false, 'min_accuracy' => Geocode::ACC_COUNTRY));
+		$this->Addresses->removeBehavior('Geocoder');
+		$this->Addresses->addBehavior('Geo.Geocoder', array('real' => false, 'min_accuracy' => Geocode::ACC_COUNTRY));
 		$data = array(
 			'city' => 'Deutschland'
 		);
 		$entity = $this->_getEntity($data);
-		$res = $this->Comments->save($entity);
+		$res = $this->Addresses->save($entity);
 
 		//FIXME
 		return;
@@ -256,13 +250,13 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testMinAccHigh() {
-		$this->Comments->removeBehavior('Geocoder');
-		$this->Comments->addBehavior('Geo.Geocoder', array('real' => false, 'min_accuracy' => Geocode::ACC_POSTAL));
+		$this->Addresses->removeBehavior('Geocoder');
+		$this->Addresses->addBehavior('Geo.Geocoder', array('real' => false, 'min_accuracy' => Geocode::ACC_POSTAL));
 		$data = array(
 			'city' => 'Deutschland'
 		);
 		$entity = $this->_getEntity($data);
-		$res = $this->Comments->save($entity);
+		$res = $this->Addresses->save($entity);
 
 		//FIXME
 		return;
@@ -276,17 +270,17 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testMinInc() {
-		$this->Comments->removeBehavior('Geocoder');
-		$this->Comments->addBehavior('Geo.Geocoder', array('real' => false, 'min_accuracy' => Geocode::ACC_SUBLOC));
+		$this->Addresses->removeBehavior('Geocoder');
+		$this->Addresses->addBehavior('Geo.Geocoder', array('real' => false, 'min_accuracy' => Geocode::ACC_SUBLOC));
 
-		$this->assertEquals(Geocode::ACC_SUBLOC, $this->Comments->behaviors()->Geocoder->config('min_accuracy'));
+		$this->assertEquals(Geocode::ACC_SUBLOC, $this->Addresses->behaviors()->Geocoder->config('min_accuracy'));
 
 		$data = array(
 			//'street' => 'Leopoldstraße',
 			'city' => 'Neustadt'
 		);
 		$entity = $this->_getEntity($data);
-		$res = $this->Comments->save($entity);
+		$res = $this->Addresses->save($entity);
 
 		//FIXME
 		return;
@@ -300,14 +294,14 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testMinIncAllowed() {
-		$this->Comments->removeBehavior('Geocoder');
-		$this->Comments->addBehavior('Geo.Geocoder', array('real' => false, 'allow_inconclusive' => true));
+		$this->Addresses->removeBehavior('Geocoder');
+		$this->Addresses->addBehavior('Geo.Geocoder', array('real' => false, 'allow_inconclusive' => true));
 
 		$data = array(
 			'city' => 'Neustadt'
 		);
 		$entity = $this->_getEntity($data);
-		$res = $this->Comments->save($entity);
+		$res = $this->Addresses->save($entity);
 
 		//FIXME
 		return;
@@ -321,21 +315,21 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testExpect() {
-		$this->Comments->removeBehavior('Geocoder');
-		$this->Comments->addBehavior('Geo.Geocoder', array('real' => false, 'expect' => array('postal_code')));
+		$this->Addresses->removeBehavior('Geocoder');
+		$this->Addresses->addBehavior('Geo.Geocoder', array('real' => false, 'expect' => array('postal_code')));
 
 		$data = array(
 			'city' => 'Bibersfeld'
 		);
 		$entity = $this->_getEntity($data);
-		$res = $this->Comments->save($entity);
+		$res = $this->Addresses->save($entity);
 		$this->assertTrue(empty($res['lat']) && empty($res['lng']));
 
 		$data = array(
 			'city' => '74523'
 		);
 		$entity = $this->_getEntity($data);
-		$res = $this->Comments->save($entity);
+		$res = $this->Addresses->save($entity);
 
 		//FIXME
 		return;
