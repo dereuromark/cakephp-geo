@@ -238,6 +238,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$entity = $this->_getEntity($data);
 		$res = $this->Addresses->save($entity);
 
+		$this->assertEquals('Deutschland', $res['city']);
 		$this->assertTrue((int)$res['lat'] && (int)$res['lng']);
 	}
 
@@ -255,9 +256,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$entity = $this->_getEntity($data);
 		$res = $this->Addresses->save($entity);
 
-		//FIXME
-		return;
-
+		$this->assertEquals('Deutschland', $res['city']);
 		$this->assertTrue(!isset($res['lat']) && !isset($res['lng']));
 	}
 
@@ -279,9 +278,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$entity = $this->_getEntity($data);
 		$res = $this->Addresses->save($entity);
 
-		//FIXME
-		return;
-
+		$this->assertEquals('Neustadt', $res['city']);
 		$this->assertTrue(!isset($res['lat']) && !isset($res['lng']));
 	}
 
@@ -300,9 +297,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$entity = $this->_getEntity($data);
 		$res = $this->Addresses->save($entity);
 
-		//FIXME
-		return;
-
+		$this->assertEquals('Neustadt', $res['city']);
 		$this->assertTrue(!empty($res['lat']) && !empty($res['lng']));
 	}
 
@@ -316,21 +311,19 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->Addresses->addBehavior('Geo.Geocoder', array('real' => false, 'expect' => array('postal_code')));
 
 		$data = array(
-			'city' => 'Bibersfeld'
+			'city' => 'Bibersfeld, Deutschland'
 		);
 		$entity = $this->_getEntity($data);
 		$res = $this->Addresses->save($entity);
 		$this->assertTrue(empty($res['lat']) && empty($res['lng']));
 
 		$data = array(
-			'city' => '74523'
+			'city' => '74523, Deutschland'
 		);
 		$entity = $this->_getEntity($data);
 		$res = $this->Addresses->save($entity);
 
-		//FIXME
-		return;
-
+		$this->assertEquals('74523 Schwäbisch Hall, Deutschland', $res['formatted_address']);
 		$this->assertTrue(!empty($res['lat']) && !empty($res['lng']));
 	}
 

@@ -86,7 +86,9 @@ class GeocoderBehavior extends Behavior {
  */
 	public function beforeValidate(Event $event, Entity $entity, ArrayObject $options) {
 		if ($this->_config['before'] === 'validate') {
-			$this->geocode($entity);
+			if(!$this->geocode($entity)) {
+				$event->stopPropagation();
+			}
 		}
 	}
 
@@ -98,7 +100,9 @@ class GeocoderBehavior extends Behavior {
  */
 	public function beforeSave(Event $event, Entity $entity, ArrayObject $options) {
 		if ($this->_config['before'] === 'save') {
-			$this->geocode($entity);
+			if (!$this->geocode($entity)) {
+				$event->stopPropagation();
+			}
 		}
 	}
 
@@ -196,9 +200,7 @@ class GeocoderBehavior extends Behavior {
 			}
 		}
 
-		debug($entityData);
 		$entity->set($entityData);
-		debug($entity);
 
 		return true;
 	}
