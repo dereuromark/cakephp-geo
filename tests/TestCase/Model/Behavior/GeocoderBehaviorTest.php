@@ -236,7 +236,6 @@ class GeocoderBehaviorTest extends TestCase {
 			'city' => 'Deutschland'
 		);
 		$entity = $this->_getEntity($data);
-		debug($entity);
 		$res = $this->Addresses->save($entity);
 
 		$this->assertTrue((int)$res['lat'] && (int)$res['lng']);

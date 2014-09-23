@@ -121,7 +121,7 @@ class GeocoderBehavior extends Behavior {
 		if ($this->_config['real']) {
 			foreach ($addressfields as $field) {
 				if (!$this->_table->hasField($field)) {
-					return $entity;
+					return false;
 				}
 			}
 		}
@@ -174,7 +174,7 @@ class GeocoderBehavior extends Behavior {
 				}
 				//return false;
 			}
-			return $geocode;
+			return true;
 		}
 
 		// Valid lat/lng found
@@ -196,9 +196,11 @@ class GeocoderBehavior extends Behavior {
 			}
 		}
 
+		debug($entityData);
 		$entity->set($entityData);
+		debug($entity);
 
-		return $entity;
+		return true;
 	}
 
 	/**
