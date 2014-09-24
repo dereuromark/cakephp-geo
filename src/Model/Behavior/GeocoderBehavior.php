@@ -73,7 +73,7 @@ class GeocoderBehavior extends Behavior {
  * @param array $config The config for this behavior.
  */
 	public function __construct(Table $table, array $config = []) {
-		$this->config($config);
+		parent::__construct($table, $config);
 
 		$this->_table = $table;
 	}
