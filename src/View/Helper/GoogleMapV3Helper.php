@@ -6,6 +6,7 @@ use Cake\Routing\Router;
 use Cake\View\Helper;
 use Cake\Utility\Hash;
 use Geo\View\Helper\JsBaseEngineTrait;
+use Cake\Core\Exception\Exception;
 
 /**
  * This is a CakePHP helper that helps users to integrate GoogleMap v3
@@ -535,7 +536,7 @@ function geocodeAddress(address) {
 	});
 }";
 			if (!isset($options['address'])) {
-				throw new CakeException('Either use lat/lng or address to add a marker');
+				throw new Exception('Either use lat/lng or address to add a marker');
 			}
 			$position = 'geocodeAddress(\'' . h($options['address']) . '\')';
 		} else {
