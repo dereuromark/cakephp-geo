@@ -470,7 +470,7 @@ class GoogleMapV3Helper extends Helper {
 	 *
 	 * @param array $options
 	 * @return mixed Integer marker count or boolean false on failure
-	 * @throws CakeException
+	 * @throws Exception
 	 */
 	public function addMarker($options) {
 		$defaults = $this->_config['marker'];
@@ -952,13 +952,13 @@ var iconShape = {
 		if (is_array($from)) {
 			$from = 'new google.maps.LatLng(' . (float)$from['lat'] . ', ' . (float)$from['lng'] . ')';
 		} else {
-			throw new CakeException('not implemented yet, use array of lat/lng');
+			throw new Exception('not implemented yet, use array of lat/lng');
 			$from = '\'' . h($from) . '\'';
 		}
 		if (is_array($to)) {
 			$to = 'new google.maps.LatLng(' . (float)$to['lat'] . ', ' . (float)$to['lng'] . ')';
 		} else {
-			throw new CakeException('not implemented yet, use array of lat/lng');
+			throw new Exception('not implemented yet, use array of lat/lng');
 			$to = '\'' . h($to) . '\'';
 		}
 
