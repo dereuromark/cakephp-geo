@@ -764,7 +764,7 @@ class Geocode {
 	 * @param string $fromUnit (using class constants)
 	 * @param string $toUnit (using class constants)
 	 * @return float convertedValue
-	 * @throws CakeException
+	 * @throws Exception
 	 */
 	public function convert($value, $fromUnit, $toUnit) {
 		if (!isset($this->units[($fromUnit = strtoupper($fromUnit))]) || !isset($this->units[($toUnit = strtoupper($toUnit))])) {
@@ -794,7 +794,7 @@ class Geocode {
 	 * - 4:
 	 * - 5:
 	 * @return float Coordinates
-	 * @throws CakeException
+	 * @throws Exception
 	 */
 	public static function blur($coord, $level = 0) {
 		if (!$level) {
