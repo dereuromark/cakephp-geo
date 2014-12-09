@@ -1013,7 +1013,7 @@ var iconShape = {
 	 * @return string
 	 */
 	public function script() {
-		$script = '<script type="text/javascript">
+		$script = '<script>
 		' . $this->finalize(true) . '
 </script>';
 		return $script;
@@ -1277,7 +1277,7 @@ var iconShape = {
 	 * @return string imageTag
 	 */
 	public function staticMap($options = array(), $attributes = array()) {
-		$defaultAttributes = array('alt' => __('Map'));
+		$defaultAttributes = array('alt' => __d('tools', 'Map'));
 
 		return $this->Html->image($this->staticMapUrl($options), array_merge($defaultAttributes, $attributes));
 	}
@@ -1650,42 +1650,6 @@ function Fluster2Cluster(_fluster,_marker) {var markerPosition=_marker.getPositi
 function Fluster2ClusterMarker(_fluster,_cluster) {this.fluster=_fluster;this.cluster=_cluster;this.position=this.cluster.getPosition();this.markerCount=this.cluster.getMarkerCount();this.map=this.fluster.getMap();this.style=null;this.div=null;var styles=this.fluster.getStyles();for (var i in styles) {if (this.markerCount>i) {this.style=styles[i]} else {break}}google.maps.OverlayView.call(this);this.setMap(this.map);this.draw()};Fluster2ClusterMarker.prototype=new google.maps.OverlayView();Fluster2ClusterMarker.prototype.draw=function() {if (this.div==null) {var me=this;this.div=document.createElement(\'div\');this.div.style.position=\'absolute\';this.div.style.width=this.style.width+\'px\';this.div.style.height=this.style.height+\'px\';this.div.style.lineHeight=this.style.height+\'px\';this.div.style.background=\'transparent url("\'+this.style.image+\'") 50% 50% no-repeat\';this.div.style.color=this.style.textColor;this.div.style.textAlign=\'center\';this.div.style.fontFamily=\'Arial, Helvetica\';this.div.style.fontSize=\'11px\';this.div.style.fontWeight=\'bold\';this.div.innerHTML=this.markerCount;this.div.style.cursor=\'pointer\';google.maps.event.addDomListener(this.div,\'click\',function() {me.map.fitBounds(me.cluster.getMarkerBounds())});this.getPanes().overlayLayer.appendChild(this.div)}var position=this.getProjection().fromLatLngToDivPixel(this.position);this.div.style.left=(position.x-parseInt(this.style.width/2))+\'px\';this.div.style.top=(position.y-parseInt(this.style.height/2))+\'px\'};Fluster2ClusterMarker.prototype.hide=function() {this.div.style.display=\'none\'};Fluster2ClusterMarker.prototype.show=function() {this.div.style.display=\'block\'};
 function Fluster2ProjectionOverlay(map) {google.maps.OverlayView.call(this);this.setMap(map);this.getP=function() {return this.getProjection()}}Fluster2ProjectionOverlay.prototype=new google.maps.OverlayView();Fluster2ProjectionOverlay.prototype.draw=function() {};
 \'';
-
-	/**
-	 * Calculates Distance between two points array('lat'=>x,'lng'=>y)
-	 * DB:
-	 * '6371.04 * ACOS( COS( PI()/2 - RADIANS(90 - Retailer.lat)) * ' .
-	 *				'COS( PI()/2 - RADIANS(90 - ' . $data['Location']['lat'] .')) * ' .
-	 *				'COS( RADIANS(Retailer.lng) - RADIANS(' . $data['Location']['lng'] .')) + ' .
-	 *				'SIN( PI()/2 - RADIANS(90 - Retailer.lat)) * ' .
-	 *				'SIN( PI()/2 - RADIANS(90 - ' . $data['Location']['lat'] . '))) ' .
-	 * 'AS distance'
-	 *
-	 * @param array pointX
-	 * @param array pointY
-	 * @return int distance: in km
-	 * @DEPRECATED - use Geocode::distance() instead!
-	 */
-	public function distance($pointX, $pointY) {
-		/*
-		$res = 	6371.04 * ACOS( COS( PI()/2 - rad2deg(90 - $pointX['lat'])) *
-				COS( PI()/2 - rad2deg(90 - $pointY['lat'])) *
-				COS( rad2deg($pointX['lng']) - rad2deg($pointY['lng'])) +
-				SIN( PI()/2 - rad2deg(90 - $pointX['lat'])) *
-				SIN( PI()/2 - rad2deg(90 - $pointY['lat'])));
-
-		$res = 6371.04 * acos(sin($pointY['lat'])*sin($pointX['lat'])+cos($pointY['lat'])*cos($pointX['lat'])*cos($pointY['lng'] - $pointX['lng']));
-		*/
-
-		// seems to be the only working one (although slightly incorrect...)
-		$res = 69.09 * rad2deg(acos(sin(deg2rad($pointX['lat'])) * sin(deg2rad($pointY['lat'])) +
-			cos(deg2rad($pointX['lat'])) * cos(deg2rad($pointY['lat'])) * cos(deg2rad($pointX['lng'] - $pointY['lng']))));
-
-		// Miles to KM
-		$res *= 1.609344;
-
-		return ceil($res);
-	}
 
 	/**
 	 * GoogleMapV3Helper::_arrayToObject()
