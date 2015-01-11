@@ -1,7 +1,7 @@
 <?php
 namespace Geo\Geocode;
 
-use Cake\Utility\String;
+use Cake\Utility\Text;
 use Cake\Core\Configure;
 use Cake\Network\Http\Client;
 use Cake\Log\Log;
@@ -184,7 +184,7 @@ class Geocode {
 		$params = array(
 			'host' => $this->options['host']
 		);
-		$url = String::insert(static::BASE_URL, $params, array('before' => '{', 'after' => '}', 'clean' => true));
+		$url = Text::insert(static::BASE_URL, $params, array('before' => '{', 'after' => '}', 'clean' => true));
 		return $url;
 	}
 

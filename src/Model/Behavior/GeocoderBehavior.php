@@ -30,7 +30,7 @@ class GeocoderBehavior extends Behavior {
 		'require' => false, 'allowEmpty' => true, 'invalidate' => array(), 'expect' => array(),
 		'lat' => 'lat', 'lng' => 'lng', 'formatted_address' => 'formatted_address',
 		'host' => null, 'language' => 'de', 'region' => '', 'bounds' => '',
-		'overwrite' => false, 'update' => array(), 'before' => 'save',
+		'overwrite' => false, 'update' => array(), 'on' => 'beforeSave',
 		'min_accuracy' => Geocode::ACC_COUNTRY, 'allow_inconclusive' => true, 'unit' => Geocode::UNIT_KM,
 		'log' => true, // log successfull results to geocode.log (errors will be logged to error.log in either case)
 		'implementedFinders' => [
@@ -84,8 +84,8 @@ class GeocoderBehavior extends Behavior {
  * @param \ArrayObject $options the options passed to the save method
  * @return void
  */
-	public function beforeValidate(Event $event, Entity $entity, ArrayObject $options) {
-		if ($this->_config['before'] === 'validate') {
+	public function beforeRules(Event $event, Entity $entity, ArrayObject $options) {
+		if ($this->_config['on'] === 'beforeRules') {
 			if(!$this->geocode($entity)) {
 				$event->stopPropagation();
 			}
@@ -99,7 +99,7 @@ class GeocoderBehavior extends Behavior {
  * @return void
  */
 	public function beforeSave(Event $event, Entity $entity, ArrayObject $options) {
-		if ($this->_config['before'] === 'save') {
+		if ($this->_config['on'] === 'beforeSave') {
 			if (!$this->geocode($entity)) {
 				$event->stopPropagation();
 			}

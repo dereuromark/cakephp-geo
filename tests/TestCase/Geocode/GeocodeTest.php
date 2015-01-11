@@ -212,8 +212,8 @@ class GeocodeTest extends TestCase {
 		foreach ($coords as $coord) {
 			$is = $this->Geocode->blur($coord[0], $coord[1]);
 			//pr('is: '.$is.' - expected: '.$coord[0].' +- '.$coord[2]);
-			$this->assertWithinMargin($is, $coord[0], $coord[2]);
-			$this->assertNotWithinMargin($is, $coord[0], $coord[2] / 4);
+			$this->assertWithinRange($is, $coord[0], $coord[2]);
+			$this->assertNotWithinRange($is, $coord[0], $coord[2] / 4);
 		}
 	}
 
