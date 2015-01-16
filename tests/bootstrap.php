@@ -3,7 +3,6 @@
 require dirname(__DIR__) . '/vendor/cakephp/cakephp/src/basics.php';
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-define('DS', DIRECTORY_SEPARATOR);
 if (!defined('WINDOWS')) {
 	if (DS == '\\' || substr(PHP_OS, 0, 3) === 'WIN') {
 		define('WINDOWS', true);
@@ -41,7 +40,8 @@ Cake\Core\Configure::write('debug', true);
 
 $cache = [
 	'default' => [
-		'engine' => 'File'
+		'engine' => 'File',
+		'path' => CACHE
 	],
 	'_cake_core_' => [
 		'className' => 'File',
