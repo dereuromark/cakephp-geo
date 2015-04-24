@@ -21,7 +21,7 @@ use Cake\Log\Log;
 class Geocode {
 
 	const BASE_URL = 'https://{host}/maps/api/geocode/json?';
-	const DEFAULT_HOST = 'maps.googleapis.com';
+	const DEFAULT_HOST = 'maps.google.com';
 
 	const ACC_COUNTRY = 0;
 	const ACC_AAL1 = 1;
