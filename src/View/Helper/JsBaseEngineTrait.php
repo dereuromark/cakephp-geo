@@ -22,7 +22,7 @@ trait JsBaseEngineTrait {
  *
  * @var array
  */
-	protected $_optionMap = array();
+	protected $_optionMap = [];
 
 /**
  * An array of lowercase method names in the Engine that are buffered unless otherwise disabled.
@@ -30,14 +30,14 @@ trait JsBaseEngineTrait {
  *
  * @var array
  */
-	public $bufferedMethods = array('event', 'sortable', 'drag', 'drop', 'slider');
+	public $bufferedMethods = ['event', 'sortable', 'drag', 'drop', 'slider'];
 
 /**
  * Contains a list of callback names -> default arguments.
  *
  * @var array
  */
-	protected $_callbackArguments = array();
+	protected $_callbackArguments = [];
 
 /**
  * Create an `alert()` message in JavaScript
@@ -107,10 +107,10 @@ trait JsBaseEngineTrait {
  * @param array $options Set of options, see above.
  * @return string A JSON code block
  */
-	public function object($data = array(), $options = array()) {
-		$defaultOptions = array(
+	public function object($data = [], $options = []) {
+		$defaultOptions = [
 			'prefix' => '', 'postfix' => '',
-		);
+		];
 		$options += $defaultOptions;
 
 		return $options['prefix'] . json_encode($data) . $options['postfix'];
@@ -124,7 +124,7 @@ trait JsBaseEngineTrait {
  * @param string $key Key name.
  * @return string a JavaScript-safe/JSON representation of $val
  */
-	public function value($val = array(), $quoteString = null, $key = 'value') {
+	public function value($val = [], $quoteString = null, $key = 'value') {
 		if ($quoteString === null) {
 			$quoteString = true;
 		}
@@ -273,8 +273,8 @@ trait JsBaseEngineTrait {
  * @param array $safeKeys Keys that should not be escaped.
  * @return string Parsed JSON options without enclosing { }.
  */
-	protected function _parseOptions($options, $safeKeys = array()) {
-		$out = array();
+	protected function _parseOptions($options, $safeKeys = []) {
+		$out = [];
 		$safeKeys = array_flip($safeKeys);
 		foreach ($options as $key => $value) {
 			if (!is_int($value) && !isset($safeKeys[$key])) {
@@ -295,7 +295,7 @@ trait JsBaseEngineTrait {
  * @param array $callbacks Additional Keys that contain callbacks
  * @return array Array of options with callbacks added.
  */
-	protected function _prepareCallbacks($method, $options, $callbacks = array()) {
+	protected function _prepareCallbacks($method, $options, $callbacks = []) {
 		$wrapCallbacks = true;
 		if (isset($options['wrapCallbacks'])) {
 			$wrapCallbacks = $options['wrapCallbacks'];
@@ -304,7 +304,7 @@ trait JsBaseEngineTrait {
 		if (!$wrapCallbacks) {
 			return $options;
 		}
-		$callbackOptions = array();
+		$callbackOptions = [];
 		if (isset($this->_callbackArguments[$method])) {
 			$callbackOptions = $this->_callbackArguments[$method];
 		}

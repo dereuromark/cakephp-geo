@@ -14,7 +14,7 @@ class AddressesFixture extends TestFixture {
 	 *
 	 * @var array
 	 */
-	public $fields = array(
+	public $fields = [
 		'id' => ['type' => 'integer'],
 		'foreign_id' => ['type' => 'string', 'null' => true, 'default' => null, 'length' => 36],
 		'model' => ['type' => 'string', 'null' => true, 'default' => null, 'length' => 30],
@@ -32,15 +32,15 @@ class AddressesFixture extends TestFixture {
 		'modified' => ['type' => 'datetime', 'null' => true, 'default' => null],
 		'type_id' => ['type' => 'integer', 'null' => true, 'default' => null, 'length' => 4],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
-	);
+	];
 
 	/**
 	 * Records
 	 *
 	 * @var array
 	 */
-	public $records = array(
-		array(
+	public $records = [
+		[
 			'id' => '46',
 			'foreign_id' => '6',
 			'model' => 'Partner',
@@ -57,8 +57,8 @@ class AddressesFixture extends TestFixture {
 			'created' => '2011-04-21 16:50:05',
 			'modified' => '2011-10-07 17:42:27',
 			'type_id' => null
-		),
-		array(
+		],
+		[
 			'id' => '47',
 			'foreign_id' => '4',
 			'model' => 'Restaurant',
@@ -75,8 +75,8 @@ class AddressesFixture extends TestFixture {
 			'created' => '2011-04-21 16:51:01',
 			'modified' => '2011-10-07 17:44:02',
 			'type_id' => null
-		),
-		array(
+		],
+		[
 			'id' => '48',
 			'foreign_id' => '7',
 			'model' => 'Partner',
@@ -93,8 +93,8 @@ class AddressesFixture extends TestFixture {
 			'created' => '2011-11-17 13:47:36',
 			'modified' => '2011-11-17 13:47:36',
 			'type_id' => null
-		),
-		array(
+		],
+		[
 			'id' => '49',
 			'foreign_id' => '5',
 			'model' => 'Restaurant',
@@ -111,6 +111,6 @@ class AddressesFixture extends TestFixture {
 			'created' => '2011-11-17 14:34:14',
 			'modified' => '2011-11-17 14:49:21',
 			'type_id' => null
-		),
-	);
+		],
+	];
 }
