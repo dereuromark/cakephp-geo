@@ -712,8 +712,8 @@ class Geocode {
 						'SIN( PI()/2 - RADIANS(90 - '. $data['Location']['lat'] . '))) ' .
 		'AS distance'
 	 *
-	 * @param array pointX
-	 * @param array pointY
+	 * @param array $pointX
+	 * @param array $pointY
 	 * @param string $unit Unit char or constant (M=miles, K=kilometers, N=nautical miles, I=inches, F=feet)
 	 * @return int Distance in km
 	 */
@@ -737,11 +737,11 @@ class Geocode {
 	/**
 	 * Geocode::calculateDistance()
 	 *
-	 * @param array $pointX
-	 * @param array $pointY
+	 * @param array|\ArrayObject $pointX
+	 * @param array|\ArrayObject $pointY
 	 * @return float
 	 */
-	public static function calculateDistance(array $pointX, array $pointY) {
+	public static function calculateDistance($pointX, $pointY) {
 		/*
 		$res = 	6371.04 * ACOS( COS( PI()/2 - rad2deg(90 - $pointX['lat'])) *
 				COS( PI()/2 - rad2deg(90 - $pointY['lat'])) *
@@ -764,7 +764,7 @@ class Geocode {
 	 * @param string $fromUnit (using class constants)
 	 * @param string $toUnit (using class constants)
 	 * @return float convertedValue
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function convert($value, $fromUnit, $toUnit) {
 		if (!isset($this->units[($fromUnit = strtoupper($fromUnit))]) || !isset($this->units[($toUnit = strtoupper($toUnit))])) {
@@ -786,15 +786,10 @@ class Geocode {
 	 * Useful if you store other users' locations and want to grant some
 	 * privacy protection. This way the coordinates will be slightly modified.
 	 *
-	 * @param float coord Coordinates
-	 * @param int level The Level of blurness (0 = nothing to 5 = extrem)
-	 * - 1:
-	 * - 2:
-	 * - 3:
-	 * - 4:
-	 * - 5:
+	 * @param float $coord Coordinates
+	 * @param int $level The Level of blurness (0 = nothing to 5 = extrem)
 	 * @return float Coordinates
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public static function blur($coord, $level = 0) {
 		if (!$level) {
