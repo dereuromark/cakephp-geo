@@ -31,7 +31,9 @@ class GeocoderBehavior extends Behavior {
 		'lat' => 'lat', 'lng' => 'lng', 'formatted_address' => 'formatted_address',
 		'host' => null, 'language' => 'de', 'region' => '', 'bounds' => '',
 		'overwrite' => false, 'update' => [], 'on' => 'beforeSave',
-		'min_accuracy' => Geocode::ACC_COUNTRY, 'allow_inconclusive' => true, 'unit' => Geocode::UNIT_KM,
+		'min_accuracy' => Geocode::ACC_COUNTRY,
+		'allow_inconclusive' => true,
+		'unit' => Geocode::UNIT_KM,
 		'log' => true, // log successfull results to geocode.log (errors will be logged to error.log in either case)
 		'implementedFinders' => [
 			'distance' => 'findDistance',
@@ -54,7 +56,7 @@ class GeocoderBehavior extends Behavior {
 	 *
 	 * - accuracy: see above
 	 *
-	 * - override: lat/lng override on changes?
+	 * - overwrite: lat/lng overwrite on changes?
 	 *
 	 * - update: what fields to update (key=>value array pairs)
 	 *
@@ -208,8 +210,6 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * Custom finder for distance.
 	 *
-	 * Used to be a virtual field in 2.x via setDistanceAsVirtualField()
-	 *
 	 * Options:
 	 * - lat (required)
 	 * - lng (required)
@@ -229,19 +229,6 @@ class GeocoderBehavior extends Behavior {
 			$query->where(['(' . $sql . ') <' => $options['distance']]);
 		}
 		return $query->order(['distance' => 'ASC']);
-	}
-
-	/**
-	 * Adds the distance to this point as a virtual field.
-	 * Make sure you have set configs lat/lng field names.
-	 *
-	 * @param string|float $lat Fieldname (Model.lat) or float value
-	 * @param string|float $lng Fieldname (Model.lng) or float value
-	 * @return void
-	 * @deprecated Use custom finder / findDistance instead.
-	 */
-	public function setDistanceAsVirtualField($lat, $lng, $tableName = null) {
-		$this->_table->virtualFields['distance'] = $this->distance($lat, $lng, null, null, $tableName);
 	}
 
 	/**
