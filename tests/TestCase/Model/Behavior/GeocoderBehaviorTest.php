@@ -14,7 +14,7 @@ use Geo\Model\Behavior\GeocoderBehavior;
 class GeocoderBehaviorTest extends TestCase {
 
 	public $fixtures = [
-		'plugin.geo.addresses'
+		'plugin.Geo.Addresses'
 	];
 
 	public $Addresses;
@@ -123,7 +123,8 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testPagination() {
-		$this->skipIf(true, 'FIX pagination');
+		$driver = $this->db->driver();
+		$this->skipIf(!($driver instanceof Mysql), 'The virtualFields test is only compatible with Mysql.');
 
 		$this->Controller = new TestController();
 		$this->Controller->Addresses->addBehavior('Geo.Geocoder');
@@ -131,12 +132,11 @@ class GeocoderBehaviorTest extends TestCase {
 		$options = ['lat' => 13.3, 'lng' => 19.2, 'distance' => 3000];
 		// find()->find('distance', $options)->find('all')->toArray()
 
-		$this->Controller->paginate = [
-			'conditions' => ['distance <' => 3000],
-			'order' => ['distance' => 'ASC']
-		];
-		$res = $this->Controller->paginate();
-		//debug($res);die();
+
+		$query = $this->Controller->Addresses->find('distance', $options);
+		$query->order(['distance' => 'ASC']);
+
+		$res = $this->Controller->paginate($query)->toArray();
 
 		$this->assertEquals(2, count($res));
 		$this->assertTrue($res[0]['distance'] < $res[1]['distance']);

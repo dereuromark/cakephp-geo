@@ -64,6 +64,10 @@ Cake\Cache\Cache::config($cache);
 //needed?
 Cake\Core\Plugin::load('Geo', ['path' => ROOT . DS, 'autoload' => true]);
 
+if (file_exists(CONFIG . 'app_local.php')) {
+	\Cake\Core\Configure::load('app_local', 'default');
+}
+
 // Ensure default test connection is defined
 if (!getenv('db_class')) {
 	putenv('db_class=Cake\Database\Driver\Sqlite');
