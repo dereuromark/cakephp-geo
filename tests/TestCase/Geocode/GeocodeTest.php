@@ -86,7 +86,7 @@ class GeocodeTest extends TestCase {
 	 */
 	public function testReverseGeocode() {
 		$coords = [
-			[-34.594445, -58.37446, ', Buenos Aires, Argentinien'],
+			[-34.594445, -58.37446, ', Argentinien'],
 			[48.8934, 8.70492, 'B294, 75175 Pforzheim, Deutschland']
 		];
 
