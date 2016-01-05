@@ -225,7 +225,8 @@ class GeocoderBehavior extends Behavior {
 		$sql = $this->distance($options['lat'], $options['lng'], null, null, $options['tableName']);
 		$query->select(['distance' => $query->newExpr($sql)]);
 		if (isset($options['distance'])) {
-			$query->where(['distance <' => $options['distance']]);
+			// Some SQL versions cannot reuse the select() distance field, so we better reuse the $sql snippet
+			$query->where(['(' . $sql . ') <' => $options['distance']]);
 		}
 		return $query->order(['distance' => 'ASC']);
 	}
