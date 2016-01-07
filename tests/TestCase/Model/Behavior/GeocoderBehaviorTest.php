@@ -17,6 +17,9 @@ class GeocoderBehaviorTest extends TestCase {
 		'plugin.Geo.Addresses'
 	];
 
+	/**
+	 * @var \Cake\ORM\Table;
+	 */
 	public $Addresses;
 
 	/**
@@ -160,27 +163,20 @@ class GeocoderBehaviorTest extends TestCase {
 		$is = $this->Addresses->validateLongitude(-190);
 		$this->assertFalse($is);
 
-
-		$driver = $this->db->driver();
-		$this->skipIf(!($driver instanceof Mysql), 'The virtualFields test is only compatible with Mysql.');
-
-		$this->Addresses->validator()->add('lat', 'validateLatitude', ['rule' => 'validateLatitude', 'message' => 'validateLatitudeError']);
-		$this->Addresses->validator()->add('lng', 'validateLongitude', ['rule' => 'validateLongitude', 'message' => 'validateLongitudeError']);
+		$this->Addresses->validator()->add('lat', 'validateLatitude', ['provider' => 'table', 'rule' => 'validateLatitude', 'message' => 'validateLatitudeError']);
+		$this->Addresses->validator()->add('lng', 'validateLongitude', ['provider' => 'table', 'rule' => 'validateLongitude', 'message' => 'validateLongitudeError']);
 		$data = [
 			'lat' => 44,
 			'lng' => 190,
 		];
-		$entity = $this->_getEntity($data);
+		$entity = $this->Addresses->newEntity($data);
 
-		//FIXME
-		return;
-
-		$res = $this->Addresses->validates();
-		$this->assertFalse($res);
 		$expectedErrors = [
-			'lng' => [__('validateLongitudeError')]
+			'lng' => [
+				'validateLongitude' => __('validateLongitudeError')
+			]
 		];
-		$this->assertEquals($expectedErrors, $this->Addresses->validationErrors);
+		$this->assertEquals($expectedErrors, $entity->errors());
 	}
 
 	/**

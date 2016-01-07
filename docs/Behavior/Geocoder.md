@@ -32,6 +32,7 @@ $lng = $address->lng;
 You can always manually call `geocode` as well, of course:
 ```php
 $address = $this->Addresses->get($id);
+// $address contains address with value `Berlin`
 $this->Addresses->geocode($address);
 
 // These should be both set now
@@ -56,7 +57,7 @@ Note that you need to first geocode all your data. On the fly geocoding is not a
 
 ## Batch geocoding
 
-You can look into the [Tools.Reset behavior]() and wrap the following in a CakePHP Shell command:
+You can look into the [Tools.Reset behavior](https://github.com/dereuromark/cakephp-tools/blob/master/src/Model/Behavior/ResetBehavior.php) and wrap the following in a CakePHP Shell command:
 ```php
 // Geocoder behavior must already be added to the Table class object
 $addressTable->addBehavior('Tools.Reset', $config);

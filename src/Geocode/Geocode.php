@@ -58,6 +58,7 @@ class Geocode {
 	 */
 	public $options = [
 		'log' => false,
+		'trials' => 5,
 		'pause' => 10000, # in ms
 		'min_accuracy' => self::ACC_COUNTRY,
 		'allow_inconclusive' => true,
@@ -158,7 +159,7 @@ class Geocode {
 	/**
 	 * Reset - ready for the next request
 	 *
-	 * @param mixed boolean $full or string === 'params' to reset just params
+	 * @param bool|string $full Boolean or string === 'params' to reset just params
 	 * @return void
 	 */
 	public function reset($full = true) {
@@ -171,6 +172,7 @@ class Geocode {
 			$this->params = $this->defaultParams;
 			return;
 		}
+		//TODO: remove these
 		$this->params = $this->defaultParams;
 		$this->options = $this->defaultOptions;
 	}
@@ -230,7 +232,7 @@ class Geocode {
 	 *
 	 * @param string $address
 	 * @param array $params
-	 * @return bool Success
+	 * @return array Result
 	 */
 	public function geocode($address, $params = []) {
 		$this->reset(false);
@@ -295,7 +297,7 @@ class Geocode {
 				return false; # for now...
 			}
 
-			if ($count > 5) {
+			if ($count > $this->options['trials']) {
 				if ($this->options['log']) {
 					Log::write('debug', __('Aborted after too many trials with \'%s\'', $address));
 				}
@@ -305,7 +307,7 @@ class Geocode {
 			$this->pause(true);
 		}
 
-		return true;
+		return $this->getResult();
 	}
 
 	/**
@@ -314,7 +316,7 @@ class Geocode {
 	 * @param float $lat
 	 * @param float $lng
 	 * @param array $params
-	 * @return bool Success
+	 * @return array Result
 	 */
 	public function reverseGeocode($lat, $lng, $params = []) {
 		$this->reset(false);
@@ -380,7 +382,7 @@ class Geocode {
 			$this->pause(true);
 		}
 
-		return true;
+		return $this->getResult();
 	}
 
 	/**

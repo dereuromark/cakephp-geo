@@ -92,7 +92,7 @@ class GeocodeTest extends TestCase {
 
 		foreach ($coords as $coord) {
 			$is = $this->Geocode->reverseGeocode($coord[0], $coord[1]);
-			$this->assertTrue($is);
+			$this->assertTrue((bool)$is);
 
 			$is = $this->Geocode->getResult();
 			$this->assertTrue(!empty($is));
@@ -116,7 +116,7 @@ class GeocodeTest extends TestCase {
 
 		$this->Geocode->setOptions(['allow_inconclusive' => true, 'min_accuracy' => Geocode::ACC_POSTAL]);
 		$is = $this->Geocode->geocode($address);
-		$this->assertTrue($is);
+		$this->assertTrue((bool)$is);
 		$res = $this->Geocode->getResult();
 		$this->assertNotEmpty($res);
 
@@ -169,13 +169,13 @@ class GeocodeTest extends TestCase {
 			'allow_inconclusive' => true,
 			'expect' => [Geocode::ACC_POSTAL, Geocode::ACC_LOC, Geocode::ACC_SUBLOC]]);
 		$is = $this->Geocode->geocode($address);
-		$this->assertTrue($is);
+		$this->assertTrue((bool)$is);
 
 		$this->Geocode->setOptions([
 			'allow_inconclusive' => true,
 			'expect' => [Geocode::ACC_POSTAL, Geocode::ACC_LOC]]);
 		$is = $this->Geocode->geocode($address);
-		$this->assertFalse($is);
+		$this->assertFalse((bool)$is);
 	}
 
 	/**
@@ -287,7 +287,7 @@ class GeocodeTest extends TestCase {
 		//echo '<h2>'.$address.'</h2>';
 		$is = $this->Geocode->geocode($address);
 		//debug($is);
-		$this->assertTrue($is);
+		$this->assertTrue((bool)$is);
 
 		$is = $this->Geocode->getResult();
 		//debug($is);
@@ -301,7 +301,7 @@ class GeocodeTest extends TestCase {
 		//echo '<h2>'.$address.'</h2>';
 		$is = $this->Geocode->geocode($address);
 		//debug($is);
-		$this->assertTrue($is);
+		$this->assertTrue((bool)$is);
 
 		//pr($this->Geocode->debug());
 
@@ -317,7 +317,7 @@ class GeocodeTest extends TestCase {
 		//echo '<h2>'.$address.'</h2>';
 		$is = $this->Geocode->geocode($address);
 		//debug($is);
-		$this->assertTrue($is);
+		$this->assertTrue((bool)$is);
 
 		//pr($this->Geocode->debug());
 
@@ -536,7 +536,7 @@ class GeocodeTest extends TestCase {
 	protected static function assertNotWithinMargin($result, $expected, $margin, $message = '') {
 		$upper = $result + $margin;
 		$lower = $result - $margin;
-		return static::assertFalse((($expected <= $upper) && ($expected >= $lower)), $message);
+		static::assertFalse((($expected <= $upper) && ($expected >= $lower)), $message);
 	}
 
 }
