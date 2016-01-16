@@ -50,7 +50,7 @@ class Geocoder {
 		'adapter' => '\Ivory\HttpAdapter\CakeHttpAdapter', // Only for default provider
 		//'log' => false,
 		'allowInconclusive' => true,
-		'minAccuracy' => self::TYPE_COUNTRY,
+		'minAccuracy' => self::TYPE_COUNTRY, // deprecated?
 		'expect' => [], # see $_types for details, one hit is enough to be valid
 	];
 
