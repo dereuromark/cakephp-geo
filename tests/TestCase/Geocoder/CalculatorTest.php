@@ -60,14 +60,19 @@ class CalculatorTest extends TestCase {
 	 */
 	public function testBlur() {
 		$coords = [
-			[48.1391, 1, 0.002],
-			[11.5802, 1, 0.002],
+			[48.1391, 1, 0.003],
+			[11.5802, 1, 0.003],
+			[48.1391, 5, 0.08],
+			[11.5802, 5, 0.08],
+			[48.1391, 10, 0.5],
+			[11.5802, 10, 0.5],
 		];
-
-		foreach ($coords as $coord) {
-			$is = $this->Calculator->blur($coord[0], $coord[1]);
-			$this->assertWithinRange($coord[0], $is, $coord[2]);
-			$this->assertNotWithinRange($coord[0], $is, $coord[2] / 4);
+		for ($i = 0; $i < 100; $i++) {
+			foreach ($coords as $coord) {
+				$is = $this->Calculator->blur($coord[0], $coord[1]);
+				$this->assertWithinRange($coord[0], $is, $coord[2], $is . ' instead of ' . $coord[0]. ' (' . $coord[2] . ')');
+				$this->assertNotWithinRange($coord[0], $is, $coord[2] / 1000, $is . ' NOT instead of ' . $coord[0] .' (' . $coord[2] . ')');
+			}
 		}
 	}
 
