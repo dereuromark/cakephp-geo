@@ -7,8 +7,10 @@
 * [Upgrade guide from 2.x to 3.x](Upgrade.md)
 
 ## Documentation
-* [Behavior/Geocoder](Behavior/Geocoder.md)
-
+* [Geocoder behavior](Behavior/Geocoder.md)
+* [Geocoder lib](Geocoder/Geocoder.md)
+* [Calculator lib](Geocoder/Calculator.md)
+* [GoogleMap helper](Helper/GoogleMap.md)
 ## Contributing
 Your help is greatly appreciated.
 
