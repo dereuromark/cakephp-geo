@@ -17,6 +17,35 @@ Possible config options are:
 - on: beforeMarshall/beforeSave (defaults to save) - Set to false if you only want to use the validation rules etc
 - unit: defaults to km
 
+## Configure your own geocoder
+By default it will use the GoogleMaps provider.
+
+Please see [willdurand/geocoder](https://github.com/geocoder-php/Geocoder) library on what other providers you can use out of the box.
+You got
+- 12+ address-based Geocoder providers
+- 10+ IP-based Geocoder providers
+to chose from.
+
+You could easily switch to an IP based provider like this:
+```php
+// in your app.php config
+'Geocoder' => [
+	'provider' => '\Geocoder\Provider\FreeGeoIp'
+],
+```
+
+Let's say you want to switch to OpenStreetMap and also use a different HTTP adapter:
+```php
+// in your app.php config
+'Geocoder' => [
+	'provider' => function () {
+		return new \Geocoder\Provider\OpenStreetMap(new \Ivory\HttpAdapter\BuzzHttpAdapter());
+	}
+],
+```
+
+Note: Don't forget that most providers need an apiKey to work.
+
 ## Saving geocodable data
 
 Storing lat/lng on save() is automatically done when the `address` field is defined and found when saving.
@@ -29,7 +58,7 @@ $lat = $address->lat;
 $lng = $address->lng;
 ```
 
-You can always manually call `geocode` as well, of course:
+You can always manually call `geocode()` as well, of course:
 ```php
 $address = $this->Addresses->get($id);
 // $address contains address with value `Berlin`
@@ -65,7 +94,7 @@ $addressTable->resetRecords();
 ```
 This will loop over all records as a batch script and update all lat/lng values.
 You should set a scope for performance reasons. Maybe update only every record older than x months, or those that have lat/lng values of `null` to avoid
-re-geocoding.
+re-geocoding. And of course you should timeout your batch runs, most providers only allow y requests per minute. Better don't over-request to avoid penalties.
 
 ## Validate lat/lng
 

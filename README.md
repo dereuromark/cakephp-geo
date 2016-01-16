@@ -9,10 +9,17 @@
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
 
 A CakePHP 3.x Plugin to
-- geocode locations and save the information (lat/lng) along with the records
-- display (google) maps
+- geocode locations/ips and save the information (lat/lng) along with the records
+- reverse geocode data
+- display (Google) maps
 
 This plugin requires PHP 5.4+
+
+Note that since CakePHP 3.x upgrade uses the [willdurand/geocoder](https://github.com/geocoder-php/Geocoder) library and therefore now supports
+- 12+ address-based Geocoder providers
+- 10+ IP-based Geocoder providers
+
+Most of them also support reverse geocoding. And of course you can write your own providers on top.
 
 ## Installation & Docs
 

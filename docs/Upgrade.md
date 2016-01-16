@@ -10,6 +10,8 @@ $this->findDistance($query, $options);
 You can manually geocode an entity with
 ```php
 $addresses = $this->behaviors()->Geocoder->geocode($entity);
+// or simply
+$addresses = $this->geocode($entity);
 ```
 
 The sql snippet has changed from `distance()` to `distanceSql()`.
