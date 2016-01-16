@@ -18,7 +18,7 @@ The sql snippet has changed from `distance()` to `distanceSql()`.
 
 The calculation has been moved to Calculation class.
 
-## Changed behavior config
+### Changed behavior config
 
 - `'before' => 'save'` is now `'on' => 'beforeSave'`.
 - `allow_inconclusive` is now `allowInconclusive`
@@ -27,10 +27,15 @@ The calculation has been moved to Calculation class.
 
 You can use `provider` and `adapter` config to change the used provider, defaults to GoogleMap.
 
-## Removed functionality.
+### Changed helper
+
+The helper now is called GoogleMap.
+The Configure key for GoogleMap helper changed to `GoogleMap`.
+
+### Removed functionality.
 
 - paginateDistanceCount()
 
-## Deprecated and removed config
+### Deprecated and removed config
 
 - real, bounds, invalidate

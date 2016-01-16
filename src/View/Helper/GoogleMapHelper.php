@@ -41,7 +41,7 @@ use Cake\Core\Exception\Exception;
  *
  * v1.6 CakePHP3.x compatible
  */
-class GoogleMapV3Helper extends Helper {
+class GoogleMapHelper extends Helper {
 
 	use JsBaseEngineTrait;
 
@@ -219,7 +219,7 @@ class GoogleMapV3Helper extends Helper {
 	protected $_located = false;
 
 	public function __construct($View = null, $config = []) {
-		$google = (array)Configure::read('Google');
+		$google = (array)Configure::read('GoogleMap');
 		$defaults = $this->_defaultOptions;
 		if (!empty($google['api'])) {
 			$defaults['map']['api'] = $google['api'];
@@ -1024,7 +1024,7 @@ var iconShape = {
 	 * Make sure that your view does also output the buffer at some place!
 	 *
 	 * @param bool $return If the output should be returned instead
-	 * @return void or string Javascript if $return is true
+	 * @return null|string Javascript if $return is true
 	 */
 	public function finalize($return = false) {
 		$script = $this->_arrayToObject('matching', $this->matching, false, true) . '
@@ -1139,7 +1139,7 @@ var iconShape = {
 	}
 
 	/**
-	 * @return json like js string
+	 * @return string JSON like js string
 	 */
 	protected function _mapOptions() {
 		$options = array_merge($this->_config, $this->_config['map']);
@@ -1183,7 +1183,7 @@ var iconShape = {
 	/**
 	 * @param string $type
 	 * @param array $options
-	 * @return json like js string
+	 * @return string JSON like js string
 	 */
 	protected function _controlOptions($type, $options) {
 		$mapping = [
@@ -1219,7 +1219,7 @@ var iconShape = {
 	/**
 	 * Returns a maps.google url
 	 *
-	 * @param array options:
+	 * @param array $options:
 	 * - from: necessary (address or lat,lng)
 	 * - to: 1x necessary (address or lat,lng - can be an array of multiple destinations: array('dest1', 'dest2'))
 	 * - zoom: optional (defaults to none)
