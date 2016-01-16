@@ -1,4 +1,5 @@
 # Geocoder Behavior
+Geocode your entity data.
 
 ## Adding the behavior
 
@@ -26,10 +27,9 @@ Note that it is usually better to set global configs in your `app.php` using the
 By default it will use the GoogleMaps provider.
 
 Please see [willdurand/geocoder](https://github.com/geocoder-php/Geocoder) library on what other providers you can use out of the box.
-You got
+You can chose from
 - 12+ address-based Geocoder providers
 - 10+ IP-based Geocoder providers
-to chose from.
 
 You could easily switch to an IP based provider like this:
 ```php
