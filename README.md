@@ -30,16 +30,10 @@ Also new:
 - [Documentation](docs/README.md)
 
 
-## Disclaimer
-Use at your own risk. Please provide any fixes or enhancements via issue or better pull request.
-Some classes are still from 1.2 (and are merely upgraded to 2.x) and might still need some serious refactoring.
-If you are able to help on that one, that would be awesome.
-
 ### Branching strategy
 The master branch is the currently active and maintained one and works with the current 3.x stable version.
 Please see the original [Tools plugin](https://github.com/dereuromark/cakephp-tools) if you need the Geo tools for CakePHP 2.x versions.
 
 ### TODOs
 
-* Maybe include https://github.com/Pollenizer/CakePHP-GeoIP-Plugin as 3.x version
-* Extend to use https://github.com/geocoder-php/Geocoder as source to allow more data providers for the behavior
+* Write own Geocoder provider to leverage all of MapsGoogle data that is being returned.
