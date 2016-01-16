@@ -139,7 +139,7 @@ class Calculator {
 	 * privacy protection. This way the coordinates will be slightly modified.
 	 *
 	 * @param float $coordinate Coordinate
-	 * @param int $level The Level of blurness (0 = nothing to 5 = extrem)
+	 * @param int $level The Level of blurriness (0...n), 0 means no blur
 	 * @return float Coordinates
 	 * @throws \Exception
 	 */
@@ -147,28 +147,12 @@ class Calculator {
 		if (!$level) {
 			return $coordinate;
 		}
-		//TODO:
-		switch ($level) {
-			case 1:
-				break;
-			case 2:
-				break;
-			case 3:
-				break;
-			case 4:
-				break;
-			case 5:
-				break;
-			default:
-				throw new \Exception(__('Invalid level \'%s\'', $level));
-		}
-		$scrambleVal = 0.000001 * mt_rand(1000, 2000) * (mt_rand(0, 1) === 0 ? 1 : -1);
+
+		$scrambleVal = 0.000001 * mt_rand(10, 200) * pow(2, $level) * (mt_rand(0, 1) === 0 ? 1 : -1);
 
 		return ($coordinate + $scrambleVal);
 
-		//$scrambleVal *= (mt_rand(0,1) === 0 ? 1 : 2);
 		//$scrambleVal *= (float)(2^$level);
-
 		// TODO: + - by chance!!!
 	}
 
