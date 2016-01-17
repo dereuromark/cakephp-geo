@@ -1652,7 +1652,7 @@ function Fluster2ProjectionOverlay(map) {google.maps.OverlayView.call(this);this
 \'';
 
 	/**
-	 * GoogleMapV3Helper::_arrayToObject()
+	 * GoogleMapHelper::_arrayToObject()
 	 *
 	 * @param string $name
 	 * @param array $array
@@ -1668,7 +1668,7 @@ function Fluster2ProjectionOverlay(map) {google.maps.OverlayView.call(this);this
 	}
 
 	/**
-	 * GoogleMapV3Helper::_toObjectParams()
+	 * GoogleMapHelper::_toObjectParams()
 	 *
 	 * @param array $array
 	 * @param bool $asString
