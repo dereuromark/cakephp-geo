@@ -13,6 +13,7 @@ use Geo\Geocode\Geocode;
 use Geo\Geocoder\Calculator;
 use Geo\Geocoder\Geocoder;
 use Geo\Model\Behavior\GeocoderBehavior;
+use Cake\Database\ValueBinder;
 
 class GeocoderBehaviorTest extends TestCase {
 

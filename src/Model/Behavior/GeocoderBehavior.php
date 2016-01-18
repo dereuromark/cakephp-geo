@@ -12,6 +12,9 @@ use Geo\Exception\InconclusiveException;
 use Geo\Exception\NotAccurateEnoughException;
 use Geo\Geocoder\Calculator;
 use Geo\Geocoder\Geocoder;
+use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\FunctionExpression;
 
 /**
  * A geocoding behavior for CakePHP to easily geocode addresses.
@@ -237,11 +240,35 @@ class GeocoderBehavior extends Behavior {
 
 		$value = $this->_calculationValue($this->_config['unit']);
 
-		return $value . ' * ACOS(COS(PI()/2 - RADIANS(90 - ' . $tableName . '.' . $fieldLat . ')) * ' .
-			'COS(PI()/2 - RADIANS(90 - ' . $lat . ')) * ' .
-			'COS(RADIANS(' . $tableName . '.' . $fieldLng . ') - RADIANS(' . $lng . ')) + ' .
-			'SIN(PI()/2 - RADIANS(90 - ' . $tableName . '.' . $fieldLat . ')) * ' .
-			'SIN(PI()/2 - RADIANS(90 - ' . $lat . ')))';
+		$op = function ($type, $params) {
+			return new QueryExpression($params, [], $type);
+		};
+		$func = function ($name, $arg = null) {
+			return new FunctionExpression($name, $arg === null ? [] : [$arg]);
+		};
+
+		$fieldLat = new IdentifierExpression("$tableName.$fieldLat");
+		$fieldLng = new IdentifierExpression("$tableName.$fieldLng");
+
+		$latRadians = $func('RADIANS', $op('-', ['90', $fieldLat]));
+		$lngRadians = $func('RADIANS', $fieldLng);
+		$radius = $op('/', [$func('PI'), '2']);
+
+		$mult = $op('*', [
+			$func('COS', $op('-', [$radius, $latRadians])),
+			'COS(PI()/2 - RADIANS(90 - ' . $lat . '))',
+			$func('COS', $op('-', [$lngRadians, $func('RADIANS', $lng)])),
+		]);
+
+		$mult2 = $op('*', [
+			$func('SIN', $op('-', [$radius, $latRadians])),
+			$func('SIN', $op('-', [$radius, new FunctionExpression('RADIANS', [$lng])])),
+		]);
+
+		return $op('*', [
+			(string)$value,
+			$func('ACOS', $op('+', [$mult, $mult2]))
+		]);
 	}
 
 	/**
@@ -273,14 +300,14 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * Snippet for custom pagination
 	 *
-	 * @return string
+	 * @return array
 	 */
 	public function distanceField($lat, $lng, $fieldName = null, $tableName = null) {
 		if ($tableName === null) {
 			$tableName = $this->_table->alias();
 		}
 		$fieldName = (!empty($fieldName) ? $fieldName : 'distance');
-		return $this->distanceSql($lat, $lng, null, null, $tableName) . ' AS ' . $tableName . '.' . $fieldName;
+		return [$tableName . '.' . $fieldName => $this->distanceSql($lat, $lng, null, null, $tableName)];
 	}
 
 	/**
