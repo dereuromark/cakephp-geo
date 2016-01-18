@@ -262,7 +262,7 @@ class GeocoderBehavior extends Behavior {
 
 		$mult2 = $op('*', [
 			$func('SIN', $op('-', [$radius, $latRadians])),
-			$func('SIN', $op('-', [$radius, new FunctionExpression('RADIANS', [$lng])])),
+			$func('SIN', $op('-', [$radius, $func('RADIANS', $lng)])),
 		]);
 
 		return $op('*', [
