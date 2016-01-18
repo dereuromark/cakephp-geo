@@ -41,8 +41,7 @@ class AddressesFixture extends TestFixture {
 	 */
 	public $records = [
 		[
-			'id' => '46',
-			'foreign_id' => '6',
+			'foreign_id' => 6,
 			'model' => 'Partner',
 			'country_id' => null,
 			'first_name' => 'Hans',
@@ -59,7 +58,6 @@ class AddressesFixture extends TestFixture {
 			'type_id' => null
 		],
 		[
-			'id' => '47',
 			'foreign_id' => '4',
 			'model' => 'Restaurant',
 			'country_id' => '1',
@@ -77,7 +75,6 @@ class AddressesFixture extends TestFixture {
 			'type_id' => null
 		],
 		[
-			'id' => '48',
 			'foreign_id' => '7',
 			'model' => 'Partner',
 			'country_id' => null,
@@ -95,7 +92,6 @@ class AddressesFixture extends TestFixture {
 			'type_id' => null
 		],
 		[
-			'id' => '49',
 			'foreign_id' => '5',
 			'model' => 'Restaurant',
 			'country_id' => '1',
