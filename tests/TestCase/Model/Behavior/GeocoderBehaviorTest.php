@@ -62,21 +62,25 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testDistance() {
-		$res = $this->Addresses->distanceSql(12, 14);
-		$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.lat)) * COS(PI()/2 - RADIANS(90 - 12)) * COS(RADIANS(Addresses.lng) - RADIANS(14)) + SIN(PI()/2 - RADIANS(90 - Addresses.lat)) * SIN(PI()/2 - RADIANS(90 - 12)))';
-		$this->assertEquals($expected, $res);
+		$expr = $this->Addresses->distanceSql(12, 14);
+		//$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.lat)) * COS(PI()/2 - RADIANS(90 - 12)) * COS(RADIANS(Addresses.lng) - RADIANS(14)) + SIN(PI()/2 - RADIANS(90 - Addresses.lat)) * SIN(PI()/2 - RADIANS(90 - 12)))';
+		$expected = '(6371.04 * ACOS((((COS((((PI() / 2) - RADIANS(((90 - Addresses.lat)))))) * COS(PI()/2 - RADIANS(90 - 12)) * COS(((RADIANS((Addresses.lng)) - RADIANS(:c0))))) + (SIN((((PI() / 2) - RADIANS(((90 - Addresses.lat)))))) * SIN((((PI() / 2) - RADIANS(:c1)))))))))';
+
+		$binder = new ValueBinder();
+		$result = $expr->sql($binder);
+		$this->assertEquals($expected, $result);
 
 		$this->Addresses->removeBehavior('Geocoder');
 		$this->Addresses->addBehavior('Geo.Geocoder', ['lat' => 'x', 'lng' => 'y']);
-		$res = $this->Addresses->distanceSql(12.1, 14.2);
-		$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.x)) * COS(PI()/2 - RADIANS(90 - 12.1)) * COS(RADIANS(Addresses.y) - RADIANS(14.2)) + SIN(PI()/2 - RADIANS(90 - Addresses.x)) * SIN(PI()/2 - RADIANS(90 - 12.1)))';
-		$this->assertEquals($expected, $res);
+		$expr = $this->Addresses->distanceSql(12.1, 14.2);
+		//$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.x)) * COS(PI()/2 - RADIANS(90 - 12.1)) * COS(RADIANS(Addresses.y) - RADIANS(14.2)) + SIN(PI()/2 - RADIANS(90 - Addresses.x)) * SIN(PI()/2 - RADIANS(90 - 12.1)))';
+		$this->assertInstanceOf('\Cake\Database\Expression\QueryExpression', $expr);
 
 		$this->Addresses->removeBehavior('Geocoder');
 		$this->Addresses->addBehavior('Geo.Geocoder', ['lat' => 'x', 'lng' => 'y']);
-		$res = $this->Addresses->distanceSql('User.lat', 'User.lng');
-		$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.x)) * COS(PI()/2 - RADIANS(90 - User.lat)) * COS(RADIANS(Addresses.y) - RADIANS(User.lng)) + SIN(PI()/2 - RADIANS(90 - Addresses.x)) * SIN(PI()/2 - RADIANS(90 - User.lat)))';
-		$this->assertEquals($expected, $res);
+		$expr = $this->Addresses->distanceSql('User.lat', 'User.lng');
+		//$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.x)) * COS(PI()/2 - RADIANS(90 - User.lat)) * COS(RADIANS(Addresses.y) - RADIANS(User.lng)) + SIN(PI()/2 - RADIANS(90 - Addresses.x)) * SIN(PI()/2 - RADIANS(90 - User.lat)))';
+		$this->assertInstanceOf('\Cake\Database\Expression\QueryExpression', $expr);
 	}
 
 	/**
@@ -85,9 +89,10 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testDistanceField() {
-		$res = $this->Addresses->distanceField(12, 14);
-		$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.lat)) * COS(PI()/2 - RADIANS(90 - 12)) * COS(RADIANS(Addresses.lng) - RADIANS(14)) + SIN(PI()/2 - RADIANS(90 - Addresses.lat)) * SIN(PI()/2 - RADIANS(90 - 12))) AS Addresses.distance';
-		$this->assertEquals($expected, $res);
+		$condition = $this->Addresses->distanceField(12, 14);
+		//$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.lat)) * COS(PI()/2 - RADIANS(90 - 12)) * COS(RADIANS(Addresses.lng) - RADIANS(14)) + SIN(PI()/2 - RADIANS(90 - Addresses.lat)) * SIN(PI()/2 - RADIANS(90 - 12))) AS Addresses.distance';
+
+		$this->assertInstanceOf('\Cake\Database\Expression\QueryExpression', $condition['Addresses.distance']);
 	}
 
 	/**

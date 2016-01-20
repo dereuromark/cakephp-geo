@@ -2,6 +2,7 @@
 namespace Geo\Model\Behavior;
 
 use Cake\Core\Configure;
+use Cake\Database\ExpressionInterface;
 use Cake\ORM\Behavior;
 use Cake\ORM\Table;
 use Cake\ORM\Entity;
@@ -223,9 +224,12 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * Forms a sql snippet for distance calculation on db level using two lat/lng points.
 	 *
-	 * @param string|float $lat Fieldname (Model.lat) or float value
-	 * @param string|float $lng Fieldname (Model.lng) or float value
-	 * @return string
+	 * @param string|float|null $lat Latitude field (Model.lat) or float value
+	 * @param string|float|null $lng Longitude field (Model.lng) or float value
+	 * @param string|null $fieldLat Comparison field
+	 * @param string|null $fieldLng Comparison field
+	 * @param string|null $tableName
+	 * @return ExpressionInterface
 	 */
 	public function distanceSql($lat, $lng, $fieldLat = null, $fieldLng = null, $tableName = null) {
 		if ($fieldLat === null) {
@@ -274,6 +278,11 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * Snippet for custom pagination
 	 *
+	 * @param null $distance
+	 * @param null $fieldName
+	 * @param null $fieldLat
+	 * @param null $fieldLng
+	 * @param null $tableName
 	 * @return array
 	 */
 	public function distanceConditions($distance = null, $fieldName = null, $fieldLat = null, $fieldLng = null, $tableName = null) {
@@ -300,6 +309,10 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * Snippet for custom pagination
 	 *
+	 * @param $lat
+	 * @param $lng
+	 * @param null $fieldName
+	 * @param null $tableName
 	 * @return array
 	 */
 	public function distanceField($lat, $lng, $fieldName = null, $tableName = null) {
@@ -314,6 +327,11 @@ class GeocoderBehavior extends Behavior {
 	 * Snippet for custom pagination
 	 * still useful?
 	 *
+	 * @param $lat
+	 * @param $lng
+	 * @param null $byFieldName
+	 * @param null $fieldName
+	 * @param null $tableName
 	 * @return string
 	 */
 	public function distanceByField($lat, $lng, $byFieldName = null, $fieldName = null, $tableName = null) {
