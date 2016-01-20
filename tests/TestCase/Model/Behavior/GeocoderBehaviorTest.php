@@ -2,6 +2,7 @@
 namespace Geo\Test\Model\Behavior;
 
 use Cake\Core\Configure;
+use Cake\Database\Driver\Postgres;
 use Cake\Utility\Hash;
 use Cake\Controller\Controller;
 use Cake\TestSuite\TestCase;
@@ -102,7 +103,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testSetDistanceAsVirtualField() {
 		$driver = $this->db->driver();
-		$this->skipIf(!($driver instanceof Mysql), 'The virtualFields test is only compatible with Mysql.');
+		$this->skipIf(!($driver instanceof Mysql || $driver instanceof Postgres), 'The virtualFields test is only compatible with Mysql.');
 
 		$options = ['lat' => 13.3, 'lng' => 19.2]; //array('order' => array('Address.distance' => 'ASC'));
 		$res = $this->Addresses->find()->find('distance', $options)->find('all')->toArray();
@@ -119,7 +120,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testSetDistanceAsVirtualFieldInMiles() {
 		$driver = $this->db->driver();
-		$this->skipIf(!($driver instanceof Mysql), 'The virtualFields test is only compatible with Mysql.');
+		$this->skipIf(!($driver instanceof Mysql || $driver instanceof Postgres), 'The virtualFields test is only compatible with Mysql.');
 
 		$this->Addresses->removeBehavior('Geocoder'); //FIXME: Shouldnt be necessary ideally
 		$this->Addresses->addBehavior('Geo.Geocoder', ['unit' => Calculator::UNIT_MILES]);
@@ -139,7 +140,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testPagination() {
 		$driver = $this->db->driver();
-		$this->skipIf(!($driver instanceof Mysql), 'The virtualFields test is only compatible with Mysql.');
+		$this->skipIf(!($driver instanceof Mysql || $driver instanceof Postgres), 'The virtualFields test is only compatible with Mysql.');
 
 		$this->Controller = new TestController();
 		$this->Controller->Addresses->addBehavior('Geo.Geocoder');
@@ -198,7 +199,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testBasic() {
 		$driver = $this->db->driver();
-		$this->skipIf(!($driver instanceof Mysql), 'The virtualFields test is only compatible with Mysql.');
+		$this->skipIf(!($driver instanceof Mysql || $driver instanceof Postgres), 'The virtualFields test is only compatible with Mysql.');
 
 		$this->Addresses->removeBehavior('Geocoder');
 		$this->Addresses->addBehavior('Geo.Geocoder', ['address' => ['street', 'zip', 'city']]);
