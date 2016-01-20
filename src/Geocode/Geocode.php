@@ -247,7 +247,7 @@ class Geocode {
 			$result = $this->_fetch($requestUrl, $this->params);
 			if ($result === false || $result === null) {
 				$this->setError('Could not retrieve url');
-				Log::write('debug', 'Geocoder could not retrieve url with \'' . $address . '\'', ['geocode']);
+				Log::write('debug', __('Geocoder could not retrieve url with {0}', [$address]), ['geocode']);
 				return false;
 			}
 
@@ -256,7 +256,7 @@ class Geocode {
 
 			if (!is_array($result)) {
 				$this->setError('Result parsing failed');
-				Log::write('debug', __('Failed geocode parsing of \'%s\'', $address));
+				Log::write('debug', __('Failed geocode parsing of {0}', $address), ['geocode']);
 				return false;
 			}
 
@@ -269,14 +269,14 @@ class Geocode {
 
 				// save Result
 				if ($this->options['log']) {
-					Log::write('debug', __('Address \'%s\' has been geocoded', $address));
+					Log::write('debug', __('Address {0} has been geocoded', $address), ['geocode']);
 				}
 				break;
 
 			} elseif ($status == static::STATUS_TOO_MANY_QUERIES) {
 				// sent geocodes too fast, delay +0.1 seconds
 				if ($this->options['log']) {
-					Log::write('debug', __('Delay necessary for address \'%s\'', $address));
+					Log::write('debug', __('Delay necessary for address {0}', $address), ['geocode']);
 				}
 				$count++;
 			} else {
@@ -292,14 +292,14 @@ class Geocode {
 				$this->setError('Error ' . $status . ' (' . $errorMessage . ')');
 
 				if ($this->options['log']) {
-					Log::write('debug', __('Could not geocode \'%s\'', $address));
+					Log::write('debug', __('Could not geocode {0}', $address), ['geocode']);
 				}
 				return false; # for now...
 			}
 
 			if ($count > $this->options['trials']) {
 				if ($this->options['log']) {
-					Log::write('debug', __('Aborted after too many trials with \'%s\'', $address));
+					Log::write('debug', __('Aborted after too many trials with {0}', $address), ['geocode']);
 				}
 				$this->setError('Too many trials - abort');
 				return false;
@@ -331,7 +331,7 @@ class Geocode {
 			$result = $this->_fetch($requestUrl, $this->params);
 			if ($result === false || $result === null) {
 				$this->setError('Could not retrieve url');
-				Log::write('debug', __('Could not retrieve url with \'%s\'', $latlng));
+				Log::write('debug', __('Could not retrieve url with {0}', $latlng), ['geocode']);
 				return false;
 			}
 
@@ -339,7 +339,7 @@ class Geocode {
 			$result = $this->_transform($result);
 			if (!is_array($result)) {
 				$this->setError('Result parsing failed');
-				Log::write('debug', __('Failed reverseGeocode parsing of \'%s\'', $latlng));
+				Log::write('debug', __('Failed reverseGeocode parsing of {0}', $latlng), ['geocode']);
 				return false;
 			}
 
@@ -352,14 +352,14 @@ class Geocode {
 
 				// save Result
 				if ($this->options['log']) {
-					Log::write('debug', __('Address \'%s\' has been geocoded', $latlng));
+					Log::write('debug', __('Address {0} has been geocoded', $latlng), ['geocode']);
 				}
 				break;
 
 			} elseif ($status == static::STATUS_TOO_MANY_QUERIES) {
 				// sent geocodes too fast, delay +0.1 seconds
 				if ($this->options['log']) {
-					Log::write('debug', __('Delay necessary for \'%s\'', $latlng));
+					Log::write('debug', __('Delay necessary for {0}', $latlng), ['geocode']);
 				}
 				$count++;
 
@@ -368,13 +368,13 @@ class Geocode {
 				$this->setError('Error ' . $status . (isset($this->statusCodes[$status]) ? ' (' . $this->statusCodes[$status] . ')' : ''));
 
 				if ($this->options['log']) {
-					Log::write('debug', __('Could not geocode \'%s\'', $latlng));
+					Log::write('debug', __('Could not geocode {0}', $latlng), ['geocode']);
 				}
 				return false; # for now...
 			}
 			if ($count > 5) {
 				if ($this->options['log']) {
-					Log::write('debug', __('Aborted after too many trials with \'%s\'', $latlng));
+					Log::write('debug', __('Aborted after too many trials with {0}', $latlng), ['geocode']);
 				}
 				$this->setError(__('Too many trials - abort'));
 				return false;
@@ -416,7 +416,7 @@ class Geocode {
 
 		if ($this->_isNotAccurateEnough($this->result['accuracy'])) {
 			$minAccuracy = $this->accuracyTypes[$this->options['min_accuracy']];
-			$this->setError(__('Accuracy not good enough (%s instead of at least %s)', $this->result['accuracy_name'], $minAccuracy));
+			$this->setError(__('Accuracy not good enough ({0} instead of at least {1})', [$this->result['accuracy_name'], $minAccuracy]));
 
 			return false;
 		}
@@ -431,9 +431,9 @@ class Geocode {
 			$validExpectation = !empty($found);
 
 			if (!$validExpectation) {
-				$this->setError(__('Expectation not reached (we have %s instead of at least one of %s)',
-					implode(', ', $found),
-					implode(', ', $expected)
+				$this->setError(__('Expectation not reached (we have {0} instead of at least one of {1})',
+					[implode(', ', $found),
+					implode(', ', $expected)]
 				));
 				return false;
 			}

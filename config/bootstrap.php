@@ -3,7 +3,9 @@
 use Cake\Log\Log;
 
 Log::config('geo', [
-	'engine' => 'File',
-	'types' => ['debug'],
+	'className' => 'Cake\Log\Engine\FileLog',
+	'path' => LOGS,
+	'levels' => ['debug'],
 	'scopes' => ['geocode'],
+	'file' => 'geocode',
 ]);
