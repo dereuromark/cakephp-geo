@@ -65,7 +65,7 @@ class GeocoderBehaviorTest extends TestCase {
 	public function testDistance() {
 		$expr = $this->Addresses->distanceSql(12, 14);
 		//$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.lat)) * COS(PI()/2 - RADIANS(90 - 12)) * COS(RADIANS(Addresses.lng) - RADIANS(14)) + SIN(PI()/2 - RADIANS(90 - Addresses.lat)) * SIN(PI()/2 - RADIANS(90 - 12)))';
-		$expected = '(6371.04 * ACOS((((COS((((PI() / 2) - RADIANS(((90 - Addresses.lat)))))) * COS(PI()/2 - RADIANS(90 - 12)) * COS(((RADIANS((Addresses.lng)) - RADIANS(:c0))))) + (SIN((((PI() / 2) - RADIANS(((90 - Addresses.lat)))))) * SIN((((PI() / 2) - RADIANS(:c1)))))))))';
+		$expected = '(6371.04 * ACOS((((COS((((PI() / 2) - RADIANS(((90 - Addresses.lat)))))) * COS(PI()/2 - RADIANS(90 - 12)) * COS(((RADIANS((Addresses.lng)) - RADIANS(14))))) + (SIN((((PI() / 2) - RADIANS(((90 - Addresses.lat)))))) * SIN((((PI() / 2) - RADIANS(90 - 12)))))))))';
 
 		$binder = new ValueBinder();
 		$result = $expr->sql($binder);
@@ -106,11 +106,14 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->skipIf(!($driver instanceof Mysql || $driver instanceof Postgres), 'The virtualFields test is only compatible with Mysql.');
 
 		$options = ['lat' => 13.3, 'lng' => 19.2]; //array('order' => array('Address.distance' => 'ASC'));
-		$res = $this->Addresses->find()->find('distance', $options)->find('all')->toArray();
+		$query = $this->Addresses->find()->find('distance', $options)->find('all');
 
-		$this->assertTrue($res[0]['distance'] < $res[1]['distance']);
-		$this->assertTrue($res[1]['distance'] < $res[2]['distance']);
-		$this->assertTrue($res[0]['distance'] > 620 && $res[0]['distance'] < 640);
+//debug($query);die();
+		$result = $query->toArray();
+
+		$this->assertTrue($result[0]['distance'] < $result[1]['distance']);
+		$this->assertTrue($result[1]['distance'] < $result[2]['distance']);
+		$this->assertTrue($result[0]['distance'] > 620 && $result[0]['distance'] < 640);
 	}
 
 	/**
