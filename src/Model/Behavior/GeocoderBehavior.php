@@ -148,17 +148,6 @@ class GeocoderBehavior extends Behavior {
 
 		$entityData['geocoder_result'] = [];
 
-		if (
-			$this->_config['overwrite'] || ((int)$entity->get($this->_config['lat']) === 0 && (int)$entity->get($this->_config['lng']) === 0)
-		) {
-			/*
-			//FIXME: whitelist in 3.x?
-			if (!empty($this->_table->whitelist) && (!in_array($this->_config['lat'], $this->_table->whitelist) || !in_array($this->_config['lng'], $this->_table->whitelist))) {
-				return $entity;
-			}
-			*/
-		}
-
 		$addresses = $this->_geocode($addressData);
 
 		if ($addresses->count() < 1) {
@@ -256,18 +245,18 @@ class GeocoderBehavior extends Behavior {
 		$fieldLat = new IdentifierExpression("$tableName.$fieldLat");
 		$fieldLng = new IdentifierExpression("$tableName.$fieldLng");
 
-		$latRadians = $func('RADIANS', $op('-', ['90', $fieldLat]));
-		$lngRadians = $func('RADIANS', $fieldLng);
+		$fieldLatRadians = $func('RADIANS', $op('-', ['90', $fieldLat]));
+		$fieldLngRadians = $func('RADIANS', $fieldLng);
 		$radius = $op('/', [$func('PI'), '2']);
 
 		$mult = $op('*', [
-			$func('COS', $op('-', [$radius, $latRadians])),
+			$func('COS', $op('-', [$radius, $fieldLatRadians])),
 			'COS(PI()/2 - RADIANS(90 - ' . $lat . '))',
-			$func('COS', $op('-', [$lngRadians, 'RADIANS(' . $lng . ')'])),
+			$func('COS', $op('-', [$fieldLngRadians, $func('RADIANS', $lng)])),
 		]);
 
 		$mult2 = $op('*', [
-			$func('SIN', $op('-', [$radius, $latRadians])),
+			$func('SIN', $op('-', [$radius, $fieldLatRadians])),
 			$func('SIN', $op('-', [$radius, 'RADIANS(90 - ' . $lat . ')'])),
 		]);
 
@@ -280,11 +269,11 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * Snippet for custom pagination
 	 *
-	 * @param null $distance
-	 * @param null $fieldName
-	 * @param null $fieldLat
-	 * @param null $fieldLng
-	 * @param null $tableName
+	 * @param int|null $distance
+	 * @param string|null $fieldName
+	 * @param string|null $fieldLat
+	 * @param string|null $fieldLng
+	 * @param string|null $tableName
 	 * @return array
 	 */
 	public function distanceConditions($distance = null, $fieldName = null, $fieldLat = null, $fieldLng = null, $tableName = null) {
@@ -311,10 +300,10 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * Snippet for custom pagination
 	 *
-	 * @param $lat
-	 * @param $lng
-	 * @param null $fieldName
-	 * @param null $tableName
+	 * @param float|string|null $lat
+	 * @param float|string|null $lng
+	 * @param string|null $fieldName
+	 * @param string|null $tableName
 	 * @return array
 	 */
 	public function distanceField($lat, $lng, $fieldName = null, $tableName = null) {
@@ -323,31 +312,6 @@ class GeocoderBehavior extends Behavior {
 		}
 		$fieldName = (!empty($fieldName) ? $fieldName : 'distance');
 		return [$tableName . '.' . $fieldName => $this->distanceSql($lat, $lng, null, null, $tableName)];
-	}
-
-	/**
-	 * Snippet for custom pagination
-	 * still useful?
-	 *
-	 * @param $lat
-	 * @param $lng
-	 * @param null $byFieldName
-	 * @param null $fieldName
-	 * @param null $tableName
-	 * @return string
-	 */
-	public function distanceByField($lat, $lng, $byFieldName = null, $fieldName = null, $tableName = null) {
-		if ($tableName === null) {
-			$tableName = $this->_table->alias();
-		}
-		if ($fieldName === null) {
-			$fieldName = 'distance';
-		}
-		if ($byFieldName === null) {
-			$byFieldName = 'radius';
-		}
-
-		return $this->distanceSql($lat, $lng, null, null, $tableName) . ' ' . $byFieldName;
 	}
 
 	/**
