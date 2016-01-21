@@ -14,7 +14,7 @@ $addresses = $this->behaviors()->Geocoder->geocode($entity);
 $addresses = $this->geocode($entity);
 ```
 
-The sql snippet has changed from `distance()` to `distanceSql()`.
+The sql snippet has changed from `distance()` to `distanceExpr()` to be DB agnostic.
 
 The calculation has been moved to Calculation class.
 

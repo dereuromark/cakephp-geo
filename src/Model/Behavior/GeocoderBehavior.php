@@ -201,7 +201,7 @@ class GeocoderBehavior extends Behavior {
 	 */
 	public function findDistance(Query $query, array $options) {
 		$options += ['tableName' => null];
-		$sql = $this->distanceSql($options['lat'], $options['lng'], null, null, $options['tableName']);
+		$sql = $this->distanceExpr($options['lat'], $options['lng'], null, null, $options['tableName']);
 		$query->select(['distance' => $query->newExpr($sql)]);
 		if (isset($options['distance'])) {
 			// Some SQL versions cannot reuse the select() distance field, so we better reuse the $sql snippet
@@ -222,7 +222,7 @@ class GeocoderBehavior extends Behavior {
 	 * @param string|null $tableName
 	 * @return ExpressionInterface
 	 */
-	public function distanceSql($lat, $lng, $fieldLat = null, $fieldLng = null, $tableName = null) {
+	public function distanceExpr($lat, $lng, $fieldLat = null, $fieldLng = null, $tableName = null) {
 		if ($fieldLat === null) {
 			$fieldLat = $this->_config['lat'];
 		}
@@ -311,7 +311,7 @@ class GeocoderBehavior extends Behavior {
 			$tableName = $this->_table->alias();
 		}
 		$fieldName = (!empty($fieldName) ? $fieldName : 'distance');
-		return [$tableName . '.' . $fieldName => $this->distanceSql($lat, $lng, null, null, $tableName)];
+		return [$tableName . '.' . $fieldName => $this->distanceExpr($lat, $lng, null, null, $tableName)];
 	}
 
 	/**
