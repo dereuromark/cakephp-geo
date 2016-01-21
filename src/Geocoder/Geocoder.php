@@ -241,6 +241,10 @@ class Geocoder {
 	 * @return void
      */
 	protected function _buildGeocoder() {
+		if (isset($this->geocoder)) {
+			return $this->geocoder;
+		}
+
 		$geocoderClass = $this->config('provider');
 		if (is_callable($geocoderClass)) {
 			$this->geocoder = $geocoderClass();

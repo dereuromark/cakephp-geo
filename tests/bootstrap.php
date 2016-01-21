@@ -33,7 +33,7 @@ define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 define('CAKE', CORE_PATH . 'src' . DS);
 
 Cake\Core\Configure::write('App', [
-	'namespace' => 'App'
+	'namespace' => 'TestApp'
 ]);
 
 Cake\Core\Configure::write('debug', true);

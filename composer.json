@@ -29,6 +29,7 @@
 	"autoload-dev": {
 		"psr-4": {
 			"Geo\\Test\\": "tests",
+			"TestApp\\": "tests/TestApp/src",
 			"Cake\\Test\\": "vendor/cakephp/cakephp/tests"
 		}
 	},

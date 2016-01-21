@@ -1,7 +1,7 @@
 <?php
 namespace Geo\Test\Geocoder;
 
-use Geo\Geocoder\Geocoder;
+use TestApp\Geocoder\Geocoder;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 
@@ -75,7 +75,7 @@ class GeocoderTest extends TestCase {
 		];
 
 		$this->Geocoder = new Geocoder($config);
-		$result = $this->Geocoder->geocode('Oranienburger Straße 87, 10178 Berlin, Deutschland');
+		$result = $this->Geocoder->geocode('Oranienburger Straße 85, 10178 Berlin, Deutschland');
 
 		$this->assertTrue($result->count() > 1);
 
