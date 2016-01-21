@@ -32,6 +32,10 @@ class GeocoderBehavior extends GeoGeocoderBehavior {
 		$testFile = $testFiles . $file;
 
 		if (!file_exists($testFile)) {
+			if (getenv('CI')) {
+				throw new \Exception('Should not happen on CI.');
+			}
+
 			$addresses = parent::_geocode($addressFields);
 			file_put_contents($testFile, serialize($addresses));
 		}

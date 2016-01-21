@@ -34,6 +34,10 @@ class Geocoder extends GeoGeocoder {
 		$testFile = $testFiles . $file;
 
 		if (!file_exists($testFile)) {
+			if (getenv('CI')) {
+				throw new \Exception('Should not happen on CI.');
+			}
+
 			$addresses = parent::geocode($address, $params);
 			file_put_contents($testFile, serialize($addresses));
 		}
