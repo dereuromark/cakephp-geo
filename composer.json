@@ -34,6 +34,7 @@
 		}
 	},
 	"require-dev": {
-		"cakephp/cakephp": "~3.1"
+		"cakephp/cakephp": "~3.1",
+		"fig-r/psr2r-sniffer": "dev-master"
 	}
 }

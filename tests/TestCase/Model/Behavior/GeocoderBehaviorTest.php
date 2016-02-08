@@ -150,7 +150,6 @@ class GeocoderBehaviorTest extends TestCase {
 		$options = ['lat' => 13.3, 'lng' => 19.2, 'distance' => 3000];
 		// find()->find('distance', $options)->find('all')->toArray()
 
-
 		$query = $this->Controller->Addresses->find('distance', $options);
 		$query->order(['distance' => 'ASC']);
 
@@ -216,7 +215,6 @@ class GeocoderBehaviorTest extends TestCase {
 
 		$this->assertTrue(!empty($res['lat']) && !empty($res['lng']));
 		$this->assertTrue(round($res['lat']) === 49.0 && round($res['lng']) === 10.0);
-
 
 		// inconclusive
 		$data = [
@@ -348,7 +346,7 @@ class GeocoderBehaviorTest extends TestCase {
 	/**
 	 * Gets a new Entity
 	 *
-	 * @return Entity
+	 * @return \Cake\ORM\Entity
 	 */
 	protected function _getEntity($data) {
 		return new Entity($data);

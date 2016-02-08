@@ -10,5 +10,5 @@ namespace Geo\Exception;
 
 use Cake\Core\Exception\Exception;
 
-class InconclusiveException extends Exception{
+class InconclusiveException extends Exception {
 }

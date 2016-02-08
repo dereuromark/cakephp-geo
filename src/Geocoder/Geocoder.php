@@ -150,7 +150,7 @@ class Geocoder {
 	 */
 	public function isExpectedType(Address $address) {
 		$expected = $this->_config['expect'];
-		if(!$expected) {
+		if (!$expected) {
 			return true;
 		}
 
@@ -225,7 +225,7 @@ class Geocoder {
 	/**
 	 * @param \Geocoder\Model\Address $address
 	 * @return bool
-     */
+	 */
 	public function isAccurateEnough(Address $address) {
 		$levels = array_keys($this->_types);
 		$values = array_values($this->_types);
@@ -239,7 +239,7 @@ class Geocoder {
 
 	/**
 	 * @return void
-     */
+	 */
 	protected function _buildGeocoder() {
 		if (isset($this->geocoder)) {
 			return $this->geocoder;

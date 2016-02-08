@@ -85,7 +85,7 @@ class GeocoderBehavior extends Behavior {
  * Does not retain a reference to the Table object. If you need this
  * you should override the constructor.
  *
- * @param Table $table The table this behavior is attached to.
+ * @param \Cake\ORM\Table $table The table this behavior is attached to.
  * @param array $config The config for this behavior.
  */
 	public function __construct(Table $table, array $config = []) {
@@ -103,7 +103,7 @@ class GeocoderBehavior extends Behavior {
  */
 	public function beforeRules(Event $event, Entity $entity, ArrayObject $options) {
 		if ($this->_config['on'] === 'beforeRules') {
-			if(!$this->geocode($entity)) {
+			if (!$this->geocode($entity)) {
 				$event->stopPropagation();
 			}
 		}
@@ -220,7 +220,7 @@ class GeocoderBehavior extends Behavior {
 	 * @param string|null $fieldLat Comparison field
 	 * @param string|null $fieldLng Comparison field
 	 * @param string|null $tableName
-	 * @return ExpressionInterface
+	 * @return \Cake\Database\ExpressionInterface
 	 */
 	public function distanceExpr($lat, $lng, $fieldLat = null, $fieldLng = null, $tableName = null) {
 		if ($fieldLat === null) {
@@ -292,7 +292,7 @@ class GeocoderBehavior extends Behavior {
 		];
 		$fieldName = !empty($fieldName) ? $fieldName : 'distance';
 		if ($distance !== null) {
-			$conditions[] = '1=1 HAVING ' . $tableName . '.' . $fieldName . ' < ' . intval($distance);
+			$conditions[] = '1=1 HAVING ' . $tableName . '.' . $fieldName . ' < ' . (int)$distance;
 		}
 		return $conditions;
 	}
