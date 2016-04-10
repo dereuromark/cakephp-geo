@@ -225,7 +225,7 @@ class Geocoder {
 	/**
 	 * @param \Geocoder\Model\Address $address
 	 * @return bool
-     */
+	 */
 	public function isAccurateEnough(Address $address) {
 		$levels = array_keys($this->_types);
 		$values = array_values($this->_types);
@@ -239,7 +239,7 @@ class Geocoder {
 
 	/**
 	 * @return void
-     */
+	 */
 	protected function _buildGeocoder() {
 		$geocoderClass = $this->config('provider');
 		if (is_callable($geocoderClass)) {

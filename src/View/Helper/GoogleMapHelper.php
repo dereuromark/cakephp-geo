@@ -444,7 +444,8 @@ class GoogleMapHelper extends Helper {
 
 		$this->_config['div']['style'] .= 'width: ' . $this->_config['div']['width'] . ';';
 		$this->_config['div']['style'] .= 'height: ' . $this->_config['div']['height'] . ';';
-		unset($this->_config['div']['width']); unset($this->_config['div']['height']);
+		unset($this->_config['div']['width']);
+		unset($this->_config['div']['height']);
 
 		$defaultText = isset($this->_config['content']) ? $this->_config['content'] : __('Map cannot be displayed!');
 		$result .= $this->Html->tag('div', $defaultText, $this->_config['div']);
@@ -477,7 +478,7 @@ class GoogleMapHelper extends Helper {
 	 *
 	 * @param array $options
 	 * @return mixed Integer marker count or boolean false on failure
-	 * @throws Exception
+	 * @throws \Cake\Core\Exception\Exception
 	 */
 	public function addMarker($options) {
 		$defaults = $this->_config['marker'];
@@ -782,7 +783,7 @@ var iconShape = {
 			}
 		}
 		if (empty($options['anchor'])) {
-			$options['anchor']['width'] = intval($options['size']['width'] / 2);
+			$options['anchor']['width'] = (int)($options['size']['width'] / 2);
 			$options['anchor']['height'] = $options['size']['height'];
 		}
 		if (empty($options['origin'])) {
@@ -1341,7 +1342,7 @@ var iconShape = {
 			//'type' => null,
 		]);
 		// do we want zoom to auto-correct itself?
-		if (!isset($options['zoom']) && !empty($mapOptions['markers'])|| !empty($mapOptions['paths']) || !empty($mapOptions['visible'])) {
+		if (!isset($options['zoom']) && !empty($mapOptions['markers']) || !empty($mapOptions['paths']) || !empty($mapOptions['visible'])) {
 			$options['zoom'] = 'auto';
 		}
 
@@ -1572,7 +1573,8 @@ var iconShape = {
 	protected function _prepColor($color) {
 		if (strpos($color, '#') !== false) {
 			return str_replace('#', '0x', $color);
-		} elseif (is_numeric($color)) {
+		}
+		if (is_numeric($color)) {
 			return '0x' . $color;
 		}
 		return $color;
