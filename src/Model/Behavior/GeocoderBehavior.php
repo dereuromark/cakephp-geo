@@ -150,7 +150,7 @@ class GeocoderBehavior extends Behavior {
 
 		$addresses = $this->_geocode($addressData);
 
-		if ($addresses->count() < 1) {
+		if (!$addresses || $addresses->count() < 1) {
 			return !empty($this->_config['allowEmpty']) ? true : false;
 		}
 		$address = $addresses->first();
