@@ -207,7 +207,7 @@ class GoogleMapHelper extends Helper {
 		],
 		'autoCenter' => false, // try to fit all markers in (careful, all zooms values are omitted)
 		'autoScript' => false, // let the helper include the necessary js script links
-		'inline' => false, // for scripts
+		'block' => true, // for scripts
 		'localImages' => false,
 		'https' => null // auto detect
 	];
@@ -261,6 +261,12 @@ class GoogleMapHelper extends Helper {
 		}
 
 		$config = Hash::merge($defaults, $config);
+
+		// BC
+		if (!empty($options['inline'])) {
+			$options['block'] = null;
+		}
+
 		parent::__construct($View, $config);
 	}
 
@@ -274,6 +280,7 @@ class GoogleMapHelper extends Helper {
 	 * - region
 	 *
 	 * @param bool $sensor
+	 * @param string|null $api
 	 * @param string $language (iso2: en, de, ja, ...)
 	 * @param string $append (more key-value-pairs to append)
 	 * @return string Full URL
@@ -294,7 +301,6 @@ class GoogleMapHelper extends Helper {
 		if (!empty($append)) {
 			$url .= $append;
 		}
-		$this->_apiIncluded = true;
 		return $url;
 	}
 
@@ -388,10 +394,11 @@ class GoogleMapHelper extends Helper {
 		$result = '';
 
 		// autoinclude js?
-		if (!empty($this->_config['autoScript']) && !$this->_apiIncluded) {
-			$res = $this->Html->script($this->apiUrl(), ['inline' => $this->_config['inline']]);
+		if ($this->_config['autoScript'] && !$this->_apiIncluded) {
+			$res = $this->Html->script($this->apiUrl(), ['block' => $this->_config['block']]);
+			$this->_apiIncluded = true;
 
-			if ($this->_config['inline']) {
+			if (!$this->_config['block']) {
 				$result .= $res . PHP_EOL;
 			}
 			// usually already included
@@ -399,8 +406,8 @@ class GoogleMapHelper extends Helper {
 		}
 		// still not very common: http://code.google.com/intl/de-DE/apis/maps/documentation/javascript/basics.html
 		if (false && !empty($this->_config['autoScript']) && !$this->_gearsIncluded) {
-			$res = $this->Html->script($this->gearsUrl(), ['inline' => $this->_config['inline']]);
-			if ($this->_config['inline']) {
+			$res = $this->Html->script($this->gearsUrl(), ['block' => $this->_config['block']]);
+			if (!$this->_config['block']) {
 				$result .= $res . PHP_EOL;
 			}
 		}
