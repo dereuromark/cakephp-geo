@@ -96,7 +96,7 @@ class GeocoderTest extends TestCase {
 	public function testIp() {
 		$config = [
 			'provider' => function () {
-				return new \Geocoder\Provider\FreeGeoIp(new \Ivory\HttpAdapter\CakeHttpAdapter());
+				return new \Geo\Geocoder\Provider\GeoIpLookup(new \Ivory\HttpAdapter\CakeHttpAdapter());
 			}
 		];
 
