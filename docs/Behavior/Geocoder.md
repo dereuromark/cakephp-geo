@@ -1,4 +1,5 @@
 # Geocoder Behavior
+Geocode your entity data.
 
 ## Adding the behavior
 
@@ -8,14 +9,47 @@ $this->addBehavior('Geo.Geocoder', $config);
 ```
 
 Possible config options are:
+- apiKey (mandatory for some providers)
+- locale (for example DE)
+- region (for some providers
+- ssl (for some providers)
 - address: (array|string, optional) set to the field name that contains the string from where to generate the slug, or a set of field names to concatenate for generating the slug.
-- real: (boolean, optional) if set to true then field names defined in address must exist in the database table. defaults to false
-- expect: (array)postal_code, locality, sublocality, ...
-- min_accuracy: see above
 - overwrite: lat/lng overwrite on changes, defaults to false
 - update: what fields to update (key=>value array pairs)
 - on: beforeMarshall/beforeSave (defaults to save) - Set to false if you only want to use the validation rules etc
 - unit: defaults to km
+- allowInconclusive: False to throw exception
+- expect: (array)postal_code, locality, sublocality, ...
+
+Note that it is usually better to set global configs in your `app.php` using the `Geocoder` key.
+
+## Configure your own geocoder
+By default it will use the GoogleMaps provider.
+
+Please see [willdurand/geocoder](https://github.com/geocoder-php/Geocoder) library on what other providers you can use out of the box.
+You can chose from
+- 12+ address-based Geocoder providers
+- 10+ IP-based Geocoder providers
+
+You could easily switch to an IP based provider like this:
+```php
+// in your app.php config
+'Geocoder' => [
+	'provider' => '\Geocoder\Provider\FreeGeoIp'
+],
+```
+
+Let's say you want to switch to OpenStreetMap and also use a different HTTP adapter:
+```php
+// in your app.php config
+'Geocoder' => [
+	'provider' => function () {
+		return new \Geocoder\Provider\OpenStreetMap(new \Ivory\HttpAdapter\BuzzHttpAdapter());
+	}
+],
+```
+
+Note: Don't forget that most providers need an apiKey to work.
 
 ## Saving geocodable data
 
@@ -29,7 +63,7 @@ $lat = $address->lat;
 $lng = $address->lng;
 ```
 
-You can always manually call `geocode` as well, of course:
+You can always manually call `geocode()` as well, of course:
 ```php
 $address = $this->Addresses->get($id);
 // $address contains address with value `Berlin`
@@ -44,12 +78,13 @@ $lng = $address->lng;
 
 We want to find all addresses within a distance of 200 km of the given lat/lng:
 ```php
+// In a controller action
 $options = ['lat' => 13.3, 'lng' => 19.2, 'distance' => 200];
 
 $query = $this->Addresses->find('distance', $options);
 $query->order(['distance' => 'ASC']);
 
-$res = $this->Controller->paginate($query)
+$addresses = $this->paginate($query)
 ```
 They will be ordered by `['distance' => 'ASC']`, so all records with the smallest distances first.
 
@@ -65,7 +100,7 @@ $addressTable->resetRecords();
 ```
 This will loop over all records as a batch script and update all lat/lng values.
 You should set a scope for performance reasons. Maybe update only every record older than x months, or those that have lat/lng values of `null` to avoid
-re-geocoding.
+re-geocoding. And of course you should timeout your batch runs, most providers only allow y requests per minute. Better don't over-request to avoid penalties.
 
 ## Validate lat/lng
 

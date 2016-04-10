@@ -14,7 +14,8 @@
 	],
 	"require": {
 		"php": ">=5.4",
-		"cakephp/cakephp": "~3.0"
+		"cakephp/orm": "~3.1",
+		"willdurand/geocoder": "^3.3"
 	},
 	"support": {
 		"source": "https://github.com/dereuromark/cakephp-geo"
@@ -28,7 +29,12 @@
 	"autoload-dev": {
 		"psr-4": {
 			"Geo\\Test\\": "tests",
+			"TestApp\\": "tests/TestApp/src",
 			"Cake\\Test\\": "vendor/cakephp/cakephp/tests"
 		}
+	},
+	"require-dev": {
+		"cakephp/cakephp": "~3.1",
+		"fig-r/psr2r-sniffer": "dev-master"
 	}
 }

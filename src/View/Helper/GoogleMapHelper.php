@@ -41,7 +41,7 @@ use Cake\Core\Exception\Exception;
  *
  * v1.6 CakePHP3.x compatible
  */
-class GoogleMapV3Helper extends Helper {
+class GoogleMapHelper extends Helper {
 
 	use JsBaseEngineTrait;
 
@@ -207,7 +207,7 @@ class GoogleMapV3Helper extends Helper {
 		],
 		'autoCenter' => false, // try to fit all markers in (careful, all zooms values are omitted)
 		'autoScript' => false, // let the helper include the necessary js script links
-		'inline' => false, // for scripts
+		'block' => true, // for scripts
 		'localImages' => false,
 		'https' => null // auto detect
 	];
@@ -219,7 +219,7 @@ class GoogleMapV3Helper extends Helper {
 	protected $_located = false;
 
 	public function __construct($View = null, $config = []) {
-		$google = (array)Configure::read('Google');
+		$google = (array)Configure::read('GoogleMap');
 		$defaults = $this->_defaultOptions;
 		if (!empty($google['api'])) {
 			$defaults['map']['api'] = $google['api'];
@@ -261,6 +261,12 @@ class GoogleMapV3Helper extends Helper {
 		}
 
 		$config = Hash::merge($defaults, $config);
+
+		// BC
+		if (!empty($options['inline'])) {
+			$options['block'] = null;
+		}
+
 		parent::__construct($View, $config);
 	}
 
@@ -274,6 +280,7 @@ class GoogleMapV3Helper extends Helper {
 	 * - region
 	 *
 	 * @param bool $sensor
+	 * @param string|null $api
 	 * @param string $language (iso2: en, de, ja, ...)
 	 * @param string $append (more key-value-pairs to append)
 	 * @return string Full URL
@@ -294,7 +301,6 @@ class GoogleMapV3Helper extends Helper {
 		if (!empty($append)) {
 			$url .= $append;
 		}
-		$this->_apiIncluded = true;
 		return $url;
 	}
 
@@ -324,7 +330,7 @@ class GoogleMapV3Helper extends Helper {
 	/**
 	 * Make it possible to include multiple maps per page
 	 * resets markers, infoWindows etc
-	 * @param full: true=optionsAsWell
+	 * @param bool $full true=optionsAsWell
 	 * @return void
 	 */
 	public function reset($full = true) {
@@ -388,10 +394,11 @@ class GoogleMapV3Helper extends Helper {
 		$result = '';
 
 		// autoinclude js?
-		if (!empty($this->_config['autoScript']) && !$this->_apiIncluded) {
-			$res = $this->Html->script($this->apiUrl(), ['inline' => $this->_config['inline']]);
+		if ($this->_config['autoScript'] && !$this->_apiIncluded) {
+			$res = $this->Html->script($this->apiUrl(), ['block' => $this->_config['block']]);
+			$this->_apiIncluded = true;
 
-			if ($this->_config['inline']) {
+			if (!$this->_config['block']) {
 				$result .= $res . PHP_EOL;
 			}
 			// usually already included
@@ -399,8 +406,8 @@ class GoogleMapV3Helper extends Helper {
 		}
 		// still not very common: http://code.google.com/intl/de-DE/apis/maps/documentation/javascript/basics.html
 		if (false && !empty($this->_config['autoScript']) && !$this->_gearsIncluded) {
-			$res = $this->Html->script($this->gearsUrl(), ['inline' => $this->_config['inline']]);
-			if ($this->_config['inline']) {
+			$res = $this->Html->script($this->gearsUrl(), ['block' => $this->_config['block']]);
+			if (!$this->_config['block']) {
 				$result .= $res . PHP_EOL;
 			}
 		}
@@ -437,7 +444,8 @@ class GoogleMapV3Helper extends Helper {
 
 		$this->_config['div']['style'] .= 'width: ' . $this->_config['div']['width'] . ';';
 		$this->_config['div']['style'] .= 'height: ' . $this->_config['div']['height'] . ';';
-		unset($this->_config['div']['width']); unset($this->_config['div']['height']);
+		unset($this->_config['div']['width']);
+		unset($this->_config['div']['height']);
 
 		$defaultText = isset($this->_config['content']) ? $this->_config['content'] : __('Map cannot be displayed!');
 		$result .= $this->Html->tag('div', $defaultText, $this->_config['div']);
@@ -470,7 +478,7 @@ class GoogleMapV3Helper extends Helper {
 	 *
 	 * @param array $options
 	 * @return mixed Integer marker count or boolean false on failure
-	 * @throws Exception
+	 * @throws \Cake\Core\Exception\Exception
 	 */
 	public function addMarker($options) {
 		$defaults = $this->_config['marker'];
@@ -593,9 +601,9 @@ function geocodeAddress(address) {
 	 *
 	 * @param mixed $directions
 	 * - bool TRUE for autoDirections (using lat/lng)
-	 * @param array $options
+	 * @param array $markerOptions
 	 * - options array of marker for autoDirections etc (optional)
-	 * @return HTML
+	 * @return string HTML
 	 */
 	protected function _directions($directions, $markerOptions = []) {
 		$options = [
@@ -660,11 +668,11 @@ function geocodeAddress(address) {
 	/**
 	 * Get a custom icon set
 	 *
-	 * @param color: green, red, purple, ... or some special ones like "home", ...
-	 * @param char: A...Z or 0...20/100 (defaults to none)
-	 * @param size: s, m, l (defaults to medium)
+	 * @param string $color Color: green, red, purple, ... or some special ones like "home", ...
+	 * @param string $char Char: A...Z or 0...20/100 (defaults to none)
+	 * @param string $size Size: s, m, l (defaults to medium)
 	 * NOTE: for special ones only first parameter counts!
-	 * @return array: array(icon, shadow, shape, ...)
+	 * @return array Array(icon, shadow, shape, ...)
 	 */
 	public function iconSet($color, $char = null, $size = 'm') {
 		$colors = ['red', 'green', 'yellow', 'blue', 'purple', 'white', 'black'];
@@ -730,10 +738,10 @@ var iconShape = {
 	 * custom icons: http://code.google.com/p/google-maps-icons/wiki/NumericIcons#Lettered_Balloons_from_A_to_Z,_in_10_Colors
 	 * custom shadows: http://www.cycloloco.com/shadowmaker/shadowmaker.htm
 	 *
-	 * @param string $imageUrl (http://...)
-	 * @param string $shadowImageUrl (http://...)
-	 * @param array $imageOptions
-	 * @param array $shadowImageOptions
+	 * @param string $image Image Url (http://...)
+	 * @param string $shadow ShadowImage Url (http://...)
+	 * @param array $imageOptions Image options
+	 * @param array $shadowOptions Shadow image options
 	 * @return array Resulting array
 	 */
 	public function addIcon($image, $shadow = null, $imageOptions = [], $shadowOptions = []) {
@@ -767,7 +775,8 @@ var iconShape = {
 		// The shadow image is larger in the horizontal dimension
 		// while the position and offset are the same as for the main image.
 		if (empty($options['size'])) {
-			if ($data = @getimagesize($url)) {
+			$data = getimagesize($url);
+			if ($data) {
 				$options['size']['width'] = $data[0];
 				$options['size']['height'] = $data[1];
 			} else {
@@ -775,7 +784,7 @@ var iconShape = {
 			}
 		}
 		if (empty($options['anchor'])) {
-			$options['anchor']['width'] = intval($options['size']['width'] / 2);
+			$options['anchor']['width'] = (int)($options['size']['width'] / 2);
 			$options['anchor']['height'] = $options['size']['height'];
 		}
 		if (empty($options['origin'])) {
@@ -953,13 +962,13 @@ var iconShape = {
 			$from = 'new google.maps.LatLng(' . (float)$from['lat'] . ', ' . (float)$from['lng'] . ')';
 		} else {
 			throw new Exception('not implemented yet, use array of lat/lng');
-			$from = '\'' . h($from) . '\'';
+			//$from = '\'' . h($from) . '\'';
 		}
 		if (is_array($to)) {
 			$to = 'new google.maps.LatLng(' . (float)$to['lat'] . ', ' . (float)$to['lng'] . ')';
 		} else {
 			throw new Exception('not implemented yet, use array of lat/lng');
-			$to = '\'' . h($to) . '\'';
+			//$to = '\'' . h($to) . '\'';
 		}
 
 		$defaults = $this->_config['polyline'];
@@ -987,19 +996,19 @@ var iconShape = {
 
 	/**
 	 * @param string $content (html/text)
-	 * @param int $infoWindowCount
+	 * @param int $index infoWindowCount
 	 * @return void
 	 */
-	public function setContentInfoWindow($con, $index) {
+	public function setContentInfoWindow($content, $index) {
 		$this->map .= "
-			gInfoWindows" . static::$mapCount . "[$index]. setContent(" . $this->escapeString($con) . ");";
+			gInfoWindows" . static::$mapCount . "[$index]. setContent(" . $this->escapeString($content) . ");";
 	}
 
 	/**
 	 * Json encode string
 	 *
 	 * @param mixed $content
-	 * @return json
+	 * @return string JSON
 	 */
 	public function escapeString($content) {
 		return json_encode($content);
@@ -1024,7 +1033,7 @@ var iconShape = {
 	 * Make sure that your view does also output the buffer at some place!
 	 *
 	 * @param bool $return If the output should be returned instead
-	 * @return void or string Javascript if $return is true
+	 * @return null|string Javascript if $return is true
 	 */
 	public function finalize($return = false) {
 		$script = $this->_arrayToObject('matching', $this->matching, false, true) . '
@@ -1139,7 +1148,7 @@ var iconShape = {
 	}
 
 	/**
-	 * @return json like js string
+	 * @return string JSON like js string
 	 */
 	protected function _mapOptions() {
 		$options = array_merge($this->_config, $this->_config['map']);
@@ -1183,7 +1192,7 @@ var iconShape = {
 	/**
 	 * @param string $type
 	 * @param array $options
-	 * @return json like js string
+	 * @return string JSON like js string
 	 */
 	protected function _controlOptions($type, $options) {
 		$mapping = [
@@ -1219,7 +1228,7 @@ var iconShape = {
 	/**
 	 * Returns a maps.google url
 	 *
-	 * @param array options:
+	 * @param array $options:
 	 * - from: necessary (address or lat,lng)
 	 * - to: 1x necessary (address or lat,lng - can be an array of multiple destinations: array('dest1', 'dest2'))
 	 * - zoom: optional (defaults to none)
@@ -1260,7 +1269,7 @@ var iconShape = {
 	 * Create a plain image map
 	 *
 	 * @link http://code.google.com/intl/de-DE/apis/maps/documentation/staticmaps
-	 * @param options:
+	 * @param array $options:
 	 * - string $size [necessary: VALxVAL, e.g. 500x400 - max 640x640]
 	 * - string $center: x,y or address [necessary, if no markers are given; else tries to take defaults if available] or TRUE/FALSE
 	 * - int $zoom [optional; if no markers are given, default value is used; if set to "auto" and ]*
@@ -1297,7 +1306,7 @@ var iconShape = {
 	/**
 	 * Create an url to a plain image map
 	 *
-	 * @param options
+	 * @param array $options
 	 * - see staticMap() for details
 	 * @return string urlOfImage: http://...
 	 */
@@ -1334,7 +1343,7 @@ var iconShape = {
 			//'type' => null,
 		]);
 		// do we want zoom to auto-correct itself?
-		if (!isset($options['zoom']) && !empty($mapOptions['markers'])|| !empty($mapOptions['paths']) || !empty($mapOptions['visible'])) {
+		if (!isset($options['zoom']) && !empty($mapOptions['markers']) || !empty($mapOptions['paths']) || !empty($mapOptions['visible'])) {
 			$options['zoom'] = 'auto';
 		}
 
@@ -1460,7 +1469,7 @@ var iconShape = {
 	/**
 	 * Prepare markers for staticMap
 	 *
-	 * @param array $markerArrays
+	 * @param array $pos markerArrays
 	 * - lat: xx.xxxxxx (necessary)
 	 * - lng: xx.xxxxxx (necessary)
 	 * - address: (instead of lat/lng)
@@ -1468,7 +1477,7 @@ var iconShape = {
 	 * - label: a-z or numbers (optional, default: s)
 	 * - icon: custom icon (png, gif, jpg - max 64x64 - max 5 different icons per image)
 	 * - shadow: TRUE/FALSE
-	 * @param style (global) (overridden by custom marker styles)
+	 * @param array $style (global) (overridden by custom marker styles)
 	 * - color
 	 * - label
 	 * - icon
@@ -1502,8 +1511,6 @@ var iconShape = {
 			// adress or lat/lng?
 			if (!empty($p['lat']) && !empty($p['lng'])) {
 				$p['address'] = $p['lat'] . ',' . $p['lng'];
-			} else {
-				$p['address'] = $p['address'];
 			}
 			$p['address'] = urlencode($p['address']);
 
@@ -1549,7 +1556,8 @@ var iconShape = {
 	 * @return string protocol base (including ://)
 	 */
 	protected function _protocol() {
-		if (($https = $this->_config['https']) === null) {
+		$https = $this->_config['https'];
+		if ($https === null) {
 			$https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
 		}
 		return ($https ? 'https' : 'http') . '://';
@@ -1565,7 +1573,8 @@ var iconShape = {
 	protected function _prepColor($color) {
 		if (strpos($color, '#') !== false) {
 			return str_replace('#', '0x', $color);
-		} elseif (is_numeric($color)) {
+		}
+		if (is_numeric($color)) {
 			return '0x' . $color;
 		}
 		return $color;
@@ -1602,7 +1611,7 @@ http://google-maps-utility-library-v3.googlecode.com/svn/tags/infobox/
 	/**
 	 * Managing lots of markers!
 	 * @link http://google-maps-utility-library-v3.googlecode.com/svn/tags/markermanager/1.0/docs/examples.html
-	 * @param options
+	 * @param array $options
 	 * -
 	 * @return void
 	 */
@@ -1619,7 +1628,7 @@ http://google-maps-utility-library-v3.googlecode.com/svn/tags/infobox/
 	/**
 	 * Clustering for lots of markers!
 	 * @link ?
-	 * @param options
+	 * @param array $options
 	 * -
 	 * based on Fluster2 0.1.1
 	 * @return void
@@ -1631,7 +1640,7 @@ http://google-maps-utility-library-v3.googlecode.com/svn/tags/infobox/
 		';
 
 		// styles
-		'fluster' . static::$mapCount . '.styles = {}';
+		//'fluster' . static::$mapCount . '.styles = {}';
 
 		$this->map .= $js;
 	}
@@ -1652,7 +1661,7 @@ function Fluster2ProjectionOverlay(map) {google.maps.OverlayView.call(this);this
 \'';
 
 	/**
-	 * GoogleMapV3Helper::_arrayToObject()
+	 * GoogleMapHelper::_arrayToObject()
 	 *
 	 * @param string $name
 	 * @param array $array
@@ -1668,7 +1677,7 @@ function Fluster2ProjectionOverlay(map) {google.maps.OverlayView.call(this);this
 	}
 
 	/**
-	 * GoogleMapV3Helper::_toObjectParams()
+	 * GoogleMapHelper::_toObjectParams()
 	 *
 	 * @param array $array
 	 * @param bool $asString

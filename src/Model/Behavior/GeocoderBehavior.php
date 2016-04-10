@@ -1,13 +1,21 @@
 <?php
 namespace Geo\Model\Behavior;
 
+use Cake\Core\Configure;
+use Cake\Database\ExpressionInterface;
 use Cake\ORM\Behavior;
-use Geo\Geocode\Geocode;
 use Cake\ORM\Table;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\Event\Event;
 use \ArrayObject;
+use Geo\Exception\InconclusiveException;
+use Geo\Exception\NotAccurateEnoughException;
+use Geo\Geocoder\Calculator;
+use Geo\Geocoder\Geocoder;
+use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\FunctionExpression;
 
 /**
  * A geocoding behavior for CakePHP to easily geocode addresses.
@@ -26,21 +34,30 @@ use \ArrayObject;
 class GeocoderBehavior extends Behavior {
 
 	protected $_defaultConfig = [
-		'real' => false, 'address' => ['street', 'postal_code', 'city', 'country'],
-		'require' => false, 'allowEmpty' => true, 'invalidate' => [], 'expect' => [],
+		'address' => ['street', 'postal_code', 'city', 'country'],
+		'allowEmpty' => true, // deprecated?
+		'expect' => [],
 		'lat' => 'lat', 'lng' => 'lng', 'formatted_address' => 'formatted_address',
-		'host' => null, 'language' => 'de', 'region' => '', 'bounds' => '',
-		'overwrite' => false, 'update' => [], 'on' => 'beforeSave',
-		'min_accuracy' => Geocode::ACC_COUNTRY,
-		'allow_inconclusive' => true,
-		'unit' => Geocode::UNIT_KM,
-		'log' => true, // log successfull results to geocode.log (errors will be logged to error.log in either case)
+		'locale' => null, // For GoogleMaps provider
+		'region' => null, // For GoogleMaps provider
+		'ssl' => false, // For GoogleMaps provider
+		//'bounds' => '',
+		'overwrite' => false,
+		'update' => [],
+		'on' => 'beforeSave',
+		'minAccuracy' => Geocoder::TYPE_COUNTRY,
+		'allowInconclusive' => true,
+		'unit' => Calculator::UNIT_KM,
+		//'log' => true, // logs successful results to geocode.log (errors will be logged to error.log in either case)
 		'implementedFinders' => [
 			'distance' => 'findDistance',
 		]
 	];
 
-	public $Geocode;
+	/**
+	 * @var \Geo\Geocoder\Geocoder
+	 */
+	public $_Geocoder;
 
 	/**
 	 * Initiate behavior for the model using specified settings. Available settings:
@@ -48,9 +65,6 @@ class GeocoderBehavior extends Behavior {
 	 * - address: (array | string, optional) set to the field name that contains the
 	 * 			string from where to generate the slug, or a set of field names to
 	 * 			concatenate for generating the slug.
-	 *
-	 * - real: (boolean, optional) if set to true then field names defined in
-	 * 			label must exist in the database table. DEFAULTS TO: false
 	 *
 	 * - expect: (array)postal_code, locality, sublocality, ...
 	 *
@@ -71,11 +85,12 @@ class GeocoderBehavior extends Behavior {
  * Does not retain a reference to the Table object. If you need this
  * you should override the constructor.
  *
- * @param Table $table The table this behavior is attached to.
+ * @param \Cake\ORM\Table $table The table this behavior is attached to.
  * @param array $config The config for this behavior.
  */
 	public function __construct(Table $table, array $config = []) {
-		parent::__construct($table, $config);
+		$defaults = (array)Configure::read('Geocoder');
+		parent::__construct($table, $config + $defaults);
 
 		$this->_table = $table;
 	}
@@ -88,7 +103,7 @@ class GeocoderBehavior extends Behavior {
  */
 	public function beforeRules(Event $event, Entity $entity, ArrayObject $options) {
 		if ($this->_config['on'] === 'beforeRules') {
-			if(!$this->geocode($entity)) {
+			if (!$this->geocode($entity)) {
 				$event->stopPropagation();
 			}
 		}
@@ -123,15 +138,6 @@ class GeocoderBehavior extends Behavior {
 		}
 		$addressfields = array_unique($addressfields);
 
-		// Make sure all address fields are available
-		if ($this->_config['real']) {
-			foreach ($addressfields as $field) {
-				if (!$this->_table->hasField($field)) {
-					return false;
-				}
-			}
-		}
-
 		$addressData = [];
 		foreach ($addressfields as $field) {
 			$fieldData = $entity->get($field);
@@ -142,60 +148,33 @@ class GeocoderBehavior extends Behavior {
 
 		$entityData['geocoder_result'] = [];
 
-		if ((!$this->_config['real'] || ($this->_table->hasField($this->_config['lat']) && $this->_table->hasField($this->_config['lng']))) &&
-			($this->_config['overwrite'] || !$entity->get($this->_config['lat']) || ((int)$entity->get($this->_config['lat']) === 0 && (int)$entity->get($this->_config['lng']) === 0))
-		) {
-			/*
-			//FIXME: whitelist in 3.x?
-			if (!empty($this->_table->whitelist) && (!in_array($this->_config['lat'], $this->_table->whitelist) || !in_array($this->_config['lng'], $this->_table->whitelist))) {
-				return $entity;
-			}
-			*/
-		}
+		$addresses = $this->_geocode($addressData);
 
-		$geocode = $this->_geocode($addressData);
-
-		if (empty($geocode) && !empty($this->_config['allowEmpty'])) {
-			return true;
+		if (!$addresses || $addresses->count() < 1) {
+			return !empty($this->_config['allowEmpty']) ? true : false;
 		}
-		if (empty($geocode)) {
-			return false;
-		}
+		$address = $addresses->first();
 
-		// If both are 0, thats not valid, otherwise continue
-		if (empty($geocode['lat']) && empty($geocode['lng'])) {
-			/*
-			// Prevent 0 inserts of incorrect runs
-			if (isset($this->_table->data[$this->_table->alias][$this->_config['lat']])) {
-				unset($this->_table->data[$this->_table->alias][$this->_config['lat']]);
-			}
-			if (isset($this->_table->data[$this->_table->alias][$this->_config['lng']])) {
-				unset($this->_table->data[$this->_table->alias][$this->_config['lng']]);
-			}
-			*/
-			if ($this->_config['require']) {
-				if ($fields = $this->_config['invalidate']) {
-					//FIXME
-					//$this->_table->invalidate($fields[0], $fields[1], isset($fields[2]) ? $fields[2] : true);
-				}
-				//return false;
-			}
-			return true;
+		if (!$this->_Geocoder->isExpectedType($address)) {
+			return !empty($this->_config['allowEmpty']) ? true : false;
 		}
-
 		// Valid lat/lng found
-		$entityData[$this->_config['lat']] = $geocode['lat'];
-		$entityData[$this->_config['lng']] = $geocode['lng'];
+		$entityData[$this->_config['lat']] = $address->getLatitude();
+		$entityData[$this->_config['lng']] = $address->getLongitude();
 
+		//debug($address);die();
 		if (!empty($this->_config['formatted_address'])) {
-			$entityData[$this->_config['formatted_address']] = $geocode['formatted_address'];
+			// Unfortunately, the formatted address of google is lost
+			$formatter = new \Geocoder\Formatter\StringFormatter();
+			$entityData[$this->_config['formatted_address']] = $formatter->format($address, '%S %n, %z %L');
 		}
 
-		$entityData['geocoder_result'] = $geocode;
+		$entityData['geocoder_result'] = $address->toArray();
 		$entityData['geocoder_result']['address_data'] = implode(' ', $addressData);
 
 		if (!empty($this->_config['update'])) {
 			foreach ($this->_config['update'] as $key => $field) {
+				//FIXME, not so easy with the new library
 				if (!empty($geocode[$key])) {
 					$entityData[$field] = $geocode[$key];
 				}
@@ -222,11 +201,13 @@ class GeocoderBehavior extends Behavior {
 	 */
 	public function findDistance(Query $query, array $options) {
 		$options += ['tableName' => null];
-		$sql = $this->distance($options['lat'], $options['lng'], null, null, $options['tableName']);
+		$sql = $this->distanceExpr($options['lat'], $options['lng'], null, null, $options['tableName']);
 		$query->select(['distance' => $query->newExpr($sql)]);
 		if (isset($options['distance'])) {
 			// Some SQL versions cannot reuse the select() distance field, so we better reuse the $sql snippet
-			$query->where(['(' . $sql . ') <' => $options['distance']]);
+			$query->where(function ($exp) use ($sql, $options) {
+				return $exp->lt($sql, $options['distance']);
+			});
 		}
 		return $query->order(['distance' => 'ASC']);
 	}
@@ -234,11 +215,14 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * Forms a sql snippet for distance calculation on db level using two lat/lng points.
 	 *
-	 * @param string|float $lat Fieldname (Model.lat) or float value
-	 * @param string|float $lng Fieldname (Model.lng) or float value
-	 * @return string
+	 * @param string|float|null $lat Latitude field (Model.lat) or float value
+	 * @param string|float|null $lng Longitude field (Model.lng) or float value
+	 * @param string|null $fieldLat Comparison field
+	 * @param string|null $fieldLng Comparison field
+	 * @param string|null $tableName
+	 * @return \Cake\Database\ExpressionInterface
 	 */
-	public function distance($lat, $lng, $fieldLat = null, $fieldLng = null, $tableName = null) {
+	public function distanceExpr($lat, $lng, $fieldLat = null, $fieldLng = null, $tableName = null) {
 		if ($fieldLat === null) {
 			$fieldLat = $this->_config['lat'];
 		}
@@ -251,16 +235,45 @@ class GeocoderBehavior extends Behavior {
 
 		$value = $this->_calculationValue($this->_config['unit']);
 
-		return $value . ' * ACOS(COS(PI()/2 - RADIANS(90 - ' . $tableName . '.' . $fieldLat . ')) * ' .
-			'COS(PI()/2 - RADIANS(90 - ' . $lat . ')) * ' .
-			'COS(RADIANS(' . $tableName . '.' . $fieldLng . ') - RADIANS(' . $lng . ')) + ' .
-			'SIN(PI()/2 - RADIANS(90 - ' . $tableName . '.' . $fieldLat . ')) * ' .
-			'SIN(PI()/2 - RADIANS(90 - ' . $lat . ')))';
+		$op = function ($type, $params) {
+			return new QueryExpression($params, [], $type);
+		};
+		$func = function ($name, $arg = null) {
+			return new FunctionExpression($name, $arg === null ? [] : [$arg]);
+		};
+
+		$fieldLat = new IdentifierExpression("$tableName.$fieldLat");
+		$fieldLng = new IdentifierExpression("$tableName.$fieldLng");
+
+		$fieldLatRadians = $func('RADIANS', $op('-', ['90', $fieldLat]));
+		$fieldLngRadians = $func('RADIANS', $fieldLng);
+		$radius = $op('/', [$func('PI'), '2']);
+
+		$mult = $op('*', [
+			$func('COS', $op('-', [$radius, $fieldLatRadians])),
+			'COS(PI()/2 - RADIANS(90 - ' . $lat . '))',
+			$func('COS', $op('-', [$fieldLngRadians, $func('RADIANS', $lng)])),
+		]);
+
+		$mult2 = $op('*', [
+			$func('SIN', $op('-', [$radius, $fieldLatRadians])),
+			$func('SIN', $op('-', [$radius, 'RADIANS(90 - ' . $lat . ')'])),
+		]);
+
+		return $op('*', [
+			(string)$value,
+			$func('ACOS', $op('+', [$mult, $mult2]))
+		]);
 	}
 
 	/**
 	 * Snippet for custom pagination
 	 *
+	 * @param int|null $distance
+	 * @param string|null $fieldName
+	 * @param string|null $fieldLat
+	 * @param string|null $fieldLng
+	 * @param string|null $tableName
 	 * @return array
 	 */
 	public function distanceConditions($distance = null, $fieldName = null, $fieldLat = null, $fieldLng = null, $tableName = null) {
@@ -279,7 +292,7 @@ class GeocoderBehavior extends Behavior {
 		];
 		$fieldName = !empty($fieldName) ? $fieldName : 'distance';
 		if ($distance !== null) {
-			$conditions[] = '1=1 HAVING ' . $tableName . '.' . $fieldName . ' < ' . intval($distance);
+			$conditions[] = '1=1 HAVING ' . $tableName . '.' . $fieldName . ' < ' . (int)$distance;
 		}
 		return $conditions;
 	}
@@ -287,52 +300,18 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * Snippet for custom pagination
 	 *
-	 * @return string
+	 * @param float|string|null $lat
+	 * @param float|string|null $lng
+	 * @param string|null $fieldName
+	 * @param string|null $tableName
+	 * @return array
 	 */
 	public function distanceField($lat, $lng, $fieldName = null, $tableName = null) {
 		if ($tableName === null) {
 			$tableName = $this->_table->alias();
 		}
 		$fieldName = (!empty($fieldName) ? $fieldName : 'distance');
-		return $this->distance($lat, $lng, null, null, $tableName) . ' AS ' . $tableName . '.' . $fieldName;
-	}
-
-	/**
-	 * Snippet for custom pagination
-	 * still useful?
-	 *
-	 * @return string
-	 */
-	public function distanceByField($lat, $lng, $byFieldName = null, $fieldName = null, $tableName = null) {
-		if ($tableName === null) {
-			$tableName = $this->_table->alias();
-		}
-		if ($fieldName === null) {
-			$fieldName = 'distance';
-		}
-		if ($byFieldName === null) {
-			$byFieldName = 'radius';
-		}
-
-		return $this->distance($lat, $lng, null, null, $tableName) . ' ' . $byFieldName;
-	}
-
-	/**
-	 * Snippet for custom pagination
-	 *
-	 * @return int count
-	 */
-	public function paginateDistanceCount($conditions = null, $recursive = -1, $extra = []) {
-		if (!empty($extra['radius'])) {
-			$conditions[] = $extra['distance'] . ' < ' . $extra['radius'] .
-				(!empty($extra['startRadius']) ? ' AND ' . $extra['distance'] . ' > ' . $extra['startRadius'] : '') .
-				(!empty($extra['endRadius']) ? ' AND ' . $extra['distance'] . ' < ' . $extra['endRadius'] : '');
-		}
-		if (!empty($extra['group'])) {
-			unset($extra['group']);
-		}
-		$extra['behavior'] = true;
-		return $this->_table->paginateCount($conditions, $recursive, $extra);
+		return [$tableName . '.' . $fieldName => $this->distanceExpr($lat, $lng, null, null, $tableName)];
 	}
 
 	/**
@@ -367,7 +346,7 @@ class GeocoderBehavior extends Behavior {
 	 * Uses the Geocode class to query
 	 *
 	 * @param array $addressFields (simple array of address pieces)
-	 * @return array
+	 * @return \Geocoder\Model\AddressCollection|null
 	 */
 	protected function _geocode($addressFields) {
 		$address = implode(' ', $addressFields);
@@ -375,19 +354,16 @@ class GeocoderBehavior extends Behavior {
 			return [];
 		}
 
-		$geocodeOptions = [
-			'log' => $this->_config['log'], 'min_accuracy' => $this->_config['min_accuracy'],
-			'expect' => $this->_config['expect'], 'allow_inconclusive' => $this->_config['allow_inconclusive'],
-			'host' => $this->_config['host']
-		];
-		$this->Geocode = new Geocode($geocodeOptions);
-
-		$config = ['language' => $this->_config['language']];
-		if (!$this->Geocode->geocode($address, $config)) {
-			return ['lat' => null, 'lng' => null, 'formatted_address' => ''];
+		$this->_Geocoder = new Geocoder($this->_config);
+		try {
+			$addresses = $this->_Geocoder->geocode($address);
+		} catch (InconclusiveException $e) {
+			return null;
+		} catch (NotAccurateEnoughException $e) {
+			return null;
 		}
 
-		return $this->Geocode->getResult();
+		return $addresses;
 	}
 
 	/**
@@ -397,10 +373,10 @@ class GeocoderBehavior extends Behavior {
 	 * @return float Value
 	 */
 	protected function _calculationValue($unit) {
-		if (!isset($this->Geocode)) {
-			$this->Geocode = new Geocode();
+		if (!isset($this->Calculator)) {
+			$this->Calculator = new Calculator();
 		}
-		return $this->Geocode->convert(6371.04, Geocode::UNIT_KM, $unit);
+		return $this->Calculator->convert(6371.04, Calculator::UNIT_KM, $unit);
 	}
 
 }
