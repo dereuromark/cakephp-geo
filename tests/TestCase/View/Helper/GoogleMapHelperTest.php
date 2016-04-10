@@ -15,7 +15,8 @@ class GoogleMapHelperTest extends TestCase {
 
 		Configure::delete('GoogleMap');
 
-		$this->GoogleMap = new GoogleMapHelper(new View(null));
+		$this->View = new View(null);
+		$this->GoogleMap = new GoogleMapHelper($this->View);
 	}
 
 	public function testObject() {
@@ -34,7 +35,7 @@ class GoogleMapHelperTest extends TestCase {
 			]
 		];
 		Configure::write('GoogleMap.zoom', 8);
-		$this->GoogleMap = new GoogleMapHelper(new View(null), $config);
+		$this->GoogleMap = new GoogleMapHelper($this->View, $config);
 
 		$result = $this->GoogleMap->config();
 		$this->assertEquals('foo', $result['map']['type']);
@@ -222,7 +223,6 @@ class GoogleMapHelperTest extends TestCase {
 	public function testMap() {
 		$options = [
 			'autoScript' => true,
-			'inline' => true,
 		];
 
 		$result = $this->GoogleMap->map($options);
@@ -233,9 +233,34 @@ class GoogleMapHelperTest extends TestCase {
 		$this->assertTextContains($expected, $result);
 
 		$expected = '<script src="http://maps.google.com/maps/api/js?sensor=false';
-		$this->assertTextContains($expected, $result);
+		$this->assertTextNotContains($expected, $result);
 
 		$expected = 'var map0 = new google.maps.Map(document.getElementById("map_canvas"), myOptions);';
+		$this->assertTextContains($expected, $result);
+
+		$scripts = $this->View->fetch('script');
+		$expected = '<script src="http://maps.google.com/maps/api/js?sensor=false';
+		$this->assertTextContains($expected, $scripts);
+	}
+
+	/**
+	 * Test some basic map options
+	 */
+	public function testMapInlineScript() {
+		$options = [
+			'autoScript' => true,
+			//'inline' => true,
+			'block' => false
+		];
+
+		$result = $this->GoogleMap->map($options);
+
+		$result .= $this->GoogleMap->script();
+
+		$expected = '<div id="map_canvas" class="map"';
+		$this->assertTextContains($expected, $result);
+
+		$expected = '<script src="http://maps.google.com/maps/api/js?sensor=false';
 		$this->assertTextContains($expected, $result);
 	}
 
