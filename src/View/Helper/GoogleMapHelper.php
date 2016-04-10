@@ -445,7 +445,7 @@ class GoogleMapHelper extends Helper {
 		$this->_config['div']['style'] .= 'width: ' . $this->_config['div']['width'] . ';';
 		$this->_config['div']['style'] .= 'height: ' . $this->_config['div']['height'] . ';';
 		unset($this->_config['div']['width']);
-unset($this->_config['div']['height']);
+		unset($this->_config['div']['height']);
 
 		$defaultText = isset($this->_config['content']) ? $this->_config['content'] : __('Map cannot be displayed!');
 		$result .= $this->Html->tag('div', $defaultText, $this->_config['div']);

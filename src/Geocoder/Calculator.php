@@ -38,7 +38,6 @@ class Calculator {
 	 * - log: false logs only real errors, true all activities
 	 * - pause: timeout to prevent blocking
 	 * - ...
-	 *
 	 */
 	protected $_defaultConfig = [
 		'units' => [
@@ -49,7 +48,7 @@ class Calculator {
 	 * Calculator constructor.
 	 *
 	 * @param array $config
-     */
+	 */
 	public function __construct(array $config = []) {
 		$this->config($config);
 
