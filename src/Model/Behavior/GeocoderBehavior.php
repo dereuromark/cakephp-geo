@@ -35,7 +35,7 @@ class GeocoderBehavior extends Behavior {
 
 	protected $_defaultConfig = [
 		'address' => ['street', 'postal_code', 'city', 'country'],
-		'allowEmpty' => true, // deprecated?
+		'allowEmpty' => true,
 		'expect' => [],
 		'lat' => 'lat', 'lng' => 'lng', 'formatted_address' => 'formatted_address',
 		'locale' => null, // For GoogleMaps provider
@@ -51,7 +51,8 @@ class GeocoderBehavior extends Behavior {
 		//'log' => true, // logs successful results to geocode.log (errors will be logged to error.log in either case)
 		'implementedFinders' => [
 			'distance' => 'findDistance',
-		]
+		],
+		'validationError' => null,
 	];
 
 	/**
@@ -95,12 +96,27 @@ class GeocoderBehavior extends Behavior {
 		$this->_table = $table;
 	}
 
-/**
- * @param \Cake\Event\Event $event The beforeSave event that was fired
- * @param \Cake\ORM\Entity $entity The entity that is going to be saved
- * @param \ArrayObject $options the options passed to the save method
- * @return void
- */
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \ArrayObject $data
+	 * @param \ArrayObject $options
+	 * @return void
+	 */
+	public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options)
+	{
+		if ($this->_config['on'] === 'beforeMarshal') {
+			if (!$this->geocode($data)) {
+				$event->stopPropagation();
+			}
+		}
+	}
+
+	/**
+	 * @param \Cake\Event\Event $event The beforeSave event that was fired
+	 * @param \Cake\ORM\Entity $entity The entity that is going to be saved
+	 * @param \ArrayObject $options the options passed to the save method
+	 * @return void
+	 */
 	public function beforeRules(Event $event, Entity $entity, ArrayObject $options) {
 		if ($this->_config['on'] === 'beforeRules') {
 			if (!$this->geocode($entity)) {
@@ -109,12 +125,12 @@ class GeocoderBehavior extends Behavior {
 		}
 	}
 
-/**
- * @param \Cake\Event\Event $event The beforeSave event that was fired
- * @param \Cake\ORM\Entity $entity The entity that is going to be saved
- * @param \ArrayObject $options the options passed to the save method
- * @return void
- */
+	/**
+	 * @param \Cake\Event\Event $event The beforeSave event that was fired
+	 * @param \Cake\ORM\Entity $entity The entity that is going to be saved
+	 * @param \ArrayObject $options the options passed to the save method
+	 * @return void
+	 */
 	public function beforeSave(Event $event, Entity $entity, ArrayObject $options) {
 		if ($this->_config['on'] === 'beforeSave') {
 			if (!$this->geocode($entity)) {
@@ -126,10 +142,10 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * Run before a model is saved, used to set up slug for model.
 	 *
-	 * @param \Cake\ORM\Entity $entity The entity that is going to be saved
+	 * @param \Cake\ORM\Entity|array $entity The entity that is going to be saved
 	 * @return bool True if save should proceed, false otherwise
 	 */
-	public function geocode(Entity $entity) {
+	public function geocode($entity) {
 		// Make address fields an array
 		if (!is_array($this->_config['address'])) {
 			$addressfields = [$this->_config['address']];
@@ -140,9 +156,8 @@ class GeocoderBehavior extends Behavior {
 
 		$addressData = [];
 		foreach ($addressfields as $field) {
-			$fieldData = $entity->get($field);
-			if (!empty($fieldData)) {
-				$addressData[] = $fieldData;
+			if (!empty($entity[$field])) {
+				$addressData[] = $entity[$field];
 			}
 		}
 
@@ -151,12 +166,20 @@ class GeocoderBehavior extends Behavior {
 		$addresses = $this->_geocode($addressData);
 
 		if (!$addresses || $addresses->count() < 1) {
-			return !empty($this->_config['allowEmpty']) ? true : false;
+			if ($this->_config['allowEmpty']) {
+				return true;
+			}
+			$this->invalidate($entity);
+			return false;
 		}
 		$address = $addresses->first();
 
 		if (!$this->_Geocoder->isExpectedType($address)) {
-			return !empty($this->_config['allowEmpty']) ? true : false;
+			if ($this->_config['allowEmpty']) {
+				return true;
+			}
+			$this->invalidate($entity);
+			return false;
 		}
 		// Valid lat/lng found
 		$entityData[$this->_config['lat']] = $address->getLatitude();
@@ -181,9 +204,10 @@ class GeocoderBehavior extends Behavior {
 			}
 		}
 
-		$entity->set($entityData);
-
-		return true;
+		foreach ($entityData as $key => $value) {
+			$entity[$key] = $value;
+		}
+		return $entity;
 	}
 
 	/**
@@ -377,6 +401,30 @@ class GeocoderBehavior extends Behavior {
 			$this->Calculator = new Calculator();
 		}
 		return $this->Calculator->convert(6371.04, Calculator::UNIT_KM, $unit);
+	}
+
+	/**
+	 * @param \Cake\ORM\Entity $entity
+	 * @return void
+	 */
+	protected function invalidate($entity) {
+		$errorMessage = $this->_config['validationError'] !== null ? $this->_config['validationError'] : __('Could not geocode this address');
+		if ($errorMessage === false) {
+			return;
+		}
+
+		$fields = (array)$this->_config['address'];
+		foreach ($fields as $field) {
+			if (!is_array($errorMessage)) {
+				$entity->errors($field, $errorMessage);
+			}
+
+			$message = !empty($errorMessage[$field]) ? $errorMessage[$field] : null;
+			if (!$message) {
+				continue;
+			}
+			$entity->errors($field, $message);
+		}
 	}
 
 }

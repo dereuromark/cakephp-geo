@@ -7,6 +7,7 @@ use Cake\Network\Http\Client;
 use Cake\Log\Log;
 use Geo\Exception\InconclusiveException;
 use Geo\Exception\NotAccurateEnoughException;
+use Geocoder\Exception\NoResult;
 use Geocoder\Model\Address;
 use Geocoder\Model\AddressCollection;
 use Geocoder\Model\AdminLevel;
@@ -100,7 +101,12 @@ class Geocoder {
 	public function geocode($address, array $params = []) {
 		$this->_buildGeocoder();
 
-		$result = $this->geocoder->geocode($address);
+		try {
+			$result = $this->geocoder->geocode($address);
+		} catch (NoResult $e) {
+			throw new InconclusiveException(sprintf('Inconclusive result (total of %s)', 0));
+		}
+
 		if (!$this->_config['allowInconclusive'] && !$this->isConclusive($result)) {
 			throw new InconclusiveException(sprintf('Inconclusive result (total of %s)', $result->count()));
 		}
