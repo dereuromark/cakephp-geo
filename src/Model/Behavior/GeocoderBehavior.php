@@ -97,6 +97,11 @@ class GeocoderBehavior extends Behavior {
 	}
 
 	/**
+	 * Using pre-patching to populate the entity with the lat/lng etc before
+	 * the validation kicks in.
+	 * This has the downside that it has to run every time. The other events trigger
+	 * geocoding only if the address data has been modified (fields marked as dirty).
+	 *
 	 * @param \Cake\Event\Event $event
 	 * @param \ArrayObject $data
 	 * @param \ArrayObject $options
@@ -105,7 +110,17 @@ class GeocoderBehavior extends Behavior {
 	public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options)
 	{
 		if ($this->_config['on'] === 'beforeMarshal') {
-			if (!$this->geocode($data)) {
+			$addressfields = (array)$this->_config['address'];
+
+			$addressData = [];
+			$dirty = false;
+			foreach ($addressfields as $field) {
+				if (!empty($data[$field])) {
+					$addressData[] = $data[$field];
+				}
+			}
+
+			if (!$this->_geocode($data, $addressData)) {
 				$event->stopPropagation();
 			}
 		}
@@ -142,34 +157,53 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * Run before a model is saved, used to set up slug for model.
 	 *
-	 * @param \Cake\ORM\Entity|array $entity The entity that is going to be saved
+	 * @param \Cake\ORM\Entity $entity The entity that is going to be saved
 	 * @return bool True if save should proceed, false otherwise
 	 */
-	public function geocode($entity) {
-		// Make address fields an array
-		if (!is_array($this->_config['address'])) {
-			$addressfields = [$this->_config['address']];
-		} else {
-			$addressfields = $this->_config['address'];
-		}
-		$addressfields = array_unique($addressfields);
+	public function geocode(Entity $entity) {
+		$addressfields = (array)$this->_config['address'];
 
 		$addressData = [];
+		$dirty = false;
 		foreach ($addressfields as $field) {
-			if (!empty($entity[$field])) {
-				$addressData[] = $entity[$field];
+			$fieldData = $entity->get($field);
+			if ($fieldData) {
+				$addressData[] = $fieldData;
+			}
+			if ($entity->dirty($field)) {
+				$dirty = true;
 			}
 		}
+		if (!$dirty) {
+			if ($this->_config['allowEmpty'] || $entity->lat &&  $entity->lng) {
+				return true;
+			}
+			if ($entity instanceof Entity) {
+				$this->invalidate($entity);
+			}
+			return false;
+		}
 
+		return $this->_geocode($entity, $addressData);
+	}
+
+	/**
+	 * @param \Cake\ORM\Entity|array $entity
+	 * @param array $addressData
+	 *
+	 * @return bool
+	 */
+	protected function _geocode($entity, $addressData) {
 		$entityData['geocoder_result'] = [];
 
-		$addresses = $this->_geocode($addressData);
-
+		$addresses = $this->_execute($addressData);
 		if (!$addresses || $addresses->count() < 1) {
 			if ($this->_config['allowEmpty']) {
 				return true;
 			}
-			$this->invalidate($entity);
+			if ($entity instanceof Entity) {
+				$this->invalidate($entity);
+			}
 			return false;
 		}
 		$address = $addresses->first();
@@ -178,7 +212,9 @@ class GeocoderBehavior extends Behavior {
 			if ($this->_config['allowEmpty']) {
 				return true;
 			}
-			$this->invalidate($entity);
+			if ($entity instanceof Entity) {
+				$this->invalidate($entity);
+			}
 			return false;
 		}
 		// Valid lat/lng found
@@ -372,10 +408,10 @@ class GeocoderBehavior extends Behavior {
 	 * @param array $addressFields (simple array of address pieces)
 	 * @return \Geocoder\Model\AddressCollection|null
 	 */
-	protected function _geocode($addressFields) {
+	protected function _execute($addressFields) {
 		$address = implode(' ', $addressFields);
 		if (empty($address)) {
-			return [];
+			return null;
 		}
 
 		$this->_Geocoder = new Geocoder($this->_config);
@@ -408,7 +444,7 @@ class GeocoderBehavior extends Behavior {
 	 * @return void
 	 */
 	protected function invalidate($entity) {
-		$errorMessage = $this->_config['validationError'] !== null ? $this->_config['validationError'] : __('Could not geocode this address');
+		$errorMessage = $this->_config['validationError'] !== null ? $this->_config['validationError'] : __('Could not geocode this address. Please refine.');
 		if ($errorMessage === false) {
 			return;
 		}
