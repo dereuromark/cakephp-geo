@@ -18,7 +18,7 @@ class GeocoderBehavior extends GeoGeocoderBehavior {
 	 * @param array $addressFields (simple array of address pieces)
 	 * @return \Geocoder\Model\AddressCollection|null
 	 */
-	protected function _geocode($addressFields) {
+	protected function _execute($addressFields) {
 		$address = implode(' ', $addressFields);
 		if (empty($address)) {
 			return [];
@@ -36,7 +36,7 @@ class GeocoderBehavior extends GeoGeocoderBehavior {
 				throw new \Exception('Should not happen on CI.');
 			}
 
-			$addresses = parent::_geocode($addressFields);
+			$addresses = parent::_execute($addressFields);
 			file_put_contents($testFile, serialize($addresses));
 		}
 
