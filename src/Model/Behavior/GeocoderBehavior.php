@@ -254,14 +254,20 @@ class GeocoderBehavior extends Behavior {
 	 * - lng (required)
 	 * - tableName
 	 * - distance
+	 * - sort
 	 *
 	 * @param \Cake\ORM\Query $query Query.
 	 * @param array $options Array of options as described above
 	 * @return \Cake\ORM\Query
 	 */
 	public function findDistance(Query $query, array $options) {
-		$options += ['tableName' => null];
+		$options += ['tableName' => null, 'sort' => true];
 		$sql = $this->distanceExpr($options['lat'], $options['lng'], null, null, $options['tableName']);
+
+		if ($query->autoFields() === null) {
+			$query->autoFields(true);
+		}
+
 		$query->select(['distance' => $query->newExpr($sql)]);
 		if (isset($options['distance'])) {
 			// Some SQL versions cannot reuse the select() distance field, so we better reuse the $sql snippet
@@ -269,7 +275,13 @@ class GeocoderBehavior extends Behavior {
 				return $exp->lt($sql, $options['distance']);
 			});
 		}
-		return $query->order(['distance' => 'ASC']);
+
+		if ($options['sort']) {
+			$sort = $options['sort'] === true ? 'ASC' : $options['sort'];
+			$query->order(['distance' => $sort]);
+		}
+
+		return $query;
 	}
 
 	/**

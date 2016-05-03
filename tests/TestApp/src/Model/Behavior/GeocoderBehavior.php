@@ -33,7 +33,7 @@ class GeocoderBehavior extends GeoGeocoderBehavior {
 
 		if (!file_exists($testFile)) {
 			if (getenv('CI')) {
-				throw new \Exception('Should not happen on CI.');
+				throw new \Exception('Should not happen on CI: ' . $testFile);
 			}
 
 			$addresses = parent::_execute($addressFields);
