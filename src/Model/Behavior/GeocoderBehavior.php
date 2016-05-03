@@ -1,21 +1,21 @@
 <?php
 namespace Geo\Model\Behavior;
 
+use ArrayObject;
 use Cake\Core\Configure;
-use Cake\Database\ExpressionInterface;
+use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
+use Cake\Event\Event;
 use Cake\ORM\Behavior;
-use Cake\ORM\Table;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
-use Cake\Event\Event;
-use \ArrayObject;
+use Cake\ORM\Table;
+use Geocoder\Formatter\StringFormatter;
 use Geo\Exception\InconclusiveException;
 use Geo\Exception\NotAccurateEnoughException;
 use Geo\Geocoder\Calculator;
 use Geo\Geocoder\Geocoder;
-use Cake\Database\Expression\QueryExpression;
-use Cake\Database\Expression\IdentifierExpression;
-use Cake\Database\Expression\FunctionExpression;
 
 /**
  * A geocoding behavior for CakePHP to easily geocode addresses.
@@ -28,11 +28,14 @@ use Cake\Database\Expression\FunctionExpression;
  * If you need 0.0, cast it in your beforeSave() callback.
  *
  * @author Mark Scherer
- * @licence MIT
+ * @license MIT
  * @link http://www.dereuromark.de/2012/06/12/geocoding-with-cakephp/
  */
 class GeocoderBehavior extends Behavior {
 
+	/**
+	 * @var array
+	 */
 	protected $_defaultConfig = [
 		'address' => null,
 		'allowEmpty' => true,
@@ -64,8 +67,8 @@ class GeocoderBehavior extends Behavior {
 	 * Initiate behavior for the model using specified settings. Available settings:
 	 *
 	 * - address: (array | string, optional) set to the field name that contains the
-	 * 			string from where to generate the slug, or a set of field names to
-	 * 			concatenate for generating the slug.
+	 *             string from where to generate the slug, or a set of field names to
+	 *             concatenate for generating the slug.
 	 *
 	 * - expect: (array)postal_code, locality, sublocality, ...
 	 *
@@ -76,7 +79,7 @@ class GeocoderBehavior extends Behavior {
 	 * - update: what fields to update (key=>value array pairs)
 	 *
 	 * - before: validate/save (defaults to save)
-	 * 			set to false if you only want to use the validation rules etc
+	 *             set to false if you only want to use the validation rules etc
 	 *
 /**
  * Constructor
@@ -111,8 +114,7 @@ class GeocoderBehavior extends Behavior {
 	 * @param \ArrayObject $options
 	 * @return void
 	 */
-	public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options)
-	{
+	public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options) {
 		if ($this->_config['on'] === 'beforeMarshal') {
 			$addressfields = (array)$this->_config['address'];
 
@@ -179,7 +181,7 @@ class GeocoderBehavior extends Behavior {
 			}
 		}
 		if (!$dirty) {
-			if ($this->_config['allowEmpty'] || $entity->lat &&  $entity->lng) {
+			if ($this->_config['allowEmpty'] || $entity->lat && $entity->lng) {
 				return true;
 			}
 			if ($entity instanceof Entity) {
@@ -228,7 +230,7 @@ class GeocoderBehavior extends Behavior {
 		//debug($address);die();
 		if (!empty($this->_config['formatted_address'])) {
 			// Unfortunately, the formatted address of google is lost
-			$formatter = new \Geocoder\Formatter\StringFormatter();
+			$formatter = new StringFormatter();
 			$entityData[$this->_config['formatted_address']] = $formatter->format($address, '%S %n, %z %L');
 		}
 
@@ -401,7 +403,7 @@ class GeocoderBehavior extends Behavior {
 		if (is_array($latitude)) {
 			$latitude = array_shift($latitude);
 		}
-		return ($latitude <= 90 && $latitude >= -90);
+		return $latitude <= 90 && $latitude >= -90;
 	}
 
 	/**
@@ -415,7 +417,7 @@ class GeocoderBehavior extends Behavior {
 		if (is_array($longitude)) {
 			$longitude = array_shift($longitude);
 		}
-		return ($longitude <= 180 && $longitude >= -180);
+		return $longitude <= 180 && $longitude >= -180;
 	}
 
 	/**

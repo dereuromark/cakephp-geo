@@ -2,22 +2,25 @@
 namespace TestApp\Geocoder;
 
 use Cake\Utility\Inflector;
+use Exception;
 use Geo\Geocoder\Geocoder as GeoGeocoder;
 
 /**
  * Geocode via google (UPDATE: api3)
+ *
  * @see https://developers.google.com/maps/documentation/geocoding/
  *
  * Used by Geo.GeocoderBehavior
  *
  * @author Mark Scherer
- * @licence MIT
+ * @license MIT
  */
 class Geocoder extends GeoGeocoder {
 
 	/**
 	 * @param mixed $geocoder
-     */
+	 * @return void
+	 */
 	public function setGeocoderAndResult($geocoder) {
 		$this->geocoder = $geocoder;
 	}
@@ -26,7 +29,7 @@ class Geocoder extends GeoGeocoder {
 	 * @param string $address
 	 * @param array $params
 	 * @return \Geocoder\Model\AddressCollection
-     */
+	 */
 	public function geocode($address, array $params = []) {
 		$file = Inflector::slug($address) . '.php';
 
@@ -35,7 +38,7 @@ class Geocoder extends GeoGeocoder {
 
 		if (!file_exists($testFile)) {
 			if (getenv('CI')) {
-				throw new \Exception('Should not happen on CI.');
+				throw new Exception('Should not happen on CI.');
 			}
 
 			$addresses = parent::geocode($address, $params);
@@ -47,4 +50,5 @@ class Geocoder extends GeoGeocoder {
 
 		return $addresses;
 	}
+
 }

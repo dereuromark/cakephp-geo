@@ -1,10 +1,10 @@
 <?php
 namespace Geo\Test\View\Helper;
 
-use Geo\View\Helper\GoogleMapHelper;
+use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
-use Cake\Core\Configure;
+use Geo\View\Helper\GoogleMapHelper;
 
 /**
  */
@@ -219,6 +219,8 @@ class GoogleMapHelperTest extends TestCase {
 
 	/**
 	 * Test some basic map options
+	 *
+	 * @return void
 	 */
 	public function testMap() {
 		$options = [
@@ -245,6 +247,8 @@ class GoogleMapHelperTest extends TestCase {
 
 	/**
 	 * Test some basic map options
+	 *
+	 * @return void
 	 */
 	public function testMapInlineScript() {
 		$options = [
@@ -266,6 +270,8 @@ class GoogleMapHelperTest extends TestCase {
 
 	/**
 	 * With default options
+	 *
+	 * @return void
 	 */
 	public function testDynamic() {
 		//echo '<h2>Map 1</h2>';
@@ -305,6 +311,8 @@ class GoogleMapHelperTest extends TestCase {
 
 	/**
 	 * More than 100 markers and it gets reaaally slow...
+	 *
+	 * @return void
 	 */
 	public function testDynamic2() {
 		//echo '<h2>Map 2</h2>';
@@ -364,4 +372,5 @@ class GoogleMapHelperTest extends TestCase {
 
 		//echo $this->GoogleMap->script();
 	}
+
 }

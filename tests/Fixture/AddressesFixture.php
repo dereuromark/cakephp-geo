@@ -5,7 +5,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * AddressFixture
- *
  */
 class AddressesFixture extends TestFixture {
 
@@ -109,4 +108,5 @@ class AddressesFixture extends TestFixture {
 			'type_id' => null
 		],
 	];
+
 }

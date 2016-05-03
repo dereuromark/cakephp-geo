@@ -1,21 +1,23 @@
 <?php
 namespace Geo\Test\Model\Behavior;
 
-use Cake\Core\Configure;
-use Cake\Database\Driver\Postgres;
-use Cake\Utility\Hash;
 use Cake\Controller\Controller;
-use Cake\TestSuite\TestCase;
-use Cake\ORM\TableRegistry;
+use Cake\Core\Configure;
+use Cake\Database\Driver\Mysql;
+use Cake\Database\Driver\Postgres;
+use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
-use Cake\Database\Driver\Mysql;
+use Cake\ORM\TableRegistry;
+use Cake\TestSuite\TestCase;
 use Geo\Geocoder\Calculator;
 use Geo\Geocoder\Geocoder;
-use Cake\Database\ValueBinder;
 
 class GeocoderBehaviorTest extends TestCase {
 
+	/**
+	 * @var array
+	 */
 	public $fixtures = [
 		'plugin.Geo.Addresses'
 	];
@@ -201,7 +203,6 @@ class GeocoderBehaviorTest extends TestCase {
 	public function testBasic() {
 		$this->Addresses->removeBehavior('Geocoder');
 		$this->Addresses->addBehavior('Geocoder', ['address' => ['street', 'zip', 'city']]);
-
 		$data = [
 			'street' => 'Krebenweg 22',
 			'zip' => '74523',
@@ -343,6 +344,7 @@ class GeocoderBehaviorTest extends TestCase {
 	/**
 	 * Gets a new Entity
 	 *
+	 * @param array $data
 	 * @return \Cake\ORM\Entity
 	 */
 	protected function _getEntity($data) {
@@ -353,6 +355,9 @@ class GeocoderBehaviorTest extends TestCase {
 
 class TestController extends Controller {
 
+	/**
+	 * @var string
+	 */
 	public $modelClass = 'Geo.Addresses';
 
 }

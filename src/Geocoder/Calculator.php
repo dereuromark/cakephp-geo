@@ -3,20 +3,17 @@ namespace Geo\Geocoder;
 
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Network\Http\Client;
-use Cake\Log\Log;
 use Geo\Exception\CalculatorException;
 
 /**
  * Used by Geo.GeocoderBehavior
  *
  * @author Mark Scherer
- * @licence MIT
+ * @license MIT
  */
 class Calculator {
 
 	use InstanceConfigTrait;
-
 
 	const UNIT_KM = 'K';
 	const UNIT_NAUTICAL = 'N';
@@ -24,6 +21,9 @@ class Calculator {
 	const UNIT_INCHES = 'I';
 	const UNIT_MILES = 'M';
 
+	/**
+	 * @var array
+	 */
 	protected $_units = [
 		self::UNIT_KM => 1.609344,
 		self::UNIT_NAUTICAL => 0.868976242,
@@ -38,6 +38,8 @@ class Calculator {
 	 * - log: false logs only real errors, true all activities
 	 * - pause: timeout to prevent blocking
 	 * - ...
+	 *
+	 * @var array
 	 */
 	protected $_defaultConfig = [
 		'units' => [
@@ -98,7 +100,7 @@ class Calculator {
 	 *
 	 * @param array $pointX
 	 * @param array $pointY
-	 * @param string $unit Unit char or constant (M=miles, K=kilometers, N=nautical miles, I=inches, F=feet)
+	 * @param string|null $unit Unit char or constant (M=miles, K=kilometers, N=nautical miles, I=inches, F=feet)
 	 * @return int Distance in km
 	 */
 	public function distance(array $pointX, array $pointY, $unit = null) {
@@ -149,7 +151,7 @@ class Calculator {
 
 		$scrambleVal = 0.000001 * mt_rand(10, 200) * pow(2, $level) * (mt_rand(0, 1) === 0 ? 1 : -1);
 
-		return ($coordinate + $scrambleVal);
+		return $coordinate + $scrambleVal;
 
 		//$scrambleVal *= (float)(2^$level);
 		// TODO: + - by chance!!!

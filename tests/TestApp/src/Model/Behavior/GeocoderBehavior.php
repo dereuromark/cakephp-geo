@@ -1,9 +1,8 @@
 <?php
 namespace TestApp\Model\Behavior;
 
-use Cake\Core\Configure;
 use Cake\Utility\Inflector;
-use Cake\Utility\Text;
+use Exception;
 use Geo\Geocoder\Geocoder;
 use Geo\Model\Behavior\GeocoderBehavior as GeoGeocoderBehavior;
 
@@ -33,7 +32,7 @@ class GeocoderBehavior extends GeoGeocoderBehavior {
 
 		if (!file_exists($testFile)) {
 			if (getenv('CI')) {
-				throw new \Exception('Should not happen on CI: ' . $testFile);
+				throw new Exception('Should not happen on CI: ' . $testFile);
 			}
 
 			$addresses = parent::_execute($addressFields);

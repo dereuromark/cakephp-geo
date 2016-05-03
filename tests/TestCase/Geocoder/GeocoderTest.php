@@ -1,9 +1,12 @@
 <?php
 namespace Geo\Test\Geocoder;
 
-use TestApp\Geocoder\Geocoder;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
+use Geocoder\Provider\OpenStreetMap;
+use Geo\Geocoder\Provider\GeoIpLookup;
+use Ivory\HttpAdapter\CakeHttpAdapter;
+use TestApp\Geocoder\Geocoder;
 
 class GeocoderTest extends TestCase {
 
@@ -70,7 +73,7 @@ class GeocoderTest extends TestCase {
 	public function testClosure() {
 		$config = [
 			'provider' => function () {
-				return new \Geocoder\Provider\OpenStreetMap(new \Ivory\HttpAdapter\CakeHttpAdapter());
+				return new OpenStreetMap(new CakeHttpAdapter());
 			}
 		];
 
@@ -96,7 +99,7 @@ class GeocoderTest extends TestCase {
 	public function testIp() {
 		$config = [
 			'provider' => function () {
-				return new \Geo\Geocoder\Provider\GeoIpLookup(new \Ivory\HttpAdapter\CakeHttpAdapter());
+				return new GeoIpLookup(new CakeHttpAdapter());
 			}
 		];
 

@@ -3,23 +3,21 @@ namespace Geo\Geocoder;
 
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Network\Http\Client;
-use Cake\Log\Log;
-use Geo\Exception\InconclusiveException;
-use Geo\Exception\NotAccurateEnoughException;
 use Geocoder\Exception\NoResult;
 use Geocoder\Model\Address;
 use Geocoder\Model\AddressCollection;
-use Geocoder\Model\AdminLevel;
+use Geo\Exception\InconclusiveException;
+use Geo\Exception\NotAccurateEnoughException;
 
 /**
  * Geocode via google (UPDATE: api3)
+ *
  * @see https://developers.google.com/maps/documentation/geocoding/
  *
  * Used by Geo.GeocoderBehavior
  *
  * @author Mark Scherer
- * @licence MIT
+ * @license MIT
  */
 class Geocoder {
 

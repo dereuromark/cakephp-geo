@@ -9,7 +9,6 @@ namespace Geo\Geocoder\Provider;
 use Cake\Utility\Xml;
 use Geocoder\Exception\NoResult;
 use Geocoder\Exception\UnsupportedOperation;
-use Geocoder\Model\AddressCollection;
 use Geocoder\Provider\AbstractHttpProvider;
 use Geocoder\Provider\Provider;
 
@@ -31,7 +30,7 @@ class GeoIpLookup extends AbstractHttpProvider implements Provider {
 		}
 
 		if (in_array($address, ['127.0.0.1', '::1'])) {
-			return $this->returnResults([ $this->getLocalhostDefaults() ]);
+			return $this->returnResults([$this->getLocalhostDefaults()]);
 		}
 
 		$query = sprintf(self::ENDPOINT_URL, $address);

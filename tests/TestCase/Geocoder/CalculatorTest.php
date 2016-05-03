@@ -1,9 +1,8 @@
 <?php
 namespace Geo\Test\Geocoder;
 
-use Geo\Geocoder\Calculator;
-use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
+use Geo\Geocoder\Calculator;
 
 class CalculatorTest extends TestCase {
 
@@ -70,8 +69,8 @@ class CalculatorTest extends TestCase {
 		for ($i = 0; $i < 100; $i++) {
 			foreach ($coords as $coord) {
 				$is = $this->Calculator->blur($coord[0], $coord[1]);
-				$this->assertWithinRange($coord[0], $is, $coord[2], $is . ' instead of ' . $coord[0]. ' (' . $coord[2] . ')');
-				$this->assertNotWithinRange($coord[0], $is, $coord[2] / 1000, $is . ' NOT instead of ' . $coord[0] .' (' . $coord[2] . ')');
+				$this->assertWithinRange($coord[0], $is, $coord[2], $is . ' instead of ' . $coord[0] . ' (' . $coord[2] . ')');
+				$this->assertNotWithinRange($coord[0], $is, $coord[2] / 1000, $is . ' NOT instead of ' . $coord[0] . ' (' . $coord[2] . ')');
 			}
 		}
 	}
