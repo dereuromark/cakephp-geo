@@ -34,7 +34,7 @@ use Cake\Database\Expression\FunctionExpression;
 class GeocoderBehavior extends Behavior {
 
 	protected $_defaultConfig = [
-		'address' => ['street', 'postal_code', 'city', 'country'],
+		'address' => null,
 		'allowEmpty' => true,
 		'expect' => [],
 		'lat' => 'lat', 'lng' => 'lng', 'formatted_address' => 'formatted_address',
@@ -93,6 +93,10 @@ class GeocoderBehavior extends Behavior {
 		$defaults = (array)Configure::read('Geocoder');
 		parent::__construct($table, $config + $defaults);
 
+		// Bug in core about merging keys of array values
+		if ($this->_config['address'] === null) {
+			$this->_config['address'] = ['street', 'postal_code', 'city', 'country'];
+		}
 		$this->_table = $table;
 	}
 

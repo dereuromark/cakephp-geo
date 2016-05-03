@@ -199,9 +199,6 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testBasic() {
-		$driver = $this->db->driver();
-		$this->skipIf(!($driver instanceof Mysql || $driver instanceof Postgres), 'The virtualFields test is only compatible with Mysql/Postgres.');
-
 		$this->Addresses->removeBehavior('Geocoder');
 		$this->Addresses->addBehavior('Geocoder', ['address' => ['street', 'zip', 'city']]);
 
