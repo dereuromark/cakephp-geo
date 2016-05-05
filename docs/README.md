@@ -11,6 +11,8 @@
 * [Geocoder lib](Geocoder/Geocoder.md)
 * [Calculator lib](Geocoder/Calculator.md)
 * [GoogleMap helper](Helper/GoogleMap.md)
+* [GeocodedAddresses result cache](Model/GeocodedAddresses.md)
+* [Search plugin integration](Geocoder/Search.md)
 
 ## Contributing
 Your help is greatly appreciated.
