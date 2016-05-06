@@ -11,11 +11,13 @@ use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Geocoder\Formatter\StringFormatter;
 use Geo\Exception\InconclusiveException;
 use Geo\Exception\NotAccurateEnoughException;
 use Geo\Geocoder\Calculator;
 use Geo\Geocoder\Geocoder;
+use RuntimeException;
 
 /**
  * A geocoding behavior for CakePHP to easily geocode addresses.
@@ -56,12 +58,13 @@ class GeocoderBehavior extends Behavior {
 			'distance' => 'findDistance',
 		],
 		'validationError' => null,
+		'cache' => false // Enable only if you got a GeocodedAddresses table running
 	];
 
 	/**
 	 * @var \Geo\Geocoder\Geocoder
 	 */
-	public $_Geocoder;
+	protected $_Geocoder;
 
 	/**
 	 * Initiate behavior for the model using specified settings. Available settings:
@@ -202,8 +205,13 @@ class GeocoderBehavior extends Behavior {
 	protected function _geocode($entity, $addressData) {
 		$entityData['geocoder_result'] = [];
 
-		$addresses = $this->_execute($addressData);
-		if (!$addresses || $addresses->count() < 1) {
+		$search = implode(' ', $addressData);
+		if ($search === '') {
+			return false;
+		}
+
+		$address = $this->_execute($search);
+		if (!$address) {
 			if ($this->_config['allowEmpty']) {
 				return true;
 			}
@@ -212,7 +220,6 @@ class GeocoderBehavior extends Behavior {
 			}
 			return false;
 		}
-		$address = $addresses->first();
 
 		if (!$this->_Geocoder->isExpectedType($address)) {
 			if ($this->_config['allowEmpty']) {
@@ -223,6 +230,7 @@ class GeocoderBehavior extends Behavior {
 			}
 			return false;
 		}
+
 		// Valid lat/lng found
 		$entityData[$this->_config['lat']] = $address->getLatitude();
 		$entityData[$this->_config['lng']] = $address->getLongitude();
@@ -423,25 +431,53 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * Uses the Geocode class to query
 	 *
-	 * @param array $addressFields (simple array of address pieces)
-	 * @return \Geocoder\Model\AddressCollection|null
+	 * @param string $address
+	 * @return \Geocoder\Model\Address|null
 	 */
-	protected function _execute($addressFields) {
-		$address = implode(' ', $addressFields);
-		if (empty($address)) {
-			return null;
+	protected function _execute($address) {
+		$this->_Geocoder = new Geocoder($this->_config);
+
+		if ($this->config('cache')) {
+			$GeocodedAddresses = TableRegistry::get('Geo.GeocodedAddresses');
+			$result = $GeocodedAddresses->find()->where(['address' => $address])->first();
+
+			if ($result) {
+				return $result->data ?: null;
+			}
 		}
 
-		$this->_Geocoder = new Geocoder($this->_config);
 		try {
 			$addresses = $this->_Geocoder->geocode($address);
 		} catch (InconclusiveException $e) {
-			return null;
+			$addresses = null;
 		} catch (NotAccurateEnoughException $e) {
-			return null;
+			$addresses = null;
+		}
+		$result = null;
+		if ($addresses && $addresses->count() > 0) {
+			$result = $addresses->first();
 		}
 
-		return $addresses;
+		if ($this->config('cache')) {
+			$addressEntity = $GeocodedAddresses->newEntity([
+				'address' => $address
+			]);
+			if ($result) {
+				$formatter = new StringFormatter();
+				$addressEntity->formatted_address = $formatter->format($result, '%S %n, %z %L');
+				$addressEntity->lat = $result->getLatitude();
+				$addressEntity->lng = $result->getLongitude();
+				$addressEntity->country = $result->getCountry()->getCode();
+				$addressEntity->data = $result;
+			}
+
+			//dd($GeocodedAddresses->save($addressEntity));
+			if (!$GeocodedAddresses->save($addressEntity, ['atomic' => false])) {
+				throw new RuntimeException('Could not store geocoding cache data');
+			}
+		}
+
+		return $result;
 	}
 
 	/**

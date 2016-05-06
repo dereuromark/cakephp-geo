@@ -31,7 +31,7 @@ class Geocoder extends GeoGeocoder {
 	 * @return \Geocoder\Model\AddressCollection
 	 */
 	public function geocode($address, array $params = []) {
-		$file = Inflector::slug($address) . '.php';
+		$file = Inflector::slug($address) . '.txt';
 
 		$testFiles = ROOT . DS . 'tests' . DS . 'test_files' . DS . 'Geocoder' . DS;
 		$testFile = $testFiles . $file;

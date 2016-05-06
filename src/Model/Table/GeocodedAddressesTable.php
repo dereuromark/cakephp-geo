@@ -1,6 +1,7 @@
 <?php
 namespace Geo\Model\Table;
 
+use Cake\Database\Schema\Table as Schema;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -29,9 +30,19 @@ class GeocodedAddressesTable extends Table {
 	}
 
 	/**
+	 * @param \Cake\Database\Schema\Table $schema
+	 *
+	 * @return \Cake\Database\Schema\Table
+	 */
+	protected function _initializeSchema(Schema $schema) {
+		$schema->columnType('data', 'object');
+		return $schema;
+	}
+
+	/**
 	 * @param string $address
 	 *
-	 * @return bool|\Cake\Datasource\EntityInterface
+	 * @return bool|\Geo\Model\Entity\GeocodedAddress
 	 */
 	public function retrieve($address) {
 		$entity = $this->find()->where(['address' => $address])->first();
@@ -50,8 +61,7 @@ class GeocodedAddressesTable extends Table {
 
 			$formatter = new StringFormatter();
 			$address->formatted_address = $formatter->format($result, '%S %n, %z %L');
-			//FIXME (Array Type needed)
-			//$address->data = $address->toArray();
+			$address->data = $result;
 		}
 
 		return $this->save($address);

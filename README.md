@@ -25,6 +25,9 @@ Also new:
 - MYSQL support
 - PostgreSQL support
 
+And also:
+- GeocodedAddresses Table class for caching of API requests to prevent rate limits and speed up lookups
+
 ## Installation & Docs
 
 - [Documentation](docs/README.md)

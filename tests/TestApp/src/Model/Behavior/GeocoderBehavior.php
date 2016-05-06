@@ -14,18 +14,14 @@ class GeocoderBehavior extends GeoGeocoderBehavior {
 	/**
 	 * Uses the Geocode class to query
 	 *
-	 * @param array $addressFields (simple array of address pieces)
-	 * @return \Geocoder\Model\AddressCollection|null
+	 * @param string $address
+	 * @return \Geocoder\Model\Address|null
+	 * @throws \Exception
 	 */
-	protected function _execute($addressFields) {
-		$address = implode(' ', $addressFields);
-		if (empty($address)) {
-			return [];
-		}
-
+	protected function _execute($address) {
 		$this->_Geocoder = new Geocoder($this->_config);
 
-		$file = Inflector::slug($address) . '.php';
+		$file = Inflector::slug($address) . '.txt';
 
 		$testFiles = ROOT . DS . 'tests' . DS . 'test_files' . DS . 'Behavior' . DS;
 		$testFile = $testFiles . $file;
@@ -35,14 +31,15 @@ class GeocoderBehavior extends GeoGeocoderBehavior {
 				throw new Exception('Should not happen on CI: ' . $testFile);
 			}
 
-			$addresses = parent::_execute($addressFields);
-			file_put_contents($testFile, serialize($addresses));
+			$address = parent::_execute($address);
+			file_put_contents($testFile, serialize($address));
+			return $address;
 		}
 
-		$addresses = file_get_contents($testFile);
-		$addresses = unserialize($addresses);
+		$address = file_get_contents($testFile);
+		$address = unserialize($address);
 
-		return $addresses;
+		return $address;
 	}
 
 }
