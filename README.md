@@ -28,6 +28,10 @@ Also new:
 And also:
 - GeocodedAddresses Table class for caching of API requests to prevent rate limits and speed up lookups
 
+
+## Demo
+See [Sandbox examples](http://sandbox.dereuromark.de/sandbox/geo-examples) for live demos of the GoogleMaps helper and the Geocoder behavior.
+
 ## Installation & Docs
 
 - [Documentation](docs/README.md)
