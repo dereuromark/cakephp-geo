@@ -88,6 +88,25 @@ class Geocoder {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function accuracyTypes() {
+		$array = [
+			self::TYPE_COUNTRY => __('Country'),
+			self::TYPE_AAL1 => __('Province'),
+			self::TYPE_AAL3 => __('Sub Province'),
+			self::TYPE_AAL4 => __('Region'),
+			self::TYPE_AAL5 => __('Sub Region'),
+			self::TYPE_LOC => __('Locality'),
+			self::TYPE_SUBLOC => __('Sub Locality'),
+			self::TYPE_POSTAL => __('Postal Code'),
+			self::TYPE_ADDRESS => __('Street Address'),
+			self::TYPE_NUMBER => __('Street Number')
+		];
+		return $array;
+	}
+
+	/**
 	 * Actual querying.
 	 * The query will be flatted, and if multiple results are fetched, they will be found
 	 * in $result['all'].
@@ -246,7 +265,7 @@ class Geocoder {
 	 */
 	protected function _buildGeocoder() {
 		if (isset($this->geocoder)) {
-			return $this->geocoder;
+			return;
 		}
 
 		$geocoderClass = $this->config('provider');
