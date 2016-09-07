@@ -33,7 +33,7 @@ class GeoIpLookup extends AbstractHttpProvider implements Provider {
 			return $this->returnResults([$this->getLocalhostDefaults()]);
 		}
 
-		$query = sprintf(self::ENDPOINT_URL, $address);
+		$query = sprintf(static::ENDPOINT_URL, $address);
 
 		return $this->executeQuery($query);
 	}

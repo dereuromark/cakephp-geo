@@ -77,9 +77,9 @@ class Calculator {
 			throw new CalculatorException('Invalid Unit');
 		}
 
-		if ($fromUnit === self::UNIT_MILES) {
+		if ($fromUnit === static::UNIT_MILES) {
 			$value *= $this->_units[$toUnit];
-		} elseif ($toUnit === self::UNIT_MILES) {
+		} elseif ($toUnit === static::UNIT_MILES) {
 			$value /= $this->_units[$fromUnit];
 		} else {
 			$value /= $this->_units[$fromUnit];

@@ -92,16 +92,16 @@ class Geocoder {
 	 */
 	public function accuracyTypes() {
 		$array = [
-			self::TYPE_COUNTRY => __('Country'),
-			self::TYPE_AAL1 => __('Province'),
-			self::TYPE_AAL3 => __('Sub Province'),
-			self::TYPE_AAL4 => __('Region'),
-			self::TYPE_AAL5 => __('Sub Region'),
-			self::TYPE_LOC => __('Locality'),
-			self::TYPE_SUBLOC => __('Sub Locality'),
-			self::TYPE_POSTAL => __('Postal Code'),
-			self::TYPE_ADDRESS => __('Street Address'),
-			self::TYPE_NUMBER => __('Street Number')
+			static::TYPE_COUNTRY => __('Country'),
+			static::TYPE_AAL1 => __('Province'),
+			static::TYPE_AAL3 => __('Sub Province'),
+			static::TYPE_AAL4 => __('Region'),
+			static::TYPE_AAL5 => __('Sub Region'),
+			static::TYPE_LOC => __('Locality'),
+			static::TYPE_SUBLOC => __('Sub Locality'),
+			static::TYPE_POSTAL => __('Postal Code'),
+			static::TYPE_ADDRESS => __('Street Address'),
+			static::TYPE_NUMBER => __('Street Number')
 		];
 		return $array;
 	}
@@ -179,50 +179,50 @@ class Geocoder {
 
 		$adminLevels = $address->getAdminLevels();
 		$map = [
-			self::TYPE_AAL1 => 1,
-			self::TYPE_AAL2 => 2,
-			self::TYPE_AAL3 => 3,
-			self::TYPE_AAL4 => 4,
-			self::TYPE_AAL5 => 5,
+			static::TYPE_AAL1 => 1,
+			static::TYPE_AAL2 => 2,
+			static::TYPE_AAL3 => 3,
+			static::TYPE_AAL4 => 4,
+			static::TYPE_AAL5 => 5,
 		];
 
 		foreach ($expected as $expect) {
 			switch ($expect) {
-				case self::TYPE_COUNTRY:
+				case static::TYPE_COUNTRY:
 					if ($address->getCountry() !== null) {
 						return true;
 					}
 					break;
-				case (self::TYPE_AAL1):
-				case (self::TYPE_AAL2):
-				case (self::TYPE_AAL3):
-				case (self::TYPE_AAL4):
-				case (self::TYPE_AAL5):
+				case (static::TYPE_AAL1):
+				case (static::TYPE_AAL2):
+				case (static::TYPE_AAL3):
+				case (static::TYPE_AAL4):
+				case (static::TYPE_AAL5):
 					if ($adminLevels->has($map[$expect])) {
 						return true;
 					}
 					break;
-				case self::TYPE_LOC:
+				case static::TYPE_LOC:
 					if ($address->getLocality() !== null) {
 						return true;
 					}
 					break;
-				case self::TYPE_SUBLOC:
+				case static::TYPE_SUBLOC:
 					if ($address->getSubLocality() !== null) {
 						return true;
 					}
 					break;
-				case self::TYPE_POSTAL:
+				case static::TYPE_POSTAL:
 					if ($address->getPostalCode() !== null) {
 						return true;
 					}
 					break;
-				case self::TYPE_ADDRESS:
+				case static::TYPE_ADDRESS:
 					if ($address->getStreetName() !== null) {
 						return true;
 					}
 					break;
-				case self::TYPE_NUMBER:
+				case static::TYPE_NUMBER:
 					if ($address->getStreetNumber() !== null) {
 						return true;
 					}
