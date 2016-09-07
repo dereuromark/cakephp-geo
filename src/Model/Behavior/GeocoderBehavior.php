@@ -84,17 +84,14 @@ class GeocoderBehavior extends Behavior {
 	 * - before: validate/save (defaults to save)
 	 *             set to false if you only want to use the validation rules etc
 	 *
-/**
- * Constructor
- *
- * Merges config with the default and store in the config property
- *
- * Does not retain a reference to the Table object. If you need this
- * you should override the constructor.
- *
- * @param \Cake\ORM\Table $table The table this behavior is attached to.
- * @param array $config The config for this behavior.
- */
+	 * Merges config with the default and store in the config property
+	 *
+	 * Does not retain a reference to the Table object. If you need this
+	 * you should override the constructor.
+	 *
+	 * @param \Cake\ORM\Table $table The table this behavior is attached to.
+	 * @param array $config The config for this behavior.
+	 */
 	public function __construct(Table $table, array $config = []) {
 		$defaults = (array)Configure::read('Geocoder');
 		parent::__construct($table, $config + $defaults);
@@ -301,8 +298,8 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * Forms a sql snippet for distance calculation on db level using two lat/lng points.
 	 *
-	 * @param string|float|null $lat Latitude field (Model.lat) or float value
-	 * @param string|float|null $lng Longitude field (Model.lng) or float value
+	 * @param string|float $lat Latitude field (Model.lat) or float value
+	 * @param string|float $lng Longitude field (Model.lng) or float value
 	 * @param string|null $fieldLat Comparison field
 	 * @param string|null $fieldLng Comparison field
 	 * @param string|null $tableName
@@ -386,8 +383,8 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * Snippet for custom pagination
 	 *
-	 * @param float|string|null $lat
-	 * @param float|string|null $lng
+	 * @param float|string $lat
+	 * @param float|string $lng
 	 * @param string|null $fieldName
 	 * @param string|null $tableName
 	 * @return array
@@ -471,7 +468,6 @@ class GeocoderBehavior extends Behavior {
 				$addressEntity->data = $result;
 			}
 
-			//dd($GeocodedAddresses->save($addressEntity));
 			if (!$GeocodedAddresses->save($addressEntity, ['atomic' => false])) {
 				throw new RuntimeException('Could not store geocoding cache data');
 			}
