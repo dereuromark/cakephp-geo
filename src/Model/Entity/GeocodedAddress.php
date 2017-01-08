@@ -11,7 +11,7 @@ use Cake\ORM\Entity;
  * @property string $formatted_address
  * @property string $country
  * @property float $lat
- * @property float $long
+ * @property float $lng
  * @property string $data
  */
 class GeocodedAddress extends Entity {
