@@ -201,7 +201,6 @@ class GoogleMapHelperTest extends TestCase {
 
 		$staticMapUrl = $this->GoogleMap->staticMapUrl(['center' => 48 . ',' . 11, 'markers' => $mapMarkers, 'size' => '640x510', 'zoom' => 6]);
 		//echo $this->GoogleMap->Html->link('Open Static Map', $staticMapUrl, array('class'=>'staticMap', 'title'=>__d('tools', 'click for full map'))); //, 'escape'=>false
-
 	}
 
 	public function testMarkerIcons() {
