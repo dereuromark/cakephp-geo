@@ -35,7 +35,6 @@ class ObjectType extends Type {
 		if (is_object($value)) {
 			return $value;
 		}
-		dd($value);
 		return unserialize($value);
 	}
 
