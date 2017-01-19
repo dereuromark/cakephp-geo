@@ -36,5 +36,11 @@
 			"TestApp\\": "tests/TestApp/src",
 			"Cake\\Test\\": "vendor/cakephp/cakephp/tests"
 		}
+	},
+	"scripts": {
+		"test": "php phpunit.phar",
+		"coverage": "php phpunit.phar --log-junit webroot/coverage/unitreport.xml --coverage-html webroot/coverage --coverage-clover webroot/coverage/coverage.xml",
+		"cs-check": "phpcs -p --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/vendor/,/tmp/,/logs/,/config/Migrations/ --extensions=php ./",
+		"cs-fix": "phpcbf -v --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/vendor/,/tmp/,/logs/,/config/Migrations/ --extensions=php ./"
 	}
 }

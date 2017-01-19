@@ -12,8 +12,8 @@ I am looking forward to your contributions. There are several ways to help out:
 * Write patches for bugs/features, preferably with test cases included
 
 There are a few guidelines that I need contributors to follow:
-* Coding standards (see link below) `vendor/bin/sniff`
-* Passing tests (you can enable travis to assert your changes pass): `php phpunit.phar`
+* Coding standards (see link below) `composer cs-check` (and `composer cs-fix` to fix)
+* Passing tests (you can enable travis to assert your changes pass): `composer test`
 
 # Additional Resources
 
