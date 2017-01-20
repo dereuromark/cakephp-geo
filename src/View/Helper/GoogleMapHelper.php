@@ -26,6 +26,10 @@ class GoogleMapHelper extends Helper {
 
 	use JsBaseEngineTrait;
 
+	const API = 'maps.google.com/maps/api/js?';
+
+	const STATIC_API = 'maps.google.com/maps/api/staticmap?';
+
 	/**
 	 * @var int
 	 */
@@ -50,10 +54,6 @@ class GoogleMapHelper extends Helper {
 	 * @var int
 	 */
 	public static $infoContentCount = 0;
-
-	const API = 'maps.google.com/maps/api/js?';
-
-	const STATIC_API = 'maps.google.com/maps/api/staticmap?';
 
 	const TYPE_ROADMAP = 'R';
 
@@ -252,7 +252,7 @@ class GoogleMapHelper extends Helper {
 	 * @param array $config
 	 */
 	public function __construct($View = null, $config = []) {
-		$google = (array)Configure::read('GoogleMap');
+		$google = $config + (array)Configure::read('GoogleMap');
 		$defaults = $this->_defaultOptions;
 		if (!empty($google['api'])) {
 			$defaults['map']['api'] = $google['api'];

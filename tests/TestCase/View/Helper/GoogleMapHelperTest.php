@@ -10,6 +10,9 @@ use Geo\View\Helper\GoogleMapHelper;
  */
 class GoogleMapHelperTest extends TestCase {
 
+	/**
+	 * @return void
+	 */
 	public function setUp() {
 		parent::setUp();
 
@@ -19,13 +22,22 @@ class GoogleMapHelperTest extends TestCase {
 		$this->GoogleMap = new GoogleMapHelper($this->View);
 	}
 
-	public function testObject() {
-		$this->assertInstanceOf('Geo\View\Helper\GoogleMapHelper', $this->GoogleMap);
+	/**
+	 * @return void
+	 */
+	public function testConfigMergeDefaults() {
+		$config = [
+			'zoom' => 2,
+			'type' => 'foo'
+		];
+		$this->GoogleMap = new GoogleMapHelper($this->View, $config);
+
+		$result = $this->GoogleMap->config();
+		$this->assertEquals('foo', $result['map']['type']);
+		$this->assertEquals(2, $result['map']['zoom']);
 	}
 
 	/**
-	 * GoogleMapHelperTest::testConfigMerge()
-	 *
 	 * @return void
 	 */
 	public function testConfigMerge() {
@@ -42,6 +54,9 @@ class GoogleMapHelperTest extends TestCase {
 		$this->assertEquals(8, $result['map']['zoom']);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testMapUrl() {
 		$url = $this->GoogleMap->mapUrl(['to' => 'Munich, Germany']);
 		$this->assertEquals('http://maps.google.com/maps?daddr=Munich%2C+Germany', $url);
@@ -50,6 +65,9 @@ class GoogleMapHelperTest extends TestCase {
 		$this->assertEquals('http://maps.google.com/maps?daddr=%3CM%C3%BCnchen%3E%2C+Germany', $url);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testMapLink() {
 		$result = $this->GoogleMap->mapLink('<To Munich>!', ['to' => '<Munich>, Germany']);
 		$expected = '<a href="http://maps.google.com/maps?daddr=%3CMunich%3E%2C+Germany">&lt;To Munich&gt;!</a>';
@@ -57,6 +75,9 @@ class GoogleMapHelperTest extends TestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testLinkWithMapUrl() {
 		$url = $this->GoogleMap->mapUrl(['to' => '<München>, Germany']);
 		$result = $this->GoogleMap->Html->link('Some title', $url);
@@ -65,6 +86,9 @@ class GoogleMapHelperTest extends TestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testStaticPaths() {
 		$m = [
 			[
@@ -82,18 +106,18 @@ class GoogleMapHelperTest extends TestCase {
 		];
 
 		$is = $this->GoogleMap->staticPaths($m);
-		//echo pr(h($is));
 
 		$options = [
 			'paths' => $is
 		];
 		$is = $this->GoogleMap->staticMapLink('My Title', $options);
-		//echo h($is).BR.BR;
 
 		$is = $this->GoogleMap->staticMap($options);
-		//echo $is;
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testStaticMarkers() {
 		$m = $this->markerElements = [
 			[
@@ -117,6 +141,9 @@ class GoogleMapHelperTest extends TestCase {
 //	http://maps.google.com/staticmap?size=500x500&maptype=hybrid&markers=color:red|label:S|48.3,11.2&sensor=false
 //	http://maps.google.com/maps/api/staticmap?size=512x512&maptype=roadmap&markers=color:blue|label:S|40.702147,-74.015794&markers=color:green|label:G|40.711614,-74.012318&markers=color:red|color:red|label:C|40.718217,-73.998284&sensor=false
 
+	/**
+	 * @return void
+	 */
 	public function testStatic() {
 		//echo '<h2>StaticMap</h2>';
 		$m = [
@@ -193,6 +220,9 @@ class GoogleMapHelperTest extends TestCase {
 		//echo $link;
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testStaticMapWithStaticMapLink() {
 		//echo '<h2>testStaticMapWithStaticMapLink</h2>';
 		$markers = [];
@@ -203,6 +233,9 @@ class GoogleMapHelperTest extends TestCase {
 		//echo $this->GoogleMap->Html->link('Open Static Map', $staticMapUrl, array('class'=>'staticMap', 'title'=>__d('tools', 'click for full map'))); //, 'escape'=>false
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testMarkerIcons() {
 		$tests = [
 			['green', null],
@@ -352,6 +385,9 @@ class GoogleMapHelperTest extends TestCase {
 		//echo '<a href="javascript:void(0)" class="mapAnchor" rel="m3">Marker3</a>';
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testDynamic3() {
 		//echo '<h2>Map with Directions</h2>';
 		$options = [

@@ -27,7 +27,7 @@
 	"autoload": {
 		"psr-4": {
 			"Geo\\": "src",
-			"Geo\\Test\\Fixture\\": "tests\\Fixture"
+			"Geo\\Test\\Fixture\\": "tests/Fixture"
 		}
 	},
 	"autoload-dev": {
@@ -38,6 +38,7 @@
 		}
 	},
 	"scripts": {
+		"setup": "[ ! -f phpunit.phar ] && wget https://phar.phpunit.de/phpunit.phar",
 		"test": "php phpunit.phar",
 		"coverage": "php phpunit.phar --log-junit webroot/coverage/unitreport.xml --coverage-html webroot/coverage --coverage-clover webroot/coverage/coverage.xml",
 		"cs-check": "phpcs -p --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/vendor/,/tmp/,/logs/,/config/Migrations/ --extensions=php ./",
