@@ -5,6 +5,7 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Postgres;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
@@ -58,14 +59,12 @@ class GeocoderBehaviorTest extends TestCase {
 	}
 
 	/**
-	 * GeocoderBehaviorTest::testDistance()
-	 *
 	 * @return void
 	 */
 	public function testDistance() {
 		$expr = $this->Addresses->distanceExpr(12, 14);
 		//$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.lat)) * COS(PI()/2 - RADIANS(90 - 12)) * COS(RADIANS(Addresses.lng) - RADIANS(14)) + SIN(PI()/2 - RADIANS(90 - Addresses.lat)) * SIN(PI()/2 - RADIANS(90 - 12)))';
-		$expected = '(6371.04 * ACOS((((COS((((PI() / 2) - RADIANS(((90 - Addresses.lat)))))) * COS(PI()/2 - RADIANS(90 - 12)) * COS(((RADIANS((Addresses.lng)) - RADIANS(:c0))))) + (SIN((((PI() / 2) - RADIANS(((90 - Addresses.lat)))))) * SIN((((PI() / 2) - RADIANS(90 - 12)))))))))';
+		$expected = '(6371.04 * ACOS((((COS((((PI() / 2) - RADIANS(((90 - Addresses.lat)))))) * COS(PI()/2 - RADIANS(90 - 12)) * COS(((RADIANS((Addresses.lng)) - RADIANS(:param0))))) + (SIN((((PI() / 2) - RADIANS(((90 - Addresses.lat)))))) * SIN((((PI() / 2) - RADIANS(90 - 12)))))))))';
 
 		$binder = new ValueBinder();
 		$result = $expr->sql($binder);
@@ -85,20 +84,16 @@ class GeocoderBehaviorTest extends TestCase {
 	}
 
 	/**
-	 * GeocoderBehaviorTest::testDistanceField()
-	 *
 	 * @return void
 	 */
 	public function testDistanceField() {
 		$condition = $this->Addresses->distanceField(12, 14);
 		//$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.lat)) * COS(PI()/2 - RADIANS(90 - 12)) * COS(RADIANS(Addresses.lng) - RADIANS(14)) + SIN(PI()/2 - RADIANS(90 - Addresses.lat)) * SIN(PI()/2 - RADIANS(90 - 12))) AS Addresses.distance';
 
-		$this->assertInstanceOf('\Cake\Database\Expression\QueryExpression', $condition['Addresses.distance']);
+		$this->assertInstanceOf(QueryExpression::class, $condition['Addresses.distance']);
 	}
 
 	/**
-	 * GeocoderBehaviorTest::testSetDistanceAsVirtualField()
-	 *
 	 * @return void
 	 */
 	public function testSetDistanceAsVirtualField() {
@@ -118,8 +113,6 @@ class GeocoderBehaviorTest extends TestCase {
 	}
 
 	/**
-	 * GeocoderBehaviorTest::testSetDistanceAsVirtualFieldInMiles()
-	 *
 	 * @return void
 	 */
 	public function testSetDistanceAsVirtualFieldInMiles() {
@@ -138,8 +131,6 @@ class GeocoderBehaviorTest extends TestCase {
 	}
 
 	/**
-	 * GeocoderBehaviorTest::testPagination()
-	 *
 	 * @return void
 	 */
 	public function testPagination() {
@@ -162,8 +153,6 @@ class GeocoderBehaviorTest extends TestCase {
 	}
 
 	/**
-	 * GeocoderBehaviorTest::testValidate()
-	 *
 	 * @return void
 	 */
 	public function testValidate() {
@@ -196,8 +185,6 @@ class GeocoderBehaviorTest extends TestCase {
 	}
 
 	/**
-	 * Geocoding tests using the google webservice
-	 *
 	 * @return void
 	 */
 	public function testBasic() {
@@ -237,8 +224,6 @@ class GeocoderBehaviorTest extends TestCase {
 	}
 
 	/**
-	 * GeocoderBehaviorTest::testMinAccLow()
-	 *
 	 * @return void
 	 */
 	public function testMinAccLow() {
@@ -255,8 +240,6 @@ class GeocoderBehaviorTest extends TestCase {
 	}
 
 	/**
-	 * GeocoderBehaviorTest::testMinAccHigh()
-	 *
 	 * @return void
 	 */
 	public function testMinAccHigh() {
@@ -274,8 +257,6 @@ class GeocoderBehaviorTest extends TestCase {
 	}
 
 	/**
-	 * GeocoderBehaviorTest::testMinInc()
-	 *
 	 * @return void
 	 */
 	public function testMinInc() {
@@ -297,8 +278,6 @@ class GeocoderBehaviorTest extends TestCase {
 	}
 
 	/**
-	 * GeocoderBehaviorTest::testMinIncAllowed()
-	 *
 	 * @return void
 	 */
 	public function testMinIncAllowed() {
@@ -316,8 +295,6 @@ class GeocoderBehaviorTest extends TestCase {
 	}
 
 	/**
-	 * GeocoderBehaviorTest::testExpect()
-	 *
 	 * @return void
 	 */
 	public function testExpect() {
