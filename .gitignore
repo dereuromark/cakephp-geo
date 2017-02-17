@@ -5,3 +5,4 @@
 /tests/config/app_local.php
 /.idea/
 /webroot/coverage
+/config/Migrations/schema-dump-default.lock
