@@ -28,21 +28,22 @@ before_script:
   - composer self-update
   - composer install --prefer-source --no-interaction --dev
 
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
-  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi"
+  - if [ $DB = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi
+  - if [ $DB = 'pgsql' ]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
 
-  - sh -c "if [ '$COVERALLS' = '1' ]; then composer require --dev satooshi/php-coveralls:dev-master; fi"
-  - sh -c "if [ '$COVERALLS' = '1' ]; then mkdir -p build/logs; fi"
+  - if [ $PHPCS != 1 ]; then composer require phpunit/phpunit; fi
+  - if [ $COVERALLS = '1' ]; then composer require --dev satooshi/php-coveralls:dev-master; fi
+  - if [ $COVERALLS = '1' ]; then mkdir -p build/logs; fi
 
   - phpenv rehash
   - set +H
   - cp phpunit.xml.dist phpunit.xml
 
 script:
-  - sh -c "if [ '$COVERALLS' = '1' ]; then phpunit --coverage-clover build/logs/clover.xml; fi"
-  - sh -c "if [ '$COVERALLS' = '1' ]; then php vendor/bin/coveralls -c .coveralls.yml -v; fi"
-  - sh -c "if [ '$DEFAULT' = '1' ]; then phpunit; fi"
-  - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=vendor --ignore=docs --ignore=test_files --ignore=config/Migrations . ; fi"
+  - if [ $COVERALLS = '1' ]; then vendor/bin/phpunit --coverage-clover build/logs/clover.xml; fi
+  - if [ $COVERALLS = '1' ]; then php vendor/bin/coveralls -c .coveralls.yml -v; fi
+  - if [ $DEFAULT = '1' ]; then vendor/bin/phpunit; fi
+  - if [ $PHPCS = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=vendor --ignore=docs --ignore=test_files --ignore=config/Migrations . ; fi
 
 notifications:
   email: false
