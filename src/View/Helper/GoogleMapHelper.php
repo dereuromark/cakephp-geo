@@ -6,7 +6,9 @@ use Cake\Core\Exception\Exception;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\View\Helper;
+use Cake\View\View;
 use Geo\View\Helper\JsBaseEngineTrait;
+use LogicException;
 
 /**
  * This is a CakePHP helper that helps users to integrate GoogleMap v3
@@ -26,9 +28,9 @@ class GoogleMapHelper extends Helper {
 
 	use JsBaseEngineTrait;
 
-	const API = 'maps.google.com/maps/api/js?';
+	const API = 'maps.google.com/maps/api/js';
 
-	const STATIC_API = 'maps.google.com/maps/api/staticmap?';
+	const STATIC_API = 'maps.google.com/maps/api/staticmap';
 
 	/**
 	 * @var int
@@ -140,13 +142,17 @@ class GoogleMapHelper extends Helper {
 	 *
 	 * @var array
 	 */
-	protected $_defaultOptions = [
+	protected $_defaultConfig = [
 		'zoom' => null, // global, both map and staticMap
 		'lat' => null, // global, both map and staticMap
 		'lng' => null, // global, both map and staticMap
 		'type' => self::TYPE_ROADMAP,
 		'map' => [
 			'api' => null,
+			'zoom' => null,
+			'lat' => null,
+			'lng' => null,
+			'type' => null,
 			'streetViewControl' => false,
 			'navigationControl' => true,
 			'mapTypeControl' => true,
@@ -167,7 +173,6 @@ class GoogleMapHelper extends Helper {
 			//'shadow' => true // for icons
 		],
 		'geolocate' => false,
-		'sensor' => false,
 		'language' => null,
 		'region' => null,
 		'showMarker' => true,
@@ -229,8 +234,14 @@ class GoogleMapHelper extends Helper {
 		'autoScript' => false, // let the helper include the necessary js script links
 		'block' => true, // for scripts
 		'localImages' => false,
-		'https' => null // auto detect
+		'https' => null, // auto detect
+		'key' => null,
 	];
+
+	/**
+	 * @var array
+	 */
+	protected $_runtimeConfig = [];
 
 	/**
 	 * @var bool
@@ -251,83 +262,105 @@ class GoogleMapHelper extends Helper {
 	 * @param \Cake\View\View|null $View
 	 * @param array $config
 	 */
-	public function __construct($View = null, $config = []) {
-		$google = $config + (array)Configure::read('GoogleMap');
-		$defaults = $this->_defaultOptions;
-		if (!empty($google['api'])) {
-			$defaults['map']['api'] = $google['api'];
+	public function __construct(View $View, array $config = []) {
+		parent::__construct($View, $config);
+	}
+
+	/**
+	 * @param array $config
+	 * @return void
+	 */
+	public function initialize(array $config) {
+		parent::initialize($config);
+
+		$defaultConfig = Hash::merge($this->_defaultConfig, (array)Configure::read('GoogleMap'));
+		$config = Hash::merge($defaultConfig, $config);
+
+		if (isset($config['api']) && !isset($config['map']['api'])) {
+			$config['map']['api'] = $config['api'];
 		}
-		if (!empty($google['zoom'])) {
-			$defaults['map']['zoom'] = $google['zoom'];
+		if (isset($config['zoom']) && !isset($config['map']['zoom'])) {
+			$config['map']['zoom'] = $config['zoom'];
 		}
-		if (!empty($google['lat'])) {
-			$defaults['map']['lat'] = $google['lat'];
+		if (isset($config['lat']) && !isset($config['map']['lat'])) {
+			$config['map']['lat'] = $config['lat'];
 		}
-		if (!empty($google['lng'])) {
-			$defaults['map']['lng'] = $google['lng'];
+		if (isset($config['lng']) && !isset($config['map']['lng'])) {
+			$config['map']['lng'] = $config['lng'];
 		}
-		if (!empty($google['type'])) {
-			$defaults['map']['type'] = $google['type'];
+		if (isset($config['type']) && !isset($config['map']['type'])) {
+			$config['map']['type'] = $config['type'];
 		}
-		if (!empty($google['size'])) {
-			$defaults['div']['width'] = $google['size']['width'];
-			$defaults['div']['height'] = $google['size']['height'];
+		if (isset($config['size'])) {
+			$config['div']['width'] = $config['size']['width'];
+			$config['div']['height'] = $config['size']['height'];
 		}
-		if (!empty($google['staticSize'])) {
-			$defaults['staticMap']['size'] = $google['staticSize'];
+		if (isset($config['staticSize'])) {
+			$config['staticMap']['size'] = $config['staticSize'];
 		}
 		// the following are convenience defaults - if not available the map lat/lng/zoom defaults will be used
-		if (!empty($google['staticZoom'])) {
-			$defaults['staticMap']['zoom'] = $google['staticZoom'];
+		if (isset($config['staticZoom'])) {
+			$config['staticMap']['zoom'] = $config['staticZoom'];
 		}
-		if (!empty($google['staticLat'])) {
-			$defaults['staticMap']['lat'] = $google['staticLat'];
+		if (isset($config['staticLat'])) {
+			$config['staticMap']['lat'] = $config['staticLat'];
 		}
-		if (!empty($google['staticLng'])) {
-			$defaults['staticMap']['lng'] = $google['staticLng'];
+		if (isset($config['staticLng'])) {
+			$config['staticMap']['lng'] = $config['staticLng'];
 		}
-		if (isset($google['localImages'])) {
-			if ($google['localImages'] === true) {
-				$google['localImages'] = Router::url('/img/google_map/', true);
+		if (isset($config['localImages'])) {
+			if ($config['localImages'] === true) {
+				$config['localImages'] = Router::url('/img/google_map/', true);
 			}
-			$defaults['localImages'] = $google['localImages'];
 		}
-
-		$config = Hash::merge($defaults, $config);
 
 		// BC
-		if (!empty($options['inline'])) {
-			$options['block'] = null;
+		if (!empty($config['inline'])) {
+			$config['block'] = null;
 		}
 
-		parent::__construct($View, $config);
+		$this->_config = $config;
+		$this->_runtimeConfig = $this->_config;
 	}
 
 	/**
 	 * JS maps.google API url
 	 * Like:
-	 * http://maps.google.com/maps/api/js?sensor=true
+	 * http://maps.google.com/maps/api/js?key=ABC
 	 * Adds Key - more variables could be added after it with "&key=value&..."
 	 * - region
 	 *
-	 * @param bool $sensor
 	 * @param string|null $api
 	 * @param string|null $language (iso2: en, de, ja, ...)
 	 * @param string|null $append (more key-value-pairs to append)
 	 * @return string Full URL
 	 */
-	public function apiUrl($sensor = false, $api = null, $language = null, $append = null) {
+	public function apiUrl($api = null, $language = null, $append = null) {
 		$url = $this->_protocol() . static::API;
 
-		$url .= 'sensor=' . ($sensor ? 'true' : 'false');
-		if (!empty($language)) {
-			$url .= '&language=' . $language;
+		// Make sure no one still uses $sensor
+		if (is_bool($api)) {
+			throw new LogicException('First argument is $api, either string or null. Bool given!');
 		}
+
+		$query = [];
 		if (!empty($api)) {
-			$this->_config['map']['api'] = $api;
+			$this->_runtimeConfig['map']['api'] = $api;
 		}
-		if (!empty($this->_config['map']['api'])) {
-			$url .= '&v=' . $this->_config['map']['api'];
+		if (!empty($this->_runtimeConfig['map']['api'])) {
+			$query[] = 'v=' . $this->_runtimeConfig['map']['api'];
+		}
+
+		if (!empty($this->_runtimeConfig['key'])) {
+			$query[] = 'key=' . $this->_runtimeConfig['key'];
+		}
+
+		if (!empty($language)) {
+			$query[] = 'language=' . $language;
+		}
+
+		if ($query) {
+			$url .= '?' . implode('&', $query);
 		}
 		if (!empty($append)) {
 			$url .= $append;
@@ -356,7 +389,7 @@ class GoogleMapHelper extends Helper {
 	 * @return string currentContainerId
 	 */
 	public function id() {
-		return $this->_config['div']['id'];
+		return $this->_runtimeConfig['div']['id'];
 	}
 
 	/**
@@ -370,7 +403,7 @@ class GoogleMapHelper extends Helper {
 		static::$markerCount = static::$infoWindowCount = 0;
 		$this->markers = $this->infoWindows = [];
 		if ($full) {
-			$this->_config = $this->_defaultOptions;
+			$this->_runtimeConfig = $this->_config;
 		}
 	}
 
@@ -389,19 +422,19 @@ class GoogleMapHelper extends Helper {
 	 */
 	public function setControls($options = []) {
 		if (isset($options['streetView'])) {
-			$this->_config['map']['streetViewControl'] = $options['streetView'];
+			$this->_runtimeConfig['map']['streetViewControl'] = $options['streetView'];
 		}
 		if (isset($options['zoom'])) {
-			$this->_config['map']['scaleControl'] = $options['zoom'];
+			$this->_runtimeConfig['map']['scaleControl'] = $options['zoom'];
 		}
 		if (isset($options['scrollwheel'])) {
-			$this->_config['map']['scrollwheel'] = $options['scrollwheel'];
+			$this->_runtimeConfig['map']['scrollwheel'] = $options['scrollwheel'];
 		}
 		if (isset($options['keyboardShortcuts'])) {
-			$this->_config['map']['keyboardShortcuts'] = $options['keyboardShortcuts'];
+			$this->_runtimeConfig['map']['keyboardShortcuts'] = $options['keyboardShortcuts'];
 		}
 		if (isset($options['type'])) {
-			$this->_config['map']['type'] = $options['type'];
+			$this->_runtimeConfig['map']['type'] = $options['type'];
 		}
 	}
 
@@ -412,35 +445,35 @@ class GoogleMapHelper extends Helper {
 	 * @param array $options associative array of settings are passed
 	 * @return string divContainer
 	 */
-	public function map($options = []) {
+	public function map(array $options = []) {
 		$this->reset();
-		$this->_config = Hash::merge($this->_config, $options);
-		$this->_config['map'] = array_merge($this->_config['map'], ['zoom' => $this->_config['zoom'], 'lat' => $this->_config['lat'], 'lng' => $this->_config['lng'], 'type' => $this->_config['type']], $options);
-		if (!$this->_config['map']['lat'] || !$this->_config['map']['lng']) {
-			$this->_config['map']['lat'] = $this->_config['map']['defaultLat'];
-			$this->_config['map']['lng'] = $this->_config['map']['defaultLng'];
-			$this->_config['map']['zoom'] = $this->_config['map']['defaultZoom'];
-		} elseif (!$this->_config['map']['zoom']) {
-			$this->_config['map']['zoom'] = $this->_config['map']['defaultZoom'];
+		$this->_runtimeConfig = Hash::merge($this->_runtimeConfig, $options);
+		$this->_runtimeConfig['map'] = array_merge($this->_runtimeConfig['map'], ['zoom' => $this->_runtimeConfig['zoom'], 'lat' => $this->_runtimeConfig['lat'], 'lng' => $this->_runtimeConfig['lng'], 'type' => $this->_runtimeConfig['type']], $options);
+		if (!$this->_runtimeConfig['map']['lat'] || !$this->_runtimeConfig['map']['lng']) {
+			$this->_runtimeConfig['map']['lat'] = $this->_runtimeConfig['map']['defaultLat'];
+			$this->_runtimeConfig['map']['lng'] = $this->_runtimeConfig['map']['defaultLng'];
+			$this->_runtimeConfig['map']['zoom'] = $this->_runtimeConfig['map']['defaultZoom'];
+		} elseif (!$this->_runtimeConfig['map']['zoom']) {
+			$this->_runtimeConfig['map']['zoom'] = $this->_runtimeConfig['map']['defaultZoom'];
 		}
 
 		$result = '';
 
 		// autoinclude js?
-		if ($this->_config['autoScript'] && !$this->_apiIncluded) {
-			$res = $this->Html->script($this->apiUrl(), ['block' => $this->_config['block']]);
+		if ($this->_runtimeConfig['autoScript'] && !$this->_apiIncluded) {
+			$res = $this->Html->script($this->apiUrl(), ['block' => $this->_runtimeConfig['block']]);
 			$this->_apiIncluded = true;
 
-			if (!$this->_config['block']) {
+			if (!$this->_runtimeConfig['block']) {
 				$result .= $res . PHP_EOL;
 			}
 			// usually already included
 			//http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js
 		}
 		// still not very common: http://code.google.com/intl/de-DE/apis/maps/documentation/javascript/basics.html
-		if (false && !empty($this->_config['autoScript']) && !$this->_gearsIncluded) {
-			$res = $this->Html->script($this->gearsUrl(), ['block' => $this->_config['block']]);
-			if (!$this->_config['block']) {
+		if (false && !empty($this->_runtimeConfig['autoScript']) && !$this->_gearsIncluded) {
+			$res = $this->Html->script($this->gearsUrl(), ['block' => $this->_runtimeConfig['block']]);
+			if (!$this->_runtimeConfig['block']) {
 				$result .= $res . PHP_EOL;
 			}
 		}
@@ -457,31 +490,31 @@ class GoogleMapHelper extends Helper {
 		";
 
 		#rename "map_canvas" to "map_canvas1", ... if multiple maps on one page
-		while (in_array($this->_config['div']['id'], $this->_mapIds)) {
-			$this->_config['div']['id'] .= '-1'; //TODO: improve
+		while (in_array($this->_runtimeConfig['div']['id'], $this->_mapIds)) {
+			$this->_runtimeConfig['div']['id'] .= '-1'; //TODO: improve
 		}
-		$this->_mapIds[] = $this->_config['div']['id'];
+		$this->_mapIds[] = $this->_runtimeConfig['div']['id'];
 
 		$map .= "
-			var " . $this->name() . ' = new google.maps.Map(document.getElementById("' . $this->_config['div']['id'] . "\"), myOptions);
+			var " . $this->name() . ' = new google.maps.Map(document.getElementById("' . $this->_runtimeConfig['div']['id'] . "\"), myOptions);
 			";
 		$this->map = $map;
 
-		$this->_config['div']['style'] = '';
-		if (is_numeric($this->_config['div']['width'])) {
-			$this->_config['div']['width'] .= 'px';
+		$this->_runtimeConfig['div']['style'] = '';
+		if (is_numeric($this->_runtimeConfig['div']['width'])) {
+			$this->_runtimeConfig['div']['width'] .= 'px';
 		}
-		if (is_numeric($this->_config['div']['height'])) {
-			$this->_config['div']['height'] .= 'px';
+		if (is_numeric($this->_runtimeConfig['div']['height'])) {
+			$this->_runtimeConfig['div']['height'] .= 'px';
 		}
 
-		$this->_config['div']['style'] .= 'width: ' . $this->_config['div']['width'] . ';';
-		$this->_config['div']['style'] .= 'height: ' . $this->_config['div']['height'] . ';';
-		unset($this->_config['div']['width']);
-		unset($this->_config['div']['height']);
+		$this->_runtimeConfig['div']['style'] .= 'width: ' . $this->_runtimeConfig['div']['width'] . ';';
+		$this->_runtimeConfig['div']['style'] .= 'height: ' . $this->_runtimeConfig['div']['height'] . ';';
+		unset($this->_runtimeConfig['div']['width']);
+		unset($this->_runtimeConfig['div']['height']);
 
-		$defaultText = isset($this->_config['content']) ? $this->_config['content'] : __('Map cannot be displayed!');
-		$result .= $this->Html->tag('div', $defaultText, $this->_config['div']);
+		$defaultText = isset($this->_runtimeConfig['content']) ? $this->_runtimeConfig['content'] : __('Map cannot be displayed!');
+		$result .= $this->Html->tag('div', $defaultText, $this->_runtimeConfig['div']);
 
 		return $result;
 	}
@@ -492,10 +525,10 @@ class GoogleMapHelper extends Helper {
 	 * @return string
 	 */
 	protected function _initialLocation() {
-		if ($this->_config['map']['lat'] && $this->_config['map']['lng']) {
-			return 'new google.maps.LatLng(' . $this->_config['map']['lat'] . ', ' . $this->_config['map']['lng'] . ')';
+		if ($this->_runtimeConfig['map']['lat'] && $this->_runtimeConfig['map']['lng']) {
+			return 'new google.maps.LatLng(' . $this->_runtimeConfig['map']['lat'] . ', ' . $this->_runtimeConfig['map']['lng'] . ')';
 		}
-		$this->_config['autoCenter'] = true;
+		$this->_runtimeConfig['autoCenter'] = true;
 		return 'false';
 	}
 
@@ -514,7 +547,7 @@ class GoogleMapHelper extends Helper {
 	 * @throws \Cake\Core\Exception\Exception
 	 */
 	public function addMarker($options) {
-		$defaults = $this->_config['marker'];
+		$defaults = $this->_runtimeConfig['marker'];
 		if (isset($options['icon']) && is_array($options['icon'])) {
 			$defaults = array_merge($defaults, $options['icon']);
 			unset($options['icon']);
@@ -600,19 +633,19 @@ function geocodeAddress(address) {
 		}
 
 		// Fill popup windows
-		if (!empty($options['content']) && $this->_config['infoWindow']['useMultiple']) {
+		if (!empty($options['content']) && $this->_runtimeConfig['infoWindow']['useMultiple']) {
 			$x = $this->addInfoWindow(['content' => $options['content']]);
 			$this->addEvent(static::$markerCount, $x, $options['open']);
 
 		} elseif (!empty($options['content'])) {
-			if (!isset($this->_config['marker']['infoWindow'])) {
-				$this->_config['marker']['infoWindow'] = $this->addInfoWindow();
+			if (!isset($this->_runtimeConfig['marker']['infoWindow'])) {
+				$this->_runtimeConfig['marker']['infoWindow'] = $this->addInfoWindow();
 			}
 
 			$x = $this->addInfoContent($options['content']);
 			$event = "
-			gInfoWindows" . static::$mapCount . '[' . $this->_config['marker']['infoWindow'] . ']. setContent(gWindowContents' . static::$mapCount . '[' . $x . "]);
-			gInfoWindows" . static::$mapCount . '[' . $this->_config['marker']['infoWindow'] . '].open(' . $this->name() . ', gMarkers' . static::$mapCount . '[' . $x . "]);
+			gInfoWindows" . static::$mapCount . '[' . $this->_runtimeConfig['marker']['infoWindow'] . ']. setContent(gWindowContents' . static::$mapCount . '[' . $x . "]);
+			gInfoWindows" . static::$mapCount . '[' . $this->_runtimeConfig['marker']['infoWindow'] . '].open(' . $this->name() . ', gMarkers' . static::$mapCount . '[' . $x . "]);
 			";
 			$this->addCustomEvent(static::$markerCount, $event);
 
@@ -716,11 +749,11 @@ function geocodeAddress(address) {
 			$color = 'red';
 		}
 
-		if (!empty($this->_config['localImages'])) {
-			$this->setIcons['color'] = $this->_config['localImages'] . 'marker%s.png';
-			$this->setIcons['alpha'] = $this->_config['localImages'] . 'marker%s%s.png';
-			$this->setIcons['numeric'] = $this->_config['localImages'] . '%s%s.png';
-			$this->setIcons['special'] = $this->_config['localImages'] . '%s.png';
+		if (!empty($this->_runtimeConfig['localImages'])) {
+			$this->setIcons['color'] = $this->_runtimeConfig['localImages'] . 'marker%s.png';
+			$this->setIcons['alpha'] = $this->_runtimeConfig['localImages'] . 'marker%s%s.png';
+			$this->setIcons['numeric'] = $this->_runtimeConfig['localImages'] . '%s%s.png';
+			$this->setIcons['special'] = $this->_runtimeConfig['localImages'] . '%s.png';
 		}
 
 		if (!empty($char)) {
@@ -739,24 +772,24 @@ function geocodeAddress(address) {
 			$url = sprintf($this->setIcons['color'], $color);
 		}
 
-/*
-var iconImage = new google.maps.MarkerImage('images/' + images[0] + ' .png',
-	new google.maps.Size(iconData[images[0]].width, iconData[images[0]].height),
-	new google.maps.Point(0,0),
-	new google.maps.Point(0, 32)
-);
+		/*
+        var iconImage = new google.maps.MarkerImage('images/' + images[0] + ' .png',
+            new google.maps.Size(iconData[images[0]].width, iconData[images[0]].height),
+            new google.maps.Point(0,0),
+            new google.maps.Point(0, 32)
+        );
 
-var iconShadow = new google.maps.MarkerImage('images/' + images[1] + ' .png',
-	new google.maps.Size(iconData[images[1]].width, iconData[images[1]].height),
-	new google.maps.Point(0,0),
-	new google.maps.Point(0, 32)
-);
+        var iconShadow = new google.maps.MarkerImage('images/' + images[1] + ' .png',
+            new google.maps.Size(iconData[images[1]].width, iconData[images[1]].height),
+            new google.maps.Point(0,0),
+            new google.maps.Point(0, 32)
+        );
 
-var iconShape = {
-	coord: [1, 1, 1, 32, 32, 32, 32, 1],
-	type: 'poly'
-};
-*/
+        var iconShape = {
+            coord: [1, 1, 1, 32, 32, 32, 32, 1],
+            type: 'poly'
+        };
+        */
 
 		$shadow = 'http://www.google.com/mapfiles/shadow50.png';
 		$res = [
@@ -851,7 +884,7 @@ var iconShape = {
 	 * @return int windowCount
 	 */
 	public function addInfoWindow($options = []) {
-		$defaults = $this->_config['infoWindow'];
+		$defaults = $this->_runtimeConfig['infoWindow'];
 		$options += $defaults;
 
 		if (!empty($options['lat']) && !empty($options['lng'])) {
@@ -940,7 +973,7 @@ var iconShape = {
 	 */
 	public function addDirections($from, $to, $options = []) {
 		$id = 'd' . static::$markerCount++;
-		$defaults = $this->_config['directions'];
+		$defaults = $this->_runtimeConfig['directions'];
 		$options += $defaults;
 		$travelMode = $this->travelModes[$options['travelMode']];
 
@@ -1010,7 +1043,7 @@ var iconShape = {
 			//$to = '\'' . h($to) . '\'';
 		}
 
-		$defaults = $this->_config['polyline'];
+		$defaults = $this->_runtimeConfig['polyline'];
 		$options += $defaults;
 
 		$id = 'p' . static::$markerCount++;
@@ -1075,22 +1108,22 @@ var iconShape = {
 	 * @return null|string Javascript if $return is true
 	 */
 	public function finalize($return = false) {
-		$script = $this->_arrayToObject('matching', $this->matching, false, true) . '
-		' . $this->_arrayToObject('gIcons' . static::$mapCount, $this->icons, false, false) . '
+		$script = $this->_arrayToObject('matching', $this->matching, false, true) . PHP_EOL;
+		$script .= $this->_arrayToObject('gIcons' . static::$mapCount, $this->icons, false, false) . '
 
 	jQuery(document).ready(function() {
 		';
 
 		$script .= $this->map;
-		if ($this->_config['geolocate']) {
+		if ($this->_runtimeConfig['geolocate']) {
 			$script .= $this->_geolocate();
 		}
 
-		if ($this->_config['showMarker'] && !empty($this->markers) && is_array($this->markers)) {
+		if ($this->_runtimeConfig['showMarker'] && !empty($this->markers) && is_array($this->markers)) {
 			$script .= implode($this->markers, ' ');
 		}
 
-		if ($this->_config['autoCenter']) {
+		if ($this->_runtimeConfig['autoCenter']) {
 			$script .= $this->_autoCenter();
 		}
 		$script .= '
@@ -1112,10 +1145,10 @@ var iconShape = {
 	 */
 	public function geolocateCallback($js) {
 		if ($js === false) {
-			$this->_config['callbacks']['geolocate'] = false;
+			$this->_runtimeConfig['callbacks']['geolocate'] = false;
 			return;
 		}
-		$this->_config['callbacks']['geolocate'] = $js;
+		$this->_runtimeConfig['callbacks']['geolocate'] = $js;
 	}
 
 	/**
@@ -1167,7 +1200,7 @@ var iconShape = {
 	 * @return string
 	 */
 	protected function _geolocationCallback() {
-		if (($js = $this->_config['callbacks']['geolocate']) === false) {
+		if (($js = $this->_runtimeConfig['callbacks']['geolocate']) === false) {
 			return '';
 		}
 		if ($js === null) {
@@ -1196,7 +1229,7 @@ var iconShape = {
 	 * @return string JSON like js string
 	 */
 	protected function _mapOptions() {
-		$options = array_merge($this->_config, $this->_config['map']);
+		$options = array_merge($this->_runtimeConfig, $this->_runtimeConfig['map']);
 
 		$mapOptions = array_intersect_key($options, [
 			'streetViewControl' => null,
@@ -1257,8 +1290,8 @@ var iconShape = {
 	}
 
 	/**
- * Google Maps Link
- **/
+	 * Google Maps Link
+	 **/
 
 	/**
 	 * Returns a maps.google link
@@ -1309,12 +1342,12 @@ var iconShape = {
 	}
 
 	/**
- * STATIC MAP
- **/
+	 * STATIC MAP
+	 **/
 
 	/**
- * http://maps.google.com/staticmap?center=40.714728,-73.998672&zoom=14&size=512x512&maptype=mobile&markers=40.702147,-74.015794,blues%7C40.711614,-74.012318,greeng%7C40.718217,-73.998284,redc&mobile=true&sensor=false
- **/
+	 * http://maps.google.com/staticmap?center=40.714728,-73.998672&zoom=14&size=512x512&maptype=mobile&markers=40.702147,-74.015794,blues%7C40.711614,-74.012318,greeng%7C40.718217,-73.998284,redc&mobile=true&sensor=false
+	 **/
 
 	/**
 	 * Create a plain image map
@@ -1365,25 +1398,20 @@ var iconShape = {
 		$map = $this->_protocol() . static::STATIC_API;
 		/*
 		$params = array(
-			'sensor' => 'false',
 			'mobile' => 'false',
 			'format' => 'png',
 			//'center' => false
 		);
 
-		if (!empty($options['sensor'])) {
-			$params['sensor'] = 'true';
-		}
 		if (!empty($options['mobile'])) {
 			$params['mobile'] = 'true';
 		}
 		*/
 
-		$defaults = array_merge($this->_defaultOptions, $this->_defaultOptions['staticMap']);
+		$defaults = array_merge($this->_config, $this->_config['staticMap']);
 		$mapOptions = $options + $defaults;
 
 		$params = array_intersect_key($mapOptions, [
-			'sensor' => null,
 			'mobile' => null,
 			'format' => null,
 			'size' => null,
@@ -1607,7 +1635,7 @@ var iconShape = {
 	 * @return string protocol base (including ://)
 	 */
 	protected function _protocol() {
-		$https = $this->_config['https'];
+		$https = $this->_runtimeConfig['https'];
 		if ($https === null) {
 			$https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
 		}

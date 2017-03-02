@@ -11,6 +11,16 @@ use Geo\View\Helper\GoogleMapHelper;
 class GoogleMapHelperTest extends TestCase {
 
 	/**
+	 * @var GoogleMapHelper
+	 */
+	protected $GoogleMap;
+
+	/**
+	 * @var View
+	 */
+	protected $View;
+
+	/**
 	 * @return void
 	 */
 	public function setUp() {
@@ -40,16 +50,18 @@ class GoogleMapHelperTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testConfigMerge() {
+	public function testConfigMergeDeep() {
 		$config = [
 			'map' => [
 				'type' => 'foo',
 			]
 		];
+		Configure::write('GoogleMap.key', 'abc');
 		Configure::write('GoogleMap.zoom', 8);
 		$this->GoogleMap = new GoogleMapHelper($this->View, $config);
 
 		$result = $this->GoogleMap->config();
+		$this->assertEquals('abc', $result['key']);
 		$this->assertEquals('foo', $result['map']['type']);
 		$this->assertEquals(8, $result['map']['zoom']);
 	}
@@ -266,14 +278,14 @@ class GoogleMapHelperTest extends TestCase {
 		$expected = '<div id="map_canvas" class="map"';
 		$this->assertTextContains($expected, $result);
 
-		$expected = '<script src="http://maps.google.com/maps/api/js?sensor=false';
+		$expected = '<script src="http://maps.google.com/maps/api/js';
 		$this->assertTextNotContains($expected, $result);
 
 		$expected = 'var map0 = new google.maps.Map(document.getElementById("map_canvas"), myOptions);';
 		$this->assertTextContains($expected, $result);
 
 		$scripts = $this->View->fetch('script');
-		$expected = '<script src="http://maps.google.com/maps/api/js?sensor=false';
+		$expected = '<script src="http://maps.google.com/maps/api/js';
 		$this->assertTextContains($expected, $scripts);
 	}
 
@@ -296,7 +308,7 @@ class GoogleMapHelperTest extends TestCase {
 		$expected = '<div id="map_canvas" class="map"';
 		$this->assertTextContains($expected, $result);
 
-		$expected = '<script src="http://maps.google.com/maps/api/js?sensor=false';
+		$expected = '<script src="http://maps.google.com/maps/api/js';
 		$this->assertTextContains($expected, $result);
 	}
 
