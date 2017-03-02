@@ -146,6 +146,7 @@ class GoogleMapHelper extends Helper {
 		'zoom' => null, // global, both map and staticMap
 		'lat' => null, // global, both map and staticMap
 		'lng' => null, // global, both map and staticMap
+		'api' => '3',
 		'type' => self::TYPE_ROADMAP,
 		'map' => [
 			'api' => null,
