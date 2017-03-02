@@ -43,7 +43,7 @@ script:
   - if [[ $COVERALLS = 1 ]]; then vendor/bin/phpunit --coverage-clover build/logs/clover.xml; fi
   - if [[ $COVERALLS = 1 ]]; then php vendor/bin/coveralls -c .coveralls.yml -v; fi
   - if [[ $DEFAULT = 1 ]]; then vendor/bin/phpunit; fi
-  - if [[ $PHPCS = 1 ]]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=vendor --ignore=docs --ignore=test_files --ignore=config/Migrations . ; fi
+  - if [[ $PHPCS = 1 ]]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/vendor/,/docs/,/test_files/,/config/Migrations/ . ; fi
 
 notifications:
   email: false

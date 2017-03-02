@@ -317,6 +317,7 @@ class GoogleMapHelper extends Helper {
 
 		// BC
 		if (!empty($config['inline'])) {
+			trigger_error('Deprecated inline option, use block instead.', E_USER_DEPRECATED);
 			$config['block'] = null;
 		}
 

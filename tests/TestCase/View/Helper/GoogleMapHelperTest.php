@@ -11,12 +11,12 @@ use Geo\View\Helper\GoogleMapHelper;
 class GoogleMapHelperTest extends TestCase {
 
 	/**
-	 * @var GoogleMapHelper
+	 * @var \Geo\View\Helper\GoogleMapHelper
 	 */
 	protected $GoogleMap;
 
 	/**
-	 * @var View
+	 * @var \Cake\View\View
 	 */
 	protected $View;
 
