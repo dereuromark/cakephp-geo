@@ -666,6 +666,11 @@ function geocodeAddress(address) {
 	/**
 	 * Build directions form (type get) for directions inside infoWindows
 	 *
+	 * Options for directions (if array)
+	 * - label
+	 * - submit
+	 * - escape: defaults to true
+	 *
 	 * @param mixed $directions
 	 * - bool TRUE for autoDirections (using lat/lng)
 	 * @param array $markerOptions
@@ -1314,6 +1319,7 @@ function geocodeAddress(address) {
 	 * - to: 1x necessary (address or lat,lng - can be an array of multiple destinations: array('dest1', 'dest2'))
 	 * - zoom: optional (defaults to none)
 	 * - query: Additional query strings as array
+	 * - escape: defaults to true
 	 *
 	 * @param array $options Options
 	 * @return string link: http://...
@@ -1397,6 +1403,9 @@ function geocodeAddress(address) {
 	/**
 	 * Creates a URL to a plain image map.
 	 *
+	 * Options:
+	 * - escape: defaults to true
+	 *
 	 * @param array $options
 	 * - see staticMap() for details
 	 * @return string urlOfImage: http://...
@@ -1439,7 +1448,7 @@ function geocodeAddress(address) {
 			$params['visible'] = urlencode($mapOptions['visible']);
 		}
 
-		// center and zoom are not necccessary if path, visible or markers are given
+		// center and zoom are not necessary if path, visible or markers are given
 		if (!isset($options['center']) || $options['center'] === false) {
 			// dont use it
 		} elseif ($options['center'] === true && $mapOptions['lat'] !== null && $mapOptions['lng'] !== null) {
