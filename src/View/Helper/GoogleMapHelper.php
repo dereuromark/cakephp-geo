@@ -613,7 +613,7 @@ function geocodeAddress(address) {
 			if (!isset($options['address'])) {
 				throw new Exception('Either use lat/lng or address to add a marker');
 			}
-			$position = 'geocodeAddress(\'' . h($options['address']) . '\')';
+			$position = 'geocodeAddress("' . h($options['address']) . '")';
 		} else {
 			$position = 'new google.maps.LatLng(' . $options['lat'] . ',' . $options['lng'] . ')';
 		}
@@ -872,7 +872,7 @@ function geocodeAddress(address) {
 			$options['anchor'] = $options['shadow'];
 		}
 
-		$icon = 'new google.maps.MarkerImage(\'' . $url . '\',
+		$icon = 'new google.maps.MarkerImage("' . $url . '",
 	new google.maps.Size(' . $options['size']['width'] . ', ' . $options['size']['height'] . '),
 	new google.maps.Point(' . $options['origin']['width'] . ', ' . $options['origin']['height'] . '),
 	new google.maps.Point(' . $options['anchor']['width'] . ', ' . $options['anchor']['height'] . ')
@@ -997,12 +997,12 @@ function geocodeAddress(address) {
 		if (is_array($from)) {
 			$from = 'new google.maps.LatLng(' . (float)$from['lat'] . ', ' . (float)$from['lng'] . ')';
 		} else {
-			$from = '\'' . h($from) . '\'';
+			$from = '"' . h($from) . '"';
 		}
 		if (is_array($to)) {
 			$to = 'new google.maps.LatLng(' . (float)$to['lat'] . ', ' . (float)$to['lng'] . ')';
 		} else {
-			$to = '\'' . h($to) . '\'';
+			$to = '"' . h($to) . '"';
 		}
 
 		$directions .= "
@@ -1175,7 +1175,7 @@ function geocodeAddress(address) {
 		// Try Google Gears Geolocation
 	} else if (google.gears) {
 		browserSupportFlag = true;
-		var geo = google.gears.factory.create(\'beta.geolocation\');
+		var geo = google.gears.factory.create("beta.geolocation");
 		geo.getCurrentPosition(function(position) {
 			geolocationCallback(position.latitude, position.longitude);
 		}, function() {
@@ -1308,7 +1308,7 @@ function geocodeAddress(address) {
 	 * @return string HTML link
 	 */
 	public function mapLink($title, $mapOptions = [], $linkOptions = []) {
-		return $this->Html->link($title, $this->mapUrl($mapOptions), $linkOptions);
+		return $this->Html->link($title, $this->mapUrl($mapOptions + ['escape' => false]), $linkOptions);
 	}
 
 	/**
@@ -1397,7 +1397,7 @@ function geocodeAddress(address) {
 	 * @return string HTML link
 	 */
 	public function staticMapLink($title, $mapOptions = [], $linkOptions = []) {
-		return $this->Html->link($title, $this->staticMapUrl($mapOptions), $linkOptions);
+		return $this->Html->link($title, $this->staticMapUrl($mapOptions + ['escape' => false]), $linkOptions);
 	}
 
 	/**
@@ -1708,8 +1708,8 @@ function geocodeAddress(address) {
 	protected function _toObjectParams($array, $asString = true, $keyAsString = false) {
 		$pieces = [];
 		foreach ($array as $key => $value) {
-			$e = ($asString && strpos($value, 'new ') !== 0 ? '\'' : '');
-			$ke = ($keyAsString ? '\'' : '');
+			$e = ($asString && strpos($value, 'new ') !== 0 ? '"' : '');
+			$ke = ($keyAsString ? '"' : '');
 			$pieces[] = $ke . $key . $ke . ': ' . $e . $value . $e;
 		}
 		return implode(',' . PHP_EOL, $pieces);

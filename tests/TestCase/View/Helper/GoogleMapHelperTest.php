@@ -92,9 +92,8 @@ class GoogleMapHelperTest extends TestCase {
 	 * @return void
 	 */
 	public function testMapLink() {
-		$result = $this->GoogleMap->mapLink('<To Munich>!', ['to' => '<Munich>, Germany']);
-		$expected = '<a href="http://maps.google.com/maps?daddr=%3CMunich%3E%2C+Germany">&lt;To Munich&gt;!</a>';
-		//echo $result;
+		$result = $this->GoogleMap->mapLink('<To Munich>!', ['to' => '<Munich>, Germany', 'zoom' => 10]);
+		$expected = '<a href="http://maps.google.com/maps?daddr=%3CMunich%3E%2C+Germany&amp;z=10">&lt;To Munich&gt;!</a>';
 		$this->assertEquals($expected, $result);
 	}
 
@@ -102,10 +101,9 @@ class GoogleMapHelperTest extends TestCase {
 	 * @return void
 	 */
 	public function testLinkWithMapUrl() {
-		$url = $this->GoogleMap->mapUrl(['to' => '<München>, Germany']);
+		$url = $this->GoogleMap->mapUrl(['to' => '<München>, Germany', 'zoom' => 10, 'escape' => false]);
 		$result = $this->GoogleMap->Html->link('Some title', $url);
-		$expected = '<a href="http://maps.google.com/maps?daddr=%3CM%C3%BCnchen%3E%2C+Germany">Some title</a>';
-		//echo $result;
+		$expected = '<a href="http://maps.google.com/maps?daddr=%3CM%C3%BCnchen%3E%2C+Germany&amp;z=10">Some title</a>';
 		$this->assertEquals($expected, $result);
 	}
 
@@ -134,11 +132,18 @@ class GoogleMapHelperTest extends TestCase {
 			'paths' => $is
 		];
 		$is = $this->GoogleMap->staticMapLink('My Title', $options);
+		$expected = 'path=color:green|weight:5|Berlin|Stuttgart&amp;path=color:blue|weight:5|44.2,11.1|43.1,12.2|44.3,11.3|43.3,12.3&amp;path=color:red|weight:10|48.1,11.1|48.4,11.2';
+		$this->assertTextContains($expected, $is);
 
 		$is = $this->GoogleMap->staticMap($options);
+		$this->assertTextContains($expected, $is);
 	}
 
 	/**
+	 * Examples:
+	 * http://maps.google.com/staticmap?size=500x500&maptype=hybrid&markers=color:red|label:S|48.3,11.2&sensor=false
+	 * http://maps.google.com/maps/api/staticmap?size=512x512&maptype=roadmap&markers=color:blue|label:S|40.702147,-74.015794&markers=color:green|label:G|40.711614,-74.012318&markers=color:red|color:red|label:C|40.718217,-73.998284&sensor=false
+	 *
 	 * @return void
 	 */
 	public function testStaticMarkers() {
@@ -151,18 +156,19 @@ class GoogleMapHelperTest extends TestCase {
 			]
 		];
 		$is = $this->GoogleMap->staticMarkers($m, ['color' => 'red', 'char' => 'C', 'shadow' => 'false']);
-		//debug($is);
+		$expected = [
+			'color:red|shadow:false|44.3%2C11.2',
+			'color:red|shadow:false|44.2%2C11.1'
+		];
+		$this->assertSame($expected, $is);
 
 		$options = [
 			'markers' => $is
 		];
 		$is = $this->GoogleMap->staticMap($options);
-		//debug($is);
-		//echo $is;
+		$expected = 'markers=color:red|shadow:false|44.3%2C11.2&amp;markers=color:red|shadow:false|44.2%2C11.1';
+		$this->assertTextContains($expected, $is);
 	}
-
-//	http://maps.google.com/staticmap?size=500x500&maptype=hybrid&markers=color:red|label:S|48.3,11.2&sensor=false
-//	http://maps.google.com/maps/api/staticmap?size=512x512&maptype=roadmap&markers=color:blue|label:S|40.702147,-74.015794&markers=color:green|label:G|40.711614,-74.012318&markers=color:red|color:red|label:C|40.718217,-73.998284&sensor=false
 
 	/**
 	 * @return void
@@ -188,32 +194,30 @@ class GoogleMapHelperTest extends TestCase {
 		$options = [
 			'markers' => $this->GoogleMap->staticMarkers($m)
 		];
-		//debug($options['markers']).BR;
 
 		$is = $this->GoogleMap->staticMapUrl($options);
-		//echo h($is);
-		//echo BR.BR;
+		$expected = 'http://maps.google.com/maps/api/staticmap?size=300x300&amp;format=png&amp;mobile=false&amp;maptype=roadmap&amp;markers=color:yellow|shadow:true|Berlin&amp;markers=color:0x0000FF|shadow:false|44.2%2C11.1';
+		$this->assertSame($expected, $is);
 
 		$is = $this->GoogleMap->staticMapLink('MyLink', $options);
-		//echo h($is);
-		//echo BR.BR;
+		$expected = '<a href="http://maps.google.com/maps/api/staticmap?size=300x300&amp;format=png&amp;mobile=false&amp;maptype=roadmap&amp;markers=color:yellow|shadow:true|Berlin&amp;markers=color:0x0000FF|shadow:false|44.2%2C11.1">MyLink</a>';
+		$this->assertSame($expected, $is);
 
 		$is = $this->GoogleMap->staticMap($options);
-		//echo h($is).BR;
-		//echo $is;
-		//echo BR.BR;
+		$expected = 'size=300x300&amp;format=png&amp;';
+		$this->assertTextContains($expected, $is);
 
 		$options = [
 			'size' => '200x100',
 			'center' => true
 		];
 		$is = $this->GoogleMap->staticMapLink('MyTitle', $options);
-		//echo h($is);
-		//echo BR.BR;
 		$attr = [
 			'title' => '<b>Yeah!</b>'
 		];
 		$is = $this->GoogleMap->staticMap($options, $attr);
+		$expected = '<img src="http://maps.google.com/maps/api/staticmap?size=200x100&amp;format=png&amp;mobile=false&amp;center=1&amp;maptype=roadmap" title="&lt;b&gt;Yeah!&lt;/b&gt;" alt="Map"/>';
+		$this->assertSame($expected, $is);
 
 		$pos = [
 			['lat' => 48.1, 'lng' => '11.1'],
@@ -223,21 +227,26 @@ class GoogleMapHelperTest extends TestCase {
 			'markers' => $this->GoogleMap->staticMarkers($pos)
 		];
 
-		$attr = ['url' => $this->GoogleMap->mapUrl(['to' => 'Munich, Germany'])];
+		$attr = [
+			'url' => $this->GoogleMap->mapUrl(['to' => 'Munich, Germany', 'zoom' => 10, 'escape' => false])
+		];
 		$is = $this->GoogleMap->staticMap($options, $attr);
+		$this->assertTextContains('href="http://maps.google.com/maps?daddr=Munich%2C+Germany&amp;z=10"', $is);
 
-		$url = $this->GoogleMap->mapUrl(['to' => 'Munich, Germany']);
+		$url = $this->GoogleMap->mapUrl(['to' => 'Munich, Germany', 'zoom' => 10, 'escape' => false]);
 		$attr = [
 			'title' => 'Yeah'
 		];
 		$image = $this->GoogleMap->staticMap($options, $attr);
 		$link = $this->GoogleMap->Html->link($image, $url, ['escape' => false, 'target' => '_blank']);
+		$this->assertTextContains('href="http://maps.google.com/maps?daddr=Munich%2C+Germany&amp;z=10" target="_blank"', $link);
+		$this->assertTextContains('src="http://maps.google.com/maps/api/staticmap?size=300x300&amp;format=png', $link);
 	}
 
 	/**
 	 * @return void
 	 */
-	public function testStaticMapWithStaticMapLink() {
+	public function testStaticMapWithStaticMapUrl() {
 		$markers = [];
 		$markers[] = ['lat' => 48.2, 'lng' => 11.1, 'color' => 'red'];
 		$mapMarkers = $this->GoogleMap->staticMarkers($markers);
@@ -356,7 +365,8 @@ class GoogleMapHelperTest extends TestCase {
 
 		$result .= $this->GoogleMap->script();
 
-		//echo $result;
+		$this->assertTextContains('new google.maps.MarkerImage("http://www.google.com/mapfiles/marker_greenE.png"', $result);
+		$this->assertTextContains('gWindowContents2.push("Some Html-<b>Content<\/b>");', $result);
 	}
 
 	/**
