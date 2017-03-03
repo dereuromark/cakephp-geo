@@ -450,12 +450,13 @@ class GoogleMapHelper extends Helper {
 	public function map(array $options = []) {
 		$this->reset();
 		$this->_runtimeConfig = Hash::merge($this->_runtimeConfig, $options);
-		$this->_runtimeConfig['map'] = array_merge($this->_runtimeConfig['map'], ['zoom' => $this->_runtimeConfig['zoom'], 'lat' => $this->_runtimeConfig['lat'], 'lng' => $this->_runtimeConfig['lng'], 'type' => $this->_runtimeConfig['type']], $options);
-		if (!$this->_runtimeConfig['map']['lat'] || !$this->_runtimeConfig['map']['lng']) {
+		$this->_runtimeConfig['map'] = $options + $this->_runtimeConfig['map'];
+
+		if (!isset($this->_runtimeConfig['map']['lat']) || !isset($this->_runtimeConfig['map']['lng'])) {
 			$this->_runtimeConfig['map']['lat'] = $this->_runtimeConfig['map']['defaultLat'];
 			$this->_runtimeConfig['map']['lng'] = $this->_runtimeConfig['map']['defaultLng'];
-			$this->_runtimeConfig['map']['zoom'] = $this->_runtimeConfig['map']['defaultZoom'];
-		} elseif (!$this->_runtimeConfig['map']['zoom']) {
+		}
+		if (!isset($this->_runtimeConfig['map']['zoom'])) {
 			$this->_runtimeConfig['map']['zoom'] = $this->_runtimeConfig['map']['defaultZoom'];
 		}
 
@@ -551,7 +552,7 @@ class GoogleMapHelper extends Helper {
 	public function addMarker($options) {
 		$defaults = $this->_runtimeConfig['marker'];
 		if (isset($options['icon']) && is_array($options['icon'])) {
-			$defaults = array_merge($defaults, $options['icon']);
+			$defaults = $options['icon'] + $defaults;
 			unset($options['icon']);
 		}
 		$options += $defaults;
@@ -685,7 +686,7 @@ function geocodeAddress(address) {
 		if ($directions === true) {
 			$options['to'] = $markerOptions['lat'] . ',' . $markerOptions['lng'];
 		} elseif (is_array($directions)) {
-			$options = array_merge($options, $directions);
+			$options = $directions + $options;
 		}
 		if (empty($options['to']) && empty($options['from'])) {
 			return '';
@@ -823,7 +824,7 @@ function geocodeAddress(address) {
 			if (!isset($shadowOptions['anchor'])) {
 				$shadowOptions['anchor'] = [];
 			}
-			$shadowOptions['anchor'] = array_merge($shadowOptions['anchor'], $last['options']['anchor']);
+			$shadowOptions['anchor'] = $last['options']['anchor'] + $shadowOptions['anchor'];
 
 			$res['shadow'] = $this->icon($shadow, $shadowOptions);
 		}
@@ -1231,7 +1232,7 @@ function geocodeAddress(address) {
 	 * @return string JSON like js string
 	 */
 	protected function _mapOptions() {
-		$options = array_merge($this->_runtimeConfig, $this->_runtimeConfig['map']);
+		$options = $this->_runtimeConfig['map'] + $this->_runtimeConfig;
 
 		$mapOptions = array_intersect_key($options, [
 			'streetViewControl' => null,
@@ -1334,7 +1335,7 @@ function geocodeAddress(address) {
 			$urlArray[] = 'daddr=' . urlencode($options['to']);
 		}
 
-		if (!empty($options['zoom'])) {
+		if (isset($options['zoom']) && $options['zoom'] !== false) {
 			$urlArray[] = 'z=' . (int)$options['zoom'];
 		}
 		//$urlArray[] = 'f=d';
@@ -1373,8 +1374,9 @@ function geocodeAddress(address) {
 	 */
 	public function staticMap($options = [], $attributes = []) {
 		$defaultAttributes = ['alt' => __d('tools', 'Map')];
+		$attributes += $defaultAttributes;
 
-		return $this->Html->image($this->staticMapUrl($options), array_merge($defaultAttributes, $attributes));
+		return $this->Html->image($this->staticMapUrl($options), $attributes);
 	}
 
 	/**
@@ -1410,7 +1412,7 @@ function geocodeAddress(address) {
 		}
 		*/
 
-		$defaults = array_merge($this->_config, $this->_config['staticMap']);
+		$defaults = $this->_config['staticMap'] + $this->_config;
 		$mapOptions = $options + $defaults;
 
 		$params = array_intersect_key($mapOptions, [
@@ -1521,7 +1523,7 @@ function geocodeAddress(address) {
 
 		$res = [];
 		foreach ($pos as $p) {
-			$options = array_merge($defaults, $p);
+			$options = $p + $defaults;
 
 			$markers = $options['path'];
 			unset($options['path']);
@@ -1587,7 +1589,7 @@ function geocodeAddress(address) {
 
 		// new in staticV2: separate styles! right now just merged
 		foreach ($pos as $p) {
-			$p = array_merge($defaults, $style, $p);
+			$p += $style + $defaults;
 
 			// adress or lat/lng?
 			if (!empty($p['lat']) && !empty($p['lng'])) {

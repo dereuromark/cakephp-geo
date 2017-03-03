@@ -37,14 +37,14 @@ class GoogleMapHelperTest extends TestCase {
 	 */
 	public function testConfigMergeDefaults() {
 		$config = [
-			'zoom' => 2,
+			'zoom' => 0,
 			'type' => 'foo'
 		];
 		$this->GoogleMap = new GoogleMapHelper($this->View, $config);
 
 		$result = $this->GoogleMap->config();
-		$this->assertEquals('foo', $result['map']['type']);
-		$this->assertEquals(2, $result['map']['zoom']);
+		$this->assertSame('foo', $result['map']['type']);
+		$this->assertSame(0, $result['map']['zoom']);
 	}
 
 	/**
@@ -57,13 +57,13 @@ class GoogleMapHelperTest extends TestCase {
 			]
 		];
 		Configure::write('GoogleMap.key', 'abc');
-		Configure::write('GoogleMap.zoom', 8);
+		Configure::write('GoogleMap.zoom', 0);
 		$this->GoogleMap = new GoogleMapHelper($this->View, $config);
 
 		$result = $this->GoogleMap->config();
-		$this->assertEquals('abc', $result['key']);
-		$this->assertEquals('foo', $result['map']['type']);
-		$this->assertEquals(8, $result['map']['zoom']);
+		$this->assertSame('abc', $result['key']);
+		$this->assertSame('foo', $result['map']['type']);
+		$this->assertSame(0, $result['map']['zoom']);
 	}
 
 	/**
@@ -73,8 +73,8 @@ class GoogleMapHelperTest extends TestCase {
 		$url = $this->GoogleMap->mapUrl(['to' => 'Munich, Germany']);
 		$this->assertEquals('http://maps.google.com/maps?daddr=Munich%2C+Germany', $url);
 
-		$url = $this->GoogleMap->mapUrl(['to' => '<München>, Germany']);
-		$this->assertEquals('http://maps.google.com/maps?daddr=%3CM%C3%BCnchen%3E%2C+Germany', $url);
+		$url = $this->GoogleMap->mapUrl(['to' => '<München>, Germany', 'zoom' => 1]);
+		$this->assertEquals('http://maps.google.com/maps?daddr=%3CM%C3%BCnchen%3E%2C+Germany&z=1', $url);
 	}
 
 	/**
@@ -269,6 +269,7 @@ class GoogleMapHelperTest extends TestCase {
 	public function testMap() {
 		$options = [
 			'autoScript' => true,
+			'zoom' => 0
 		];
 
 		$result = $this->GoogleMap->map($options);
@@ -282,6 +283,9 @@ class GoogleMapHelperTest extends TestCase {
 		$this->assertTextNotContains($expected, $result);
 
 		$expected = 'var map0 = new google.maps.Map(document.getElementById("map_canvas"), myOptions);';
+		$this->assertTextContains($expected, $result);
+
+		$expected = 'zoom: 0,';
 		$this->assertTextContains($expected, $result);
 
 		$scripts = $this->View->fetch('script');

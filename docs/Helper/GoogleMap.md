@@ -4,18 +4,37 @@
 
 Either in your View class or at runtime:
 ```php
+$config = [
+	'autoScript' => true,
+];
 $this->loadHelper('Geo.GoogleMap', $config);
 ```
 
+Required (global) configs (as of 2016) are:
+- key
+
+You can easily configure this globally using Configure (e.g. config_local.php):
+```
+	'GoogleMap' => [
+		'key' => 'your-api-key-here',
+	],
+```
+
 Possible config options are:
-- address: (array|string, optional) set to the field name that contains the string from where to generate the slug, or a set of field names to concatenate for generating the slug.
-- real: (boolean, optional) if set to true then field names defined in address must exist in the database table. defaults to false
-- expect: (array)postal_code, locality, sublocality, ...
-- min_accuracy: see above
-- overwrite: lat/lng overwrite on changes, defaults to false
-- update: what fields to update (key=>value array pairs)
-- on: beforeMarshall/beforeSave (defaults to save) - Set to false if you only want to use the validation rules etc
-- unit: defaults to km
+- api: Uses v3 currently
+- zoom: Uses the defaultZoom of 5 otherwise
+- type: Defaults to roadmap
+- block: Display defaults to true to append the generated JS to the "scripts" block
+- https: Leave empty for auto detect
+- map: Multiple map options
+- staticMap: Multiple static map options
+- div: Multiple div options
+- marker: Multiple marker options
+- infoWindow: Multiple info window options
+- directions: Multiple directions options
+- language
+- geolocate 
+- 
 
 ## Display a basic link to a map
 ```php
@@ -67,6 +86,8 @@ $map = $this->GoogleMap->staticMap($options);
 ```
 
 ## Display a basic dynamic map
+Make sure you either loaded your helper with autoScript enabled, or you manually add the apiUrl() to your scripts.
+
 ```php
 $options = [
 	'zoom' => 6,
@@ -94,6 +115,7 @@ Don't forget to output the buffered JS at the end of your page, where also the o
 ```html
 echo $this->fetch('script');
 ```
+This code snippet is usually already in your `layout.ctp` at the end of the body tag.
 
 ### Inline JS
 Maybe you need inline JS instead, then you can call script() instead of finalize() directly:
@@ -110,3 +132,5 @@ $map .= $this->GoogleMap->script();
 // Output both together
 echo $map;
 ```
+
+In general it is advised to defer JS execution by putting it to the end of the HTML (body tag), though.
