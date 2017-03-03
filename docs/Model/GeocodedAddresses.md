@@ -11,7 +11,7 @@ The main benefits are:
 
 ## Basic Usage
 
-You need to enable `GeocodedAddresses` Table. Just make sure you added the table via Migrations plugin:
+You need to enable `Geo.GeocodedAddresses` Table. Just make sure you added the table via Migrations plugin:
 ```
 bin/cake migrations migrate -p Geo
 ```

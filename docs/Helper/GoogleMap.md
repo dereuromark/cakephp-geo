@@ -33,8 +33,7 @@ Possible config options are:
 - infoWindow: Multiple info window options
 - directions: Multiple directions options
 - language
-- geolocate 
-- 
+- geolocate
 
 ## Display a basic link to a map
 ```php
