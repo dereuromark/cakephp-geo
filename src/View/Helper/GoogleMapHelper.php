@@ -23,6 +23,7 @@ use LogicException;
  * @author Mark Scherer
  * @link http://www.dereuromark.de/2010/12/21/googlemapsv3-cakephp-helper/
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @property \Cake\View\Helper\HtmlHelper $Html
  */
 class GoogleMapHelper extends Helper {
 
@@ -326,47 +327,44 @@ class GoogleMapHelper extends Helper {
 	}
 
 	/**
-	 * JS maps.google API url
-	 * Like:
-	 * http://maps.google.com/maps/api/js?key=ABC
-	 * Adds Key - more variables could be added after it with "&key=value&..."
-	 * - region
+	 * JS maps.google API url.
 	 *
-	 * @param string|null $api
-	 * @param string|null $language (iso2: en, de, ja, ...)
-	 * @param string|null $append (more key-value-pairs to append)
+	 * Options read via configs
+	 * - key
+	 * - api
+	 * - language (iso2: en, de, ja, ...)
+	 *
+	 * You can adds more after the URL like "&key=value&..." via
+	 * - query string array: additional query strings (e.g. callback for deferred execution - not supported yet by this helper)
+	 *
+	 * @param array $query
 	 * @return string Full URL
 	 */
-	public function apiUrl($api = null, $language = null, $append = null) {
+	public function apiUrl($query = []) {
 		$url = $this->_protocol() . static::API;
 
-		// Make sure no one still uses $sensor
-		if (is_bool($api)) {
-			throw new LogicException('First argument is $api, either string or null. Bool given!');
+		// Make sure no one still uses old args.
+		if (!is_array($query)) {
+			throw new LogicException('First argument is now array. Bool given!');
 		}
 
-		$query = [];
-		if (!empty($api)) {
-			$this->_runtimeConfig['map']['api'] = $api;
+		if ($this->_runtimeConfig['map']['api']) {
+			 $query['v'] = $this->_runtimeConfig['map']['api'];
 		}
-		if (!empty($this->_runtimeConfig['map']['api'])) {
-			$query[] = 'v=' . $this->_runtimeConfig['map']['api'];
-		}
-
-		if (!empty($this->_runtimeConfig['key'])) {
-			$query[] = 'key=' . $this->_runtimeConfig['key'];
+		if ($this->_runtimeConfig['key']) {
+			$query['key'] = $this->_runtimeConfig['key'];
 		}
 
-		if (!empty($language)) {
-			$query[] = 'language=' . $language;
+		if ($this->_runtimeConfig['language']) {
+			$query['language'] = $this->_runtimeConfig['language'];
 		}
 
 		if ($query) {
-			$url .= '?' . implode('&', $query);
+			$query = http_build_query($query);
+
+			$url .= '?' . $query;
 		}
-		if (!empty($append)) {
-			$url .= $append;
-		}
+
 		return $url;
 	}
 
@@ -1311,18 +1309,21 @@ function geocodeAddress(address) {
 	/**
 	 * Returns a maps.google url
 	 *
-	 * @param array $options Options
+	 * Options:
 	 * - from: necessary (address or lat,lng)
 	 * - to: 1x necessary (address or lat,lng - can be an array of multiple destinations: array('dest1', 'dest2'))
 	 * - zoom: optional (defaults to none)
+	 * - query: Additional query strings as array
+	 *
+	 * @param array $options Options
 	 * @return string link: http://...
 	 */
 	public function mapUrl($options = []) {
 		$url = $this->_protocol() . 'maps.google.com/maps?';
 
-		$urlArray = [];
+		$urlArray = !empty($options['query']) ? $options['query'] : [];
 		if (!empty($options['from'])) {
-			$urlArray[] = 'saddr=' . urlencode($options['from']);
+			$urlArray['saddr'] = $options['from'];
 		}
 
 		if (!empty($options['to']) && is_array($options['to'])) {
@@ -1330,30 +1331,32 @@ function geocodeAddress(address) {
 			foreach ($options['to'] as $key => $value) {
 				$to .= '+to:' . $value;
 			}
-			$urlArray[] = 'daddr=' . urlencode($to);
+			$urlArray['daddr'] = $to;
 		} elseif (!empty($options['to'])) {
-			$urlArray[] = 'daddr=' . urlencode($options['to']);
+			$urlArray['daddr'] = $options['to'];
 		}
 
 		if (isset($options['zoom']) && $options['zoom'] !== false) {
-			$urlArray[] = 'z=' . (int)$options['zoom'];
+			$urlArray['z'] = (int)$options['zoom'];
 		}
 		//$urlArray[] = 'f=d';
 		//$urlArray[] = 'hl=de';
 		//$urlArray[] = 'ie=UTF8';
-		return $url . implode('&', $urlArray);
+
+		$options += [
+			'escape' => true,
+		];
+
+		$query = http_build_query($urlArray);
+		if ($options['escape']) {
+			$query = h($query);
+		}
+
+		return $url . $query;
 	}
 
 	/**
-	 * STATIC MAP
-	 **/
-
-	/**
-	 * http://maps.google.com/staticmap?center=40.714728,-73.998672&zoom=14&size=512x512&maptype=mobile&markers=40.702147,-74.015794,blues%7C40.711614,-74.012318,greeng%7C40.718217,-73.998284,redc&mobile=true&sensor=false
-	 **/
-
-	/**
-	 * Create a plain image map
+	 * Creates a plain image map.
 	 *
 	 * @link http://code.google.com/intl/de-DE/apis/maps/documentation/staticmaps
 	 * @param array $options Options
@@ -1392,14 +1395,14 @@ function geocodeAddress(address) {
 	}
 
 	/**
-	 * Create an url to a plain image map
+	 * Creates a URL to a plain image map.
 	 *
 	 * @param array $options
 	 * - see staticMap() for details
 	 * @return string urlOfImage: http://...
 	 */
 	public function staticMapUrl($options = []) {
-		$map = $this->_protocol() . static::STATIC_API;
+		$mapUrl = $this->_protocol() . static::STATIC_API;
 		/*
 		$params = array(
 			'mobile' => 'false',
@@ -1413,6 +1416,7 @@ function geocodeAddress(address) {
 		*/
 
 		$defaults = $this->_config['staticMap'] + $this->_config;
+
 		$mapOptions = $options + $defaults;
 
 		$params = array_intersect_key($mapOptions, [
@@ -1498,7 +1502,16 @@ function geocodeAddress(address) {
 			}
 			$pieces[] = $key . '=' . $value;
 		}
-		return $map . implode('&', $pieces);
+
+		$options += [
+			'escape' => true,
+		];
+		$query = implode('&', $pieces);
+		if ($options['escape']) {
+			$query = h($query);
+		}
+
+		return $mapUrl . '?' . $query;
 	}
 
 	/**

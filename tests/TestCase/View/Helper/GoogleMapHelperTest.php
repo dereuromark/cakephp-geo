@@ -69,12 +69,23 @@ class GoogleMapHelperTest extends TestCase {
 	/**
 	 * @return void
 	 */
+	public function testApiUrl() {
+		$result = $this->GoogleMap->apiUrl();
+		$this->assertSame('http://maps.google.com/maps/api/js?v=3', $result);
+
+		$result = $this->GoogleMap->apiUrl(['foo' => '<b>Bar</b>']);
+		$this->assertSame('http://maps.google.com/maps/api/js?foo=%3Cb%3EBar%3C%2Fb%3E&v=3', $result);
+	}
+
+	/**
+	 * @return void
+	 */
 	public function testMapUrl() {
 		$url = $this->GoogleMap->mapUrl(['to' => 'Munich, Germany']);
 		$this->assertEquals('http://maps.google.com/maps?daddr=Munich%2C+Germany', $url);
 
 		$url = $this->GoogleMap->mapUrl(['to' => '<München>, Germany', 'zoom' => 1]);
-		$this->assertEquals('http://maps.google.com/maps?daddr=%3CM%C3%BCnchen%3E%2C+Germany&z=1', $url);
+		$this->assertEquals('http://maps.google.com/maps?daddr=%3CM%C3%BCnchen%3E%2C+Germany&amp;z=1', $url);
 	}
 
 	/**
@@ -203,9 +214,6 @@ class GoogleMapHelperTest extends TestCase {
 			'title' => '<b>Yeah!</b>'
 		];
 		$is = $this->GoogleMap->staticMap($options, $attr);
-		//echo h($is).BR;
-		//echo $is;
-		//echo BR.BR;
 
 		$pos = [
 			['lat' => 48.1, 'lng' => '11.1'],
@@ -217,10 +225,6 @@ class GoogleMapHelperTest extends TestCase {
 
 		$attr = ['url' => $this->GoogleMap->mapUrl(['to' => 'Munich, Germany'])];
 		$is = $this->GoogleMap->staticMap($options, $attr);
-		//echo h($is).BR;
-		//echo $is;
-
-		//echo BR.BR.BR;
 
 		$url = $this->GoogleMap->mapUrl(['to' => 'Munich, Germany']);
 		$attr = [
@@ -228,21 +232,19 @@ class GoogleMapHelperTest extends TestCase {
 		];
 		$image = $this->GoogleMap->staticMap($options, $attr);
 		$link = $this->GoogleMap->Html->link($image, $url, ['escape' => false, 'target' => '_blank']);
-		//echo h($link).BR;
-		//echo $link;
 	}
 
 	/**
 	 * @return void
 	 */
 	public function testStaticMapWithStaticMapLink() {
-		//echo '<h2>testStaticMapWithStaticMapLink</h2>';
 		$markers = [];
 		$markers[] = ['lat' => 48.2, 'lng' => 11.1, 'color' => 'red'];
 		$mapMarkers = $this->GoogleMap->staticMarkers($markers);
 
 		$staticMapUrl = $this->GoogleMap->staticMapUrl(['center' => 48 . ',' . 11, 'markers' => $mapMarkers, 'size' => '640x510', 'zoom' => 6]);
-		//echo $this->GoogleMap->Html->link('Open Static Map', $staticMapUrl, array('class'=>'staticMap', 'title'=>__d('tools', 'click for full map'))); //, 'escape'=>false
+		$expected = '?size=640x510&amp;format=png&amp;mobile=false&amp;center=48%2C11&amp;zoom=6&amp;maptype=roadmap&amp;markers=color:red|shadow:true|48.2%2C11.1';
+		$this->assertTextContains($expected, $staticMapUrl);
 	}
 
 	/**
