@@ -84,6 +84,19 @@ $options = [
 $map = $this->GoogleMap->staticMap($options);
 ```
 
+### Display a static map link
+In case you want to use JS to pop-up the image, you can use:
+```php
+$config = [
+	'markers' => $mapMarkers, 
+	'escape' => false,
+];
+$url = $this->GoogleMap->staticMapUrl($config);
+echo $this->Html->link(__('Map'), ['title' => __('Map')]), $url);
+```
+Note that in this case you want to set `'escape' => false` to avoid double-encoding it, as the HtmlHelper already does this.
+
+
 ## Display a basic dynamic map
 Make sure you either loaded your helper with autoScript enabled, or you manually add the apiUrl() to your scripts.
 
