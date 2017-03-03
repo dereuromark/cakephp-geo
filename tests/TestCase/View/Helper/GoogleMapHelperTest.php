@@ -212,6 +212,8 @@ class GoogleMapHelperTest extends TestCase {
 			'center' => true
 		];
 		$is = $this->GoogleMap->staticMapLink('MyTitle', $options);
+		$this->assertNotEmpty($is);
+
 		$attr = [
 			'title' => '<b>Yeah!</b>'
 		];
