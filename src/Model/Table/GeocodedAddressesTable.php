@@ -12,6 +12,14 @@ use Geo\Geocoder\Geocoder;
 
 /**
  * GeocodedAddresses Model
+ *
+ * @method \Geo\Model\Entity\GeocodedAddress get($primaryKey, $options = [])
+ * @method \Geo\Model\Entity\GeocodedAddress newEntity($data = null, array $options = [])
+ * @method \Geo\Model\Entity\GeocodedAddress[] newEntities(array $data, array $options = [])
+ * @method \Geo\Model\Entity\GeocodedAddress|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \Geo\Model\Entity\GeocodedAddress patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \Geo\Model\Entity\GeocodedAddress[] patchEntities($entities, array $data, array $options = [])
+ * @method \Geo\Model\Entity\GeocodedAddress findOrCreate($search, callable $callback = null, $options = [])
  */
 class GeocodedAddressesTable extends Table {
 
