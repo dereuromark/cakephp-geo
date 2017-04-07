@@ -67,6 +67,11 @@ class GeocoderBehavior extends Behavior {
 	protected $_Geocoder;
 
 	/**
+	 * @var \Geo\Geocoder\Calculator
+	 */
+	protected $_Calculator;
+
+	/**
 	 * Initiate behavior for the model using specified settings. Available settings:
 	 *
 	 * - address: (array | string, optional) set to the field name that contains the
@@ -164,7 +169,7 @@ class GeocoderBehavior extends Behavior {
 	 * Run before a model is saved, used to set up slug for model.
 	 *
 	 * @param \Cake\ORM\Entity $entity The entity that is going to be saved
-	 * @return bool True if save should proceed, false otherwise
+	 * @return \Cake\ORM\Entity|null
 	 */
 	public function geocode(Entity $entity) {
 		$addressfields = (array)$this->_config['address'];
@@ -182,12 +187,12 @@ class GeocoderBehavior extends Behavior {
 		}
 		if (!$dirty) {
 			if ($this->_config['allowEmpty'] || $entity->lat && $entity->lng) {
-				return true;
+				return $entity;
 			}
 			if ($entity instanceof Entity) {
 				$this->invalidate($entity);
 			}
-			return false;
+			return null;
 		}
 
 		return $this->_geocode($entity, $addressData);
@@ -197,35 +202,35 @@ class GeocoderBehavior extends Behavior {
 	 * @param \Cake\ORM\Entity|array $entity
 	 * @param array $addressData
 	 *
-	 * @return bool
+	 * @return \Cake\ORM\Entity|null
 	 */
 	protected function _geocode($entity, $addressData) {
 		$entityData['geocoder_result'] = [];
 
 		$search = implode(' ', $addressData);
 		if ($search === '') {
-			return false;
+			return null;
 		}
 
 		$address = $this->_execute($search);
 		if (!$address) {
 			if ($this->_config['allowEmpty']) {
-				return true;
+				return $entity;
 			}
 			if ($entity instanceof Entity) {
 				$this->invalidate($entity);
 			}
-			return false;
+			return null;
 		}
 
 		if (!$this->_Geocoder->isExpectedType($address)) {
 			if ($this->_config['allowEmpty']) {
-				return true;
+				return $entity;
 			}
 			if ($entity instanceof Entity) {
 				$this->invalidate($entity);
 			}
-			return false;
+			return null;
 		}
 
 		// Valid lat/lng found
@@ -434,6 +439,8 @@ class GeocoderBehavior extends Behavior {
 	protected function _execute($address) {
 		$this->_Geocoder = new Geocoder($this->_config);
 
+		/** @var \Geo\Model\Table\GeocodedAddressesTable|null $GeocodedAddresses */
+		$GeocodedAddresses = null;
 		if ($this->config('cache')) {
 			$GeocodedAddresses = TableRegistry::get('Geo.GeocodedAddresses');
 			$result = $GeocodedAddresses->find()->where(['address' => $address])->first();
@@ -483,10 +490,10 @@ class GeocoderBehavior extends Behavior {
 	 * @return float Value
 	 */
 	protected function _calculationValue($unit) {
-		if (!isset($this->Calculator)) {
-			$this->Calculator = new Calculator();
+		if (!isset($this->_Calculator)) {
+			$this->_Calculator = new Calculator();
 		}
-		return $this->Calculator->convert(6371.04, Calculator::UNIT_KM, $unit);
+		return $this->_Calculator->convert(6371.04, Calculator::UNIT_KM, $unit);
 	}
 
 	/**

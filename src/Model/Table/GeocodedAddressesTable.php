@@ -1,7 +1,7 @@
 <?php
 namespace Geo\Model\Table;
 
-use Cake\Database\Schema\Table as Schema;
+use Cake\Database\Schema\TableSchema;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -24,6 +24,11 @@ use Geo\Geocoder\Geocoder;
 class GeocodedAddressesTable extends Table {
 
 	/**
+	 * @var \Geo\Geocoder\Geocoder
+	 */
+	protected $_Geocoder;
+
+	/**
 	 * Initialize method
 	 *
 	 * @param array $config The configuration for the Table.
@@ -38,11 +43,11 @@ class GeocodedAddressesTable extends Table {
 	}
 
 	/**
-	 * @param \Cake\Database\Schema\Table $schema
+	 * @param \Cake\Database\Schema\TableSchema $schema
 	 *
-	 * @return \Cake\Database\Schema\Table
+	 * @return \Cake\Database\Schema\TableSchema
 	 */
-	protected function _initializeSchema(Schema $schema) {
+	protected function _initializeSchema(TableSchema $schema) {
 		$schema->columnType('data', 'object');
 		return $schema;
 	}

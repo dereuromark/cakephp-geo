@@ -340,13 +340,8 @@ class GoogleMapHelper extends Helper {
 	 * @param array $query
 	 * @return string Full URL
 	 */
-	public function apiUrl($query = []) {
+	public function apiUrl(array $query = []) {
 		$url = $this->_protocol() . static::API;
-
-		// Make sure no one still uses old args.
-		if (!is_array($query)) {
-			throw new LogicException('First argument is now array. Bool given!');
-		}
 
 		if ($this->_runtimeConfig['map']['api']) {
 			 $query['v'] = $this->_runtimeConfig['map']['api'];
@@ -420,7 +415,7 @@ class GoogleMapHelper extends Helper {
 	 * @param array $options
 	 * @return void
 	 */
-	public function setControls($options = []) {
+	public function setControls(array $options = []) {
 		if (isset($options['streetView'])) {
 			$this->_runtimeConfig['map']['streetViewControl'] = $options['streetView'];
 		}
@@ -677,7 +672,7 @@ function geocodeAddress(address) {
 	 * - options array of marker for autoDirections etc (optional)
 	 * @return string HTML
 	 */
-	protected function _directions($directions, $markerOptions = []) {
+	protected function _directions($directions, array $markerOptions = []) {
 		$options = [
 			'from' => null,
 			'to' => null,
@@ -819,7 +814,7 @@ function geocodeAddress(address) {
 	 * @param array $shadowOptions Shadow image options
 	 * @return array Resulting array
 	 */
-	public function addIcon($image, $shadow = null, $imageOptions = [], $shadowOptions = []) {
+	public function addIcon($image, $shadow = null, array $imageOptions = [], array $shadowOptions = []) {
 		$res = ['url' => $image];
 		$res['icon'] = $this->icon($image, $imageOptions);
 		if ($shadow) {
@@ -849,7 +844,7 @@ function geocodeAddress(address) {
 	 * - anchor: array(width=>x, height=>y)
 	 * @return int Icon count
 	 */
-	public function icon($url, $options = []) {
+	public function icon($url, array $options = []) {
 		// The shadow image is larger in the horizontal dimension
 		// while the position and offset are the same as for the main image.
 		if (empty($options['size'])) {
@@ -889,7 +884,7 @@ function geocodeAddress(address) {
 	 * - lat, lng, content, maxWidth, pixelOffset, zIndex
 	 * @return int windowCount
 	 */
-	public function addInfoWindow($options = []) {
+	public function addInfoWindow(array $options = []) {
 		$defaults = $this->_runtimeConfig['infoWindow'];
 		$options += $defaults;
 
@@ -977,7 +972,7 @@ function geocodeAddress(address) {
 	 * @see https://developers.google.com/maps/documentation/javascript/3.exp/reference#DirectionsRequest
 	 * @return void
 	 */
-	public function addDirections($from, $to, $options = []) {
+	public function addDirections($from, $to, array $options = []) {
 		$id = 'd' . static::$markerCount++;
 		$defaults = $this->_runtimeConfig['directions'];
 		$options += $defaults;
@@ -1035,7 +1030,7 @@ function geocodeAddress(address) {
 	 * @see https://developers.google.com/maps/documentation/javascript/3.exp/reference#Polyline
 	 * @return void
 	 */
-	public function addPolyline($from, $to, $options = []) {
+	public function addPolyline($from, $to, array $options = []) {
 		if (is_array($from)) {
 			$from = 'new google.maps.LatLng(' . (float)$from['lat'] . ', ' . (float)$from['lng'] . ')';
 		} else {
@@ -1324,7 +1319,7 @@ function geocodeAddress(address) {
 	 * @param array $options Options
 	 * @return string link: http://...
 	 */
-	public function mapUrl($options = []) {
+	public function mapUrl(array $options = []) {
 		$url = $this->_protocol() . 'maps.google.com/maps?';
 
 		$urlArray = !empty($options['query']) ? $options['query'] : [];
@@ -1381,7 +1376,7 @@ function geocodeAddress(address) {
 	 * - url (tip: you can pass $this->link(...) and it will create a link to maps.google.com)
 	 * @return string imageTag
 	 */
-	public function staticMap($options = [], $attributes = []) {
+	public function staticMap(array $options = [], array $attributes = []) {
 		$defaultAttributes = ['alt' => __d('tools', 'Map')];
 		$attributes += $defaultAttributes;
 
@@ -1396,7 +1391,7 @@ function geocodeAddress(address) {
 	 * @param array $linkOptions
 	 * @return string HTML link
 	 */
-	public function staticMapLink($title, $mapOptions = [], $linkOptions = []) {
+	public function staticMapLink($title, array $mapOptions = [], array $linkOptions = []) {
 		return $this->Html->link($title, $this->staticMapUrl($mapOptions + ['escape' => false]), $linkOptions);
 	}
 
@@ -1410,7 +1405,7 @@ function geocodeAddress(address) {
 	 * - see staticMap() for details
 	 * @return string urlOfImage: http://...
 	 */
-	public function staticMapUrl($options = []) {
+	public function staticMapUrl(array $options = []) {
 		$mapUrl = $this->_protocol() . static::STATIC_API;
 		/*
 		$params = array(
@@ -1530,9 +1525,9 @@ function geocodeAddress(address) {
 	 * - elements: [required] (multiple array(lat=>x, lng=>y) or just a address strings)
 	 * - color: red/blue/green (optional, default blue)
 	 * - weight: numeric (optional, default: 5)
-	 * @return string paths: e.g: color:0x0000FF80|weight:5|37.40303,-122.08334|37.39471,-122.07201|37.40589,-122.06171{|...}
+	 * @return array Array of paths: e.g: color:0x0000FF80|weight:5|37.40303,-122.08334|37.39471,-122.07201|37.40589,-122.06171{|...}
 	 */
-	public function staticPaths($pos = []) {
+	public function staticPaths(array $pos = []) {
 		$defaults = [
 			'color' => 'blue',
 			'weight' => 5 // pixel
@@ -1592,7 +1587,7 @@ function geocodeAddress(address) {
 	 * NEW: size:mid|color:red|label:E|37.400465,-122.073003|37.437328,-122.159928&markers=size:small|color:blue|37.369110,-122.096034
 	 * OLD: 40.702147,-74.015794,blueS|40.711614,-74.012318,greenG{|...}
 	 */
-	public function staticMarkers($pos = [], $style = []) {
+	public function staticMarkers(array $pos = [], array $style = []) {
 		$markers = [];
 		$verbose = false;
 

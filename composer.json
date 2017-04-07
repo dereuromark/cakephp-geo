@@ -38,9 +38,11 @@
 		}
 	},
 	"scripts": {
-		"setup": "[ ! -f phpunit.phar ] && wget https://phar.phpunit.de/phpunit.phar",
 		"test": "php phpunit.phar",
-		"coverage": "php phpunit.phar --log-junit webroot/coverage/unitreport.xml --coverage-html webroot/coverage --coverage-clover webroot/coverage/coverage.xml",
+		"test-setup": "[ ! -f phpunit.phar ] && wget https://phar.phpunit.de/phpunit-5.7.phar && mv phpunit-5.7.phar phpunit.phar || true",
+		"test-coverage": "php phpunit.phar --log-junit webroot/coverage/unitreport.xml --coverage-html webroot/coverage --coverage-clover webroot/coverage/coverage.xml",
+		"phpstan": "phpstan analyse -l 3 src",
+		"phpstan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan && mv composer.backup composer.json",
 		"cs-check": "phpcs -p --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/cakephp-geo/vendor/,/tmp/,/logs/,/config/Migrations/ --extensions=php ./",
 		"cs-fix": "phpcbf -v --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/cakephp-geo/vendor/,/tmp/,/logs/,/config/Migrations/ --extensions=php ./"
 	}
