@@ -439,7 +439,7 @@ class GeocoderBehavior extends Behavior {
 	protected function _execute($address) {
 		$this->_Geocoder = new Geocoder($this->_config);
 
-		/** @var \Geo\Model\Table\GeocodedAddressesTable|null $GeocodedAddresses */
+		/* @var \Geo\Model\Table\GeocodedAddressesTable|null $GeocodedAddresses */
 		$GeocodedAddresses = null;
 		if ($this->config('cache')) {
 			$GeocodedAddresses = TableRegistry::get('Geo.GeocodedAddresses');

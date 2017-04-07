@@ -8,7 +8,6 @@ use Cake\Utility\Hash;
 use Cake\View\Helper;
 use Cake\View\View;
 use Geo\View\Helper\JsBaseEngineTrait;
-use LogicException;
 
 /**
  * This is a CakePHP helper that helps users to integrate GoogleMap v3
