@@ -5,7 +5,10 @@ Geocode your entity data.
 
 Either in your Table class or at runtime:
 ```php
-$this->addBehavior('Geo.Geocoder', $config);
+$this->addBehavior('Geo.Geocoder',[
+         'Geocoder' =>[$config]
+      ]);
+         
 ```
 
 Possible config options are:
