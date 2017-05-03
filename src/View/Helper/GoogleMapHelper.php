@@ -1238,7 +1238,8 @@ function geocodeAddress(address) {
 			'scaleControl' => null,
 			'scrollwheel' => null,
 			'zoom' => null,
-			'keyboardShortcuts' => null
+			'keyboardShortcuts' => null,
+            'styles' => null
 		]);
 		$res = [];
 		foreach ($mapOptions as $key => $mapOption) {
