@@ -3,7 +3,7 @@
 [![Build Status](https://api.travis-ci.org/dereuromark/cakephp-geo.svg?branch=develop)](https://travis-ci.org/dereuromark/cakephp-geo)
 [![Latest Stable Version](https://poser.pugx.org/dereuromark/cakephp-geo/v/stable.svg)](https://packagist.org/packages/dereuromark/cakephp-geo)
 [![Coverage Status](https://coveralls.io/repos/dereuromark/cakephp-geo/badge.svg)](https://coveralls.io/r/dereuromark/cakephp-geo)
-[![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%205.4-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg)](https://php.net/)
 [![License](https://poser.pugx.org/dereuromark/cakephp-geo/license.svg)](https://packagist.org/packages/dereuromark/cakephp-geo)
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-geo/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-geo)
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
@@ -13,7 +13,7 @@ A CakePHP 3.x Plugin to
 - reverse geocode data
 - display (Google) maps
 
-This plugin requires PHP 5.4+
+This plugin requires PHP 5.6+
 
 Note that since CakePHP 3.x upgrade uses the [willdurand/geocoder](https://github.com/geocoder-php/Geocoder) library and therefore now supports
 - 12+ address-based Geocoder providers
