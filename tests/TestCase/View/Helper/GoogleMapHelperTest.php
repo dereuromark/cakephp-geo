@@ -334,7 +334,6 @@ class GoogleMapHelperTest extends TestCase {
 		$this->assertTextContains($expected, $result);
 	}
 
-
 	/**
 	 * Test some basic map options
 	 *
