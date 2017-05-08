@@ -2,6 +2,7 @@
 namespace Geo\Test\View\Helper;
 
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
 use Geo\View\Helper\GoogleMapHelper;
@@ -30,6 +31,10 @@ class GoogleMapHelperTest extends TestCase {
 
 		$this->View = new View(null);
 		$this->GoogleMap = new GoogleMapHelper($this->View);
+
+		GoogleMapHelper::$mapCount = 0;
+		GoogleMapHelper::$iconCount = 0;
+		GoogleMapHelper::$infoContentCount = 0;
 	}
 
 	/**
@@ -329,6 +334,26 @@ class GoogleMapHelperTest extends TestCase {
 		$this->assertTextContains($expected, $result);
 	}
 
+
+	/**
+	 * Test some basic map options
+	 *
+	 * @return void
+	 */
+	public function testMapStyles() {
+		$styles = json_decode(file_get_contents(Plugin::path('Geo') . 'tests/test_files/Helper/shades_of_grey_style.json'), true);
+		$options = [
+			'map' => [
+				'styles' => $styles
+			]
+		];
+
+		$this->GoogleMap->map($options);
+
+		$result = $this->GoogleMap->script();
+		$this->assertTextContains('{"featureType":"road.arterial","elementType":"geometry"', $result);
+	}
+
 	/**
 	 * With default options
 	 *
@@ -368,7 +393,7 @@ class GoogleMapHelperTest extends TestCase {
 		$result .= $this->GoogleMap->script();
 
 		$this->assertTextContains('new google.maps.MarkerImage("http://www.google.com/mapfiles/marker_greenE.png"', $result);
-		$this->assertTextContains('gWindowContents2.push("Some Html-<b>Content<\/b>");', $result);
+		$this->assertTextContains('gWindowContents0.push("Some Html-<b>Content<\/b>");', $result);
 	}
 
 	/**
