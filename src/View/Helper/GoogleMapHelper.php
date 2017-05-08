@@ -1432,6 +1432,12 @@ function geocodeAddress(address) {
 			//'visible' => null,
 			//'type' => null,
 		]);
+
+		// add API key to parameters.
+		if ($this->_runtimeConfig['key']) {
+			$params['key'] = $this->_runtimeConfig['key'];
+		}
+
 		// do we want zoom to auto-correct itself?
 		if (!isset($options['zoom']) && !empty($mapOptions['markers']) || !empty($mapOptions['paths']) || !empty($mapOptions['visible'])) {
 			$options['zoom'] = 'auto';
