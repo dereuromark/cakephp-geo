@@ -1291,10 +1291,6 @@ function geocodeAddress(address) {
 	}
 
 	/**
-	 * Google Maps Link
-	 **/
-
-	/**
 	 * Returns a maps.google link
 	 *
 	 * @param string $title  Link title

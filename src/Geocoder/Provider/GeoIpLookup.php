@@ -22,7 +22,7 @@ class GeoIpLookup extends AbstractHttpProvider implements Provider {
 	const ENDPOINT_URL = 'http://api.geoiplookup.net/?query=%s';
 
 	/**
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 */
 	public function geocode($address) {
 		if (!filter_var($address, FILTER_VALIDATE_IP)) {
@@ -39,14 +39,14 @@ class GeoIpLookup extends AbstractHttpProvider implements Provider {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 */
 	public function reverse($latitude, $longitude) {
 		throw new UnsupportedOperation('The geoiplookup.net provider is not able to do reverse geocoding.');
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 */
 	public function getName() {
 		return 'geo_ip_lookup';
