@@ -3,11 +3,13 @@ namespace Geo\Geocoder;
 
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
+use Cake\I18n\I18n;
 use Geocoder\Exception\NoResult;
 use Geocoder\Model\Address;
 use Geocoder\Model\AddressCollection;
 use Geo\Exception\InconclusiveException;
 use Geo\Exception\NotAccurateEnoughException;
+use Locale;
 
 /**
  * Geocode via google (UPDATE: api3)
@@ -85,6 +87,14 @@ class Geocoder {
 	public function __construct(array $config = []) {
 		$defaults = (array)Configure::read('Geocoder');
 		$this->config($config + $defaults);
+
+		if ($this->config('locale') === true) {
+			$this->config('locale', strtolower(Locale::getPrimaryLanguage(I18n::locale())));
+		}
+
+		if ($this->config('region') === true) {
+			$this->config('region', strtolower(Locale::getRegion(I18n::locale())));
+		}
 	}
 
 	/**
