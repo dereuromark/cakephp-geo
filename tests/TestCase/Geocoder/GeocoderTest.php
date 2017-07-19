@@ -2,6 +2,7 @@
 namespace Geo\Test\Geocoder;
 
 use Cake\Core\Configure;
+use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use Geocoder\Provider\OpenStreetMap;
 use Geo\Geocoder\Provider\GeoIpLookup;
@@ -65,6 +66,26 @@ class GeocoderTest extends TestCase {
 
 		$isAccurateEnough = $this->Geocoder->isAccurateEnough($address);
 		$this->assertTrue($isAccurateEnough);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testLocaleAndRegion()
+	{
+		$locale = I18n::locale();
+
+		I18n::locale('pt_BR');
+
+		$geocoder = new Geocoder([
+			'locale' => true,
+			'region' => true
+		]);
+
+		$this->assertEquals('pt', $geocoder->config('locale'));
+		$this->assertEquals('br', $geocoder->config('region'));
+
+		I18n::locale($locale);
 	}
 
 	/**
