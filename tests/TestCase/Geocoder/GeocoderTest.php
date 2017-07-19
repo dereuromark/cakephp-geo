@@ -71,8 +71,7 @@ class GeocoderTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testLocaleAndRegion()
-	{
+	public function testLocaleAndRegion() {
 		$locale = I18n::locale();
 
 		I18n::locale('pt_BR');

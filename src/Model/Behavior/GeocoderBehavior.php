@@ -74,7 +74,7 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * Initiate behavior for the model using specified settings. Available settings:
 	 *
-	 * - address: (array | string, optional) set to the field name that contains the
+	 * - address: (array|string, optional) set to the field name that contains the
 	 *             string from where to generate the slug, or a set of field names to
 	 *             concatenate for generating the slug.
 	 *
