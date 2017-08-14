@@ -6,8 +6,10 @@ If you want to geocode addresses on save(), you should look into the behavior in
 ## Basic Usage
 
 ```php
-$this->Geocoder->setOptions(['allowInconclusive' => true, 'minAccuracy' => Geocoder::TYPE_POSTAL]);
-$addresses = $this->Geocoder->geocode($address);
+use Geo\Geocoder\Geocoder;
+
+$Geocoder = new Geocoder(['allowInconclusive' => true, 'minAccuracy' => Geocoder::TYPE_POSTAL]);
+$addresses = $Geocoder->geocode($address);
 
 if (!empty($addresses)) {
    $address = $addresses->first();
@@ -17,5 +19,5 @@ if (!empty($addresses)) {
 ## Reverse Geocoding
 
 ```php
-$result = $this->Geocode->reverse($lat, $lng);
+$result = $Geocoder->reverse($lat, $lng);
 ```
