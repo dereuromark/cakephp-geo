@@ -208,7 +208,7 @@ class GeocoderBehavior extends Behavior {
 		$entityData['geocoder_result'] = [];
 
 		$search = implode(' ', $addressData);
-		if ($search === '') {
+		if ($search === '' && !$this->_config['allowEmpty']) {
 			return null;
 		}
 
