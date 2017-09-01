@@ -228,7 +228,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testMinAccLow() {
 		$this->Addresses->removeBehavior('Geocoder');
-		$this->Addresses->addBehavior('Geocoder', ['real' => false, 'minAccuracy' => Geocoder::TYPE_COUNTRY]);
+		$this->Addresses->addBehavior('Geocoder', ['minAccuracy' => Geocoder::TYPE_COUNTRY]);
 		$data = [
 			'city' => 'Deutschland'
 		];
@@ -244,7 +244,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testMinAccHigh() {
 		$this->Addresses->removeBehavior('Geocoder');
-		$this->Addresses->addBehavior('Geocoder', ['real' => false, 'minAccuracy' => Geocoder::TYPE_POSTAL]);
+		$this->Addresses->addBehavior('Geocoder', ['minAccuracy' => Geocoder::TYPE_POSTAL]);
 		$data = [
 			'city' => 'Deutschland'
 		];
@@ -261,7 +261,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testMinInc() {
 		$this->Addresses->removeBehavior('Geocoder');
-		$this->Addresses->addBehavior('Geocoder', ['real' => false, 'minAccuracy' => Geocoder::TYPE_SUBLOC]);
+		$this->Addresses->addBehavior('Geocoder', ['minAccuracy' => Geocoder::TYPE_SUBLOC]);
 
 		$this->assertEquals(Geocoder::TYPE_SUBLOC, $this->Addresses->behaviors()->Geocoder->config('minAccuracy'));
 
@@ -282,7 +282,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testMinIncAllowed() {
 		$this->Addresses->removeBehavior('Geocoder');
-		$this->Addresses->addBehavior('Geocoder', ['real' => false, 'allow_inconclusive' => true]);
+		$this->Addresses->addBehavior('Geocoder', ['allow_inconclusive' => true]);
 
 		$data = [
 			'city' => 'Neustadt'
@@ -299,7 +299,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testExpect() {
 		$this->Addresses->removeBehavior('Geocoder');
-		$this->Addresses->addBehavior('Geocoder', ['real' => false, 'expect' => [Geocoder::TYPE_POSTAL]]);
+		$this->Addresses->addBehavior('Geocoder', ['expect' => [Geocoder::TYPE_POSTAL]]);
 
 		$data = [
 			'city' => 'Berlin, Deutschland'
@@ -316,6 +316,36 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->assertContains('74523 Schwäbisch Hall', $res['formatted_address']);
 		//$this->assertEquals('74523 Schwäbisch Hall, Deutschland', $res['formatted_address']);
 		$this->assertTrue(!empty($res['lat']) && !empty($res['lng']));
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testAllowEmpty() {
+		$this->Addresses->removeBehavior('Geocoder');
+		$this->Addresses->addBehavior('Geocoder', ['expect' => [Geocoder::TYPE_POSTAL]]);
+
+		$data = [
+			'city' => ''
+		];
+		$entity = $this->_getEntity($data);
+		$res = $this->Addresses->save($entity);
+		$this->assertTrue((bool)$res);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testAllowEmptyFalse() {
+		$this->Addresses->removeBehavior('Geocoder');
+		$this->Addresses->addBehavior('Geocoder', ['allowEmpty' => false, 'expect' => [Geocoder::TYPE_POSTAL]]);
+
+		$data = [
+			'city' => ''
+		];
+		$entity = $this->_getEntity($data);
+		$res = $this->Addresses->save($entity);
+		$this->assertNull($res);
 	}
 
 	/**
