@@ -209,7 +209,11 @@ class GeocoderBehavior extends Behavior {
 
 		$search = implode(' ', $addressData);
 		if ($search === '') {
-			return null;
+			if (!$this->_config['allowEmpty']) {
+				return null;
+			}
+
+			return $entity;
 		}
 
 		$address = $this->_execute($search);
@@ -439,7 +443,7 @@ class GeocoderBehavior extends Behavior {
 	protected function _execute($address) {
 		$this->_Geocoder = new Geocoder($this->_config);
 
-		/* @var \Geo\Model\Table\GeocodedAddressesTable|null $GeocodedAddresses */
+		/** @var \Geo\Model\Table\GeocodedAddressesTable|null $GeocodedAddresses */
 		$GeocodedAddresses = null;
 		if ($this->config('cache')) {
 			$GeocodedAddresses = TableRegistry::get('Geo.GeocodedAddresses');
