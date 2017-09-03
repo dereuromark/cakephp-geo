@@ -9,7 +9,7 @@ php:
 
 env:
   matrix:
-    - DB=mysql db_class='Cake\Database\Driver\Mysql' db_dsn='mysql:host=0.0.0.0;dbname=cakephp_test' db_database='cakephp_test' db_username='travis' db_password=''
+    - DB=mysql db_dsn='mysql://root@127.0.0.1/cakephp_test'
     - DB=pgsql db_class='Cake\Database\Driver\Postgres' db_dsn='postgres://postgres@127.0.0.1/cakephp_test' db_database='cakephp_test' db_username='travis' db_password=''
   global:
     - DEFAULT=1 CI=1
@@ -20,7 +20,7 @@ matrix:
       env: PHPCS=1 DEFAULT=0
 
     - php: 7.0
-      env: COVERALLS=1 DEFAULT=0 DB=mysql db_class='Cake\Database\Driver\Mysql' db_dsn='mysql:host=0.0.0.0;dbname=cakephp_test' db_database='cakephp_test' db_username='travis' db_password=''
+      env: COVERALLS=1 DEFAULT=0 DB=mysql db_dsn='mysql://root@127.0.0.1/cakephp_test'
 
   fast_finish: true
 
