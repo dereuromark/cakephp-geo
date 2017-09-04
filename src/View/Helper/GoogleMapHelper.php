@@ -1376,7 +1376,9 @@ function geocodeAddress(address) {
 		$defaultAttributes = ['alt' => __d('tools', 'Map')];
 		$attributes += $defaultAttributes;
 
-		return $this->Html->image($this->staticMapUrl($options), $attributes);
+		// This was fixed in 3.5.1 to auto-escape URL query strings for security reasons
+		$escape = version_compare(Configure::version(), '3.5.1') < 0 ? true : false;
+		return $this->Html->image($this->staticMapUrl($options + ['escape' => $escape]), $attributes);
 	}
 
 	/**
@@ -1395,7 +1397,7 @@ function geocodeAddress(address) {
 	 * Creates a URL to a plain image map.
 	 *
 	 * Options:
-	 * - escape: defaults to true
+	 * - escape: defaults to true (Deprecated as of CakePHP 3.5.1 and now has to be always false)
 	 *
 	 * @param array $options
 	 * - see staticMap() for details
