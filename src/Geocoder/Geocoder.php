@@ -45,7 +45,7 @@ class Geocoder {
 	protected $_defaultConfig = [
 		'locale' => null, // For GoogleMaps provider
 		'region' => null, // For GoogleMaps provider
-		'ssl' => false, // For GoogleMaps provider
+		'ssl' => true, // For GoogleMaps provider
 		'apiKey' => '', // For GoogleMaps provider,
 		'provider' => '\Geocoder\Provider\GoogleMaps', // Or use own callable
 		'adapter' => '\Ivory\HttpAdapter\CakeHttpAdapter', // Only for default provider
