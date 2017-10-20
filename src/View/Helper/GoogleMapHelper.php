@@ -849,7 +849,7 @@ function geocodeAddress(address) {
 		if (empty($options['size'])) {
 			if (substr($url, 0, 1) === '/') {
 				// patch local paths to use the document root.
-				$data = getimagesize($_SERVER['DOCUMENT_ROOT'] . $url);
+				$data = getimagesize(WWW_ROOT . $url);
 			} else {
 				$data = getimagesize($url);
 			}
