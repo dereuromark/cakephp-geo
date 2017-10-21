@@ -240,7 +240,7 @@ class GoogleMapHelperTest extends TestCase {
 		$is = $this->GoogleMap->staticMap($options, $attr);
 		$this->assertTextContains('href="http://maps.google.com/maps?daddr=Munich%2C+Germany&amp;z=10"', $is);
 
-		$url = $this->GoogleMap->mapUrl(['to' => 'Munich, Germany', 'zoom' => 10, 'escape' => false]);
+		$url = $this->GoogleMap->mapUrl(['to' => 'Munich, Germany', 'zoom' => 10]);
 		$attr = [
 			'title' => 'Yeah'
 		];
