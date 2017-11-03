@@ -847,7 +847,18 @@ function geocodeAddress(address) {
 		// The shadow image is larger in the horizontal dimension
 		// while the position and offset are the same as for the main image.
 		if (empty($options['size'])) {
-			$data = getimagesize($url);
+			if (substr($url, 0, 1) === '/') {
+				// patch local paths to use the document root.  otherwise getimagesize fails filesystem lookup.
+				// paths with http or other protocol in front will be handled more simply in 'else' below.
+				$canonicalPath = realpath(WWW_ROOT . $url);
+				if (! $canonicalPath) {
+					// failed to resolve the path, so just fall back to the url provided.
+					$canonicalPath = "$url";
+				}
+				$data = getimagesize($canonicalPath);
+			} else {
+				$data = getimagesize($url);
+			}
 			if ($data) {
 				$options['size']['width'] = $data[0];
 				$options['size']['height'] = $data[1];
