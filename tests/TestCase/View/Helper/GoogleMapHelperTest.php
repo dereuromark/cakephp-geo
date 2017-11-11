@@ -85,6 +85,16 @@ class GoogleMapHelperTest extends TestCase {
 	/**
 	 * @return void
 	 */
+	public function testIcon() {
+		$result = $this->GoogleMap->icon('img/icon.png', ['size' => ['width' => 12, 'height' => 12]]);
+
+		$this->assertSame(0, $result);
+	}
+
+
+	/**
+	 * @return void
+	 */
 	public function testMapUrl() {
 		$url = $this->GoogleMap->mapUrl(['to' => 'Munich, Germany']);
 		$this->assertEquals('http://maps.google.com/maps?daddr=Munich%2C+Germany', $url);
