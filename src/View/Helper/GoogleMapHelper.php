@@ -847,12 +847,12 @@ function geocodeAddress(address) {
 		// The shadow image is larger in the horizontal dimension
 		// while the position and offset are the same as for the main image.
 		if (empty($options['size'])) {
+			// We will deprecate this in the future maybe as this is super slow!
+			//trigger_error('Please specify size manually [width => ..., height => ...] for performance reasons.', E_USER_DEPRECATED);
 			$path = $url;
 			if (!preg_match('#^((https?://)|//)#i', $path)) {
 				// This should also be avoided but is still way faster than the URL lookup.
 				$path = WWW_ROOT . ltrim($url, '/');
-			} else {
-				trigger_error('Please specify size manually [width => ..., height => ...] for performance reasons.', E_USER_DEPRECATED);
 			}
 
 			$data = getimagesize($path);
