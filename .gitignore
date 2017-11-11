@@ -6,3 +6,4 @@
 /.idea/
 /webroot/coverage
 /config/Migrations/schema-dump-default.lock
+/composer.phar
