@@ -89,8 +89,11 @@ class GoogleMapHelperTest extends TestCase {
 		$result = $this->GoogleMap->icon('img/icon.png', ['size' => ['width' => 12, 'height' => 12]]);
 
 		$this->assertSame(0, $result);
-	}
 
+		$result = $this->GoogleMap->icon('//my-domain/img/icon.png', ['size' => ['width' => 12, 'height' => 12]]);
+
+		$this->assertSame(1, $result);
+	}
 
 	/**
 	 * @return void
