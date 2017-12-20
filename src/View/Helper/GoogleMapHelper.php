@@ -237,6 +237,7 @@ class GoogleMapHelper extends Helper {
 		'localImages' => false,
 		'https' => null, // auto detect
 		'key' => null,
+		'libraries' => null,
 	];
 
 	/**
@@ -332,6 +333,7 @@ class GoogleMapHelper extends Helper {
 	 * - key
 	 * - api
 	 * - language (iso2: en, de, ja, ...)
+	 * - libraries
 	 *
 	 * You can adds more after the URL like "&key=value&..." via
 	 * - query string array: additional query strings (e.g. callback for deferred execution - not supported yet by this helper)
@@ -342,6 +344,10 @@ class GoogleMapHelper extends Helper {
 	public function apiUrl(array $query = []) {
 		$url = $this->_protocol() . static::API;
 
+		if ($this->_runtimeConfig['libraries']) {
+			$libraries = is_array( $this->_runtimeConfig['libraries'] ) ? implode( ',', $this->_runtimeConfig['libraries'] ) : $this->_runtimeConfig['libraries'];
+			$query['libraries'] = $libraries;
+		}
 		if ($this->_runtimeConfig['map']['api']) {
 			 $query['v'] = $this->_runtimeConfig['map']['api'];
 		}
