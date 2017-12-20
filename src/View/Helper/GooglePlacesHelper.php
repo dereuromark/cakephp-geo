@@ -1,4 +1,5 @@
 <?php
+
 namespace Geo\View\Helper;
 
 use Geo\View\Helper\GoogleMapHelper;
@@ -14,6 +15,7 @@ use Geo\View\Helper\GoogleMapHelper;
  * @link http://www.dereuromark.de/2010/12/21/googlemapsv3-cakephp-helper/
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  * @property \Cake\View\Helper\HtmlHelper $Html
+ * @property \Cake\View\Helper\FormHelper $Form
  */
 class GooglePlacesHelper extends GoogleMapHelper {
 
@@ -34,7 +36,7 @@ class GooglePlacesHelper extends GoogleMapHelper {
 	 *
 	 * @return string divContainer
 	 */
-	public function input( $fieldName, array $fieldOptions = [], $googleOptions = [] ) {
+	public function input( $fieldName, array $fieldOptions = [], array $googleOptions = [] ) {
 		return $this->control( $fieldName, $fieldOptions, $googleOptions );
 	}
 
@@ -48,15 +50,15 @@ class GooglePlacesHelper extends GoogleMapHelper {
 	 *
 	 * @return string divContainer
 	 */
-	public function control( $fieldName, $fieldOptions = [], $googleOptions = [] ) {
+	public function control( $fieldName, array $fieldOptions = [], array $googleOptions = [] ) {
 
-		$id = isset( $fieldOptions['id'] ) && $fieldOptions[ 'id' ] != '' ? $fieldOptions[ 'id' ] : $fieldName;
+		$id = isset( $fieldOptions['id'] ) && $fieldOptions['id'] != '' ? $fieldOptions['id'] : $fieldName;
 
 		$html = $this->Form->control( $fieldName, $fieldOptions );
 		$html .= $this->Form->hidden( "{$fieldName}_lat", [ 'id' => "{$id}_lat" ] );
 		$html .= $this->Form->hidden( "{$fieldName}_lon", [ 'id' => "{$id}_lon" ] );
 
-		$this->_script( $id, $googleOptions );
+		$html = $this->_script( $id, $googleOptions ) . $html;
 
 		return $html;
 	}
@@ -66,26 +68,23 @@ class GooglePlacesHelper extends GoogleMapHelper {
 	 *
 	 * @param $id string the id of the input field
 	 * @param array $options associative array of settings for places.Autocomplete
+	 *
+	 * @return string the scriptBlock for api
 	 */
-	private function _script( $id, $options = [] ) {
+	protected function _script( $id, $options = [] ) {
+		$api = '';
 		// autoinclude js?
-		if ($this->_runtimeConfig['autoScript'] && !$this->_apiIncluded) {
-			$res = $this->Html->script($this->apiUrl( ), ['block' => $this->_runtimeConfig['block']]);
+		if ( $this->_runtimeConfig['autoScript'] && ! $this->_apiIncluded ) {
+			$res                = $this->Html->script( $this->apiUrl(), [ 'block' => $this->_runtimeConfig['block'] ] );
 			$this->_apiIncluded = true;
 
-			if (!$this->_runtimeConfig['block']) {
-				$result .= $res . PHP_EOL;
+			if ( ! $this->_runtimeConfig['block'] ) {
+				$api = $res . PHP_EOL;
 			}
 			// usually already included
 			//http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js
 		}
-		// still not very common: http://code.google.com/intl/de-DE/apis/maps/documentation/javascript/basics.html
-		if (false && !empty($this->_runtimeConfig['autoScript']) && !$this->_gearsIncluded) {
-			$res = $this->Html->script($this->gearsUrl(), ['block' => $this->_runtimeConfig['block']]);
-			if (!$this->_runtimeConfig['block']) {
-				$result .= $res . PHP_EOL;
-			}
-		}
+
 
 		$js = "
 			function initialize() {
@@ -112,6 +111,8 @@ class GooglePlacesHelper extends GoogleMapHelper {
 
 		$script = 'jQuery(document).ready(function() {' . $js . '});';
 
-		$this->Html->scriptBlock($script, ['block' => true]);
+		$this->Html->scriptBlock( $script, [ 'block' => true ] );
+
+		return $api;
 	}
 }
