@@ -21,7 +21,7 @@ matrix:
       env: PHPCS=1 DEFAULT=0
 
     - php: 7.1
-      env: COVERALLS=1 DEFAULT=0 DB=mysql db_dsn='mysql://root@127.0.0.1/cakephp_test'
+      env: CODECOVERAGE=1 DEFAULT=0 DB=mysql db_dsn='mysql://root@127.0.0.1/cakephp_test'
 
     - php: 5.6
       env: PREFER_LOWEST=1
@@ -35,9 +35,7 @@ before_script:
   - if [[ $DB = 'mysql' ]]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
   - if [[ $DB = 'pgsql' ]]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
 
-  - if [[ $PHPCS != 1 ]]; then composer require phpunit/phpunit:"<6.0"; fi
-  - if [[ $COVERALLS = 1 ]]; then composer require --dev satooshi/php-coveralls:dev-master; fi
-  - if [[ $COVERALLS = 1 ]]; then mkdir -p build/logs; fi
+  - if [[ $PHPCS != 1 ]]; then composer require phpunit/phpunit:"^5.0|^6.0"; fi
 
   - phpenv rehash
   - set +H
@@ -45,9 +43,11 @@ before_script:
 
 script:
   - if [[ $DEFAULT = 1 ]]; then vendor/bin/phpunit; fi
-  - if [[ $COVERALLS = 1 ]]; then vendor/bin/phpunit --coverage-clover build/logs/clover.xml; fi
-  - if [[ $COVERALLS = 1 ]]; then php vendor/bin/coveralls -c .coveralls.yml -v; fi
   - if [[ $PHPCS = 1 ]]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/vendor/,/docs/,/test_files/,/config/Migrations/ . ; fi
+
+  - if [[ $CODECOVERAGE == 1 ]]; then vendor/bin/phpunit --coverage-clover=clover.xml || true; fi
+  - if [[ $CODECOVERAGE == 1 ]]; then wget -O codecov.sh https://codecov.io/bash; fi
+  - if [[ $CODECOVERAGE == 1 ]]; then bash codecov.sh; fi
 
 notifications:
   email: false
