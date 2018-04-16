@@ -181,7 +181,7 @@ class GeocoderBehavior extends Behavior {
 			if ($fieldData) {
 				$addressData[] = $fieldData;
 			}
-			if ($entity->dirty($field)) {
+			if ($entity->isDirty($field)) {
 				$dirty = true;
 			}
 		}

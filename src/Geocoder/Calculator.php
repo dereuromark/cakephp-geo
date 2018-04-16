@@ -52,7 +52,7 @@ class Calculator {
 	 * @param array $config
 	 */
 	public function __construct(array $config = []) {
-		$this->config($config);
+		$this->setConfig($config);
 
 		$additionalUnits = (array)Configure::read('Geo.Calculator.units');
 		foreach ($additionalUnits as $additionalUnit => $value) {

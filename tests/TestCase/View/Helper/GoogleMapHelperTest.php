@@ -47,7 +47,7 @@ class GoogleMapHelperTest extends TestCase {
 		];
 		$this->GoogleMap = new GoogleMapHelper($this->View, $config);
 
-		$result = $this->GoogleMap->config();
+		$result = $this->GoogleMap->getConfig();
 		$this->assertSame('foo', $result['map']['type']);
 		$this->assertSame(0, $result['map']['zoom']);
 	}
@@ -65,7 +65,7 @@ class GoogleMapHelperTest extends TestCase {
 		Configure::write('GoogleMap.zoom', 0);
 		$this->GoogleMap = new GoogleMapHelper($this->View, $config);
 
-		$result = $this->GoogleMap->config();
+		$result = $this->GoogleMap->getConfig();
 		$this->assertSame('abc', $result['key']);
 		$this->assertSame('foo', $result['map']['type']);
 		$this->assertSame(0, $result['map']['zoom']);

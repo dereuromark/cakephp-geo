@@ -37,9 +37,9 @@ class GeocodedAddressesTable extends Table {
 	public function initialize(array $config) {
 		parent::initialize($config);
 
-		$this->table('geocoded_addresses');
-		$this->displayField('address');
-		$this->primaryKey('id');
+		$this->setTable('geocoded_addresses');
+		$this->setDisplayField('address');
+		$this->setPrimaryKey('id');
 	}
 
 	/**
