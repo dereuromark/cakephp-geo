@@ -44,7 +44,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->Addresses = TableRegistry::get('Geo.Addresses');
 		$this->Addresses->addBehavior('Geocoder');
 
-                $this->db = ConnectionManager::get('test');
+		$this->db = ConnectionManager::get('test');
 	}
 
 	/**
