@@ -72,9 +72,9 @@ class GeocoderTest extends TestCase {
 	 * @return void
 	 */
 	public function testLocaleAndRegion() {
-		$locale = I18n::getLocale();
+		$locale = I18n::locale();
 
-		I18n::setLocale('pt_BR');
+		I18n::locale('pt_BR');
 
 		$geocoder = new Geocoder([
 			'locale' => true,
@@ -84,7 +84,7 @@ class GeocoderTest extends TestCase {
 		$this->assertEquals('pt', $geocoder->config('locale'));
 		$this->assertEquals('br', $geocoder->config('region'));
 
-		I18n::setLocale($locale);
+		I18n::locale($locale);
 	}
 
 	/**
