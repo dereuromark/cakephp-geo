@@ -1,4 +1,5 @@
-<phpunit backupGlobals="false"
+<phpunit 
+	backupGlobals="false"
 	backupStaticAttributes="false"
 	bootstrap="./tests/bootstrap.php"
 	colors="true"
@@ -10,11 +11,17 @@
 	stopOnFailure="false"
 	stopOnIncomplete="false"
 	stopOnSkipped="false"
-	syntaxCheck="false">
-
+	syntaxCheck="false"
+>
+	<php>
+		<!-- E_ALL & ~E_USER_DEPRECATED (16383)-->
+		<!-- E_ALL (32767) -->
+		<ini name="error_reporting" value="16383"/>
+	</php>
+	
 	<testsuites>
-		<testsuite name="Geo">
-			<directory>./tests/</directory>
+		<testsuite name="geo">
+			<directory>tests/</directory>
 		</testsuite>
 	</testsuites>
 
@@ -28,7 +35,7 @@
 
 	<filter>
 		<whitelist>
-			<directory suffix=".php">./src/</directory>
+			<directory suffix=".php">src/</directory>
 		</whitelist>
 	</filter>
 
