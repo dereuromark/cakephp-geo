@@ -32,6 +32,8 @@ define('CAKE_CORE_INCLUDE_PATH', ROOT . '/vendor/cakephp/cakephp');
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 define('CAKE', CORE_PATH . 'src' . DS);
 
+define('WWW_ROOT', APP . 'webroot' . DS);
+
 Cake\Core\Configure::write('App', [
 	'namespace' => 'TestApp'
 ]);
@@ -59,7 +61,7 @@ $cache = [
 	]
 ];
 
-Cake\Cache\Cache::config($cache);
+Cake\Cache\Cache::setConfig($cache);
 
 //needed?
 Cake\Core\Plugin::load('Geo', ['path' => ROOT . DS, 'autoload' => true]);
@@ -74,7 +76,7 @@ if (!getenv('db_class')) {
 	putenv('db_dsn=sqlite::memory:');
 }
 
-Cake\Datasource\ConnectionManager::config('test', [
+Cake\Datasource\ConnectionManager::setConfig('test', [
 	'className' => 'Cake\Database\Connection',
 	'driver' => getenv('db_class'),
 	'dsn' => getenv('db_dsn'),

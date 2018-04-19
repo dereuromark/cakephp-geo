@@ -260,7 +260,7 @@ class GoogleMapHelper extends Helper {
 	protected $_located = false;
 
 	/**
-	 * @param \Cake\View\View|null $View
+	 * @param \Cake\View\View $View
 	 * @param array $config
 	 */
 	public function __construct(View $View, array $config = []) {

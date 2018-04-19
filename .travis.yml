@@ -37,15 +37,16 @@ before_script:
   - if [[ $DB == 'mysql' ]]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
   - if [[ $DB == 'pgsql' ]]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
 
-  - if [[ $PHPCS != 1 ]]; then composer require phpunit/phpunit:"^5.0|^6.0"; fi
+  - if [[ $PHPCS != 1 ]]; then composer require phpunit/phpunit:"^5.7.14|^6.0"; fi
 
   - phpenv rehash
   - set +H
   - cp phpunit.xml.dist phpunit.xml
 
 script:
-  - if [[ $DEFAULT == 1 ]]; then vendor/bin/phpunit; fi
-  - if [[ $PHPCS == 1 ]]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/vendor/,/docs/,/test_files/,/config/Migrations/ . ; fi
+  - if [[ $DEFAULT = 1 ]]; then vendor/bin/phpunit; fi
+
+  - if [[ $PHPCS = 1 ]]; then composer cs-check; fi
 
   - if [[ $CODECOVERAGE == 1 ]]; then vendor/bin/phpunit --coverage-clover=clover.xml || true; fi
   - if [[ $CODECOVERAGE == 1 ]]; then wget -O codecov.sh https://codecov.io/bash; fi

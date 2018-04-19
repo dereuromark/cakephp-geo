@@ -1,4 +1,4 @@
-<phpunit 
+<phpunit
 	backupGlobals="false"
 	backupStaticAttributes="false"
 	bootstrap="./tests/bootstrap.php"
@@ -18,7 +18,7 @@
 		<!-- E_ALL (32767) -->
 		<ini name="error_reporting" value="16383"/>
 	</php>
-	
+
 	<testsuites>
 		<testsuite name="geo">
 			<directory>tests/</directory>

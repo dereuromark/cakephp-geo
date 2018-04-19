@@ -48,7 +48,8 @@ class GeocodedAddressesTable extends Table {
 	 * @return \Cake\Database\Schema\TableSchema
 	 */
 	protected function _initializeSchema(TableSchema $schema) {
-		$schema->columnType('data', 'object');
+		$schema->setColumnType('data', 'object');
+
 		return $schema;
 	}
 
@@ -58,6 +59,7 @@ class GeocodedAddressesTable extends Table {
 	 * @return bool|\Geo\Model\Entity\GeocodedAddress
 	 */
 	public function retrieve($address) {
+		/** @var \Geo\Model\Entity\GeocodedAddress $entity */
 		$entity = $this->find()->where(['address' => $address])->first();
 		if ($entity) {
 			return $entity;
@@ -131,7 +133,7 @@ class GeocodedAddressesTable extends Table {
 	/**
 	 * @param string $address
 	 *
-	 * @return \Geocoder\Model\Address
+	 * @return \Geocoder\Model\Address|null
 	 */
 	protected function _execute($address) {
 		$this->_Geocoder = new Geocoder();

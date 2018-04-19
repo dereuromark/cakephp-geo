@@ -168,8 +168,9 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * Run before a model is saved, used to set up slug for model.
 	 *
-	 * @param \Cake\ORM\Entity $entity The entity that is going to be saved
-	 * @return \Cake\ORM\Entity|null
+	 * @param \Geo\Model\Entity\GeocodedAddress $entity The entity that is going to be saved
+	 * @return \Geo\Model\Entity\GeocodedAddress|null
+	 * @throws \RuntimeException
 	 */
 	public function geocode(Entity $entity) {
 		$addressfields = (array)$this->_config['address'];
@@ -195,17 +196,24 @@ class GeocoderBehavior extends Behavior {
 			return null;
 		}
 
-		return $this->_geocode($entity, $addressData);
+		$result = $this->_geocode($entity, $addressData);
+		if (is_array($result)) {
+			throw new RuntimeException('Array type not expected');
+		}
+
+		return $result;
 	}
 
 	/**
-	 * @param \Cake\ORM\Entity|array $entity
+	 * @param \Geo\Model\Entity\GeocodedAddress|array $entity
 	 * @param array $addressData
 	 *
-	 * @return \Cake\ORM\Entity|null
+	 * @return \Geo\Model\Entity\GeocodedAddress|array|null
 	 */
-	protected function _geocode($entity, $addressData) {
-		$entityData['geocoder_result'] = [];
+	protected function _geocode($entity, array $addressData) {
+		$entityData = [
+			'geocoder_result' => [],
+		];
 
 		$search = implode(' ', $addressData);
 		if ($search === '') {
@@ -439,18 +447,21 @@ class GeocoderBehavior extends Behavior {
 	 *
 	 * @param string $address
 	 * @return \Geocoder\Model\Address|null
+	 * @throws \RuntimeException
 	 */
 	protected function _execute($address) {
 		$this->_Geocoder = new Geocoder($this->_config);
 
 		/** @var \Geo\Model\Table\GeocodedAddressesTable|null $GeocodedAddresses */
 		$GeocodedAddresses = null;
-		if ($this->config('cache')) {
+		if ($this->getConfig('cache')) {
 			$GeocodedAddresses = TableRegistry::get('Geo.GeocodedAddresses');
+			/** @var \Geo\Model\Entity\GeocodedAddress $result */
 			$result = $GeocodedAddresses->find()->where(['address' => $address])->first();
-
 			if ($result) {
-				return $result->data ?: null;
+				/** @var \Geocoder\Model\Address|null $data */
+				$data = $result->data;
+				return $data ?: null;
 			}
 		}
 
@@ -466,7 +477,8 @@ class GeocoderBehavior extends Behavior {
 			$result = $addresses->first();
 		}
 
-		if ($this->config('cache')) {
+		if ($this->getConfig('cache')) {
+			/** @var \Geo\Model\Entity\GeocodedAddress $addressEntity */
 			$addressEntity = $GeocodedAddresses->newEntity([
 				'address' => $address
 			]);

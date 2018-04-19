@@ -1,6 +1,8 @@
 <?php
 namespace Geo\View\Helper;
 
+use Cake\Routing\Router;
+
 /**
  * Basic Js Base Engine Trait derived from 2.x JsBaseEngineClass.
  *
@@ -139,7 +141,6 @@ trait JsBaseEngineTrait {
 				$val = ($val === true) ? 'true' : 'false';
 				break;
 			case (is_int($val)):
-				$val = $val;
 				break;
 			case (is_float($val)):
 				$val = sprintf('%.11f', $val);
@@ -173,7 +174,7 @@ trait JsBaseEngineTrait {
 	 * Encode a string into JSON. Converts and escapes necessary characters.
 	 *
 	 * @param string $string The string that needs to be utf8->hex encoded
-	 * @return void
+	 * @return string
 	 */
 	protected function _utf8ToHex($string) {
 		$length = strlen($string);
@@ -211,7 +212,7 @@ trait JsBaseEngineTrait {
 						break;
 					}
 					$charbits = $string{$i} . $string{$i + 1};
-					$char = Multibyte::utf8($charbits);
+					$char = static::utf8($charbits);
 					$return .= sprintf('\u%04s', dechex($char[0]));
 					$i += 1;
 					break;
@@ -222,7 +223,7 @@ trait JsBaseEngineTrait {
 						break;
 					}
 					$charbits = $string{$i} . $string{$i + 1} . $string{$i + 2};
-					$char = Multibyte::utf8($charbits);
+					$char = static::utf8($charbits);
 					$return .= sprintf('\u%04s', dechex($char[0]));
 					$i += 2;
 					break;
@@ -233,7 +234,7 @@ trait JsBaseEngineTrait {
 						break;
 					}
 					$charbits = $string{$i} . $string{$i + 1} . $string{$i + 2} . $string{$i + 3};
-					$char = Multibyte::utf8($charbits);
+					$char = static::utf8($charbits);
 					$return .= sprintf('\u%04s', dechex($char[0]));
 					$i += 3;
 					break;
@@ -244,7 +245,7 @@ trait JsBaseEngineTrait {
 						break;
 					}
 					$charbits = $string{$i} . $string{$i + 1} . $string{$i + 2} . $string{$i + 3} . $string{$i + 4};
-					$char = Multibyte::utf8($charbits);
+					$char = static::utf8($charbits);
 					$return .= sprintf('\u%04s', dechex($char[0]));
 					$i += 4;
 					break;
@@ -255,7 +256,7 @@ trait JsBaseEngineTrait {
 						break;
 					}
 					$charbits = $string{$i} . $string{$i + 1} . $string{$i + 2} . $string{$i + 3} . $string{$i + 4} . $string{$i + 5};
-					$char = Multibyte::utf8($charbits);
+					$char = static::utf8($charbits);
 					$return .= sprintf('\u%04s', dechex($char[0]));
 					$i += 5;
 					break;
@@ -332,7 +333,7 @@ trait JsBaseEngineTrait {
 	 * @return string Parsed options string.
 	 */
 	protected function _processOptions($method, $options) {
-		$options = $this->_mapOptions($method, $options);
+		$options = $this->_mapOptions();
 		$options = $this->_prepareCallbacks($method, $options);
 		$options = $this->_parseOptions($options, array_keys($this->_callbackArguments[$method]));
 		return $options;
@@ -355,6 +356,41 @@ trait JsBaseEngineTrait {
 			}
 		}
 		return $out;
+	}
+
+	/**
+	 * Converts a multibyte character string
+	 * to the decimal value of the character
+	 *
+	 * @param string $string String to convert.
+	 * @return array
+	 */
+	protected static function utf8($string) {
+		$map = [];
+		$values = [];
+		$find = 1;
+		$length = strlen($string);
+		for ($i = 0; $i < $length; $i++) {
+			$value = ord($string[$i]);
+			if ($value < 128) {
+				$map[] = $value;
+			} else {
+				if (empty($values)) {
+					$find = ($value < 224) ? 2 : 3;
+				}
+				$values[] = $value;
+				if (count($values) === $find) {
+					if ($find == 3) {
+						$map[] = (($values[0] % 16) * 4096) + (($values[1] % 64) * 64) + ($values[2] % 64);
+					} else {
+						$map[] = (($values[0] % 32) * 64) + ($values[1] % 64);
+					}
+					$values = [];
+					$find = 1;
+				}
+			}
+		}
+		return $map;
 	}
 
 }
