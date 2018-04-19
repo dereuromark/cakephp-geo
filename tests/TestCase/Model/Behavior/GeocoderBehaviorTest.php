@@ -13,7 +13,6 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Geo\Geocoder\Calculator;
 use Geo\Geocoder\Geocoder;
-use Geo\Model\Behavior\GeocoderBehavior;
 
 class GeocoderBehaviorTest extends TestCase {
 
@@ -64,8 +63,11 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testDistance() {
 		$expr = $this->Addresses->distanceExpr(12, 14);
-		//$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.lat)) * COS(PI()/2 - RADIANS(90 - 12)) * COS(RADIANS(Addresses.lng) - RADIANS(14)) + SIN(PI()/2 - RADIANS(90 - Addresses.lat)) * SIN(PI()/2 - RADIANS(90 - 12)))';
-		$expected = '(6371.04 * ACOS((((COS((((PI() / 2) - RADIANS(((90 - Addresses.lat)))))) * COS(PI()/2 - RADIANS(90 - 12)) * COS(((RADIANS((Addresses.lng)) - RADIANS(:param0))))) + (SIN((((PI() / 2) - RADIANS(((90 - Addresses.lat)))))) * SIN((((PI() / 2) - RADIANS(90 - 12)))))))))';
+		if (env('PREFER_LOWEST')) {
+			$expected = '(6371.04 * ACOS((((COS((((PI() / 2) - RADIANS(((90 - Addresses.lat)))))) * COS(PI()/2 - RADIANS(90 - 12)) * COS(((RADIANS((Addresses.lng)) - RADIANS(:param0))))) + (SIN((((PI() / 2) - RADIANS(((90 - Addresses.lat)))))) * SIN((((PI() / 2) - RADIANS(90 - 12)))))))))';
+		} else {
+			$expected = '(6371.04 * ACOS(((COS(((PI() / 2) - RADIANS((90 - Addresses.lat)))) * COS(PI()/2 - RADIANS(90 - 12)) * COS((RADIANS(Addresses.lng) - RADIANS(:param0)))) + (SIN(((PI() / 2) - RADIANS((90 - Addresses.lat)))) * SIN(((PI() / 2) - RADIANS(90 - 12)))))))';
+		}
 
 		$binder = new ValueBinder();
 		$result = $expr->sql($binder);
