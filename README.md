@@ -23,7 +23,7 @@ Note that since CakePHP 3.x upgrade uses the [willdurand/geocoder](https://githu
 Most of them also support reverse geocoding. And of course you can write your own providers on top.
 
 Also new:
-- MYSQL support
+- MySQL support
 - PostgreSQL support
 
 And also:
