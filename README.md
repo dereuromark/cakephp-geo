@@ -11,6 +11,7 @@
 A CakePHP 3.x Plugin to
 - geocode locations/ips and save the information (lat/lng) along with the records
 - reverse geocode data
+- querying geocoded data by distance (using custom finder)
 - display (Google) maps
 
 This plugin requires PHP 5.6+
