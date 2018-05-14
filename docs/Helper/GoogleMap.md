@@ -1,4 +1,5 @@
-# GoogleMap (V3) Helper
+# GoogleMap Helper
+Using Google Maps [API V3](https://developers.google.com/maps/documentation/javascript/reference/3.exp/).
 
 ## Adding the helper
 
