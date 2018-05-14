@@ -14,7 +14,7 @@ $this->loadHelper('Geo.GoogleMap', $config);
 Required (global) configs (as of 2016) are:
 - key
 
-You can easily configure this globally using Configure (e.g. config_local.php):
+You can easily configure this globally using Configure (e.g. src/app.php):
 ```
 	'GoogleMap' => [
 		'key' => 'your-api-key-here',
