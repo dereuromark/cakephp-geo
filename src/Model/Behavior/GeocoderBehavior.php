@@ -106,6 +106,8 @@ class GeocoderBehavior extends Behavior {
 			$this->_config['address'] = ['street', 'postal_code', 'city', 'country'];
 		}
 		$this->_table = $table;
+		
+		$this->_Geocoder = new Geocoder($this->_config);
 	}
 
 	/**
@@ -249,7 +251,6 @@ class GeocoderBehavior extends Behavior {
 		$entityData[$this->_config['lat']] = $address->getLatitude();
 		$entityData[$this->_config['lng']] = $address->getLongitude();
 
-		//debug($address);die();
 		if (!empty($this->_config['formatted_address'])) {
 			// Unfortunately, the formatted address of google is lost
 			$formatter = new StringFormatter();
@@ -450,8 +451,6 @@ class GeocoderBehavior extends Behavior {
 	 * @throws \RuntimeException
 	 */
 	protected function _execute($address) {
-		$this->_Geocoder = new Geocoder($this->_config);
-
 		/** @var \Geo\Model\Table\GeocodedAddressesTable|null $GeocodedAddresses */
 		$GeocodedAddresses = null;
 		if ($this->getConfig('cache')) {
