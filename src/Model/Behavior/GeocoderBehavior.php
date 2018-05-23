@@ -106,7 +106,7 @@ class GeocoderBehavior extends Behavior {
 			$this->_config['address'] = ['street', 'postal_code', 'city', 'country'];
 		}
 		$this->_table = $table;
-		
+
 		$this->_Geocoder = new Geocoder($this->_config);
 	}
 
