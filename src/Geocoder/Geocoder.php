@@ -86,14 +86,14 @@ class Geocoder {
 
 	public function __construct(array $config = []) {
 		$defaults = (array)Configure::read('Geocoder');
-		$this->config($config + $defaults);
+		$this->setConfig($config + $defaults);
 
-		if ($this->config('locale') === true) {
-			$this->config('locale', strtolower(Locale::getPrimaryLanguage(I18n::locale())));
+		if ($this->getConfig('locale') === true) {
+			$this->setConfig('locale', strtolower(Locale::getPrimaryLanguage(I18n::locale())));
 		}
 
-		if ($this->config('region') === true) {
-			$this->config('region', strtolower(Locale::getRegion(I18n::locale())));
+		if ($this->getConfig('region') === true) {
+			$this->setConfig('region', strtolower(Locale::getRegion(I18n::locale())));
 		}
 	}
 
