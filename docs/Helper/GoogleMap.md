@@ -148,3 +148,6 @@ echo $map;
 ```
 
 In general it is advised to defer JS execution by putting it to the end of the HTML (body tag), though.
+
+### Custom JS
+With `->addCustom($js)` you can inject any custom JS to work alongside the google map helper code.
