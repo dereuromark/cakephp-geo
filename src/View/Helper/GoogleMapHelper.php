@@ -1672,7 +1672,7 @@ function geocodeAddress(address) {
 		if ($https === null) {
 			$https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
 		}
-		return ($https ? 'https://' : '//') ;
+		return ($https ? 'https://' : '//');
 	}
 
 	/**
