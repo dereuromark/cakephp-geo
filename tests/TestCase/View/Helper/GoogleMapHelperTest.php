@@ -76,10 +76,10 @@ class GoogleMapHelperTest extends TestCase {
 	 */
 	public function testApiUrl() {
 		$result = $this->GoogleMap->apiUrl();
-		$this->assertSame('http://maps.google.com/maps/api/js?v=3', $result);
+		$this->assertSame('//maps.google.com/maps/api/js?v=3', $result);
 
 		$result = $this->GoogleMap->apiUrl(['foo' => '<b>Bar</b>']);
-		$this->assertSame('http://maps.google.com/maps/api/js?foo=%3Cb%3EBar%3C%2Fb%3E&v=3', $result);
+		$this->assertSame('//maps.google.com/maps/api/js?foo=%3Cb%3EBar%3C%2Fb%3E&v=3', $result);
 	}
 
 	/**
@@ -100,10 +100,10 @@ class GoogleMapHelperTest extends TestCase {
 	 */
 	public function testMapUrl() {
 		$url = $this->GoogleMap->mapUrl(['to' => 'Munich, Germany']);
-		$this->assertEquals('http://maps.google.com/maps?daddr=Munich%2C+Germany', $url);
+		$this->assertEquals('//maps.google.com/maps?daddr=Munich%2C+Germany', $url);
 
 		$url = $this->GoogleMap->mapUrl(['to' => '<München>, Germany', 'zoom' => 1]);
-		$this->assertEquals('http://maps.google.com/maps?daddr=%3CM%C3%BCnchen%3E%2C+Germany&amp;z=1', $url);
+		$this->assertEquals('//maps.google.com/maps?daddr=%3CM%C3%BCnchen%3E%2C+Germany&amp;z=1', $url);
 	}
 
 	/**
@@ -111,7 +111,7 @@ class GoogleMapHelperTest extends TestCase {
 	 */
 	public function testMapLink() {
 		$result = $this->GoogleMap->mapLink('<To Munich>!', ['to' => '<Munich>, Germany', 'zoom' => 10]);
-		$expected = '<a href="http://maps.google.com/maps?daddr=%3CMunich%3E%2C+Germany&amp;z=10">&lt;To Munich&gt;!</a>';
+		$expected = '<a href="//maps.google.com/maps?daddr=%3CMunich%3E%2C+Germany&amp;z=10">&lt;To Munich&gt;!</a>';
 		$this->assertEquals($expected, $result);
 	}
 
@@ -121,7 +121,7 @@ class GoogleMapHelperTest extends TestCase {
 	public function testLinkWithMapUrl() {
 		$url = $this->GoogleMap->mapUrl(['to' => '<München>, Germany', 'zoom' => 10, 'escape' => false]);
 		$result = $this->GoogleMap->Html->link('Some title', $url);
-		$expected = '<a href="http://maps.google.com/maps?daddr=%3CM%C3%BCnchen%3E%2C+Germany&amp;z=10">Some title</a>';
+		$expected = '<a href="//maps.google.com/maps?daddr=%3CM%C3%BCnchen%3E%2C+Germany&amp;z=10">Some title</a>';
 		$this->assertEquals($expected, $result);
 	}
 
@@ -214,11 +214,11 @@ class GoogleMapHelperTest extends TestCase {
 		];
 
 		$is = $this->GoogleMap->staticMapUrl($options);
-		$expected = 'http://maps.google.com/maps/api/staticmap?size=300x300&amp;format=png&amp;mobile=false&amp;maptype=roadmap&amp;markers=color:yellow|shadow:true|Berlin&amp;markers=color:0x0000FF|shadow:false|44.2%2C11.1';
+		$expected = '//maps.google.com/maps/api/staticmap?size=300x300&amp;format=png&amp;mobile=false&amp;maptype=roadmap&amp;markers=color:yellow|shadow:true|Berlin&amp;markers=color:0x0000FF|shadow:false|44.2%2C11.1';
 		$this->assertSame($expected, $is);
 
 		$is = $this->GoogleMap->staticMapLink('MyLink', $options);
-		$expected = '<a href="http://maps.google.com/maps/api/staticmap?size=300x300&amp;format=png&amp;mobile=false&amp;maptype=roadmap&amp;markers=color:yellow|shadow:true|Berlin&amp;markers=color:0x0000FF|shadow:false|44.2%2C11.1">MyLink</a>';
+		$expected = '<a href="//maps.google.com/maps/api/staticmap?size=300x300&amp;format=png&amp;mobile=false&amp;maptype=roadmap&amp;markers=color:yellow|shadow:true|Berlin&amp;markers=color:0x0000FF|shadow:false|44.2%2C11.1">MyLink</a>';
 		$this->assertSame($expected, $is);
 
 		$is = $this->GoogleMap->staticMap($options);
@@ -236,7 +236,7 @@ class GoogleMapHelperTest extends TestCase {
 			'title' => '<b>Yeah!</b>'
 		];
 		$is = $this->GoogleMap->staticMap($options, $attr);
-		$expected = '<img src="http://maps.google.com/maps/api/staticmap?size=200x100&amp;format=png&amp;mobile=false&amp;center=1&amp;maptype=roadmap" title="&lt;b&gt;Yeah!&lt;/b&gt;" alt="Map"/>';
+		$expected = '<img src="//maps.google.com/maps/api/staticmap?size=200x100&amp;format=png&amp;mobile=false&amp;center=1&amp;maptype=roadmap" title="&lt;b&gt;Yeah!&lt;/b&gt;" alt="Map"/>';
 		$this->assertSame($expected, $is);
 
 		$pos = [
@@ -251,7 +251,7 @@ class GoogleMapHelperTest extends TestCase {
 			'url' => $this->GoogleMap->mapUrl(['to' => 'Munich, Germany', 'zoom' => 10, 'escape' => false])
 		];
 		$is = $this->GoogleMap->staticMap($options, $attr);
-		$this->assertTextContains('href="http://maps.google.com/maps?daddr=Munich%2C+Germany&amp;z=10"', $is);
+		$this->assertTextContains('href="//maps.google.com/maps?daddr=Munich%2C+Germany&amp;z=10"', $is);
 
 		$url = $this->GoogleMap->mapUrl(['to' => 'Munich, Germany', 'zoom' => 10, 'escape' => false]);
 		$attr = [
@@ -259,8 +259,8 @@ class GoogleMapHelperTest extends TestCase {
 		];
 		$image = $this->GoogleMap->staticMap($options, $attr);
 		$link = $this->GoogleMap->Html->link($image, $url, ['escapeTitle' => false, 'target' => '_blank']);
-		$this->assertTextContains('href="http://maps.google.com/maps?daddr=Munich%2C+Germany&amp;z=10" target="_blank"', $link);
-		$this->assertTextContains('src="http://maps.google.com/maps/api/staticmap?size=300x300&amp;format=png', $link);
+		$this->assertTextContains('href="//maps.google.com/maps?daddr=Munich%2C+Germany&amp;z=10" target="_blank"', $link);
+		$this->assertTextContains('src="//maps.google.com/maps/api/staticmap?size=300x300&amp;format=png', $link);
 	}
 
 	/**
@@ -310,7 +310,7 @@ class GoogleMapHelperTest extends TestCase {
 		$expected = '<div id="map_canvas" class="map"';
 		$this->assertTextContains($expected, $result);
 
-		$expected = '<script src="http://maps.google.com/maps/api/js';
+		$expected = '<script src="//maps.google.com/maps/api/js';
 		$this->assertTextNotContains($expected, $result);
 
 		$expected = 'var map0 = new google.maps.Map(document.getElementById("map_canvas"), myOptions);';
@@ -320,7 +320,7 @@ class GoogleMapHelperTest extends TestCase {
 		$this->assertTextContains($expected, $result);
 
 		$scripts = $this->View->fetch('script');
-		$expected = '<script src="http://maps.google.com/maps/api/js';
+		$expected = '<script src="//maps.google.com/maps/api/js';
 		$this->assertTextContains($expected, $scripts);
 	}
 
@@ -343,7 +343,7 @@ class GoogleMapHelperTest extends TestCase {
 		$expected = '<div id="map_canvas" class="map"';
 		$this->assertTextContains($expected, $result);
 
-		$expected = '<script src="http://maps.google.com/maps/api/js';
+		$expected = '<script src="//maps.google.com/maps/api/js';
 		$this->assertTextContains($expected, $result);
 	}
 
