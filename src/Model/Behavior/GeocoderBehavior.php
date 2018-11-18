@@ -45,7 +45,7 @@ class GeocoderBehavior extends Behavior {
 		'lat' => 'lat', 'lng' => 'lng', 'formatted_address' => 'formatted_address',
 		'locale' => null, // For GoogleMaps provider
 		'region' => null, // For GoogleMaps provider
-		'ssl' => false, // For GoogleMaps provider
+		'ssl' => true, // For GoogleMaps provider
 		//'bounds' => '',
 		'overwrite' => false,
 		'update' => [],
