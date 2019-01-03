@@ -8,15 +8,15 @@
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-geo/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-geo)
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
 
-A CakePHP 3.x Plugin to
+A CakePHP plugin to
 - geocode locations/ips and save the information (lat/lng) along with the records
 - reverse geocode data
 - querying geocoded data by distance (using custom finder)
-- display (Google) maps
+- display (Google) maps (dynamic and static)
 
-This plugin requires PHP 5.6+
+This plugin is for **CakePHP 3.5+**.
 
-Note that since CakePHP 3.x upgrade uses the [willdurand/geocoder](https://github.com/geocoder-php/Geocoder) library and therefore now supports
+Note that since CakePHP 3.x upgrade it uses the [willdurand/geocoder](https://github.com/geocoder-php/Geocoder) library and therefore now supports
 - 12+ address-based Geocoder providers
 - 10+ IP-based Geocoder providers
 
@@ -31,7 +31,7 @@ And also:
 
 
 ## Demo
-See [Sandbox examples](http://sandbox.dereuromark.de/sandbox/geo-examples) for live demos of the GoogleMaps helper and the Geocoder behavior.
+See [Sandbox examples](https://sandbox.dereuromark.de/sandbox/geo-examples) for live demos of the GoogleMaps helper and the Geocoder behavior.
 
 ## Installation & Docs
 
