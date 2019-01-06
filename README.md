@@ -1,12 +1,12 @@
 # CakePHP Geo Plugin
 
 [![Build Status](https://api.travis-ci.org/dereuromark/cakephp-geo.svg?branch=develop)](https://travis-ci.org/dereuromark/cakephp-geo)
-[![Latest Stable Version](https://poser.pugx.org/dereuromark/cakephp-geo/v/stable.svg)](https://packagist.org/packages/dereuromark/cakephp-geo)
 [![Coverage Status](https://coveralls.io/repos/dereuromark/cakephp-geo/badge.svg)](https://coveralls.io/r/dereuromark/cakephp-geo)
-[![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg)](https://php.net/)
+[![Latest Stable Version](https://poser.pugx.org/dereuromark/cakephp-geo/v/stable.svg)](https://packagist.org/packages/dereuromark/cakephp-geo)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg)](https://php.net/)
 [![License](https://poser.pugx.org/dereuromark/cakephp-geo/license.svg)](https://packagist.org/packages/dereuromark/cakephp-geo)
-[![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-geo/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-geo)
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
+[![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-geo/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-geo)
 
 A CakePHP plugin to
 - geocode locations/ips and save the information (lat/lng) along with the records

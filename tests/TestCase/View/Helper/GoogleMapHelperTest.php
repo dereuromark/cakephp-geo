@@ -404,7 +404,7 @@ class GoogleMapHelperTest extends TestCase {
 
 		$result .= $this->GoogleMap->script();
 
-		$this->assertTextContains('new google.maps.MarkerImage("http://www.google.com/mapfiles/marker_greenE.png"', $result);
+		$this->assertTextContains('new google.maps.MarkerImage("https://www.google.com/mapfiles/marker_greenE.png"', $result);
 		$this->assertTextContains('gWindowContents0.push("Some Html-<b>Content<\/b>");', $result);
 	}
 

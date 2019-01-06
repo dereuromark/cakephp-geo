@@ -31,7 +31,7 @@ use RuntimeException;
  *
  * @author Mark Scherer
  * @license MIT
- * @link http://www.dereuromark.de/2012/06/12/geocoding-with-cakephp/
+ * @link https://www.dereuromark.de/2012/06/12/geocoding-with-cakephp/
  */
 class GeocoderBehavior extends Behavior {
 

@@ -20,7 +20,7 @@ use Geo\View\Helper\JsBaseEngineTrait;
  *
  * @author Rajib Ahmed
  * @author Mark Scherer
- * @link http://www.dereuromark.de/2010/12/21/googlemapsv3-cakephp-helper/
+ * @link https://www.dereuromark.de/2010/12/21/googlemapsv3-cakephp-helper/
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  * @property \Cake\View\Helper\HtmlHelper $Html
  */
@@ -688,7 +688,7 @@ function geocodeAddress(address) {
 		if (empty($options['to']) && empty($options['from'])) {
 			return '';
 		}
-		$form = '<form action="http://maps.google.com/maps" method="get" target="_blank">';
+		$form = '<form action="https://maps.google.com/maps" method="get" target="_blank">';
 		$form .= $options['escape'] ? h($options['label']) : $options['label'];
 		if (!empty($options['from'])) {
 			$form .= '<input type="hidden" name="saddr" value="' . $options['from'] . '" />';
@@ -728,10 +728,10 @@ function geocodeAddress(address) {
 	 * @var array
 	 */
 	public $setIcons = [
-		'color' => 'http://www.google.com/mapfiles/marker%s.png',
-		'alpha' => 'http://www.google.com/mapfiles/marker%s%s.png',
-		'numeric' => 'http://google-maps-icons.googlecode.com/files/%s%s.png',
-		'special' => 'http://google-maps-icons.googlecode.com/files/%s.png'
+		'color' => 'https://www.google.com/mapfiles/marker%s.png',
+		'alpha' => 'https://www.google.com/mapfiles/marker%s%s.png',
+		'numeric' => 'https://google-maps-icons.googlecode.com/files/%s%s.png',
+		'special' => 'https://google-maps-icons.googlecode.com/files/%s.png'
 	];
 
 	/**
@@ -791,7 +791,7 @@ function geocodeAddress(address) {
         };
         */
 
-		$shadow = 'http://www.google.com/mapfiles/shadow50.png';
+		$shadow = 'https://www.google.com/mapfiles/shadow50.png';
 		$res = [
 			'url' => $url,
 			'icon' => $this->icon($url, ['size' => ['width' => 20, 'height' => 34]]),
