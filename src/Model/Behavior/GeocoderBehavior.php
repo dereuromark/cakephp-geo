@@ -293,8 +293,8 @@ class GeocoderBehavior extends Behavior {
 		$options += ['tableName' => null, 'sort' => true];
 		$sql = $this->distanceExpr($options['lat'], $options['lng'], null, null, $options['tableName']);
 
-		if ($query->autoFields() === null) {
-			$query->autoFields(true);
+		if ($query->isAutoFieldsEnabled()) {
+			$query->enableAutoFields(true);
 		}
 
 		$query->select(['distance' => $query->newExpr($sql)]);
@@ -331,7 +331,7 @@ class GeocoderBehavior extends Behavior {
 			$fieldLng = $this->_config['lng'];
 		}
 		if ($tableName === null) {
-			$tableName = $this->_table->alias();
+			$tableName = $this->_table->getAlias();
 		}
 
 		$value = $this->_calculationValue($this->_config['unit']);
@@ -385,7 +385,7 @@ class GeocoderBehavior extends Behavior {
 			$fieldLng = $this->_config['lng'];
 		}
 		if ($tableName === null) {
-			$tableName = $this->_table->alias();
+			$tableName = $this->_table->getAlias();
 		}
 		$conditions = [
 			$tableName . '.' . $fieldLat . ' <> 0',
@@ -409,7 +409,7 @@ class GeocoderBehavior extends Behavior {
 	 */
 	public function distanceField($lat, $lng, $fieldName = null, $tableName = null) {
 		if ($tableName === null) {
-			$tableName = $this->_table->alias();
+			$tableName = $this->_table->getAlias();
 		}
 		$fieldName = (!empty($fieldName) ? $fieldName : 'distance');
 		return [$tableName . '.' . $fieldName => $this->distanceExpr($lat, $lng, null, null, $tableName)];
