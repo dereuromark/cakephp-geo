@@ -293,7 +293,7 @@ class GeocoderBehavior extends Behavior {
 		$options += ['tableName' => null, 'sort' => true];
 		$sql = $this->distanceExpr($options['lat'], $options['lng'], null, null, $options['tableName']);
 
-		if ($query->isAutoFieldsEnabled()) {
+		if ($query->isAutoFieldsEnabled() === null) {
 			$query->enableAutoFields(true);
 		}
 
