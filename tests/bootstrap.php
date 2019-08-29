@@ -1,5 +1,7 @@
 <?php
 
+use Geo\Plugin;
+
 require dirname(__DIR__) . '/vendor/cakephp/cakephp/src/basics.php';
 require dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -63,8 +65,7 @@ $cache = [
 
 Cake\Cache\Cache::setConfig($cache);
 
-//needed?
-Cake\Core\Plugin::load('Geo', ['path' => ROOT . DS, 'autoload' => true]);
+Cake\Core\Plugin::getCollection()->add(new Plugin());
 
 if (file_exists(CONFIG . 'app_local.php')) {
 	\Cake\Core\Configure::load('app_local', 'default');
