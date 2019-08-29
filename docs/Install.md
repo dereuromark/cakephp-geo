@@ -32,6 +32,6 @@ or
 
 ```php
 Plugin::loadAll([
-		'Geo' => ['bootstrap' => true]
+        'Geo' => ['bootstrap' => true]
 ]);
 ```

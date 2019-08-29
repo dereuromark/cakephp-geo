@@ -6,7 +6,7 @@ Using Google Maps [API V3](https://developers.google.com/maps/documentation/java
 Either in your View class or at runtime:
 ```php
 $config = [
-	'autoScript' => true,
+    'autoScript' => true,
 ];
 $this->loadHelper('Geo.GoogleMap', $config);
 ```
@@ -16,9 +16,9 @@ Required (global) configs (as of 2016) are:
 
 You can easily configure this globally using Configure (e.g. config/app_local.php):
 ```
-	'GoogleMap' => [
-		'key' => 'your-api-key-here',
-	],
+    'GoogleMap' => [
+        'key' => 'your-api-key-here',
+    ],
 ```
 I recommend using a non-commited config file here (thus the `_local` suffix) as keys/passwords should not be version controlled.
 
@@ -46,22 +46,22 @@ $link = $this->GoogleMap->mapLink('<To Munich>!', ['to' => '<Munich>, Germany'])
 ## Display a static map
 ```php
 $paths = [
-	[
-		'path' => ['Berlin', 'Stuttgart'], // Names
-		'color' => 'green',
-	],
-	[
-		'path' => ['44.2,11.1', '43.1,12.2', '44.3,11.3', '43.3,12.3'], // Flat array of coordinates
-	],
-	[
-		'path' => [['lat' => '48.1', 'lng' => '11.1'], ['lat' => '48.4', 'lng' => '11.2']], // = 'Frankfurt'
-		'color' => 'red',
-		'weight' => 10
-	]
+    [
+        'path' => ['Berlin', 'Stuttgart'], // Names
+        'color' => 'green',
+    ],
+    [
+        'path' => ['44.2,11.1', '43.1,12.2', '44.3,11.3', '43.3,12.3'], // Flat array of coordinates
+    ],
+    [
+        'path' => [['lat' => '48.1', 'lng' => '11.1'], ['lat' => '48.4', 'lng' => '11.2']], // = 'Frankfurt'
+        'color' => 'red',
+        'weight' => 10
+    ]
 ];
 
 $options = [
-	'paths' => $this->GoogleMap->staticPaths($paths)
+    'paths' => $this->GoogleMap->staticPaths($paths)
 ];
 $map = $this->GoogleMap->staticMap($options);
 ```
@@ -69,19 +69,19 @@ $map = $this->GoogleMap->staticMap($options);
 ### Adding markers:
 ```php
 $addresses = [
-	[
-		'address' => '44.3,11.2',
-	],
-	[
-		'address' => '44.2,11.1',
-	]
+    [
+        'address' => '44.3,11.2',
+    ],
+    [
+        'address' => '44.2,11.1',
+    ]
 ];
 $options = ['color' => 'red', 'char' => 'C', 'shadow' => 'false'];
 
 $markers = $this->GoogleMap->staticMarkers($addresses, $options);
 
 $options = [
-	'markers' => $markers
+    'markers' => $markers
 ];
 $map = $this->GoogleMap->staticMap($options);
 ```
@@ -90,8 +90,8 @@ $map = $this->GoogleMap->staticMap($options);
 In case you want to use JS to pop-up the image, you can use:
 ```php
 $config = [
-	'markers' => $mapMarkers, 
-	'escape' => false,
+    'markers' => $mapMarkers, 
+    'escape' => false,
 ];
 $url = $this->GoogleMap->staticMapUrl($config);
 echo $this->Html->link(__('Map'), ['title' => __('Map')]), $url);
@@ -104,11 +104,11 @@ Make sure you either loaded your helper with autoScript enabled, or you manually
 
 ```php
 $options = [
-	'zoom' => 6,
-	'type' => 'R',
-	'geolocate' => true,
-	'div' => ['id' => 'someothers'],
-	'map' => ['navOptions' => ['style' => 'SMALL'], 'typeOptions' => ['style' => 'HORIZONTAL_BAR', 'pos' => 'RIGHT_CENTER']]
+    'zoom' => 6,
+    'type' => 'R',
+    'geolocate' => true,
+    'div' => ['id' => 'someothers'],
+    'map' => ['navOptions' => ['style' => 'SMALL'], 'typeOptions' => ['style' => 'HORIZONTAL_BAR', 'pos' => 'RIGHT_CENTER']]
 ];
 $map = $this->GoogleMap->map($options);
 

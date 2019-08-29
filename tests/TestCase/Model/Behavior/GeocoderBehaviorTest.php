@@ -24,9 +24,14 @@ class GeocoderBehaviorTest extends TestCase {
 	];
 
 	/**
-	 * @var \Cake\ORM\Table;
+	 * @var \Cake\ORM\Table|\Geo\Model\Behavior\GeocoderBehavior;
 	 */
 	public $Addresses;
+
+	/**
+	 * @var \Cake\Database\Connection
+	 */
+	protected $db;
 
 	/**
 	 * setUp
@@ -100,7 +105,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testSetDistanceAsVirtualField() {
-		$driver = $this->db->driver();
+		$driver = $this->db->getDriver();
 		$this->skipIf(!($driver instanceof Mysql || $driver instanceof Postgres), 'The virtualFields test is only compatible with Mysql/Postgres.');
 
 		$options = ['lat' => 13.3, 'lng' => 19.2]; //array('order' => array('Address.distance' => 'ASC'));
@@ -119,7 +124,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testSetDistanceAsVirtualFieldInMiles() {
-		$driver = $this->db->driver();
+		$driver = $this->db->getDriver();
 		$this->skipIf(!($driver instanceof Mysql || $driver instanceof Postgres), 'The virtualFields test is only compatible with Mysql/Postgres.');
 
 		$this->Addresses->removeBehavior('Geocoder'); //FIXME: Shouldnt be necessary ideally
@@ -137,7 +142,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testPagination() {
-		$driver = $this->db->driver();
+		$driver = $this->db->getDriver();
 		$this->skipIf(!($driver instanceof Mysql || $driver instanceof Postgres), 'The virtualFields test is only compatible with Mysql/Postgres.');
 
 		$this->Controller = new TestController();
@@ -146,6 +151,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$options = ['lat' => 13.3, 'lng' => 19.2, 'distance' => 3000];
 		// find()->find('distance', $options)->find('all')->toArray()
 
+		/** @var \Cake\ORM\Query $query */
 		$query = $this->Controller->Addresses->find('distance', $options);
 		$query->order(['distance' => 'ASC']);
 
@@ -266,7 +272,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->Addresses->removeBehavior('Geocoder');
 		$this->Addresses->addBehavior('Geocoder', ['minAccuracy' => Geocoder::TYPE_SUBLOC]);
 
-		$this->assertEquals(Geocoder::TYPE_SUBLOC, $this->Addresses->behaviors()->Geocoder->config('minAccuracy'));
+		$this->assertEquals(Geocoder::TYPE_SUBLOC, $this->Addresses->behaviors()->Geocoder->getConfig('minAccuracy'));
 
 		$data = [
 			//'street' => 'Leopoldstraße',

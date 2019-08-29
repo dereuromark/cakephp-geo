@@ -57,7 +57,7 @@ class GeocoderTest extends TestCase {
 		$country = $address->getCountry();
 		$this->assertSame('DE', $country->getCode());
 
-		$this->Geocoder->config('expect', [Geocoder::TYPE_ADDRESS]);
+		$this->Geocoder->setConfig('expect', [Geocoder::TYPE_ADDRESS]);
 		$containsAccurateEnough = $this->Geocoder->containsAccurateEnough($result);
 		$this->assertTrue($containsAccurateEnough);
 
@@ -72,19 +72,19 @@ class GeocoderTest extends TestCase {
 	 * @return void
 	 */
 	public function testLocaleAndRegion() {
-		$locale = I18n::locale();
+		$locale = I18n::getLocale();
 
-		I18n::locale('pt_BR');
+		I18n::setLocale('pt_BR');
 
 		$geocoder = new Geocoder([
 			'locale' => true,
 			'region' => true
 		]);
 
-		$this->assertEquals('pt', $geocoder->config('locale'));
-		$this->assertEquals('br', $geocoder->config('region'));
+		$this->assertEquals('pt', $geocoder->getConfig('locale'));
+		$this->assertEquals('br', $geocoder->getConfig('region'));
 
-		I18n::locale($locale);
+		I18n::setLocale($locale);
 	}
 
 	/**

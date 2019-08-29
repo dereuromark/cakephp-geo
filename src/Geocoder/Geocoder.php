@@ -89,11 +89,11 @@ class Geocoder {
 		$this->setConfig($config + $defaults);
 
 		if ($this->getConfig('locale') === true) {
-			$this->setConfig('locale', strtolower(Locale::getPrimaryLanguage(I18n::locale())));
+			$this->setConfig('locale', strtolower(Locale::getPrimaryLanguage(I18n::getLocale())));
 		}
 
 		if ($this->getConfig('region') === true) {
-			$this->setConfig('region', strtolower(Locale::getRegion(I18n::locale())));
+			$this->setConfig('region', strtolower(Locale::getRegion(I18n::getLocale())));
 		}
 	}
 
@@ -278,15 +278,15 @@ class Geocoder {
 			return;
 		}
 
-		$geocoderClass = $this->config('provider');
+		$geocoderClass = $this->getConfig('provider');
 		if (is_callable($geocoderClass)) {
 			$this->geocoder = $geocoderClass();
 			return;
 		}
 
-		$adapterClass = $this->config('adapter');
+		$adapterClass = $this->getConfig('adapter');
 		$this->adapter = new $adapterClass();
-		$this->geocoder = new $geocoderClass($this->adapter, $this->config('locale'), $this->config('region'), $this->config('ssl'), $this->config('apiKey'));
+		$this->geocoder = new $geocoderClass($this->adapter, $this->getConfig('locale'), $this->getConfig('region'), $this->getConfig('ssl'), $this->getConfig('apiKey'));
 	}
 
 }

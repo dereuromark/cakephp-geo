@@ -35,7 +35,7 @@ You could easily switch to an IP based provider like this:
 ```php
 // in your app.php config
 'Geocoder' => [
-	'provider' => '\Geocoder\Provider\FreeGeoIp'
+    'provider' => '\Geocoder\Provider\FreeGeoIp'
 ],
 ```
 
@@ -43,9 +43,9 @@ Let's say you want to switch to OpenStreetMap and also use a different HTTP adap
 ```php
 // in your app.php config
 'Geocoder' => [
-	'provider' => function () {
-		return new \Geocoder\Provider\OpenStreetMap(new \Ivory\HttpAdapter\BuzzHttpAdapter());
-	}
+    'provider' => function () {
+        return new \Geocoder\Provider\OpenStreetMap(new \Ivory\HttpAdapter\BuzzHttpAdapter());
+    }
 ],
 ```
 

@@ -21,12 +21,12 @@ Then instead of using the Geocoder class directly, you go through this Table:
 $GeocodedAddresses = TableRegistry::get('Geo.GeocodedAddresses');
 $address = $GeocodedAddresses->retrieve($args['locality_search']);
 if ($address && $address->lat && $address->lng) {
-	// Do something with it
+    // Do something with it
 }
 ```
 
 Don't forget to add the Type mapping of `Geo\Database\Type\ObjectType` in your bootstrap.php.
-```
+```php
 Type::map('object', 'Geo\Database\Type\ObjectType');
 ```
 (see cookbook: https://book.cakephp.org/3.0/en/orm/database-basics.html#adding-custom-types) 

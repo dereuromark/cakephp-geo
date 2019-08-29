@@ -14,11 +14,11 @@
 	],
 	"require": {
 		"php": ">=5.6",
-		"cakephp/orm": "^3.5",
+		"cakephp/orm": "^3.6",
 		"willdurand/geocoder": "^3.3"
 	},
 	"require-dev": {
-		"cakephp/cakephp": "^3.5",
+		"cakephp/cakephp": "^3.6",
 		"fig-r/psr2r-sniffer": "dev-master"
 	},
 	"support": {
@@ -26,15 +26,14 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Geo\\": "src",
-			"Geo\\Test\\Fixture\\": "tests/Fixture"
+			"Geo\\": "src/",
+			"Geo\\Test\\Fixture\\": "tests/Fixture/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Geo\\Test\\": "tests",
-			"TestApp\\": "tests/TestApp/src",
-			"Cake\\Test\\": "vendor/cakephp/cakephp/tests"
+			"Geo\\Test\\": "tests/",
+			"TestApp\\": "tests/TestApp/src/"
 		}
 	},
 	"scripts": {

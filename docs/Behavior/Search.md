@@ -12,19 +12,19 @@ If we have a search form with a field `locality_search`, we can easily add some 
 
 ```php
 ->callback('locality_search', [
-	'callback' => function ($query, $args, $manager) {
-		$GeocodedAddresses = TableRegistry::get('Geo.GeocodedAddresses');
-		$address = $GeocodedAddresses->retrieve($args['locality_search']);
-		if ($address && $address->lat && $address->lng) {
-			$query->find('distance', [
-				'lat' => $address->lat,
-				'lng' => $address->lng,
-				'tableName' => 'Events',
-				'distance' => 100,
-				'sort' => false
-			]);
-		}
-	}
+    'callback' => function ($query, $args, $manager) {
+        $GeocodedAddresses = TableRegistry::get('Geo.GeocodedAddresses');
+        $address = $GeocodedAddresses->retrieve($args['locality_search']);
+        if ($address && $address->lat && $address->lng) {
+            $query->find('distance', [
+                'lat' => $address->lat,
+                'lng' => $address->lng,
+                'tableName' => 'Events',
+                'distance' => 100,
+                'sort' => false
+            ]);
+        }
+    }
 ]);
 ```
 
