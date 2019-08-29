@@ -68,11 +68,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testDistance() {
 		$expr = $this->Addresses->distanceExpr(12, 14);
-		if (env('PREFER_LOWEST')) {
-			$expected = '(6371.04 * ACOS((((COS((((PI() / 2) - RADIANS(((90 - Addresses.lat)))))) * COS(PI()/2 - RADIANS(90 - 12)) * COS(((RADIANS((Addresses.lng)) - RADIANS(:param0))))) + (SIN((((PI() / 2) - RADIANS(((90 - Addresses.lat)))))) * SIN((((PI() / 2) - RADIANS(90 - 12)))))))))';
-		} else {
-			$expected = '(6371.04 * ACOS(((COS(((PI() / 2) - RADIANS((90 - Addresses.lat)))) * COS(PI()/2 - RADIANS(90 - 12)) * COS((RADIANS(Addresses.lng) - RADIANS(:param0)))) + (SIN(((PI() / 2) - RADIANS((90 - Addresses.lat)))) * SIN(((PI() / 2) - RADIANS(90 - 12)))))))';
-		}
+		$expected = '(6371.04 * ACOS(((COS(((PI() / 2) - RADIANS((90 - Addresses.lat)))) * COS(PI()/2 - RADIANS(90 - 12)) * COS((RADIANS(Addresses.lng) - RADIANS(:param0)))) + (SIN(((PI() / 2) - RADIANS((90 - Addresses.lat)))) * SIN(((PI() / 2) - RADIANS(90 - 12)))))))';
 
 		$binder = new ValueBinder();
 		$result = $expr->sql($binder);
@@ -111,9 +107,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$options = ['lat' => 13.3, 'lng' => 19.2]; //array('order' => array('Address.distance' => 'ASC'));
 		$query = $this->Addresses->find()->find('distance', $options);
 
-		//debug($query);die();
 		$result = $query->toArray();
-		//debug($result);
 
 		$this->assertTrue($result[0]['distance'] < $result[1]['distance']);
 		$this->assertTrue($result[1]['distance'] < $result[2]['distance']);
@@ -145,17 +139,15 @@ class GeocoderBehaviorTest extends TestCase {
 		$driver = $this->db->getDriver();
 		$this->skipIf(!($driver instanceof Mysql || $driver instanceof Postgres), 'The virtualFields test is only compatible with Mysql/Postgres.');
 
-		$this->Controller = new TestController();
-		$this->Controller->Addresses->addBehavior('Geocoder');
-		//$this->Controller->Addresses->setDistanceAsVirtualField(13.3, 19.2);
+		$controller = new TestController();
+		$controller->Addresses->addBehavior('Geocoder');
 		$options = ['lat' => 13.3, 'lng' => 19.2, 'distance' => 3000];
-		// find()->find('distance', $options)->find('all')->toArray()
 
 		/** @var \Cake\ORM\Query $query */
-		$query = $this->Controller->Addresses->find('distance', $options);
+		$query = $controller->Addresses->find('distance', $options);
 		$query->order(['distance' => 'ASC']);
 
-		$res = $this->Controller->paginate($query)->toArray();
+		$res = $controller->paginate($query)->toArray();
 
 		$this->assertEquals(2, count($res));
 		$this->assertTrue($res[0]['distance'] < $res[1]['distance']);
