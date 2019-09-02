@@ -84,6 +84,9 @@ class Geocoder {
 	 */
 	protected $adapter;
 
+	/**
+	 * @param array $config
+	 */
 	public function __construct(array $config = []) {
 		$defaults = (array)Configure::read('Geocoder');
 		$this->setConfig($config + $defaults);
