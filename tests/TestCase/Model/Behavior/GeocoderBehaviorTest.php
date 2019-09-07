@@ -169,8 +169,8 @@ class GeocoderBehaviorTest extends TestCase {
 		$is = $this->Addresses->validateLongitude(-190);
 		$this->assertFalse($is);
 
-		$this->Addresses->validator()->add('lat', 'validateLatitude', ['provider' => 'table', 'rule' => 'validateLatitude', 'message' => 'validateLatitudeError']);
-		$this->Addresses->validator()->add('lng', 'validateLongitude', ['provider' => 'table', 'rule' => 'validateLongitude', 'message' => 'validateLongitudeError']);
+		$this->Addresses->getValidator()->add('lat', 'validateLatitude', ['provider' => 'table', 'rule' => 'validateLatitude', 'message' => 'validateLatitudeError']);
+		$this->Addresses->getValidator()->add('lng', 'validateLongitude', ['provider' => 'table', 'rule' => 'validateLongitude', 'message' => 'validateLongitudeError']);
 		$data = [
 			'lat' => 44,
 			'lng' => 190,
@@ -182,7 +182,7 @@ class GeocoderBehaviorTest extends TestCase {
 				'validateLongitude' => __('validateLongitudeError')
 			]
 		];
-		$this->assertEquals($expectedErrors, $entity->errors());
+		$this->assertEquals($expectedErrors, $entity->getErrors());
 	}
 
 	/**
