@@ -66,7 +66,7 @@ class GoogleMapHelper extends Helper {
 	const TYPE_TERRAIN = 'T';
 
 	/**
-	 * @var array
+	 * @var string[]
 	 */
 	public $types = [
 		self::TYPE_ROADMAP => 'ROADMAP',
@@ -84,7 +84,7 @@ class GoogleMapHelper extends Helper {
 	const TRAVEL_MODE_WALKING = 'W';
 
 	/**
-	 * @var array
+	 * @var string[]
 	 */
 	public $travelModes = [
 		self::TRAVEL_MODE_DRIVING => 'DRIVING',
@@ -133,7 +133,7 @@ class GoogleMapHelper extends Helper {
 	public $map = '';
 
 	/**
-	 * @var array
+	 * @var string[]
 	 */
 	protected $_mapIds = []; // Remember already used ones (valid xhtml contains ids not more than once)
 
@@ -466,12 +466,14 @@ class GoogleMapHelper extends Helper {
 			//http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js
 		}
 		// still not very common: http://code.google.com/intl/de-DE/apis/maps/documentation/javascript/basics.html
+		/*
 		if (false && !empty($this->_runtimeConfig['autoScript']) && !$this->_gearsIncluded) {
 			$res = $this->Html->script($this->gearsUrl(), ['block' => $this->_runtimeConfig['block']]);
 			if (!$this->_runtimeConfig['block']) {
 				$result .= $res . PHP_EOL;
 			}
 		}
+		*/
 
 		$map = "
 			var initialLocation = " . $this->_initialLocation() . ";
@@ -485,7 +487,7 @@ class GoogleMapHelper extends Helper {
 		";
 
 		#rename "map_canvas" to "map_canvas1", ... if multiple maps on one page
-		while (in_array($this->_runtimeConfig['div']['id'], $this->_mapIds)) {
+		while (in_array($this->_runtimeConfig['div']['id'], $this->_mapIds, true)) {
 			$this->_runtimeConfig['div']['id'] .= '-1'; //TODO: improve
 		}
 		$this->_mapIds[] = $this->_runtimeConfig['div']['id'];
@@ -1653,9 +1655,11 @@ function geocodeAddress(address) {
 		}
 
 		//TODO: shortcut? only possible if no custom params!
+		/*
 		if ($verbose) {
 
 		}
+		*/
 		// long: markers=styles1|address1&markers=styles2|address2&...
 		// short: markers=styles,address1|address2|address3|...
 

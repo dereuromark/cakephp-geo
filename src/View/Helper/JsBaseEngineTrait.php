@@ -333,7 +333,7 @@ trait JsBaseEngineTrait {
 	 * @return string Parsed options string.
 	 */
 	protected function _processOptions($method, $options) {
-		$options = $this->_mapOptions();
+		//$mapOptions = $this->_mapOptions();
 		$options = $this->_prepareCallbacks($method, $options);
 		$options = $this->_parseOptions($options, array_keys($this->_callbackArguments[$method]));
 		return $options;

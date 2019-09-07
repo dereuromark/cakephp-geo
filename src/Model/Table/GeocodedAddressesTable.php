@@ -59,27 +59,27 @@ class GeocodedAddressesTable extends Table {
 	 * @return bool|\Geo\Model\Entity\GeocodedAddress
 	 */
 	public function retrieve($address) {
-		/** @var \Geo\Model\Entity\GeocodedAddress $entity */
+		/** @var \Geo\Model\Entity\GeocodedAddress|null $entity */
 		$entity = $this->find()->where(['address' => $address])->first();
 		if ($entity) {
 			return $entity;
 		}
 
 		$result = $this->_execute($address);
-		$address = $this->newEntity([
+		$geocodedAddress = $this->newEntity([
 			'address' => $address
 		]);
 		if ($result) {
-			$address->lat = $result->getLatitude();
-			$address->lng = $result->getLongitude();
-			$address->country = $result->getCountry()->getCode();
+			$geocodedAddress->lat = $result->getLatitude();
+			$geocodedAddress->lng = $result->getLongitude();
+			$geocodedAddress->country = $result->getCountry()->getCode();
 
 			$formatter = new StringFormatter();
-			$address->formatted_address = $formatter->format($result, '%S %n, %z %L');
-			$address->data = $result;
+			$geocodedAddress->formatted_address = $formatter->format($result, '%S %n, %z %L');
+			$geocodedAddress->data = $result;
 		}
 
-		return $this->save($address);
+		return $this->save($geocodedAddress);
 	}
 
 	/**
@@ -145,11 +145,11 @@ class GeocodedAddressesTable extends Table {
 			return null;
 		}
 
-		if (!$addresses || $addresses->count() < 1) {
+		if ($addresses->count() < 1) {
 			return null;
 		}
-		$address = $addresses->first();
-		return $address;
+
+		return $addresses->first();
 	}
 
 }

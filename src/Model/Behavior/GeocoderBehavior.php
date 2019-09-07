@@ -141,7 +141,7 @@ class GeocoderBehavior extends Behavior {
 
 	/**
 	 * @param \Cake\Event\Event $event The beforeSave event that was fired
-	 * @param \Cake\ORM\Entity $entity The entity that is going to be saved
+	 * @param \Geo\Model\Entity\GeocodedAddress $entity The entity that is going to be saved
 	 * @param \ArrayObject $options the options passed to the save method
 	 * @return void
 	 */
@@ -155,7 +155,7 @@ class GeocoderBehavior extends Behavior {
 
 	/**
 	 * @param \Cake\Event\Event $event The beforeSave event that was fired
-	 * @param \Cake\ORM\Entity $entity The entity that is going to be saved
+	 * @param \Geo\Model\Entity\GeocodedAddress $entity The entity that is going to be saved
 	 * @param \ArrayObject $options the options passed to the save method
 	 * @return void
 	 */
@@ -207,7 +207,7 @@ class GeocoderBehavior extends Behavior {
 	}
 
 	/**
-	 * @param \Geo\Model\Entity\GeocodedAddress|array $entity
+	 * @param \Geo\Model\Entity\GeocodedAddress|\ArrayObject $entity
 	 * @param array $addressData
 	 *
 	 * @return \Geo\Model\Entity\GeocodedAddress|array|null
@@ -419,7 +419,7 @@ class GeocoderBehavior extends Behavior {
 	 * Returns if a latitude is valid or not.
 	 * validation rule for models
 	 *
-	 * @param float $latitude
+	 * @param float|float[] $latitude
 	 * @return bool
 	 */
 	public function validateLatitude($latitude) {
@@ -433,7 +433,7 @@ class GeocoderBehavior extends Behavior {
 	 * Returns if a longitude is valid or not.
 	 * validation rule for models
 	 *
-	 * @param float $longitude
+	 * @param float|float[] $longitude
 	 * @return bool
 	 */
 	public function validateLongitude($longitude) {
@@ -455,7 +455,7 @@ class GeocoderBehavior extends Behavior {
 		$GeocodedAddresses = null;
 		if ($this->getConfig('cache')) {
 			$GeocodedAddresses = TableRegistry::get('Geo.GeocodedAddresses');
-			/** @var \Geo\Model\Entity\GeocodedAddress $result */
+			/** @var \Geo\Model\Entity\GeocodedAddress|null $result */
 			$result = $GeocodedAddresses->find()->where(['address' => $address])->first();
 			if ($result) {
 				/** @var \Geocoder\Model\Address|null $data */
@@ -501,7 +501,7 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * Get the current unit factor
 	 *
-	 * @param int $unit Unit constant
+	 * @param string $unit Unit constant/string.
 	 * @return float Value
 	 */
 	protected function _calculationValue($unit) {
