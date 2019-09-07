@@ -1113,7 +1113,7 @@ function geocodeAddress(address) {
 	 * Make sure that your view does also output the buffer at some place!
 	 *
 	 * @param bool $return If the output should be returned instead
-	 * @return null|string Javascript if $return is true
+	 * @return string|null Javascript if $return is true
 	 */
 	public function finalize($return = false) {
 		$script = $this->_arrayToObject('matching', $this->matching, false, true) . PHP_EOL;

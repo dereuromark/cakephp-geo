@@ -16,6 +16,7 @@ use Geocoder\Provider\Provider;
  * @author Mark Scherer
  */
 class GeoIpLookup extends AbstractHttpProvider implements Provider {
+
 	/**
 	 * @var string
 	 */
