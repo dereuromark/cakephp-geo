@@ -10,13 +10,6 @@ use Cake\TestSuite\TestCase;
 class GeocodedAddressesTableTest extends TestCase {
 
 	/**
-	 * Test subject
-	 *
-	 * @var \Geo\Model\Table\GeocodedAddressesTable
-	 */
-	public $GeocodedAddresses;
-
-	/**
 	 * Fixtures
 	 *
 	 * @var array
@@ -26,8 +19,11 @@ class GeocodedAddressesTableTest extends TestCase {
 	];
 
 	/**
-	 * setUp method
-	 *
+	 * @var \Geo\Model\Table\GeocodedAddressesTable
+	 */
+	protected $GeocodedAddresses;
+
+	/**
 	 * @return void
 	 */
 	public function setUp() {
@@ -37,8 +33,6 @@ class GeocodedAddressesTableTest extends TestCase {
 	}
 
 	/**
-	 * tearDown method
-	 *
 	 * @return void
 	 */
 	public function tearDown() {
@@ -48,30 +42,16 @@ class GeocodedAddressesTableTest extends TestCase {
 	}
 
 	/**
-	 * Test initialize method
-	 *
 	 * @return void
 	 */
-	public function testInitialize() {
-		$this->markTestIncomplete('Not implemented yet.');
-	}
-
-	/**
-	 * Test validationDefault method
-	 *
-	 * @return void
-	 */
-	public function testValidationDefault() {
-		$this->markTestIncomplete('Not implemented yet.');
-	}
-
-	/**
-	 * Test buildRules method
-	 *
-	 * @return void
-	 */
-	public function testBuildRules() {
-		$this->markTestIncomplete('Not implemented yet.');
+	public function testSave() {
+		$geocodedAddress = $this->GeocodedAddresses->newEntity([
+			'address' => 'Berlin',
+			'lat' => 12,
+			'lng' => 11,
+		]);
+		$geocodedAddress = $this->GeocodedAddresses->save($geocodedAddress);
+		$this->assertNotEmpty($geocodedAddress);
 	}
 
 }
