@@ -1,7 +1,6 @@
 <?php
 namespace Geo\Test\Model\Behavior;
 
-use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Postgres;
@@ -13,6 +12,7 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Geo\Geocoder\Calculator;
 use Geo\Geocoder\Geocoder;
+use TestApp\Controller\TestController;
 
 class GeocoderBehaviorTest extends TestCase {
 
@@ -26,7 +26,7 @@ class GeocoderBehaviorTest extends TestCase {
 	/**
 	 * @var \Cake\ORM\Table|\Geo\Model\Behavior\GeocoderBehavior;
 	 */
-	public $Addresses;
+	protected $Addresses;
 
 	/**
 	 * @var \Cake\Database\Connection
@@ -358,14 +358,5 @@ class GeocoderBehaviorTest extends TestCase {
 	protected function _getEntity($data) {
 		return new Entity($data);
 	}
-
-}
-
-class TestController extends Controller {
-
-	/**
-	 * @var string
-	 */
-	public $modelClass = 'Geo.Addresses';
 
 }
