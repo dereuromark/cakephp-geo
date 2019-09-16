@@ -7,8 +7,6 @@ use Cake\TestSuite\TestCase;
 use Cake\View\View;
 use Geo\View\Helper\GoogleMapHelper;
 
-/**
- */
 class GoogleMapHelperTest extends TestCase {
 
 	/**
