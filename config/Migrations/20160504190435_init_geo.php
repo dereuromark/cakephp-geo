@@ -6,23 +6,58 @@ class InitGeo extends AbstractMigration {
 	/**
 	 * @inheritDoc
 	 */
-	public function change() {
-		$sql = <<<SQL
+    public function up()
+    {
+        if (!$this->hasTable('geocoded_addresses')) {
+            $this->table('geocoded_addresses')
+          ->addColumn('address', 'string', [
+              'default' => null,
+              'limit' => 255,
+              'null' => false,
+          ])
+          ->addColumn('formatted_address', 'string', [
+              'default' => null,
+              'limit' => 255,
+              'null' => true,
+          ])
+          ->addColumn('country', 'string', [
+              'default' => null,
+              'limit' => 3,
+              'null' => true,
+          ])
+          ->addColumn('lat', 'decimal', [
+              'default' => null,
+              'null' => true,
+              'precision' => 10,
+              'scale' => 7,
+          ])
+          ->addColumn('lng', 'decimal', [
+              'default' => null,
+              'null' => true,
+              'precision' => 10,
+              'scale' => 7,
+          ])
+          ->addColumn('data', 'text', [
+              'default' => null,
+              'limit' => null,
+              'null' => true,
+          ])
+          ->addIndex(
+              [
+                  'address',
+              ],
+              ['unique' => true]
+          )
+          ->create();
+        }
+    }
 
-CREATE TABLE IF NOT EXISTS `geocoded_addresses` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `address` varchar(255) COLLATE utf8_bin NOT NULL,
-  `formatted_address` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `country` varchar(3) COLLATE utf8_bin DEFAULT NULL,
-  `lat` decimal(10,7) DEFAULT NULL,
-  `lng` decimal(10,7) DEFAULT NULL,
-  `data` text COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `address` (`address`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
-SQL;
-		$this->query($sql);
-	}
+  /**
+	 * @inheritDoc
+	 */
+    public function down()
+    {
+        $this->table('geocoded_addresses')->drop()->save();
+    }
 
 }
