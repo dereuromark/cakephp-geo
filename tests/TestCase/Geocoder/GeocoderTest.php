@@ -25,7 +25,7 @@ class GeocoderTest extends TestCase {
 
 		// google maps
 		Configure::write('Geocoder', [
-			'key' => 'ABQIAAAAk-aSeht5vBRyVc9CjdBKLRRnhS8GMCOqu88EXp1O-QqtMSdzHhQM4y1gkHFQdUvwiZgZ6jaKlW40kw', // local
+			'apiKey' => 'ABQIAAAAk-aSeht5vBRyVc9CjdBKLRRnhS8GMCOqu88EXp1O-QqtMSdzHhQM4y1gkHFQdUvwiZgZ6jaKlW40kw', // local
 		]);
 	}
 
@@ -117,17 +117,24 @@ class GeocoderTest extends TestCase {
 	 * @return void
 	 */
 	public function testAlt() {
-		$this->Geocoder = new Geocoder(['addressFormat' => '%n %S %L %z']);
+		$config = [
+			'addressFormat' => '%n %S %L %z'
+		];
+		$this->Geocoder = new Geocoder($config);
 
 		$result = $this->Geocoder->geocode('1 infinite loop cupertino ca');
-
 		$this->assertSame(2, $result->count());
 
 		$isConclusive = $this->Geocoder->isConclusive($result);
 		$this->assertFalse($isConclusive);
 
 		$address = $result->first();
+		$state = $address->getAdminLevels()->first();
+		$this->assertTextEquals($state->getName(), 'California');
+		$this->assertTextEquals($state->getCode(), 'CA');
 		$this->assertSame('95014', $address->getPostalCode());
+		$this->assertSame('1', $address->getStreetNumber());
+		$this->assertSame('Infinite Loop', $address->getStreetName());
 
 		$coordinates = $address->getCoordinates();
 		$this->assertWithinRange(37.331697, $coordinates->getLatitude(), 0.5);

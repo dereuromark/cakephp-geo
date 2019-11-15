@@ -257,7 +257,7 @@ class GeocoderBehavior extends Behavior {
 		if (!empty($this->_config['formatted_address'])) {
 			// Unfortunately, the formatted address of google is lost
 			$formatter = new StringFormatter();
-			$entityData[$this->_config['formatted_address']] = $formatter->format($address, $this->_config['address_format']);
+			$entityData[$this->_config['formatted_address']] = $formatter->format($address, $this->_config['addressFormat']);
 		}
 
 		$entityData['geocoder_result'] = $address->toArray();
@@ -486,7 +486,7 @@ class GeocoderBehavior extends Behavior {
 			]);
 			if ($result) {
 				$formatter = new StringFormatter();
-				$addressEntity->formatted_address = $formatter->format($result, $this->_config['address_format']);
+				$addressEntity->formatted_address = $formatter->format($result, $this->_config['addressFormat']);
 				$addressEntity->lat = $result->getLatitude();
 				$addressEntity->lng = $result->getLongitude();
 				$addressEntity->country = $result->getCountry()->getCode();
