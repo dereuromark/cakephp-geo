@@ -117,7 +117,7 @@ class GeocoderTest extends TestCase {
 	 * @return void
 	 */
 	public function testAlt() {
-		$this->Geocoder = new Geocoder(['address_format' => '%n %S %L %z']);
+		$this->Geocoder = new Geocoder(['addressFormat' => '%n %S %L %z']);
 
 		$result = $this->Geocoder->geocode('1 infinite loop cupertino ca');
 

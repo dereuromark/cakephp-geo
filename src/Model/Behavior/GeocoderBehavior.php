@@ -45,7 +45,7 @@ class GeocoderBehavior extends Behavior {
 		'expect' => [],
 		'lat' => 'lat', 'lng' => 'lng',
 		'formatted_address' => 'formatted_address',
-		'address_format' => '%S %n, %z %L', // For class StringFormatter
+		'addressFormat' => '%S %n, %z %L', // For class StringFormatter
 		'locale' => null, // For GoogleMaps provider
 		'region' => null, // For GoogleMaps provider
 		'ssl' => true, // For GoogleMaps provider
