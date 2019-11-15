@@ -131,11 +131,10 @@ class GeocoderBehavior extends Behavior {
 	 */
 	public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options) {
 		if ($this->_config['on'] === 'beforeMarshal') {
-			$addressfields = (array)$this->_config['address'];
+			$addressFields = (array)$this->_config['address'];
 
 			$addressData = [];
-			$dirty = false;
-			foreach ($addressfields as $field) {
+			foreach ($addressFields as $field) {
 				if (!empty($data[$field])) {
 					$addressData[] = $data[$field];
 				}
@@ -183,11 +182,11 @@ class GeocoderBehavior extends Behavior {
 	 * @throws \RuntimeException
 	 */
 	public function geocode(Entity $entity) {
-		$addressfields = (array)$this->_config['address'];
+		$addressFields = (array)$this->_config['address'];
 
 		$addressData = [];
 		$dirty = false;
-		foreach ($addressfields as $field) {
+		foreach ($addressFields as $field) {
 			$fieldData = $entity->get($field);
 			if ($fieldData) {
 				$addressData[] = $fieldData;
@@ -197,7 +196,7 @@ class GeocoderBehavior extends Behavior {
 			}
 		}
 		if (!$dirty) {
-			if ($this->_config['allowEmpty'] || $entity->lat && $entity->lng) {
+			if ($this->_config['allowEmpty'] || ($entity->lat && $entity->lng)) {
 				return $entity;
 			}
 			if ($entity instanceof Entity) {
