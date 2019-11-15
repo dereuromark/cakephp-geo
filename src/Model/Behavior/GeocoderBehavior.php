@@ -1,4 +1,5 @@
 <?php
+
 namespace Geo\Model\Behavior;
 
 use ArrayObject;
@@ -42,9 +43,9 @@ class GeocoderBehavior extends Behavior {
 		'address' => null,
 		'allowEmpty' => true,
 		'expect' => [],
-	'lat' => 'lat', 'lng' => 'lng',
-	'formatted_address' => 'formatted_address',
-	'address_format' => '%S %n, %z %L', // For class StringFormatter
+		'lat' => 'lat', 'lng' => 'lng',
+		'formatted_address' => 'formatted_address',
+		'address_format' => '%S %n, %z %L', // For class StringFormatter
 		'locale' => null, // For GoogleMaps provider
 		'region' => null, // For GoogleMaps provider
 		'ssl' => true, // For GoogleMaps provider
@@ -60,7 +61,7 @@ class GeocoderBehavior extends Behavior {
 			'distance' => 'findDistance',
 		],
 		'validationError' => null,
-	'cache' => false // Enable only if you got a GeocodedAddresses table running
+		'cache' => false // Enable only if you got a GeocodedAddresses table running
 	];
 
 	/**
@@ -256,7 +257,7 @@ class GeocoderBehavior extends Behavior {
 		if (!empty($this->_config['formatted_address'])) {
 			// Unfortunately, the formatted address of google is lost
 			$formatter = new StringFormatter();
-	  $entityData[$this->_config['formatted_address']] = $formatter->format($address, $this->_config['address_format']);
+			$entityData[$this->_config['formatted_address']] = $formatter->format($address, $this->_config['address_format']);
 		}
 
 		$entityData['geocoder_result'] = $address->toArray();
@@ -489,7 +490,7 @@ class GeocoderBehavior extends Behavior {
 				$addressEntity->lat = $result->getLatitude();
 				$addressEntity->lng = $result->getLongitude();
 				$addressEntity->country = $result->getCountry()->getCode();
-		$addressEntity->data = $result;
+				$addressEntity->data = $result;
 			}
 
 			if (!$GeocodedAddresses->save($addressEntity, ['atomic' => false])) {

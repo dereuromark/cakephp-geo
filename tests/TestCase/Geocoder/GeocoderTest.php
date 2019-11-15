@@ -1,4 +1,5 @@
 <?php
+
 namespace Geo\Test\Geocoder;
 
 use Cake\Core\Configure;
@@ -116,35 +117,35 @@ class GeocoderTest extends TestCase {
 	 * @return void
 	 */
 	public function testAlt() {
-	  $this->Geocoder = new Geocoder(['address_format' => '%n %S %L %z']);
+		$this->Geocoder = new Geocoder(['address_format' => '%n %S %L %z']);
 
-  		$result = $this->Geocoder->geocode('1 infinite loop cupertino ca');
+		$result = $this->Geocoder->geocode('1 infinite loop cupertino ca');
 
-  		$this->assertSame(2, $result->count());
+		$this->assertSame(2, $result->count());
 
-  		$isConclusive = $this->Geocoder->isConclusive($result);
-  		$this->assertFalse($isConclusive);
+		$isConclusive = $this->Geocoder->isConclusive($result);
+		$this->assertFalse($isConclusive);
 
-  		$address = $result->first();
-  		$this->assertSame('95014', $address->getPostalCode());
+		$address = $result->first();
+		$this->assertSame('95014', $address->getPostalCode());
 
-  		$coordinates = $address->getCoordinates();
-  		$this->assertWithinRange(37.331697, $coordinates->getLatitude(), 0.5);
-  		$this->assertWithinRange(-122.030226, $coordinates->getLongitude(), 0.5);
+		$coordinates = $address->getCoordinates();
+		$this->assertWithinRange(37.331697, $coordinates->getLatitude(), 0.5);
+		$this->assertWithinRange(-122.030226, $coordinates->getLongitude(), 0.5);
 
-  		$country = $address->getCountry();
-  		$this->assertSame('US', $country->getCode());
+		$country = $address->getCountry();
+		$this->assertSame('US', $country->getCode());
 
-  		$this->Geocoder->setConfig('expect', [Geocoder::TYPE_ADDRESS]);
-  		$containsAccurateEnough = $this->Geocoder->containsAccurateEnough($result);
-  		$this->assertTrue($containsAccurateEnough);
+		$this->Geocoder->setConfig('expect', [Geocoder::TYPE_ADDRESS]);
+		$containsAccurateEnough = $this->Geocoder->containsAccurateEnough($result);
+		$this->assertTrue($containsAccurateEnough);
 
-  		$isExpectedType = $this->Geocoder->isExpectedType($address);
-  		$this->assertTrue($isExpectedType);
+		$isExpectedType = $this->Geocoder->isExpectedType($address);
+		$this->assertTrue($isExpectedType);
 
-  		$isAccurateEnough = $this->Geocoder->isAccurateEnough($address);
-  		$this->assertTrue($isAccurateEnough);
-  	}
+		$isAccurateEnough = $this->Geocoder->isAccurateEnough($address);
+		$this->assertTrue($isAccurateEnough);
+	}
 
 	/**
 	 * @return void
