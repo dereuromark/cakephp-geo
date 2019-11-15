@@ -43,8 +43,9 @@ class GeocoderBehavior extends Behavior {
 		'address' => null,
 		'allowEmpty' => true,
 		'expect' => [],
-		'lat' => 'lat', 'lng' => 'lng',
-		'formatted_address' => 'formatted_address',
+		'lat' => 'lat',
+		'lng' => 'lng',
+		'formattedAddress' => 'formatted_address', // Field used
 		'addressFormat' => '%S %n, %z %L', // For class StringFormatter
 		'locale' => null, // For GoogleMaps provider
 		'region' => null, // For GoogleMaps provider
@@ -56,7 +57,6 @@ class GeocoderBehavior extends Behavior {
 		'minAccuracy' => Geocoder::TYPE_COUNTRY,
 		'allowInconclusive' => true,
 		'unit' => Calculator::UNIT_KM,
-		//'log' => true, // logs successful results to geocode.log (errors will be logged to error.log in either case)
 		'implementedFinders' => [
 			'distance' => 'findDistance',
 		],
@@ -103,6 +103,11 @@ class GeocoderBehavior extends Behavior {
 	public function __construct(Table $table, array $config = []) {
 		$defaults = (array)Configure::read('Geocoder');
 		parent::__construct($table, $config + $defaults);
+
+		// BC shim, will be removed in next major
+		if (!empty($this->_config['formatted_address'])) {
+			$this->_config['formattedAddress'] = $this->_config['formatted_address'];
+		}
 
 		// Bug in core about merging keys of array values
 		if ($this->_config['address'] === null) {
@@ -254,10 +259,10 @@ class GeocoderBehavior extends Behavior {
 		$entityData[$this->_config['lat']] = $address->getLatitude();
 		$entityData[$this->_config['lng']] = $address->getLongitude();
 
-		if (!empty($this->_config['formatted_address'])) {
+		if (!empty($this->_config['formattedAddress'])) {
 			// Unfortunately, the formatted address of google is lost
 			$formatter = new StringFormatter();
-			$entityData[$this->_config['formatted_address']] = $formatter->format($address, $this->_config['addressFormat']);
+			$entityData[$this->_config['formattedAddress']] = $formatter->format($address, $this->_config['addressFormat']);
 		}
 
 		$entityData['geocoder_result'] = $address->toArray();
@@ -484,6 +489,7 @@ class GeocoderBehavior extends Behavior {
 			$addressEntity = $GeocodedAddresses->newEntity([
 				'address' => $address
 			]);
+
 			if ($result) {
 				$formatter = new StringFormatter();
 				$addressEntity->formatted_address = $formatter->format($result, $this->_config['addressFormat']);

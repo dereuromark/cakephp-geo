@@ -49,7 +49,6 @@ class Geocoder {
 		'apiKey' => '', // For GoogleMaps provider,
 		'provider' => '\Geocoder\Provider\GoogleMaps', // Or use own callable
 		'adapter' => '\Ivory\HttpAdapter\CakeHttpAdapter', // Only for default provider
-		//'log' => false,
 		'allowInconclusive' => true,
 		'minAccuracy' => self::TYPE_COUNTRY, // deprecated?
 		'expect' => [], # see $_types for details, one hit is enough to be valid
