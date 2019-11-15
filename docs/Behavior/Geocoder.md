@@ -16,10 +16,12 @@ Possible config options are:
 - address: (array|string, optional) set to the field name that contains the string from where to generate the slug, or a set of field names to concatenate for generating the slug.
 - overwrite: lat/lng overwrite on changes, defaults to false
 - update: what fields to update (key=>value array pairs)
-- on: beforeMarshall/beforeSave (defaults to save) - Set to false if you only want to use the validation rules etc
+- on: beforeMarshall/beforeSave (defaults to beforeSave) - Set to false if you only want to use the validation rules etc
 - unit: defaults to km
 - allowInconclusive: False to throw exception
+- minAccuracy: `Geocoder::TYPE_*` constants
 - expect: (array)postal_code, locality, sublocality, ...
+- addressFormat: Defaults to `'%S %n, %z %L'`
 
 Note that it is usually better to set global configs in your `app.php` using the `Geocoder` key.
 
@@ -35,7 +37,7 @@ You could easily switch to an IP based provider like this:
 ```php
 // in your app.php config
 'Geocoder' => [
-    'provider' => '\Geocoder\Provider\FreeGeoIp'
+    'provider' => '\Geocoder\Provider\FreeGeoIp',
 ],
 ```
 
