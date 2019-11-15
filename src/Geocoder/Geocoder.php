@@ -47,8 +47,6 @@ class Geocoder {
 		'region' => null, // For GoogleMaps provider
 		'ssl' => true, // For GoogleMaps provider
 		'apiKey' => '', // For GoogleMaps provider,
-		'addresssFormat' => '%S %n, %z %L',
-		'formatted_address' => 'formatted_address',
 		'provider' => '\Geocoder\Provider\GoogleMaps', // Or use own callable
 		'adapter' => '\Ivory\HttpAdapter\CakeHttpAdapter', // Only for default provider
 		//'log' => false,
