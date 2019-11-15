@@ -112,8 +112,11 @@ class GeocoderTest extends TestCase {
 		$country = $address->getCountry();
 		$this->assertSame('DE', $country->getCode());
 	}
-    public function testAlt() {
-      $this->Geocoder = new Geocoder(['address_format' => '%n %S %L %z']);
+	/**
+	 * @return void
+	 */
+	public function testAlt() {
+	  $this->Geocoder = new Geocoder(['address_format' => '%n %S %L %z']);
 
   		$result = $this->Geocoder->geocode('1 infinite loop cupertino ca');
 
