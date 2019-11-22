@@ -29,7 +29,7 @@ class Calculator {
 		self::UNIT_NAUTICAL => 0.868976242,
 		self::UNIT_FEET => 5280,
 		self::UNIT_INCHES => 63360,
-		self::UNIT_MILES => 1
+		self::UNIT_MILES => 1,
 	];
 
 	/**
@@ -43,7 +43,7 @@ class Calculator {
 	 */
 	protected $_defaultConfig = [
 		'units' => [
-		]
+		],
 	];
 
 	/**

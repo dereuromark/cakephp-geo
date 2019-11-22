@@ -61,7 +61,7 @@ class GeocoderBehavior extends Behavior {
 			'distance' => 'findDistance',
 		],
 		'validationError' => null,
-		'cache' => false // Enable only if you got a GeocodedAddresses table running
+		'cache' => false, // Enable only if you got a GeocodedAddresses table running
 	];
 
 	/**
@@ -370,7 +370,7 @@ class GeocoderBehavior extends Behavior {
 
 		return $op('*', [
 			(string)$value,
-			$func('ACOS', $op('+', [$mult, $mult2]))
+			$func('ACOS', $op('+', [$mult, $mult2])),
 		]);
 	}
 
@@ -486,7 +486,7 @@ class GeocoderBehavior extends Behavior {
 		if ($this->getConfig('cache')) {
 			/** @var \Geo\Model\Entity\GeocodedAddress $addressEntity */
 			$addressEntity = $GeocodedAddresses->newEntity([
-				'address' => $address
+				'address' => $address,
 			]);
 
 			if ($result) {

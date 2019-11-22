@@ -77,7 +77,7 @@ class GeoIpLookup extends AbstractHttpProvider implements Provider {
 			$adminLevels[] = [
 				'name' => isset($data['isp']) ? $data['isp'] : null,
 				'code' => null,
-				'level' => 1
+				'level' => 1,
 			];
 		}
 
@@ -89,7 +89,7 @@ class GeoIpLookup extends AbstractHttpProvider implements Provider {
 				'adminLevels' => $adminLevels,
 				'country' => isset($data['countryname']) ? $data['countryname'] : null,
 				'countryCode' => isset($data['countrycode']) ? $data['countrycode'] : null,
-			])
+			]),
 		]);
 	}
 

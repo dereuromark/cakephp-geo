@@ -36,7 +36,7 @@ class CalculatorTest extends TestCase {
 		$coords = [
 			['name' => 'MUC/Pforzheim (269km road, 2:33h)', 'x' => ['lat' => 48.1391, 'lng' => 11.5802], 'y' => ['lat' => 48.8934, 'lng' => 8.70492], 'd' => 228],
 			['name' => 'MUC/London (1142km road, 11:20h)', 'x' => ['lat' => 48.1391, 'lng' => 11.5802], 'y' => ['lat' => 51.508, 'lng' => -0.124688], 'd' => 919],
-			['name' => 'MUC/NewYork (--- road, ---h)', 'x' => ['lat' => 48.1391, 'lng' => 11.5802], 'y' => ['lat' => 40.700943, 'lng' => -73.853531], 'd' => 6479]
+			['name' => 'MUC/NewYork (--- road, ---h)', 'x' => ['lat' => 48.1391, 'lng' => 11.5802], 'y' => ['lat' => 40.700943, 'lng' => -73.853531], 'd' => 6479],
 		];
 
 		foreach ($coords as $coord) {

@@ -30,7 +30,7 @@ class AddressesFixture extends TestFixture {
 		'created' => ['type' => 'datetime', 'null' => true, 'default' => null],
 		'modified' => ['type' => 'datetime', 'null' => true, 'default' => null],
 		'type_id' => ['type' => 'integer', 'null' => true, 'default' => null, 'length' => 4],
-		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
 	];
 
 	/**
@@ -54,7 +54,7 @@ class AddressesFixture extends TestFixture {
 			'formatted_address' => 'Josef-Lang-Straße 10, 81245 München, Deutschland',
 			'created' => '2011-04-21 16:50:05',
 			'modified' => '2011-10-07 17:42:27',
-			'type_id' => null
+			'type_id' => null,
 		],
 		[
 			'foreign_id' => '4',
@@ -71,7 +71,7 @@ class AddressesFixture extends TestFixture {
 			'formatted_address' => 'Eckermannstraße 10, 80689 München, Deutschland',
 			'created' => '2011-04-21 16:51:01',
 			'modified' => '2011-10-07 17:44:02',
-			'type_id' => null
+			'type_id' => null,
 		],
 		[
 			'foreign_id' => '7',
@@ -88,7 +88,7 @@ class AddressesFixture extends TestFixture {
 			'formatted_address' => 'Krebenweg 11, 12523 Schwäbisch Boll, Deutschland',
 			'created' => '2011-11-17 13:47:36',
 			'modified' => '2011-11-17 13:47:36',
-			'type_id' => null
+			'type_id' => null,
 		],
 		[
 			'foreign_id' => '5',
@@ -105,7 +105,7 @@ class AddressesFixture extends TestFixture {
 			'formatted_address' => '',
 			'created' => '2011-11-17 14:34:14',
 			'modified' => '2011-11-17 14:49:21',
-			'type_id' => null
+			'type_id' => null,
 		],
 	];
 

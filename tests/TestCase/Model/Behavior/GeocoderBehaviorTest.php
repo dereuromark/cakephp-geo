@@ -20,7 +20,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @var array
 	 */
 	public $fixtures = [
-		'plugin.Geo.Addresses'
+		'plugin.Geo.Addresses',
 	];
 
 	/**
@@ -42,7 +42,7 @@ class GeocoderBehaviorTest extends TestCase {
 		parent::setUp();
 
 		Configure::write('Geocoder', [
-			'locale' => 'DE'
+			'locale' => 'DE',
 		]);
 
 		$this->Addresses = TableRegistry::get('Geo.Addresses');
@@ -179,8 +179,8 @@ class GeocoderBehaviorTest extends TestCase {
 
 		$expectedErrors = [
 			'lng' => [
-				'validateLongitude' => __('validateLongitudeError')
-			]
+				'validateLongitude' => __('validateLongitudeError'),
+			],
 		];
 		$this->assertEquals($expectedErrors, $entity->getErrors());
 	}
@@ -194,7 +194,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$data = [
 			'street' => 'Krebenweg 22',
 			'zip' => '74523',
-			'city' => 'Bibersfeld'
+			'city' => 'Bibersfeld',
 		];
 		$entity = $this->_getEntity($data);
 		$res = $this->Addresses->save($entity);
@@ -205,7 +205,7 @@ class GeocoderBehaviorTest extends TestCase {
 		// inconclusive
 		$data = [
 			//'street' => 'Leopoldstraße',
-			'city' => 'München'
+			'city' => 'München',
 		];
 		$entity = $this->_getEntity($data);
 		$res = $this->Addresses->save($entity);
@@ -216,7 +216,7 @@ class GeocoderBehaviorTest extends TestCase {
 		//$this->assertEquals('München, Deutschland', $res['formatted_address']);
 
 		$data = [
-			'city' => 'Bibersfeld'
+			'city' => 'Bibersfeld',
 		];
 		$entity = $this->_getEntity($data);
 		$res = $this->Addresses->save($entity);
@@ -231,7 +231,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->Addresses->removeBehavior('Geocoder');
 		$this->Addresses->addBehavior('Geocoder', ['minAccuracy' => Geocoder::TYPE_COUNTRY]);
 		$data = [
-			'city' => 'Deutschland'
+			'city' => 'Deutschland',
 		];
 		$entity = $this->_getEntity($data);
 		$res = $this->Addresses->save($entity);
@@ -247,7 +247,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->Addresses->removeBehavior('Geocoder');
 		$this->Addresses->addBehavior('Geocoder', ['minAccuracy' => Geocoder::TYPE_POSTAL]);
 		$data = [
-			'city' => 'Deutschland'
+			'city' => 'Deutschland',
 		];
 		$entity = $this->_getEntity($data);
 
@@ -268,7 +268,7 @@ class GeocoderBehaviorTest extends TestCase {
 
 		$data = [
 			//'street' => 'Leopoldstraße',
-			'city' => 'Neustadt'
+			'city' => 'Neustadt',
 		];
 		$entity = $this->_getEntity($data);
 		$res = $this->Addresses->save($entity);
@@ -286,7 +286,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->Addresses->addBehavior('Geocoder', ['allow_inconclusive' => true]);
 
 		$data = [
-			'city' => 'Neustadt'
+			'city' => 'Neustadt',
 		];
 		$entity = $this->_getEntity($data);
 		$res = $this->Addresses->save($entity);
@@ -303,14 +303,14 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->Addresses->addBehavior('Geocoder', ['expect' => [Geocoder::TYPE_POSTAL]]);
 
 		$data = [
-			'city' => 'Berlin, Deutschland'
+			'city' => 'Berlin, Deutschland',
 		];
 		$entity = $this->_getEntity($data);
 		$res = $this->Addresses->save($entity);
 		$this->assertTrue(empty($res['lat']) && empty($res['lng']));
 
 		$data = [
-			'city' => '74523, Deutschland'
+			'city' => '74523, Deutschland',
 		];
 		$entity = $this->_getEntity($data);
 		$res = $this->Addresses->save($entity);
@@ -327,7 +327,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->Addresses->addBehavior('Geocoder', ['expect' => [Geocoder::TYPE_POSTAL]]);
 
 		$data = [
-			'city' => ''
+			'city' => '',
 		];
 		$entity = $this->_getEntity($data);
 		$res = $this->Addresses->save($entity);
@@ -342,7 +342,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->Addresses->addBehavior('Geocoder', ['allowEmpty' => false, 'expect' => [Geocoder::TYPE_POSTAL]]);
 
 		$data = [
-			'city' => ''
+			'city' => '',
 		];
 		$entity = $this->_getEntity($data);
 		$res = $this->Addresses->save($entity);

@@ -41,7 +41,7 @@ class GoogleMapHelperTest extends TestCase {
 	public function testConfigMergeDefaults() {
 		$config = [
 			'zoom' => 0,
-			'type' => 'foo'
+			'type' => 'foo',
 		];
 		$this->GoogleMap = new GoogleMapHelper($this->View, $config);
 
@@ -57,7 +57,7 @@ class GoogleMapHelperTest extends TestCase {
 		$config = [
 			'map' => [
 				'type' => 'foo',
-			]
+			],
 		];
 		Configure::write('GoogleMap.key', 'abc');
 		Configure::write('GoogleMap.zoom', 0);
@@ -138,14 +138,14 @@ class GoogleMapHelperTest extends TestCase {
 			[
 				'path' => [['lat' => '48.1', 'lng' => '11.1'], ['lat' => '48.4', 'lng' => '11.2']], //'Frankfurt'
 				'color' => 'red',
-				'weight' => 10
-			]
+				'weight' => 10,
+			],
 		];
 
 		$is = $this->GoogleMap->staticPaths($m);
 
 		$options = [
-			'paths' => $is
+			'paths' => $is,
 		];
 		$is = $this->GoogleMap->staticMapLink('My Title', $options);
 		$expected = 'path=color:green|weight:5|Berlin|Stuttgart&amp;path=color:blue|weight:5|44.2,11.1|43.1,12.2|44.3,11.3|43.3,12.3&amp;path=color:red|weight:10|48.1,11.1|48.4,11.2';
@@ -169,17 +169,17 @@ class GoogleMapHelperTest extends TestCase {
 			],
 			[
 				'address' => '44.2,11.1',
-			]
+			],
 		];
 		$is = $this->GoogleMap->staticMarkers($m, ['color' => 'red', 'char' => 'C', 'shadow' => 'false']);
 		$expected = [
 			'color:red|shadow:false|44.3%2C11.2',
-			'color:red|shadow:false|44.2%2C11.1'
+			'color:red|shadow:false|44.2%2C11.1',
 		];
 		$this->assertSame($expected, $is);
 
 		$options = [
-			'markers' => $is
+			'markers' => $is,
 		];
 		$is = $this->GoogleMap->staticMap($options);
 		$expected = 'markers=color:red|shadow:false|44.3%2C11.2&amp;markers=color:red|shadow:false|44.2%2C11.1';
@@ -196,19 +196,19 @@ class GoogleMapHelperTest extends TestCase {
 				'address' => 'Berlin',
 				'color' => 'yellow',
 				'char' => 'Z',
-				'shadow' => 'true'
+				'shadow' => 'true',
 			],
 			[
 				'lat' => '44.2',
 				'lng' => '11.1',
 				'color' => '#0000FF',
 				'char' => '1',
-				'shadow' => 'false'
-			]
+				'shadow' => 'false',
+			],
 		];
 
 		$options = [
-			'markers' => $this->GoogleMap->staticMarkers($m)
+			'markers' => $this->GoogleMap->staticMarkers($m),
 		];
 
 		$is = $this->GoogleMap->staticMapUrl($options);
@@ -225,13 +225,13 @@ class GoogleMapHelperTest extends TestCase {
 
 		$options = [
 			'size' => '200x100',
-			'center' => true
+			'center' => true,
 		];
 		$is = $this->GoogleMap->staticMapLink('MyTitle', $options);
 		$this->assertNotEmpty($is);
 
 		$attr = [
-			'title' => '<b>Yeah!</b>'
+			'title' => '<b>Yeah!</b>',
 		];
 		$is = $this->GoogleMap->staticMap($options, $attr);
 		$expected = '<img src="//maps.google.com/maps/api/staticmap?size=200x100&amp;format=png&amp;mobile=false&amp;center=1&amp;maptype=roadmap" title="&lt;b&gt;Yeah!&lt;/b&gt;" alt="Map"/>';
@@ -242,18 +242,18 @@ class GoogleMapHelperTest extends TestCase {
 			['lat' => 48.2, 'lng' => '11.2'],
 		];
 		$options = [
-			'markers' => $this->GoogleMap->staticMarkers($pos)
+			'markers' => $this->GoogleMap->staticMarkers($pos),
 		];
 
 		$attr = [
-			'url' => $this->GoogleMap->mapUrl(['to' => 'Munich, Germany', 'zoom' => 10, 'escape' => false])
+			'url' => $this->GoogleMap->mapUrl(['to' => 'Munich, Germany', 'zoom' => 10, 'escape' => false]),
 		];
 		$is = $this->GoogleMap->staticMap($options, $attr);
 		$this->assertTextContains('href="//maps.google.com/maps?daddr=Munich%2C+Germany&amp;z=10"', $is);
 
 		$url = $this->GoogleMap->mapUrl(['to' => 'Munich, Germany', 'zoom' => 10, 'escape' => false]);
 		$attr = [
-			'title' => 'Yeah'
+			'title' => 'Yeah',
 		];
 		$image = $this->GoogleMap->staticMap($options, $attr);
 		$link = $this->GoogleMap->Html->link($image, $url, ['escapeTitle' => false, 'target' => '_blank']);
@@ -298,7 +298,7 @@ class GoogleMapHelperTest extends TestCase {
 	public function testMap() {
 		$options = [
 			'autoScript' => true,
-			'zoom' => 0
+			'zoom' => 0,
 		];
 
 		$result = $this->GoogleMap->map($options);
@@ -331,7 +331,7 @@ class GoogleMapHelperTest extends TestCase {
 		$options = [
 			'autoScript' => true,
 			//'inline' => true,
-			'block' => false
+			'block' => false,
 		];
 
 		$result = $this->GoogleMap->map($options);
@@ -354,8 +354,8 @@ class GoogleMapHelperTest extends TestCase {
 		$styles = json_decode(file_get_contents(Plugin::path('Geo') . 'tests/test_files/Helper/shades_of_grey_style.json'), true);
 		$options = [
 			'map' => [
-				'styles' => $styles
-			]
+				'styles' => $styles,
+			],
 		];
 
 		$this->GoogleMap->map($options);
@@ -381,7 +381,7 @@ class GoogleMapHelperTest extends TestCase {
 			'type' => 'R',
 			'geolocate' => true,
 			'div' => ['id' => 'someothers'],
-			'map' => ['navOptions' => ['style' => 'SMALL'], 'typeOptions' => ['style' => 'HORIZONTAL_BAR', 'pos' => 'RIGHT_CENTER']]
+			'map' => ['navOptions' => ['style' => 'SMALL'], 'typeOptions' => ['style' => 'HORIZONTAL_BAR', 'pos' => 'RIGHT_CENTER']],
 		];
 		$result = $this->GoogleMap->map($options);
 		$this->GoogleMap->addMarker(['lat' => 48.69847, 'lng' => 10.9514, 'title' => 'Marker', 'content' => 'Some Html-<b>Content</b>', 'icon' => $this->GoogleMap->iconSet('green', 'E')]);
@@ -417,7 +417,7 @@ class GoogleMapHelperTest extends TestCase {
 			'zoom' => 6, 'type' => 'H',
 			'autoCenter' => true,
 			'div' => ['id' => 'someother'], //'height'=>'111',
-			'map' => ['typeOptions' => ['style' => 'DROPDOWN_MENU']]
+			'map' => ['typeOptions' => ['style' => 'DROPDOWN_MENU']],
 		];
 		//echo $this->GoogleMap->map($options);
 		$this->GoogleMap->addMarker(['lat' => 47.69847, 'lng' => 11.9514, 'title' => 'MarkerMUC', 'content' => 'Some more Html-<b>Content</b>']);
@@ -458,7 +458,7 @@ class GoogleMapHelperTest extends TestCase {
 		$options = [
 			'zoom' => 5,
 			'type' => 'H',
-			'map' => []
+			'map' => [],
 		];
 		//echo $this->GoogleMap->map($options);
 

@@ -72,7 +72,7 @@ class GoogleMapHelper extends Helper {
 		self::TYPE_ROADMAP => 'ROADMAP',
 		self::TYPE_HYBRID => 'HYBRID',
 		self::TYPE_SATELLITE => 'SATELLITE',
-		self::TYPE_TERRAIN => 'TERRAIN'
+		self::TYPE_TERRAIN => 'TERRAIN',
 	];
 
 	const TRAVEL_MODE_DRIVING = 'D';
@@ -90,7 +90,7 @@ class GoogleMapHelper extends Helper {
 		self::TRAVEL_MODE_DRIVING => 'DRIVING',
 		self::TRAVEL_MODE_BICYCLING => 'BICYCLING',
 		self::TRAVEL_MODE_TRANSIT => 'TRANSIT',
-		self::TRAVEL_MODE_WALKING => 'WALKING'
+		self::TRAVEL_MODE_WALKING => 'WALKING',
 	];
 
 	/**
@@ -186,7 +186,7 @@ class GoogleMapHelper extends Helper {
 			'lng' => null,
 			'pixelOffset' => 0,
 			'zIndex' => 200,
-			'disableAutoPan' => false
+			'disableAutoPan' => false,
 		],
 		'marker' => [
 			//'autoCenter' => true,
@@ -206,7 +206,7 @@ class GoogleMapHelper extends Helper {
 			'width' => '100%',
 			'height' => '400px',
 			'class' => 'map',
-			'escape' => true
+			'escape' => true,
 		],
 		'event' => [
 		],
@@ -224,7 +224,7 @@ class GoogleMapHelper extends Helper {
 			'directionsDiv' => null,
 		],
 		'callbacks' => [
-			'geolocate' => null //TODO
+			'geolocate' => null, //TODO
 		],
 		'plugins' => [
 			'keydragzoom' => false, // http://google-maps-utility-library-v3.googlecode.com/svn/tags/keydragzoom/
@@ -733,7 +733,7 @@ function geocodeAddress(address) {
 		'color' => 'https://www.google.com/mapfiles/marker%s.png',
 		'alpha' => 'https://www.google.com/mapfiles/marker%s%s.png',
 		'numeric' => 'https://google-maps-icons.googlecode.com/files/%s%s.png',
-		'special' => 'https://google-maps-icons.googlecode.com/files/%s.png'
+		'special' => 'https://google-maps-icons.googlecode.com/files/%s.png',
 	];
 
 	/**
@@ -797,7 +797,7 @@ function geocodeAddress(address) {
 		$res = [
 			'url' => $url,
 			'icon' => $this->icon($url, ['size' => ['width' => 20, 'height' => 34]]),
-			'shadow' => $this->icon($shadow, ['size' => ['width' => 37, 'height' => 34], 'shadow' => ['width' => 10, 'height' => 34]])
+			'shadow' => $this->icon($shadow, ['size' => ['width' => 37, 'height' => 34], 'shadow' => ['width' => 10, 'height' => 34]]),
 		];
 		return $res;
 	}
@@ -1287,7 +1287,7 @@ function geocodeAddress(address) {
 		$mapping = [
 			'nav' => 'NavigationControlStyle',
 			'type' => 'MapTypeControlStyle',
-			'scale' => ''
+			'scale' => '',
 		];
 		$res = [];
 		if (!empty($options['style']) && ($m = $mapping[$type])) {
@@ -1544,7 +1544,7 @@ function geocodeAddress(address) {
 	public function staticPaths(array $pos = []) {
 		$defaults = [
 			'color' => 'blue',
-			'weight' => 5 // pixel
+			'weight' => 5, // pixel
 		];
 
 		// not a 2-level array? make it one
@@ -1610,7 +1610,7 @@ function geocodeAddress(address) {
 			'color' => 'blue',
 			'label' => '',
 			'address' => '',
-			'size' => ''
+			'size' => '',
 		];
 
 		// not a 2-level array? make it one

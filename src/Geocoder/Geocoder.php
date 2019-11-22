@@ -70,7 +70,7 @@ class Geocoder {
 		self::TYPE_SUBLOC,
 		self::TYPE_POSTAL,
 		self::TYPE_ADDRESS,
-		self::TYPE_NUMBER
+		self::TYPE_NUMBER,
 	];
 
 	/**
@@ -113,7 +113,7 @@ class Geocoder {
 			static::TYPE_SUBLOC => __('Sub Locality'),
 			static::TYPE_POSTAL => __('Postal Code'),
 			static::TYPE_ADDRESS => __('Street Address'),
-			static::TYPE_NUMBER => __('Street Number')
+			static::TYPE_NUMBER => __('Street Number'),
 		];
 		return $array;
 	}

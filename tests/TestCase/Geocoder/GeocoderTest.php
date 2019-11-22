@@ -79,7 +79,7 @@ class GeocoderTest extends TestCase {
 
 		$geocoder = new Geocoder([
 			'locale' => true,
-			'region' => true
+			'region' => true,
 		]);
 
 		$this->assertEquals('pt', $geocoder->getConfig('locale'));
@@ -95,7 +95,7 @@ class GeocoderTest extends TestCase {
 		$config = [
 			'provider' => function () {
 				return new OpenStreetMap(new CakeHttpAdapter());
-			}
+			},
 		];
 
 		$this->Geocoder = new Geocoder($config);
@@ -118,7 +118,7 @@ class GeocoderTest extends TestCase {
 	 */
 	public function testAlt() {
 		$config = [
-			'addressFormat' => '%n %S %L %z'
+			'addressFormat' => '%n %S %L %z',
 		];
 		$this->Geocoder = new Geocoder($config);
 
@@ -161,7 +161,7 @@ class GeocoderTest extends TestCase {
 		$config = [
 			'provider' => function () {
 				return new GeoIpLookup(new CakeHttpAdapter());
-			}
+			},
 		];
 
 		$this->Geocoder = new Geocoder($config);

@@ -67,7 +67,7 @@ class GeocodedAddressesTable extends Table {
 
 		$result = $this->_execute($address);
 		$geocodedAddress = $this->newEntity([
-			'address' => $address
+			'address' => $address,
 		]);
 		if ($result) {
 			$geocodedAddress->lat = $result->getLatitude();

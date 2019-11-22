@@ -15,7 +15,7 @@ class GeocodedAddressesTableTest extends TestCase {
 	 * @var array
 	 */
 	public $fixtures = [
-		'plugin.Geo.GeocodedAddresses'
+		'plugin.Geo.GeocodedAddresses',
 	];
 
 	/**
