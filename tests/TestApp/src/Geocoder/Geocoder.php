@@ -1,4 +1,5 @@
 <?php
+
 namespace TestApp\Geocoder;
 
 use Cake\Utility\Inflector;

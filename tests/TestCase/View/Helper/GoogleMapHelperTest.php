@@ -1,4 +1,5 @@
 <?php
+
 namespace Geo\Test\View\Helper;
 
 use Cake\Core\Configure;

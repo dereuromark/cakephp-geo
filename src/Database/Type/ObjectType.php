@@ -1,4 +1,5 @@
 <?php
+
 namespace Geo\Database\Type;
 
 use Cake\Database\Driver;

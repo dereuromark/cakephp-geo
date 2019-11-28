@@ -1,4 +1,5 @@
 <?php
+
 namespace TestApp\Model\Behavior;
 
 use Cake\Utility\Inflector;

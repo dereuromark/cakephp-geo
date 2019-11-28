@@ -1,4 +1,5 @@
 <?php
+
 namespace Geo\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;

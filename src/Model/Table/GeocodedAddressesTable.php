@@ -1,4 +1,5 @@
 <?php
+
 namespace Geo\Model\Table;
 
 use Cake\Database\Schema\TableSchema;

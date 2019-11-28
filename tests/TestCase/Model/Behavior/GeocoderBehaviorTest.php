@@ -1,4 +1,5 @@
 <?php
+
 namespace Geo\Test\Model\Behavior;
 
 use Cake\Core\Configure;

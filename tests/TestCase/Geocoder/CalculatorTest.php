@@ -1,4 +1,5 @@
 <?php
+
 namespace Geo\Test\Geocoder;
 
 use Cake\TestSuite\TestCase;

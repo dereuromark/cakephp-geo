@@ -1,4 +1,5 @@
 <?php
+
 namespace Geo\Geocoder;
 
 use Cake\Core\Configure;

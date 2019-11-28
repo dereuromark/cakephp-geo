@@ -1,4 +1,5 @@
 <?php
+
 namespace Geo\Model\Entity;
 
 use Cake\ORM\Entity;
