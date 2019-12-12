@@ -1141,10 +1141,13 @@ function geocodeAddress(address) {
 
 	});';
 		static::$mapCount++;
-		if ($return) {
-			return $script;
+		if (!$return) {
+			$this->Html->scriptBlock($script, ['block' => true]);
+
+			return null;
 		}
-		$this->Html->scriptBlock($script, ['block' => true]);
+
+		return $script;
 	}
 
 	/**

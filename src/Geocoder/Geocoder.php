@@ -206,11 +206,11 @@ class Geocoder {
 						return true;
 					}
 					break;
-				case (static::TYPE_AAL1):
-				case (static::TYPE_AAL2):
-				case (static::TYPE_AAL3):
-				case (static::TYPE_AAL4):
-				case (static::TYPE_AAL5):
+				case static::TYPE_AAL1:
+				case static::TYPE_AAL2:
+				case static::TYPE_AAL3:
+				case static::TYPE_AAL4:
+				case static::TYPE_AAL5:
 					if ($adminLevels->has($map[$expect])) {
 						return true;
 					}
