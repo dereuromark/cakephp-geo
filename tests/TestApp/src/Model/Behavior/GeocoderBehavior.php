@@ -2,10 +2,10 @@
 
 namespace TestApp\Model\Behavior;
 
-use Cake\Utility\Inflector;
-use Exception;
+use Cake\Utility\Text;
 use Geo\Geocoder\Geocoder;
 use Geo\Model\Behavior\GeocoderBehavior as GeoGeocoderBehavior;
+use RuntimeException;
 
 /**
  * Mocked version to avoid real API hits. Also auto-updates mock files when they cannot be found.
@@ -17,19 +17,19 @@ class GeocoderBehavior extends GeoGeocoderBehavior {
 	 *
 	 * @param string $address
 	 * @return \Geocoder\Model\Address|null
-	 * @throws \Exception
+	 * @throws \RuntimeException
 	 */
 	protected function _execute($address) {
 		$this->_Geocoder = new Geocoder($this->_config);
 
-		$file = Inflector::slug($address) . '.txt';
+		$file = Text::slug($address) . '.txt';
 
 		$testFiles = ROOT . DS . 'tests' . DS . 'test_files' . DS . 'Behavior' . DS;
 		$testFile = $testFiles . $file;
 
 		if (!file_exists($testFile)) {
 			if (getenv('CI')) {
-				throw new Exception('Should not happen on CI: ' . $testFile);
+				throw new RuntimeException('Should not happen on CI: ' . $testFile);
 			}
 
 			$address = parent::_execute($address);

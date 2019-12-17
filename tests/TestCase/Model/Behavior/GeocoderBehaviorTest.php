@@ -18,7 +18,7 @@ use TestApp\Controller\TestController;
 class GeocoderBehaviorTest extends TestCase {
 
 	/**
-	 * @var array
+	 * @var string[]
 	 */
 	public $fixtures = [
 		'plugin.Geo.Addresses',
@@ -39,7 +39,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		Configure::write('Geocoder', [
@@ -57,7 +57,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		unset($this->Addresses, $this->Addresses);
@@ -347,7 +347,7 @@ class GeocoderBehaviorTest extends TestCase {
 		];
 		$entity = $this->_getEntity($data);
 		$res = $this->Addresses->save($entity);
-		$this->assertNull($res);
+		$this->assertFalse($res);
 	}
 
 	/**

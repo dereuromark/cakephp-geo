@@ -27,7 +27,7 @@ class GeocodedAddressesTableTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$config = TableRegistry::exists('GeocodedAddresses') ? [] : ['className' => 'Geo\Model\Table\GeocodedAddressesTable'];
 		$this->GeocodedAddresses = TableRegistry::getTableLocator()->get('GeocodedAddresses', $config);
@@ -36,7 +36,7 @@ class GeocodedAddressesTableTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		unset($this->GeocodedAddresses);
 
 		parent::tearDown();
