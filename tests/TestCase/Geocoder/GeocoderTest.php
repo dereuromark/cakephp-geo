@@ -20,7 +20,7 @@ class GeocoderTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		// google maps
@@ -32,7 +32,7 @@ class GeocoderTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 	}
 
