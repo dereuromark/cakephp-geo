@@ -30,6 +30,9 @@ matrix:
 
   fast_finish: true
 
+before_install:
+  - if [[ $CODECOVERAGE != 1 ]]; then phpenv config-rm xdebug.ini ; fi
+
 before_script:
   - if [[ $PREFER_LOWEST != 1 ]]; then composer install --prefer-source --no-interaction ; fi
   - if [[ $PREFER_LOWEST == 1 ]]; then composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction ; fi
