@@ -134,7 +134,7 @@ class Geocoder {
 		try {
 			$result = $this->geocoder->geocode($address);
 		} catch (NoResult $e) {
-			throw new InconclusiveException(sprintf('Inconclusive result (total of %s)', 0));
+			throw new InconclusiveException(sprintf('Inconclusive result (total of %s)', 0), 0, $e);
 		}
 
 		if (!$this->_config['allowInconclusive'] && !$this->isConclusive($result)) {
