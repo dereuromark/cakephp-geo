@@ -10,11 +10,10 @@
         <li><?= $this->Html->link(__('Edit Geocoded Address'), ['action' => 'edit', $geocodedAddress->id]) ?> </li>
         <li><?= $this->Form->postLink(__('Delete Geocoded Address'), ['action' => 'delete', $geocodedAddress->id], ['confirm' => __('Are you sure you want to delete # {0}?', $geocodedAddress->id)]) ?> </li>
         <li><?= $this->Html->link(__('List Geocoded Addresses'), ['action' => 'index']) ?> </li>
-        <li><?= $this->Html->link(__('New Geocoded Address'), ['action' => 'add']) ?> </li>
     </ul>
 </nav>
 <div class="content action-view view large-9 medium-8 columns col-sm-8 col-xs-12">
-    <h2><?= h($geocodedAddress->address) ?></h2>
+    <h1><?= h($geocodedAddress->address) ?></h1>
     <table class="table vertical-table">
         <tr>
             <th><?= __('Formatted Address') ?></th>

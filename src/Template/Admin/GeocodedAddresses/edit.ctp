@@ -17,6 +17,7 @@
     </ul>
 </nav>
 <div class="content action-form form large-9 medium-8 columns col-sm-8 col-xs-12">
+	<h1><?= __('Edit Geocoded Address') ?></h1>
     <?= $this->Form->create($geocodedAddress) ?>
     <fieldset>
         <legend><?= __('Edit Geocoded Address') ?></legend>
@@ -26,7 +27,6 @@
             echo $this->Form->control('country');
             echo $this->Form->control('lat');
             echo $this->Form->control('lng');
-            echo $this->Form->control('data');
         ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>

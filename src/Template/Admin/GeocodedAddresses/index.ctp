@@ -8,12 +8,13 @@ use Cake\Core\Plugin; ?>
 <nav class="actions large-3 medium-4 columns col-sm-4 col-xs-12" id="actions-sidebar">
     <ul class="side-nav nav nav-pills nav-stacked">
         <li class="heading"><?= __('Actions') ?></li>
+		<li><?= $this->Html->link(__('Overview'), ['controller' => 'Geo', 'action' => 'index']) ?></li>
         <li><?= $this->Form->postLink(__('Clear empty Geocoded Addresses'), ['action' => 'clearEmpty'], ['confirm' => 'Sure?']) ?></li>
 		<li><?= $this->Form->postLink(__('Clear all Geocoded Addresses'), ['action' => 'clearAll'], ['confirm' => 'Sure?']) ?></li>
     </ul>
 </nav>
 <div class="content action-index index large-9 medium-8 columns col-sm-8 col-xs-12">
-    <h2><?= __('Geocoded Addresses') ?></h2>
+    <h1><?= __('Geocoded Addresses') ?></h1>
     <table class="table table-striped">
         <thead>
             <tr>
