@@ -14,7 +14,7 @@ A CakePHP plugin to
 - querying geocoded data by distance (using custom finder)
 - display (Google) maps (dynamic and static)
 
-This branch is for **CakePHP 3.6+**. See [version map](https://github.com/dereuromark/cakephp-geo/wiki#cakephp-version-map) for details.
+This branch is for **CakePHP 3.8+**. See [version map](https://github.com/dereuromark/cakephp-geo/wiki#cakephp-version-map) for details.
 
 Note that since CakePHP 3.x upgrade it uses the [willdurand/geocoder](https://github.com/geocoder-php/Geocoder) library and therefore now supports
 - 12+ address-based Geocoder providers
@@ -27,7 +27,7 @@ Also new:
 - PostgreSQL support
 
 And also:
-- GeocodedAddresses Table class for caching of API requests to prevent rate limits and speed up lookups
+- GeocodedAddresses Table class for caching of API requests to prevent rate limits and speed up lookups.
 
 
 ## Demo

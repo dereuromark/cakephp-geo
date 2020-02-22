@@ -34,8 +34,12 @@
         </tr>
         <tr>
             <th><?= __('Data') ?></th>
-            <td><?= h($geocodedAddress->data) ?></td>
+            <td><?= $geocodedAddress->data ? '<pre>' . h(print_r($geocodedAddress->data->toArray(), true)) . '</pre>' : '-' ?></td>
         </tr>
+		<tr>
+			<th><?= __('Created') ?></th>
+			<td><?= $this->Time->nice($geocodedAddress->created) ?></td>
+		</tr>
     </table>
 
 </div>
