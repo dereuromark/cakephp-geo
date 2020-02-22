@@ -108,3 +108,12 @@ re-geocoding. And of course you should timeout your batch runs, most providers o
 
 The methods `validateLatitude()` and `validateLongitude()` can be used to validate the range of those input values in your validation rules.
 Don't forget to set `'provider' => 'table'` in this case.
+
+## Backend
+If you include the routes, you have an admin backend for the geocoding as well as the stored geocoded addresses (cache):
+
+    /admin/geo
+
+You can test the geocoding and also remove cache data where needed.
+
+[Tools](https://github.com/dereuromark/cakephp-tools) plugin is a recommended dependency here, but not necessary.

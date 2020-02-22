@@ -17,10 +17,13 @@ use Geo\Geocoder\Geocoder;
  * @method \Geo\Model\Entity\GeocodedAddress get($primaryKey, $options = [])
  * @method \Geo\Model\Entity\GeocodedAddress newEntity($data = null, array $options = [])
  * @method \Geo\Model\Entity\GeocodedAddress[] newEntities(array $data, array $options = [])
- * @method \Geo\Model\Entity\GeocodedAddress|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \Geo\Model\Entity\GeocodedAddress|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
  * @method \Geo\Model\Entity\GeocodedAddress patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
  * @method \Geo\Model\Entity\GeocodedAddress[] patchEntities($entities, array $data, array $options = [])
  * @method \Geo\Model\Entity\GeocodedAddress findOrCreate($search, callable $callback = null, $options = [])
+ * @method \Geo\Model\Entity\GeocodedAddress saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \Geo\Model\Entity\GeocodedAddress[]|\Cake\Datasource\ResultSetInterface|false saveMany($entities, $options = [])
+ * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class GeocodedAddressesTable extends Table {
 
@@ -41,6 +44,22 @@ class GeocodedAddressesTable extends Table {
 		$this->setTable('geocoded_addresses');
 		$this->setDisplayField('address');
 		$this->setPrimaryKey('id');
+
+		$this->addBehavior('Timestamp');
+	}
+
+	/**
+	 * @return int
+	 */
+	public function clearEmpty() {
+		return $this->deleteAll(['formatted_address IS' => null]);
+	}
+
+	/**
+	 * @return int
+	 */
+	public function clearAll() {
+		return $this->deleteAll('1=1');
 	}
 
 	/**

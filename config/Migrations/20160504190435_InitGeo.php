@@ -3,6 +3,7 @@
 use Phinx\Migration\AbstractMigration;
 
 class InitGeo extends AbstractMigration {
+
 	/**
 	 * @inheritDoc
 	 */

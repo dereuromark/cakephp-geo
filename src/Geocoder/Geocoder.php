@@ -48,7 +48,7 @@ class Geocoder {
 		'region' => null, // For GoogleMaps provider
 		'ssl' => true, // For GoogleMaps provider
 		'apiKey' => '', // For GoogleMaps provider,
-		'provider' => '\Geocoder\Provider\GoogleMaps', // Or use own callable
+		'provider' => '\Geo\Provider\GoogleMaps', // Or use own callable
 		'adapter' => '\Ivory\HttpAdapter\CakeHttpAdapter', // Only for default provider
 		'allowInconclusive' => true,
 		'minAccuracy' => self::TYPE_COUNTRY, // deprecated?
