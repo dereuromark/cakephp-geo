@@ -41,11 +41,11 @@
 	<?php
 	$yes = null;
 	if ($entity->geocoded_address) {
-		$yes = 'yes (' . $this->Html->link($entity->geocoded_address->address, ['controller' => 'GeocodedAddresses', 'action' => 'view', $entity->geocoded_address->id]) . ')';
+		$yes = 'yes (' . $this->Html->link($entity->geocoded_address->address, ['controller' => 'GeocodedAddresses', 'action' => 'view', $entity->geocoded_address->id]) . ', from ' . $this->Time->nice($entity->geocoded_address->created) . ')';
 	}
 	$no = 'no';
 	if ($entity->geocoded_address_created) {
-		$no .= ' (created ' . $this->Html->link($entity->geocoded_address_created->address, ['controller' => 'GeocodedAddresses', 'action' => 'view', $entity->geocoded_address_created->id]);
+		$no .= ' (created ' . $this->Html->link($entity->geocoded_address_created->address, ['controller' => 'GeocodedAddresses', 'action' => 'view', $entity->geocoded_address_created->id]) . ')';
 	}
 	?>
 
