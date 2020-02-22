@@ -22,7 +22,7 @@
 	<legend><?= __('Geocode {0}', __('Address')) ?></legend>
 	<?php
 	echo $this->Form->control('address');
-	//echo $this->Form->control('allow_cache', ['type' => 'checkbox']);
+	echo $this->Form->control('reset_cache', ['type' => 'checkbox']);
 
 	?>
 </fieldset>

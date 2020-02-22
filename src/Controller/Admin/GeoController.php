@@ -34,6 +34,10 @@ class GeoController extends AppController {
 
 		if ($this->request->is('post')) {
 			$geocodedAddress = $this->GeocodedAddresses->find()->where(['address' => $this->request->getData('address')])->first();
+			if ($geocodedAddress && $this->request->getData('reset_cache')) {
+				$this->GeocodedAddresses->deleteOrFail($geocodedAddress);
+				$geocodedAddress = null;
+			}
 
 			$entity = $Table->patchEntity($entity, $this->request->getData());
 
