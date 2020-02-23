@@ -48,7 +48,7 @@ class Geocoder {
 		'region' => null, // For GoogleMaps provider
 		'ssl' => true, // For GoogleMaps provider
 		'apiKey' => '', // For GoogleMaps provider,
-		'provider' => '\Geocoder\Provider\GoogleMaps', // Or use own callable
+		'provider' => '\Geo\Provider\GoogleMaps', // Or use own callable
 		'adapter' => '\Ivory\HttpAdapter\CakeHttpAdapter', // Only for default provider
 		'allowInconclusive' => true,
 		'minAccuracy' => self::TYPE_COUNTRY, // deprecated?
@@ -134,7 +134,7 @@ class Geocoder {
 		try {
 			$result = $this->geocoder->geocode($address);
 		} catch (NoResult $e) {
-			throw new InconclusiveException(sprintf('Inconclusive result (total of %s)', 0));
+			throw new InconclusiveException(sprintf('Inconclusive result (total of %s)', 0), 0, $e);
 		}
 
 		if (!$this->_config['allowInconclusive'] && !$this->isConclusive($result)) {

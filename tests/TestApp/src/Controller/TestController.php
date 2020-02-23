@@ -2,9 +2,7 @@
 
 namespace TestApp\Controller;
 
-use Cake\Controller\Controller;
-
-class TestController extends Controller {
+class TestController extends AppController {
 
 	/**
 	 * @var string

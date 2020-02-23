@@ -28,7 +28,7 @@ Also:
 - SQLite support (for easy local testing)
 
 And also:
-- GeocodedAddresses Table class for caching of API requests to prevent rate limits and speed up lookups
+- GeocodedAddresses Table class for caching of API requests to prevent rate limits and speed up lookups.
 
 
 ## Demo

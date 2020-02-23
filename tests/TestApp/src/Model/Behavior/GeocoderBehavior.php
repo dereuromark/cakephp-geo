@@ -34,6 +34,7 @@ class GeocoderBehavior extends GeoGeocoderBehavior {
 
 			$address = parent::_execute($address);
 			file_put_contents($testFile, serialize($address));
+
 			return $address;
 		}
 

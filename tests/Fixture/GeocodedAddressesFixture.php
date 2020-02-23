@@ -23,6 +23,7 @@ class GeocodedAddressesFixture extends TestFixture {
         'lat' => ['type' => 'decimal', 'length' => 10, 'precision' => 7, 'unsigned' => false, 'null' => true, 'default' => null, 'comment' => ''],
         'lng' => ['type' => 'decimal', 'length' => 10, 'precision' => 7, 'unsigned' => false, 'null' => true, 'default' => null, 'comment' => ''],
         'data' => ['type' => 'text', 'length' => null, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
+		'created' => ['type' => 'datetime', 'null' => true, 'default' => null],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
             'address' => ['type' => 'unique', 'columns' => ['address'], 'length' => []],
@@ -46,7 +47,8 @@ class GeocodedAddressesFixture extends TestFixture {
 			'country' => 'L',
 			'lat' => 1.5,
 			'lng' => 1.5,
-			'data' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+			'data' => null,
+			'created' => null,
 		],
 	];
 

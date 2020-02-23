@@ -9,11 +9,12 @@ use Cake\ORM\Entity;
  *
  * @property int $id
  * @property string $address
- * @property string $formatted_address
- * @property string $country
- * @property float $lat
- * @property float $lng
+ * @property string|null $formatted_address
+ * @property string|null $country
+ * @property float|null $lat
+ * @property float|null $lng
  * @property object $data
+ * @property \Cake\I18n\Time|null $created
  */
 class GeocodedAddress extends Entity {
 

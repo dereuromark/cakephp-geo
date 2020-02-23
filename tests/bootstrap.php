@@ -38,6 +38,9 @@ define('WWW_ROOT', APP . 'webroot' . DS);
 
 Cake\Core\Configure::write('App', [
 	'namespace' => 'TestApp',
+	'paths' => [
+		'templates' => dirname(__FILE__) . DS . 'TestApp' . DS . 'templates' . DS,
+	],
 ]);
 
 Cake\Core\Configure::write('debug', true);
@@ -64,6 +67,9 @@ $cache = [
 ];
 
 Cake\Cache\Cache::setConfig($cache);
+
+class_alias(\TestApp\Controller\AppController::class, 'App\Controller\AppController');
+class_alias(\Cake\View\View::class, 'App\View\AppView');
 
 Cake\Core\Plugin::getCollection()->add(new Plugin());
 
