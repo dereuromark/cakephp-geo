@@ -5,6 +5,7 @@ namespace TestApp\Geocoder;
 use Cake\Utility\Text;
 use Geo\Geocoder\Geocoder as GeoGeocoder;
 use RuntimeException;
+use Shim\TestSuite\TestTrait;
 
 /**
  * Geocode via google (UPDATE: api3)
@@ -17,6 +18,8 @@ use RuntimeException;
  * @license MIT
  */
 class Geocoder extends GeoGeocoder {
+
+	use TestTrait;
 
 	/**
 	 * @param mixed $geocoder
@@ -39,8 +42,8 @@ class Geocoder extends GeoGeocoder {
 		$testFiles = ROOT . DS . 'tests' . DS . 'test_files' . DS . 'Geocoder' . DS;
 		$testFile = $testFiles . $file;
 
-		if (!file_exists($testFile)) {
-			if (getenv('CI')) {
+		if ($this->isDebug() || !file_exists($testFile)) {
+			if (!$this->isDebug() && getenv('CI')) {
 				throw new RuntimeException('Should not happen on CI.');
 			}
 

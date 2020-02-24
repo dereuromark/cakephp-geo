@@ -19,6 +19,8 @@
 	},
 	"require-dev": {
 		"cakephp/cakephp": "^4.0.0",
+		"php-http/cakephp-adapter": "dev-cake4",
+		"geocoder-php/google-maps-provider": "^4.4.0",
 		"dereuromark/cakephp-tools": "dev-cake4 as 2.0.0",
 		"fig-r/psr2r-sniffer": "dev-master"
 	},
