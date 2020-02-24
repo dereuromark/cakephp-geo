@@ -15,7 +15,6 @@ use Geocoder\Query\ReverseQuery;
 use Geocoder\StatefulGeocoder;
 use Geo\Exception\InconclusiveException;
 use Geo\Exception\NotAccurateEnoughException;
-use Geo\Geocoder\ResponseFactory as GeocoderResponseFactory;
 use Http\Adapter\Cake\Client;
 use Locale;
 
@@ -306,7 +305,7 @@ class Geocoder {
 		}
 
 		$adapterClass = $this->getConfig('adapter');
-		$this->adapter = new $adapterClass(new HttpCakeClient(), new GeocoderResponseFactory());
+		$this->adapter = new $adapterClass(new HttpCakeClient(), new ResponseFactory());
 
 		$provider = new GoogleMaps($this->adapter, $this->getConfig('region'), $this->getConfig('apiKey'));
 		$geocoder = new StatefulGeocoder($provider, 'en');

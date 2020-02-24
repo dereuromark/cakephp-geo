@@ -37,6 +37,7 @@ define('CAKE', CORE_PATH . 'src' . DS);
 define('WWW_ROOT', APP . 'webroot' . DS);
 
 Cake\Core\Configure::write('App', [
+	'encoding' => 'utf8',
 	'namespace' => 'TestApp',
 	'paths' => [
 		'templates' => dirname(__FILE__) . DS . 'TestApp' . DS . 'templates' . DS,

@@ -461,11 +461,15 @@ class GoogleMapHelperTest extends TestCase {
 
 		$this->GoogleMap->addMarker(['lat' => 45.69847, 'lng' => 11.9514, 'title' => 'ManuelFromDirections', 'content' => '<b>Bla</b>', 'directions' => ['from' => 'Munich, Germany']]);
 
+		$googleMap = $this->GoogleMap;
+		$this->assertSame(4, $googleMap::$markerCount);
+
 		$result = $this->GoogleMap->map($options);
 		$result .= $this->GoogleMap->script();
 
-		dd($result);
-		$this->assertTextContains('<div id="someother"', $result);
+		$this->assertSame(0, $googleMap::$markerCount);
+
+		//$this->assertTextContains('<div id="someother"', $result);
 	}
 
 }

@@ -18,6 +18,8 @@
 		"willdurand/geocoder": "^4.2"
 	},
 	"require-dev": {
+		"ext-intl": "*",
+		"ext-json": "*",
 		"cakephp/cakephp": "^4.0.0",
 		"php-http/cakephp-adapter": "dev-cake4",
 		"geocoder-php/google-maps-provider": "^4.4.0",

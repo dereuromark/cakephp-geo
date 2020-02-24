@@ -2,6 +2,7 @@
 
 namespace Geo\Test\TestCase\Controller\Admin;
 
+use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -20,6 +21,15 @@ class GeocodedAddressesControllerTest extends TestCase {
 	public $fixtures = [
 		'plugin.Geo.GeocodedAddresses',
 	];
+
+	/**
+	 * @return void
+	 */
+	public function setUp(): void {
+		parent::setUp();
+
+		Router::reload();
+	}
 
 	/**
 	 * Test index method
