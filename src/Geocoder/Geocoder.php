@@ -311,14 +311,7 @@ class Geocoder {
 		$provider = new GoogleMaps($this->adapter, $this->getConfig('region'), $this->getConfig('apiKey'));
 		$geocoder = new StatefulGeocoder($provider, 'en');
 
-		//$result = $geocoder->geocodeQuery(GeocodeQuery::create('Buckingham Palace, London'));
-		//$result = $geocoder->reverseQuery(ReverseQuery::fromCoordinates(...));
-
-		//$this->geocoder = new $geocoderClass($this->adapter, $this->getConfig('locale'), $this->getConfig('region'), $this->getConfig('ssl'), $this->getConfig('apiKey'));
-
 		$this->geocoder = $geocoder;
-
-		dd($this->geocoder);
 	}
 
 }
