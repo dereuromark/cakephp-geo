@@ -10,8 +10,11 @@ use Cake\Core\BasePlugin;
 class Plugin extends BasePlugin {
 
 	/**
-	 * Console middleware
-	 *
+	 * @var bool
+	 */
+	protected $middlewareEnabled = false;
+
+	/**
 	 * @var bool
 	 */
 	protected $consoleEnabled = false;
