@@ -7,15 +7,21 @@
 namespace Geo\Geocoder\Provider;
 
 use Cake\Utility\Xml;
-use Geocoder\Exception\NoResult;
+use Geocoder\Collection;
+use Geocoder\Exception\InvalidServerResponse;
 use Geocoder\Exception\UnsupportedOperation;
-use Geocoder\Provider\AbstractHttpProvider;
-use Geocoder\Provider\Provider;
+use Geocoder\Http\Provider\AbstractHttpProvider;
+use Geocoder\Model\AddressBuilder;
+use Geocoder\Model\AddressCollection;
+use Geocoder\Model\AdminLevel;
+use Geocoder\Query\GeocodeQuery;
+use Geocoder\Query\ReverseQuery;
+use Http\Client\HttpClient;
 
 /**
  * @author Mark Scherer
  */
-class GeoIpLookup extends AbstractHttpProvider implements Provider {
+class GeoIpLookup extends AbstractHttpProvider {
 
 	/**
 	 * @var string
@@ -23,9 +29,32 @@ class GeoIpLookup extends AbstractHttpProvider implements Provider {
 	const ENDPOINT_URL = 'http://api.geoiplookup.net/?query=%s';
 
 	/**
-	 * @inheritDoc
+	 * @var string
 	 */
-	public function geocode($address) {
+	protected $userAgent;
+
+	/**
+	 * @var string
+	 */
+	protected $referer;
+
+	/**
+	 * @param \Http\Client\HttpClient $client    an HTTP client
+	 * @param string     $userAgent Value of the User-Agent header
+	 * @param string     $referer   Value of the Referer header
+	 */
+	public function __construct(HttpClient $client, string $userAgent, string $referer = '') {
+		parent::__construct($client);
+
+		$this->userAgent = $userAgent;
+		$this->referer = $referer;
+	}
+
+	/**
+	 * @param string $address
+	 * @return \Geocoder\Collection
+	 */
+	public function geocode(string $address) {
 		if (!filter_var($address, FILTER_VALIDATE_IP)) {
 			throw new UnsupportedOperation('The geoiplookup.net provider does not support street addresses.');
 		}
@@ -34,9 +63,38 @@ class GeoIpLookup extends AbstractHttpProvider implements Provider {
 			return $this->returnResults([$this->getLocalhostDefaults()]);
 		}
 
-		$query = sprintf(static::ENDPOINT_URL, $address);
+		$query = GeocodeQuery::create($address);
 
-		return $this->executeQuery($query);
+		return $this->geocodeQuery($query);
+	}
+
+	/**
+	 * Returns the results for the 'localhost' special case.
+	 *
+	 * @return array
+	 */
+	protected function getLocalhostDefaults()
+	{
+		return [
+			'locality' => 'localhost',
+			'country'  => 'localhost',
+		];
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function geocodeQuery(GeocodeQuery $query): Collection {
+		$address = $query->getText();
+
+		return $this->executeQuery($address);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function reverseQuery(ReverseQuery $query): Collection {
+		throw new UnsupportedOperation('The geoiplookup.net provider is not able to do reverse geocoding.');
 	}
 
 	/**
@@ -49,48 +107,74 @@ class GeoIpLookup extends AbstractHttpProvider implements Provider {
 	/**
 	 * @inheritDoc
 	 */
-	public function getName() {
+	public function getName(): string {
 		return 'geo_ip_lookup';
 	}
 
 	/**
-	 * @param string $query
+	 * @param string $address
 	 *
 	 * @return \Geocoder\Model\AddressCollection
 	 */
-	private function executeQuery($query) {
-		$content = (string)$this->getAdapter()->get($query)->getBody();
-		if (empty($content)) {
-			throw new NoResult(sprintf('Could not execute query %s', $query));
+	protected function executeQuery(string $address) {
+		$url = sprintf(static::ENDPOINT_URL, $address);
+		$request = $this->getRequest($url);
+		$request = $request->withHeader('User-Agent', $this->userAgent);
+
+		if ($this->referer) {
+			$request = $request->withHeader('Referer', $this->referer);
 		}
 
-		$data = Xml::build($content);
-		if (empty($data) || empty($data->result)) {
-			throw new NoResult(sprintf('Could not execute query %s', $query));
+		$response = $this->getParsedResponse($request);
+		if (empty($response)) {
+			throw new InvalidServerResponse(sprintf('Could not execute query %s', $address));
 		}
 
-		$data = (array)$data->result;
+		/** @var \DOMDocument|\SimpleXMLElement|null $data */
+		$data = Xml::build($response);
+		if ($data === null || empty($data->results)) {
+			return new AddressCollection([]);
+		}
+
+		$data = (array)$data->results;
+		/*
+		 * ip, host, isp, city, countrycode, countryname, latitude, longitude
+		 */
+		$data = (array)$data['result'];
 
 		$adminLevels = [];
-
-		if (!empty($data['isp']) || !empty($data['isp'])) {
-			$adminLevels[] = [
-				'name' => isset($data['isp']) ? $data['isp'] : null,
-				'code' => null,
-				'level' => 1,
-			];
+		if (!empty($data['isp'])) {
+			$adminLevels[] = new AdminLevel(1, $data['isp']);
 		}
 
-		return $this->returnResults([
-			array_merge($this->getDefaults(), [
-				'latitude' => isset($data['latitude']) ? $data['latitude'] : null,
-				'longitude' => isset($data['longitude']) ? $data['longitude'] : null,
-				'locality' => isset($data['city']) ? $data['city'] : null,
-				'adminLevels' => $adminLevels,
-				'country' => isset($data['countryname']) ? $data['countryname'] : null,
-				'countryCode' => isset($data['countrycode']) ? $data['countrycode'] : null,
-			]),
-		]);
+		$builder = new AddressBuilder($this->getName());
+		$builder->setCoordinates($data['latitude'], $data['longitude']);
+		$builder->setCountryCode($data['countrycode']);
+		$builder->setCountry($data['countryname']);
+		$builder->setAdminLevels($adminLevels);
+		$builder->setLocality($data['city']);
+
+		/** @var \Geo\Geocoder\Provider\GeoIpAddress $ipAddress */
+		$ipAddress = $builder->build(GeoIpAddress::class);
+		$ipAddress = $ipAddress->withHost($data['host']);
+
+		return new AddressCollection([$ipAddress]);
+	}
+
+	/**
+	 * @param array $array
+	 *
+	 * @return \Geocoder\Model\AddressCollection
+	 */
+	protected function returnResults(array $array)
+	{
+		$array += [
+			'providedBy' => $this->getName(),
+		];
+
+		$address = GeoIpAddress::createFromArray($array);
+
+		return new AddressCollection([$address]);
 	}
 
 }

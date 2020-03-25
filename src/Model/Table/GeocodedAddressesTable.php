@@ -90,10 +90,13 @@ class GeocodedAddressesTable extends Table {
 			'address' => $address,
 		]);
 		if ($result) {
-			$geocodedAddress->lat = $result->getLatitude();
-			$geocodedAddress->lng = $result->getLongitude();
-			$geocodedAddress->country = $result->getCountry()->getCode();
-
+			if ($result->getCoordinates()) {
+				$geocodedAddress->lat = $result->getCoordinates()->getLatitude();
+				$geocodedAddress->lng = $result->getCoordinates()->getLongitude();
+			}
+			if ($result->getCountry()) {
+				$geocodedAddress->country = $result->getCountry()->getCode();
+			}
 			$formatter = new StringFormatter();
 			$geocodedAddress->formatted_address = $formatter->format($result, '%S %n, %z %L');
 			$geocodedAddress->data = $result;
@@ -152,7 +155,7 @@ class GeocodedAddressesTable extends Table {
 	/**
 	 * @param string $address
 	 *
-	 * @return \Geocoder\Model\Address|null
+	 * @return \Geocoder\Location|null
 	 */
 	protected function _execute($address) {
 		$this->_Geocoder = new Geocoder();

@@ -7,6 +7,7 @@ use Cake\Core\Configure;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
@@ -199,7 +200,7 @@ class GeocoderBehavior extends Behavior {
 			if ($this->_config['allowEmpty'] || ($entity->lat && $entity->lng)) {
 				return $entity;
 			}
-			if ($entity instanceof Entity) {
+			if ($entity instanceof EntityInterface) {
 				$this->invalidate($entity);
 			}
 			return null;
@@ -254,9 +255,11 @@ class GeocoderBehavior extends Behavior {
 			return null;
 		}
 
-		// Valid lat/lng found
-		$entityData[$this->_config['lat']] = $address->getLatitude();
-		$entityData[$this->_config['lng']] = $address->getLongitude();
+		if ($address->getCoordinates()) {
+			// Valid lat/lng found
+			$entityData[$this->_config['lat']] = $address->getCoordinates()->getLatitude();
+			$entityData[$this->_config['lng']] = $address->getCoordinates()->getLongitude();
+		}
 
 		if (!empty($this->_config['formattedAddress'])) {
 			// Unfortunately, the formatted address of google is lost
@@ -454,10 +457,10 @@ class GeocoderBehavior extends Behavior {
 	 * Uses the Geocode class to query
 	 *
 	 * @param string $address
-	 * @return \Geocoder\Model\Address|null
+	 * @return \Geocoder\Location|null
 	 * @throws \RuntimeException
 	 */
-	protected function _execute($address) {
+	protected function _execute(string $address) {
 		/** @var \Geo\Model\Table\GeocodedAddressesTable|null $GeocodedAddresses */
 		$GeocodedAddresses = null;
 		if ($this->getConfig('cache')) {
@@ -492,9 +495,13 @@ class GeocoderBehavior extends Behavior {
 			if ($result) {
 				$formatter = new StringFormatter();
 				$addressEntity->formatted_address = $formatter->format($result, $this->_config['addressFormat']);
-				$addressEntity->lat = $result->getLatitude();
-				$addressEntity->lng = $result->getLongitude();
-				$addressEntity->country = $result->getCountry()->getCode();
+				if ($result->getCoordinates()) {
+					$addressEntity->lat = $result->getCoordinates()->getLatitude();
+					$addressEntity->lng = $result->getCoordinates()->getLongitude();
+				}
+				if ($result->getCountry()) {
+					$addressEntity->country = $result->getCountry()->getCode();
+				}
 				$addressEntity->data = $result;
 			}
 
@@ -520,7 +527,7 @@ class GeocoderBehavior extends Behavior {
 	}
 
 	/**
-	 * @param \Cake\ORM\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @return void
 	 */
 	protected function invalidate($entity) {
@@ -532,14 +539,14 @@ class GeocoderBehavior extends Behavior {
 		$fields = (array)$this->_config['address'];
 		foreach ($fields as $field) {
 			if (!is_array($errorMessage)) {
-				$entity->errors($field, $errorMessage);
+				$entity->setError($field, $errorMessage);
 			}
 
 			$message = !empty($errorMessage[$field]) ? $errorMessage[$field] : null;
 			if (!$message) {
 				continue;
 			}
-			$entity->errors($field, $message);
+			$entity->setError($field, $message);
 		}
 	}
 

@@ -20,7 +20,7 @@ class GeocoderBehaviorTest extends TestCase {
 	/**
 	 * @var string[]
 	 */
-	public $fixtures = [
+	protected $fixtures = [
 		'plugin.Geo.Addresses',
 	];
 
@@ -42,9 +42,7 @@ class GeocoderBehaviorTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		Configure::write('Geocoder', [
-			'locale' => 'DE',
-		]);
+		Configure::write('Geocoder.locale', 'DE');
 
 		$this->Addresses = TableRegistry::get('Geo.Addresses');
 		$this->Addresses->addBehavior('Geocoder');
@@ -213,7 +211,7 @@ class GeocoderBehaviorTest extends TestCase {
 
 		$this->assertTrue(!empty($res['lat']) && !empty($res['lng']));
 		//FIXME
-		$this->assertContains('München', $res['formatted_address']);
+		$this->assertStringContainsString('München', $res['formatted_address']);
 		//$this->assertEquals('München, Deutschland', $res['formatted_address']);
 
 		$data = [
@@ -315,7 +313,7 @@ class GeocoderBehaviorTest extends TestCase {
 		];
 		$entity = $this->_getEntity($data);
 		$res = $this->Addresses->save($entity);
-		$this->assertContains('74523 Schwäbisch Hall', $res['formatted_address']);
+		$this->assertStringContainsString('74523 Schwäbisch Hall', $res['formatted_address']);
 		//$this->assertEquals('74523 Schwäbisch Hall, Deutschland', $res['formatted_address']);
 		$this->assertTrue(!empty($res['lat']) && !empty($res['lng']));
 	}

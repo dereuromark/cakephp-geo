@@ -16,7 +16,7 @@ class GeocodedAddressesController extends AppController {
 	/**
 	 * Index method
 	 *
-	 * @return \Cake\Http\Response|null
+	 * @return \Cake\Http\Response|null|void
 	 */
 	public function index() {
 		$geocodedAddresses = $this->paginate($this->GeocodedAddresses);
@@ -28,7 +28,7 @@ class GeocodedAddressesController extends AppController {
 	 * View method
 	 *
 	 * @param string|null $id Geocoded Address id.
-	 * @return \Cake\Http\Response|null
+	 * @return \Cake\Http\Response|null|void
 	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
 	 */
 	public function view($id = null) {
@@ -69,7 +69,7 @@ class GeocodedAddressesController extends AppController {
 	 * Edit method
 	 *
 	 * @param string|null $id Geocoded Address id.
-	 * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+	 * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
 	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
 	 */
 	public function edit($id = null) {

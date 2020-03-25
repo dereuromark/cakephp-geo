@@ -6,17 +6,20 @@ use Cake\Utility\Text;
 use Geo\Geocoder\Geocoder;
 use Geo\Model\Behavior\GeocoderBehavior as GeoGeocoderBehavior;
 use RuntimeException;
+use Shim\TestSuite\TestTrait;
 
 /**
  * Mocked version to avoid real API hits. Also auto-updates mock files when they cannot be found.
  */
 class GeocoderBehavior extends GeoGeocoderBehavior {
 
+	use TestTrait;
+
 	/**
 	 * Uses the Geocode class to query
 	 *
 	 * @param string $address
-	 * @return \Geocoder\Model\Address|null
+	 * @return \Geocoder\Location|null
 	 * @throws \RuntimeException
 	 */
 	protected function _execute($address) {
@@ -27,21 +30,21 @@ class GeocoderBehavior extends GeoGeocoderBehavior {
 		$testFiles = ROOT . DS . 'tests' . DS . 'test_files' . DS . 'Behavior' . DS;
 		$testFile = $testFiles . $file;
 
-		if (!file_exists($testFile)) {
-			if (getenv('CI')) {
+		if ($this->isDebug() || !file_exists($testFile)) {
+			if (!$this->isDebug() && getenv('CI')) {
 				throw new RuntimeException('Should not happen on CI: ' . $testFile);
 			}
 
-			$address = parent::_execute($address);
-			file_put_contents($testFile, serialize($address));
+			$addresses = parent::_execute($address);
+			file_put_contents($testFile, serialize($addresses));
 
-			return $address;
+			return $addresses;
 		}
 
-		$address = file_get_contents($testFile);
-		$address = unserialize($address);
+		$addresses = file_get_contents($testFile);
+		$addresses = unserialize($addresses);
 
-		return $address;
+		return $addresses;
 	}
 
 }

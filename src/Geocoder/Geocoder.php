@@ -7,7 +7,7 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Http\Client as HttpCakeClient;
 use Cake\I18n\I18n;
 use Geocoder\Exception\CollectionIsEmpty;
-use Geocoder\Model\Address;
+use Geocoder\Location;
 use Geocoder\Model\AddressCollection;
 use Geocoder\Provider\GoogleMaps\GoogleMaps;
 use Geocoder\Query\GeocodeQuery;
@@ -198,10 +198,10 @@ class Geocoder {
 	/**
 	 * Expects certain address types to be present in the given address.
 	 *
-	 * @param \Geocoder\Model\Address $address
+	 * @param \Geocoder\Location $address
 	 * @return bool
 	 */
-	public function isExpectedType(Address $address) {
+	public function isExpectedType(Location $address) {
 		$expected = $this->_config['expect'];
 		if (!$expected) {
 			return true;
@@ -276,10 +276,10 @@ class Geocoder {
 	}
 
 	/**
-	 * @param \Geocoder\Model\Address $address
+	 * @param \Geocoder\Location $address
 	 * @return bool
 	 */
-	public function isAccurateEnough(Address $address) {
+	public function isAccurateEnough(Location $address) {
 		$levels = array_keys($this->_types);
 		$values = array_values($this->_types);
 		$map = array_combine($levels, $values);
@@ -294,10 +294,6 @@ class Geocoder {
 	 * @return void
 	 */
 	protected function _buildGeocoder() {
-		if (isset($this->geocoder)) {
-			return;
-		}
-
 		$geocoderClass = $this->getConfig('provider');
 		if (is_callable($geocoderClass)) {
 			$this->geocoder = $geocoderClass();
@@ -308,7 +304,7 @@ class Geocoder {
 		$this->adapter = new $adapterClass(new HttpCakeClient(), new ResponseFactory());
 
 		$provider = new GoogleMaps($this->adapter, $this->getConfig('region'), $this->getConfig('apiKey'));
-		$geocoder = new StatefulGeocoder($provider, 'en');
+		$geocoder = new StatefulGeocoder($provider, $this->getConfig('locale') ?: 'en');
 
 		$this->geocoder = $geocoder;
 	}

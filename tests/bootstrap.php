@@ -1,5 +1,6 @@
 <?php
 
+use Cake\Core\Configure;
 use Geo\Plugin;
 
 require dirname(__DIR__) . '/vendor/cakephp/cakephp/src/basics.php';
@@ -94,4 +95,9 @@ Cake\Datasource\ConnectionManager::setConfig('test', [
 	'timezone' => 'UTC',
 	'quoteIdentifiers' => true,
 	'cacheMetadata' => true,
+]);
+
+// Google maps API key required
+Configure::write('Geocoder', [
+	'apiKey' => env('API_KEY'), // local, set through `export API_KEY=".."` in CLI
 ]);

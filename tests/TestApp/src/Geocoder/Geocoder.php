@@ -22,7 +22,7 @@ class Geocoder extends GeoGeocoder {
 	use TestTrait;
 
 	/**
-	 * @param mixed $geocoder
+	 * @param \Geocoder\Provider\Provider $geocoder
 	 * @return void
 	 */
 	public function setGeocoderAndResult($geocoder) {
@@ -44,7 +44,7 @@ class Geocoder extends GeoGeocoder {
 
 		if ($this->isDebug() || !file_exists($testFile)) {
 			if (!$this->isDebug() && getenv('CI')) {
-				throw new RuntimeException('Should not happen on CI.');
+				throw new RuntimeException('Should not happen on CI: ' . $testFile);
 			}
 
 			$addresses = parent::geocode($address, $params);

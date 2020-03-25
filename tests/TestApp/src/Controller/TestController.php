@@ -7,6 +7,6 @@ class TestController extends AppController {
 	/**
 	 * @var string
 	 */
-	public $modelClass = 'Geo.Addresses';
+	protected $modelClass = 'Geo.Addresses';
 
 }
