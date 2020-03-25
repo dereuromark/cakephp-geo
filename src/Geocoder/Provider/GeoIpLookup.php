@@ -60,7 +60,7 @@ class GeoIpLookup extends AbstractHttpProvider {
 		}
 
 		if (in_array($address, ['127.0.0.1', '::1'])) {
-			return $this->returnResults([$this->getLocalhostDefaults()]);
+			return $this->returnLocalhostDefaults();
 		}
 
 		$query = GeocodeQuery::create($address);
@@ -162,19 +162,20 @@ class GeoIpLookup extends AbstractHttpProvider {
 	}
 
 	/**
-	 * @param array $array
+	 * @param string $default
 	 *
 	 * @return \Geocoder\Model\AddressCollection
 	 */
-	protected function returnResults(array $array)
+	protected function returnLocalhostDefaults(string $default = 'localhost')
 	{
-		$array += [
-			'providedBy' => $this->getName(),
-		];
+		$builder = new AddressBuilder($this->getName());
+		$builder->setLocality($default);
 
-		$address = GeoIpAddress::createFromArray($array);
+		/** @var \Geo\Geocoder\Provider\GeoIpAddress $ipAddress */
+		$ipAddress = $builder->build(GeoIpAddress::class);
+		$ipAddress = $ipAddress->withHost($default);
 
-		return new AddressCollection([$address]);
+		return new AddressCollection([$ipAddress]);
 	}
 
 }

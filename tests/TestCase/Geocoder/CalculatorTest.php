@@ -8,7 +8,7 @@ use Geo\Geocoder\Calculator;
 class CalculatorTest extends TestCase {
 
 	/**
-	 * @var \Geo\Geocoder\Calculator;
+	 * @var \Geo\Geocoder\Calculator
 	 */
 	protected $Calculator;
 

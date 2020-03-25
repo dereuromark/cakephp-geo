@@ -12,7 +12,7 @@ use TestApp\Geocoder\Geocoder;
 class GeocoderTest extends TestCase {
 
 	/**
-	 * @var \Geocoder\Provider\Provider;
+	 * @var \Geocoder\Provider\Provider
 	 */
 	protected $Geocoder;
 
