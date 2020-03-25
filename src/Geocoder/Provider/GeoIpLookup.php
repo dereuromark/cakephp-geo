@@ -73,11 +73,10 @@ class GeoIpLookup extends AbstractHttpProvider {
 	 *
 	 * @return array
 	 */
-	protected function getLocalhostDefaults()
-	{
+	protected function getLocalhostDefaults() {
 		return [
 			'locality' => 'localhost',
-			'country'  => 'localhost',
+			'country' => 'localhost',
 		];
 	}
 
@@ -166,8 +165,7 @@ class GeoIpLookup extends AbstractHttpProvider {
 	 *
 	 * @return \Geocoder\Model\AddressCollection
 	 */
-	protected function returnLocalhostDefaults(string $default = 'localhost')
-	{
+	protected function returnLocalhostDefaults(string $default = 'localhost') {
 		$builder = new AddressBuilder($this->getName());
 		$builder->setLocality($default);
 

@@ -3,7 +3,6 @@
 namespace Geo\Test\Geocoder;
 
 use Cake\TestSuite\TestCase;
-use Geo\Geocoder\Calculator;
 use Geo\Geocoder\Provider\GeoIpAddress;
 use Geo\Geocoder\Provider\GeoIpLookup;
 use Http\Adapter\Cake\Client;
