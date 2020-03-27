@@ -852,13 +852,19 @@ function geocodeAddress(address) {
 		if (empty($options['size'])) {
 			// We will deprecate this in the future maybe as this is super slow!
 			//trigger_error('Please specify size manually [width => ..., height => ...] for performance reasons.', E_USER_DEPRECATED);
-			$path = $url;
-			if (!preg_match('#^((https?://)|//)#i', $path)) {
-				// This should also be avoided but is still way faster than the URL lookup.
-				$path = WWW_ROOT . ltrim($url, '/');
+			if (!empty($options['imagePath'])) {
+				$path = realpath($options['imagePath']);
+			} else {
+				$path = $url;
+				if (!preg_match('#^((https?://)|//)#i', $path)) {
+					// This should also be avoided but is still way faster than the URL lookup.
+					$path = WWW_ROOT . ltrim($url, '/');
+				}
 			}
-
-			$data = getimagesize($path);
+			$data = [];
+			if ($path) {
+				$data = getimagesize($path);
+			}
 			if ($data) {
 				$options['size']['width'] = $data[0];
 				$options['size']['height'] = $data[1];
