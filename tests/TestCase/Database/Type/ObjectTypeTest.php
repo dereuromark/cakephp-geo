@@ -1,0 +1,57 @@
+<?php
+
+namespace Geo\Test\Database\Type;
+
+use Cake\Database\Driver\Sqlite;
+use Cake\I18n\FrozenTime;
+use Cake\TestSuite\TestCase;
+use Geo\Database\Type\ObjectType;
+
+class ObjectTypeTest extends TestCase {
+
+	/**
+	 * @return void
+	 */
+	public function testToPhp() {
+		$objectType = new ObjectType();
+
+		$value = serialize(new FrozenTime());
+		$driver = new Sqlite();
+
+		$result = $objectType->toPHP($value, $driver);
+		$this->assertInstanceOf(FrozenTime::class, $result);
+
+		$result = $objectType->toPHP(null, $driver);
+		$this->assertNull($result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testTo() {
+		$objectType = new ObjectType();
+
+		$value = new FrozenTime();
+		$driver = new Sqlite();
+
+		$result = $objectType->toDatabase($value, $driver);
+		$this->assertIsString($result);
+
+		$result = $objectType->toDatabase(null, $driver);
+		$this->assertNull($result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testMarshal() {
+		$objectType = new ObjectType();
+
+		$value = new FrozenTime();
+
+		$result = $objectType->marshal($value);
+
+		$this->assertSame($value, $result);
+	}
+
+}

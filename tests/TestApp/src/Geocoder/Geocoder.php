@@ -2,9 +2,10 @@
 
 namespace TestApp\Geocoder;
 
-use Cake\Utility\Inflector;
-use Exception;
+use Cake\Utility\Text;
 use Geo\Geocoder\Geocoder as GeoGeocoder;
+use RuntimeException;
+use Shim\TestSuite\TestTrait;
 
 /**
  * Geocode via google (UPDATE: api3)
@@ -18,8 +19,10 @@ use Geo\Geocoder\Geocoder as GeoGeocoder;
  */
 class Geocoder extends GeoGeocoder {
 
+	use TestTrait;
+
 	/**
-	 * @param mixed $geocoder
+	 * @param \Geocoder\Provider\Provider $geocoder
 	 * @return void
 	 */
 	public function setGeocoderAndResult($geocoder) {
@@ -29,17 +32,19 @@ class Geocoder extends GeoGeocoder {
 	/**
 	 * @param string $address
 	 * @param array $params
+	 *
+	 * @throws \RuntimeException
 	 * @return \Geocoder\Model\AddressCollection
 	 */
 	public function geocode($address, array $params = []) {
-		$file = Inflector::slug($address) . '.txt';
+		$file = Text::slug($address) . '.txt';
 
 		$testFiles = ROOT . DS . 'tests' . DS . 'test_files' . DS . 'Geocoder' . DS;
 		$testFile = $testFiles . $file;
 
-		if (!file_exists($testFile)) {
-			if (getenv('CI')) {
-				throw new Exception('Should not happen on CI.');
+		if ($this->isDebug() || !file_exists($testFile)) {
+			if (!$this->isDebug() && getenv('CI')) {
+				throw new RuntimeException('Should not happen on CI: ' . $testFile);
 			}
 
 			$addresses = parent::geocode($address, $params);

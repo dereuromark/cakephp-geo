@@ -23,7 +23,7 @@ class GoogleMapHelperTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		Configure::delete('GoogleMap');
@@ -287,7 +287,7 @@ class GoogleMapHelperTest extends TestCase {
 		];
 		foreach ($tests as $test) {
 			$is = $this->GoogleMap->iconSet($test[0], $test[1]);
-			//echo $this->GoogleMap->Html->image($is['url']).BR;
+			$this->assertSame('https://www.google.com/mapfiles/marker' . ($test[0] ? '_' . $test[0] : '') . $test[1] . '.png', $is['url']);
 		}
 	}
 
@@ -371,12 +371,6 @@ class GoogleMapHelperTest extends TestCase {
 	 * @return void
 	 */
 	public function testDynamic() {
-		//echo '<h2>Map 1</h2>';
-		//echo '<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>';
-		//echo $this->GoogleMap->map($defaul, array('style'=>'width:100%; height: 800px'));
-		//echo '<script src="'.$this->GoogleMap->apiUrl().'"></script>';
-		//echo '<script src="'.$this->GoogleMap->gearsUrl().'"></script>';
-
 		$options = [
 			'zoom' => 6,
 			'type' => 'R',
@@ -413,14 +407,12 @@ class GoogleMapHelperTest extends TestCase {
 	 * @return void
 	 */
 	public function testDynamic2() {
-		//echo '<h2>Map 2</h2>';
 		$options = [
 			'zoom' => 6, 'type' => 'H',
 			'autoCenter' => true,
 			'div' => ['id' => 'someother'], //'height'=>'111',
 			'map' => ['typeOptions' => ['style' => 'DROPDOWN_MENU']],
 		];
-		//echo $this->GoogleMap->map($options);
 		$this->GoogleMap->addMarker(['lat' => 47.69847, 'lng' => 11.9514, 'title' => 'MarkerMUC', 'content' => 'Some more Html-<b>Content</b>']);
 
 		for ($i = 0; $i < 100; $i++) {
@@ -445,23 +437,21 @@ class GoogleMapHelperTest extends TestCase {
 
 		$this->GoogleMap->addCustom($js);
 
-		//echo $this->GoogleMap->script();
+		$result = $this->GoogleMap->map($options);
+		$result .= $this->GoogleMap->script();
 
-		//echo '<a href="javascript:void(0)" class="mapAnchor" rel="m2">Marker2</a> ';
-		//echo '<a href="javascript:void(0)" class="mapAnchor" rel="m3">Marker3</a>';
+		$this->assertTextContains('<div id="someother"', $result);
 	}
 
 	/**
 	 * @return void
 	 */
 	public function testDynamic3() {
-		//echo '<h2>Map with Directions</h2>';
 		$options = [
 			'zoom' => 5,
 			'type' => 'H',
 			'map' => [],
 		];
-		//echo $this->GoogleMap->map($options);
 
 		$this->GoogleMap->addMarker(['lat' => 48.69847, 'lng' => 10.9514, 'content' => '<b>Bla</b>', 'title' => 'NoDirections']);
 
@@ -471,7 +461,15 @@ class GoogleMapHelperTest extends TestCase {
 
 		$this->GoogleMap->addMarker(['lat' => 45.69847, 'lng' => 11.9514, 'title' => 'ManuelFromDirections', 'content' => '<b>Bla</b>', 'directions' => ['from' => 'Munich, Germany']]);
 
-		//echo $this->GoogleMap->script();
+		$googleMap = $this->GoogleMap;
+		$this->assertSame(4, $googleMap::$markerCount);
+
+		$result = $this->GoogleMap->map($options);
+		$result .= $this->GoogleMap->script();
+
+		$this->assertSame(0, $googleMap::$markerCount);
+
+		//$this->assertTextContains('<div id="someother"', $result);
 	}
 
 }

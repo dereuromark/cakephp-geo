@@ -2,22 +2,22 @@
 
 namespace Geo\Database\Type;
 
-use Cake\Database\Driver;
-use Cake\Database\Type;
+use Cake\Database\DriverInterface;
+use Cake\Database\Type\BaseType;
 use PDO;
 
 /**
  * This can serialize and unserialize objects.
  */
-class ObjectType extends Type {
+class ObjectType extends BaseType {
 
 	/**
 	 * @param string|null $value
-	 * @param \Cake\Database\Driver $driver
+	 * @param \Cake\Database\DriverInterface $driver
 	 *
 	 * @return object|null
 	 */
-	public function toPHP($value, Driver $driver) {
+	public function toPHP($value, DriverInterface $driver) {
 		if ($value === null) {
 			return $value;
 		}
@@ -41,11 +41,11 @@ class ObjectType extends Type {
 
 	/**
 	 * @param object|null $value
-	 * @param \Cake\Database\Driver $driver
+	 * @param \Cake\Database\DriverInterface $driver
 	 *
 	 * @return string|null
 	 */
-	public function toDatabase($value, Driver $driver) {
+	public function toDatabase($value, DriverInterface $driver) {
 		if ($value === null) {
 			return $value;
 		}
@@ -54,11 +54,11 @@ class ObjectType extends Type {
 
 	/**
 	 * @param mixed|null $value
-	 * @param \Cake\Database\Driver $driver
+	 * @param \Cake\Database\DriverInterface $driver
 	 *
 	 * @return int
 	 */
-	public function toStatement($value, Driver $driver) {
+	public function toStatement($value, DriverInterface $driver) {
 		if ($value === null) {
 			return PDO::PARAM_NULL;
 		}

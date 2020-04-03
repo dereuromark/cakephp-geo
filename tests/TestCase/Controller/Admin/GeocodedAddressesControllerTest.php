@@ -2,6 +2,7 @@
 
 namespace Geo\Test\TestCase\Controller\Admin;
 
+use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -17,9 +18,18 @@ class GeocodedAddressesControllerTest extends TestCase {
 	 *
 	 * @var array
 	 */
-	public $fixtures = [
+	protected $fixtures = [
 		'plugin.Geo.GeocodedAddresses',
 	];
+
+	/**
+	 * @return void
+	 */
+	public function setUp(): void {
+		parent::setUp();
+
+		Router::reload();
+	}
 
 	/**
 	 * Test index method
@@ -29,7 +39,7 @@ class GeocodedAddressesControllerTest extends TestCase {
 	public function testIndex() {
 		$this->disableErrorHandlerMiddleware();
 
-		$this->get(['prefix' => 'admin', 'plugin' => 'Geo', 'controller' => 'GeocodedAddresses', 'action' => 'index']);
+		$this->get(['prefix' => 'Admin', 'plugin' => 'Geo', 'controller' => 'GeocodedAddresses', 'action' => 'index']);
 
 		$this->assertResponseCode(200);
 	}

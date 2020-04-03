@@ -25,9 +25,10 @@ class GeoController extends AppController {
 		$Table = new Table();
 		$schema = [
 		];
+		$Table->setAlias('Table');
 		$Table->setSchema($schema);
 
-		$entity = $Table->newEntity();
+		$entity = $Table->newEmptyEntity();
 		$entity->geocoded = false;
 
 		$Table->addBehavior('Geo.Geocoder', ['address' => 'address', 'on' => 'beforeMarshal']);

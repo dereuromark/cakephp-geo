@@ -2,7 +2,7 @@
 
 namespace Geo\Model\Table;
 
-use Cake\Database\Schema\TableSchema;
+use Cake\Database\Schema\TableSchemaInterface;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -38,7 +38,7 @@ class GeocodedAddressesTable extends Table {
 	 * @param array $config The configuration for the Table.
 	 * @return void
 	 */
-	public function initialize(array $config) {
+	public function initialize(array $config): void {
 		parent::initialize($config);
 
 		$this->setTable('geocoded_addresses');
@@ -63,11 +63,11 @@ class GeocodedAddressesTable extends Table {
 	}
 
 	/**
-	 * @param \Cake\Database\Schema\TableSchema $schema
+	 * @param \Cake\Database\Schema\TableSchemaInterface $schema
 	 *
-	 * @return \Cake\Database\Schema\TableSchema
+	 * @return \Cake\Database\Schema\TableSchemaInterface
 	 */
-	protected function _initializeSchema(TableSchema $schema) {
+	protected function _initializeSchema(TableSchemaInterface $schema): TableSchemaInterface {
 		$schema->setColumnType('data', 'object');
 
 		return $schema;
@@ -90,10 +90,13 @@ class GeocodedAddressesTable extends Table {
 			'address' => $address,
 		]);
 		if ($result) {
-			$geocodedAddress->lat = $result->getLatitude();
-			$geocodedAddress->lng = $result->getLongitude();
-			$geocodedAddress->country = $result->getCountry()->getCode();
-
+			if ($result->getCoordinates()) {
+				$geocodedAddress->lat = $result->getCoordinates()->getLatitude();
+				$geocodedAddress->lng = $result->getCoordinates()->getLongitude();
+			}
+			if ($result->getCountry()) {
+				$geocodedAddress->country = $result->getCountry()->getCode();
+			}
 			$formatter = new StringFormatter();
 			$geocodedAddress->formatted_address = $formatter->format($result, '%S %n, %z %L');
 			$geocodedAddress->data = $result;
@@ -108,32 +111,32 @@ class GeocodedAddressesTable extends Table {
 	 * @param \Cake\Validation\Validator $validator Validator instance.
 	 * @return \Cake\Validation\Validator
 	 */
-	public function validationDefault(Validator $validator) {
+	public function validationDefault(Validator $validator): Validator {
 		$validator
 			->integer('id')
-			->allowEmpty('id', 'create');
+			->allowEmptyString('id', 'create');
 
 		$validator
 			->requirePresence('address', 'create')
-			->notEmpty('address')
+			->notEmptyString('address')
 			->add('address', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
 		$validator
-			->allowEmpty('formatted_address');
+			->allowEmptyString('formatted_address');
 
 		$validator
-			->allowEmpty('country');
+			->allowEmptyString('country');
 
 		$validator
 			->decimal('lat')
-			->allowEmpty('lat');
+			->allowEmptyString('lat');
 
 		$validator
 			->decimal('lng')
-			->allowEmpty('lng');
+			->allowEmptyString('lng');
 
 		$validator
-			->allowEmpty('data');
+			->allowEmptyArray('data');
 
 		return $validator;
 	}
@@ -145,15 +148,14 @@ class GeocodedAddressesTable extends Table {
 	 * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
 	 * @return \Cake\ORM\RulesChecker
 	 */
-	public function buildRules(RulesChecker $rules) {
-		//$rules->add($rules->isUnique(['address']));
+	public function buildRules(RulesChecker $rules): RulesChecker {
 		return $rules;
 	}
 
 	/**
 	 * @param string $address
 	 *
-	 * @return \Geocoder\Model\Address|null
+	 * @return \Geocoder\Location|null
 	 */
 	protected function _execute($address) {
 		$this->_Geocoder = new Geocoder();

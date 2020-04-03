@@ -2,39 +2,19 @@
 
 namespace Geo\Test\Geocoder;
 
-use Cake\Core\Configure;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
-use Geocoder\Provider\OpenStreetMap;
+use Geocoder\Provider\Nominatim\Nominatim;
 use Geo\Geocoder\Provider\GeoIpLookup;
-use Ivory\HttpAdapter\CakeHttpAdapter;
+use Http\Adapter\Cake\Client;
 use TestApp\Geocoder\Geocoder;
 
 class GeocoderTest extends TestCase {
 
 	/**
-	 * @var \Geocoder\Provider\Provider;
+	 * @var \Geocoder\Provider\Provider
 	 */
 	protected $Geocoder;
-
-	/**
-	 * @return void
-	 */
-	public function setUp() {
-		parent::setUp();
-
-		// google maps
-		Configure::write('Geocoder', [
-			'apiKey' => 'ABQIAAAAk-aSeht5vBRyVc9CjdBKLRRnhS8GMCOqu88EXp1O-QqtMSdzHhQM4y1gkHFQdUvwiZgZ6jaKlW40kw', // local
-		]);
-	}
-
-	/**
-	 * @return void
-	 */
-	public function tearDown() {
-		parent::tearDown();
-	}
 
 	/**
 	 * @return void
@@ -94,7 +74,7 @@ class GeocoderTest extends TestCase {
 	public function testClosure() {
 		$config = [
 			'provider' => function () {
-				return new OpenStreetMap(new CakeHttpAdapter());
+				return Nominatim::withOpenStreetMapServer(new Client(), 'CakePHP-Geo-Plugin');
 			},
 		];
 
@@ -113,6 +93,7 @@ class GeocoderTest extends TestCase {
 		$country = $address->getCountry();
 		$this->assertSame('DE', $country->getCode());
 	}
+
 	/**
 	 * @return void
 	 */
@@ -160,7 +141,7 @@ class GeocoderTest extends TestCase {
 	public function testIp() {
 		$config = [
 			'provider' => function () {
-				return new GeoIpLookup(new CakeHttpAdapter());
+				return new GeoIpLookup(new Client(), 'Geo Plugin test');
 			},
 		];
 
@@ -169,9 +150,9 @@ class GeocoderTest extends TestCase {
 
 		$this->assertSame(1, $result->count());
 		$address = $result->first();
-		$this->assertNotEmpty($address->getLatitude());
-		$this->assertNotEmpty($address->getLongitude());
-		$this->assertNotEmpty($address->getCountryCode());
+		$this->assertNotEmpty($address->getCoordinates()->getLatitude());
+		$this->assertNotEmpty($address->getCoordinates()->getLongitude());
+		$this->assertNotEmpty($address->getCountry()->getCode());
 	}
 
 }

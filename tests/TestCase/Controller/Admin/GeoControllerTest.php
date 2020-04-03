@@ -16,14 +16,14 @@ class GeoControllerTest extends TestCase {
 	/**
 	 * @var array
 	 */
-	public $fixtures = [
+	protected $fixtures = [
 		'plugin.Geo.GeocodedAddresses',
 	];
 
 	/**
 	 * @return void
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		Router::reload();
@@ -35,7 +35,7 @@ class GeoControllerTest extends TestCase {
 	public function testIndex() {
 		$this->disableErrorHandlerMiddleware();
 
-		$this->get(['prefix' => 'admin', 'plugin' => 'Geo', 'controller' => 'Geo', 'action' => 'index']);
+		$this->get(['prefix' => 'Admin', 'plugin' => 'Geo', 'controller' => 'Geo', 'action' => 'index']);
 
 		$this->assertResponseCode(200);
 	}

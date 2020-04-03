@@ -25,10 +25,10 @@ Possible config options are:
 
 Note that it is usually better to set global configs in your `app.php` using the `Geocoder` key.
 
-## Configure your own geocoder
+## Configure your own Geocoder
 By default it will use the GoogleMaps provider.
 
-Please see [willdurand/geocoder](https://github.com/geocoder-php/Geocoder) library on what other providers you can use out of the box.
+Please see [geocoder-php/Geocoder](https://github.com/geocoder-php/Geocoder) library on what other providers you can use out of the box.
 You can chose from
 - 12+ address-based Geocoder providers
 - 10+ IP-based Geocoder providers
@@ -46,7 +46,9 @@ Let's say you want to switch to OpenStreetMap and also use a different HTTP adap
 // in your app.php config
 'Geocoder' => [
     'provider' => function () {
-        return new \Geocoder\Provider\OpenStreetMap(new \Ivory\HttpAdapter\BuzzHttpAdapter());
+        return \Geocoder\Provider\Nominatim\Nominatim::withOpenStreetMapServer(
+            new \Http\Adapter\Cake\Client(), 'User-Agent'
+        );
     }
 ],
 ```
@@ -84,9 +86,9 @@ We want to find all addresses within a distance of 200 km of the given lat/lng:
 $options = ['lat' => 13.3, 'lng' => 19.2, 'distance' => 200];
 
 $query = $this->Addresses->find('distance', $options);
-$query->order(['distance' => 'ASC']);
+$query->orderAsc('distance');
 
-$addresses = $this->paginate($query)
+$addresses = $this->paginate($query);
 ```
 They will be ordered by `['distance' => 'ASC']`, so all records with the smallest distances first.
 
@@ -116,4 +118,5 @@ If you include the routes, you have an admin backend for the geocoding as well a
 
 You can test the geocoding and also remove cache data where needed.
 
-[Tools](https://github.com/dereuromark/cakephp-tools) plugin is a recommended dependency here, but not necessary.
+## Providers
+Full list of existing providers [here](https://github.com/geocoder-php/Geocoder#providers).

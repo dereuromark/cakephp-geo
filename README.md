@@ -3,7 +3,7 @@
 [![Build Status](https://api.travis-ci.org/dereuromark/cakephp-geo.svg?branch=master)](https://travis-ci.org/dereuromark/cakephp-geo)
 [![Coverage Status](https://coveralls.io/repos/dereuromark/cakephp-geo/badge.svg)](https://coveralls.io/r/dereuromark/cakephp-geo)
 [![Latest Stable Version](https://poser.pugx.org/dereuromark/cakephp-geo/v/stable.svg)](https://packagist.org/packages/dereuromark/cakephp-geo)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.2-8892BF.svg)](https://php.net/)
 [![License](https://poser.pugx.org/dereuromark/cakephp-geo/license.svg)](https://packagist.org/packages/dereuromark/cakephp-geo)
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-geo/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-geo)
@@ -14,17 +14,18 @@ A CakePHP plugin to
 - querying geocoded data by distance (using custom finder)
 - display (Google) maps (dynamic and static)
 
-This branch is for **CakePHP 3.8+**. See [version map](https://github.com/dereuromark/cakephp-geo/wiki#cakephp-version-map) for details.
+This branch is for **CakePHP 4.0+**. See [version map](https://github.com/dereuromark/cakephp-geo/wiki#cakephp-version-map) for details.
 
-Note that since CakePHP 3.x upgrade it uses the [willdurand/geocoder](https://github.com/geocoder-php/Geocoder) library and therefore now supports
+Note that it uses the [willdurand/geocoder](https://github.com/geocoder-php/Geocoder) library and therefore supports
 - 12+ address-based Geocoder providers
 - 10+ IP-based Geocoder providers
 
 Most of them also support reverse geocoding. And of course you can write your own providers on top.
 
-Also new:
+Also:
 - MySQL support
 - PostgreSQL support
+- SQLite support (for easy local testing)
 
 And also:
 - GeocodedAddresses Table class for caching of API requests to prevent rate limits and speed up lookups.
@@ -38,8 +39,7 @@ See [Sandbox examples](https://sandbox.dereuromark.de/sandbox/geo-examples) for 
 - [Documentation](docs/README.md)
 
 
-### Branching strategy
-The master branch is the currently active and maintained one and works with the current 3.x stable version.
+### Legacy versions
 Please see the original [Tools plugin](https://github.com/dereuromark/cakephp-tools) if you need the Geo tools for CakePHP 2.x versions.
 
 ### TODOs

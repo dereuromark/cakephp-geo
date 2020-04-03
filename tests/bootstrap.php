@@ -1,5 +1,6 @@
 <?php
 
+use Cake\Core\Configure;
 use Geo\Plugin;
 
 require dirname(__DIR__) . '/vendor/cakephp/cakephp/src/basics.php';
@@ -37,9 +38,10 @@ define('CAKE', CORE_PATH . 'src' . DS);
 define('WWW_ROOT', APP . 'webroot' . DS);
 
 Cake\Core\Configure::write('App', [
+	'encoding' => 'utf8',
 	'namespace' => 'TestApp',
 	'paths' => [
-		'templates' => dirname(__FILE__) . DS . 'TestApp' . DS . 'src' . DS . 'Template' . DS,
+		'templates' => dirname(__FILE__) . DS . 'TestApp' . DS . 'templates' . DS,
 	],
 ]);
 
@@ -85,12 +87,17 @@ if (!getenv('db_class')) {
 
 Cake\Datasource\ConnectionManager::setConfig('test', [
 	'className' => 'Cake\Database\Connection',
-	'driver' => getenv('db_class'),
-	'dsn' => getenv('db_dsn'),
-	'database' => getenv('db_database'),
-	'username' => getenv('db_username'),
-	'password' => getenv('db_password'),
+	'driver' => getenv('db_class') ?: null,
+	'dsn' => getenv('db_dsn') ?: null,
+	//'database' => getenv('db_database'),
+	//'username' => getenv('db_username'),
+	//'password' => getenv('db_password'),
 	'timezone' => 'UTC',
 	'quoteIdentifiers' => true,
 	'cacheMetadata' => true,
+]);
+
+// Google maps API key required
+Configure::write('Geocoder', [
+	'apiKey' => env('API_KEY'), // local, set through `export API_KEY=".."` in CLI
 ]);

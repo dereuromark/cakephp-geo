@@ -4,12 +4,18 @@ namespace Geo\Geocoder;
 
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Http\Client as HttpCakeClient;
 use Cake\I18n\I18n;
-use Geocoder\Exception\NoResult;
-use Geocoder\Model\Address;
+use Geocoder\Exception\CollectionIsEmpty;
+use Geocoder\Location;
 use Geocoder\Model\AddressCollection;
+use Geocoder\Provider\GoogleMaps\GoogleMaps;
+use Geocoder\Query\GeocodeQuery;
+use Geocoder\Query\ReverseQuery;
+use Geocoder\StatefulGeocoder;
 use Geo\Exception\InconclusiveException;
 use Geo\Exception\NotAccurateEnoughException;
+use Http\Adapter\Cake\Client;
 use Locale;
 
 /**
@@ -48,8 +54,8 @@ class Geocoder {
 		'region' => null, // For GoogleMaps provider
 		'ssl' => true, // For GoogleMaps provider
 		'apiKey' => '', // For GoogleMaps provider,
-		'provider' => '\Geo\Provider\GoogleMaps', // Or use own callable
-		'adapter' => '\Ivory\HttpAdapter\CakeHttpAdapter', // Only for default provider
+		'provider' => GoogleMaps::class, // Or use own callable
+		'adapter' => Client::class, // Only for default provider
 		'allowInconclusive' => true,
 		'minAccuracy' => self::TYPE_COUNTRY, // deprecated?
 		'expect' => [], # see $_types for details, one hit is enough to be valid
@@ -80,7 +86,7 @@ class Geocoder {
 	protected $geocoder;
 
 	/**
-	 * @var \Ivory\HttpAdapter\HttpAdapterInterface
+	 * @var \Http\Client\HttpClient
 	 */
 	protected $adapter;
 
@@ -126,14 +132,19 @@ class Geocoder {
 	 *
 	 * @param string $address
 	 * @param array $params
-	 * @return \Geocoder\Model\AddressCollection Result
+	 *
+	 * @throws \Geo\Exception\InconclusiveException
+	 * @throws \Geo\Exception\NotAccurateEnoughException
+	 *
+	 * @return \Geocoder\Model\AddressCollection
 	 */
 	public function geocode($address, array $params = []) {
 		$this->_buildGeocoder();
 
 		try {
-			$result = $this->geocoder->geocode($address);
-		} catch (NoResult $e) {
+			/** @var \Geocoder\Model\AddressCollection $result */
+			$result = $this->geocoder->geocodeQuery(GeocodeQuery::create($address));
+		} catch (CollectionIsEmpty $e) {
 			throw new InconclusiveException(sprintf('Inconclusive result (total of %s)', 0), 0, $e);
 		}
 
@@ -153,18 +164,24 @@ class Geocoder {
 	 * @param float $lat
 	 * @param float $lng
 	 * @param array $params
+	 *
+	 * @throws \Geo\Exception\InconclusiveException
+	 * @throws \Geo\Exception\NotAccurateEnoughException
+	 *
 	 * @return \Geocoder\Model\AddressCollection Result
 	 */
 	public function reverse($lat, $lng, array $params = []) {
 		$this->_buildGeocoder();
 
-		$result = $this->geocoder->reverse($lat, $lng);
+		/** @var \Geocoder\Model\AddressCollection $result */
+		$result = $this->geocoder->reverseQuery(ReverseQuery::fromCoordinates($lat, $lng));
 		if (!$this->_config['allowInconclusive'] && !$this->isConclusive($result)) {
 			throw new InconclusiveException(sprintf('Inconclusive result (total of %s)', $result->count()));
 		}
 		if ($this->_config['minAccuracy'] && !$this->containsAccurateEnough($result)) {
 			throw new NotAccurateEnoughException('Result is not accurate enough');
 		}
+
 		return $result;
 	}
 
@@ -181,10 +198,10 @@ class Geocoder {
 	/**
 	 * Expects certain address types to be present in the given address.
 	 *
-	 * @param \Geocoder\Model\Address $address
+	 * @param \Geocoder\Location $address
 	 * @return bool
 	 */
-	public function isExpectedType(Address $address) {
+	public function isExpectedType(Location $address) {
 		$expected = $this->_config['expect'];
 		if (!$expected) {
 			return true;
@@ -259,10 +276,10 @@ class Geocoder {
 	}
 
 	/**
-	 * @param \Geocoder\Model\Address $address
+	 * @param \Geocoder\Location $address
 	 * @return bool
 	 */
-	public function isAccurateEnough(Address $address) {
+	public function isAccurateEnough(Location $address) {
 		$levels = array_keys($this->_types);
 		$values = array_values($this->_types);
 		$map = array_combine($levels, $values);
@@ -277,10 +294,6 @@ class Geocoder {
 	 * @return void
 	 */
 	protected function _buildGeocoder() {
-		if (isset($this->geocoder)) {
-			return;
-		}
-
 		$geocoderClass = $this->getConfig('provider');
 		if (is_callable($geocoderClass)) {
 			$this->geocoder = $geocoderClass();
@@ -288,8 +301,12 @@ class Geocoder {
 		}
 
 		$adapterClass = $this->getConfig('adapter');
-		$this->adapter = new $adapterClass();
-		$this->geocoder = new $geocoderClass($this->adapter, $this->getConfig('locale'), $this->getConfig('region'), $this->getConfig('ssl'), $this->getConfig('apiKey'));
+		$this->adapter = new $adapterClass(new HttpCakeClient(), new ResponseFactory());
+
+		$provider = new GoogleMaps($this->adapter, $this->getConfig('region'), $this->getConfig('apiKey'));
+		$geocoder = new StatefulGeocoder($provider, $this->getConfig('locale') ?: 'en');
+
+		$this->geocoder = $geocoder;
 	}
 
 }
