@@ -1,6 +1,6 @@
 # CakePHP Geo Plugin
 
-[![Build Status](https://api.travis-ci.com/dereuromark/cakephp-geo.svg?branch=master)](https://travis-ci.org/dereuromark/cakephp-geo)
+[![Build Status](https://api.travis-ci.com/dereuromark/cakephp-geo.svg?branch=master)](https://travis-ci.com/dereuromark/cakephp-geo)
 [![Coverage Status](https://coveralls.io/repos/dereuromark/cakephp-geo/badge.svg)](https://coveralls.io/r/dereuromark/cakephp-geo)
 [![Latest Stable Version](https://poser.pugx.org/dereuromark/cakephp-geo/v/stable.svg)](https://packagist.org/packages/dereuromark/cakephp-geo)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.2-8892BF.svg)](https://php.net/)
