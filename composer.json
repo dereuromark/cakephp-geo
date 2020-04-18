@@ -20,7 +20,7 @@
 	"require-dev": {
 		"cakephp/cakephp": "^3.8",
 		"dereuromark/cakephp-tools": "^1.9.7",
-		"fig-r/psr2r-sniffer": "dev-master"
+		"fig-r/psr2r-sniffer": "^0.6"
 	},
 	"support": {
 		"source": "https://github.com/dereuromark/cakephp-geo"
