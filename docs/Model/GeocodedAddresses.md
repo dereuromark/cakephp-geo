@@ -32,3 +32,20 @@ Type::map('object', 'Geo\Database\Type\ObjectType');
 (see cookbook: https://book.cakephp.org/3.0/en/orm/database-basics.html#adding-custom-types) 
 
 If you need more complex solutions, you can also manually put the Geocoder and the GeocodedAddresses Table classes together.
+
+## Search usage
+If you use [Search](https://github.com/FriendsOfCake/search) plugin, the following callback might be handy here:
+
+```php
+->callback('distance', [
+    'callback' => function (Query $query, array $args, Callback $manager) {
+        if (!empty($args['location'])) {
+            $GeocodedAddresses = TableRegistry::get('Geo.GeocodedAddresses');
+            $address = $GeocodedAddresses->retrieve($args['location']);
+            if ($address && $address->lat && $address->lng) {
+                $query->find('distance', ['lat' => $address->lat, 'lng' => $address->lng, 'tableName' => 'MyTableName', 'distance' => 100, 'sort' => false]);
+            }
+        }
+    },
+])
+```       
