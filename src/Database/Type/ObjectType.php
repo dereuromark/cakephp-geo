@@ -21,6 +21,7 @@ class ObjectType extends BaseType {
 		if ($value === null) {
 			return $value;
 		}
+
 		return unserialize($value);
 	}
 
@@ -36,6 +37,7 @@ class ObjectType extends BaseType {
 		if (is_object($value)) {
 			return $value;
 		}
+
 		return unserialize($value);
 	}
 
@@ -49,6 +51,7 @@ class ObjectType extends BaseType {
 		if ($value === null) {
 			return $value;
 		}
+
 		return serialize($value);
 	}
 
@@ -62,6 +65,7 @@ class ObjectType extends BaseType {
 		if ($value === null) {
 			return PDO::PARAM_NULL;
 		}
+
 		return PDO::PARAM_STR;
 	}
 

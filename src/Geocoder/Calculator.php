@@ -16,11 +16,11 @@ class Calculator {
 
 	use InstanceConfigTrait;
 
-	const UNIT_KM = 'K';
-	const UNIT_NAUTICAL = 'N';
-	const UNIT_FEET = 'F';
-	const UNIT_INCHES = 'I';
-	const UNIT_MILES = 'M';
+	public const UNIT_KM = 'K';
+	public const UNIT_NAUTICAL = 'N';
+	public const UNIT_FEET = 'F';
+	public const UNIT_INCHES = 'I';
+	public const UNIT_MILES = 'M';
 
 	/**
 	 * @var array
@@ -48,8 +48,6 @@ class Calculator {
 	];
 
 	/**
-	 * Calculator constructor.
-	 *
 	 * @param array $config
 	 */
 	public function __construct(array $config = []) {
@@ -67,8 +65,8 @@ class Calculator {
 	 * @param float $value
 	 * @param string $fromUnit (using class constants)
 	 * @param string $toUnit (using class constants)
-	 * @return float convertedValue
 	 * @throws \Exception
+	 * @return float convertedValue
 	 */
 	public function convert($value, $fromUnit, $toUnit) {
 		$fromUnit = strtoupper($fromUnit);
@@ -86,6 +84,7 @@ class Calculator {
 			$value /= $this->_units[$fromUnit];
 			$value *= $this->_units[$toUnit];
 		}
+
 		return $value;
 	}
 
@@ -118,6 +117,7 @@ class Calculator {
 		if (isset($this->_units[$unit])) {
 			$res *= $this->_units[$unit];
 		}
+
 		return ceil($res);
 	}
 
@@ -132,6 +132,7 @@ class Calculator {
 		$res = 69.09 * rad2deg(acos(sin(deg2rad($pointX['lat'])) * sin(deg2rad($pointY['lat']))
 			+ cos(deg2rad($pointX['lat'])) * cos(deg2rad($pointY['lat'])) * cos(deg2rad($pointX['lng']
 			- $pointY['lng']))));
+
 		return $res;
 	}
 
@@ -142,8 +143,8 @@ class Calculator {
 	 *
 	 * @param float $coordinate Coordinate
 	 * @param int $level The Level of blurriness (0...n), 0 means no blur
-	 * @return float Coordinates
 	 * @throws \Exception
+	 * @return float Coordinates
 	 */
 	public static function blur($coordinate, $level = 0) {
 		if (!$level) {

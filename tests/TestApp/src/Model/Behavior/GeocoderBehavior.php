@@ -19,8 +19,8 @@ class GeocoderBehavior extends GeoGeocoderBehavior {
 	 * Uses the Geocode class to query
 	 *
 	 * @param string $address
-	 * @return \Geocoder\Location|null
 	 * @throws \RuntimeException
+	 * @return \Geocoder\Location|null
 	 */
 	protected function _execute($address) {
 		$this->_Geocoder = new Geocoder($this->_config);

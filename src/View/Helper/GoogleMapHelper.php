@@ -8,7 +8,6 @@ use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\View\Helper;
 use Cake\View\View;
-use Geo\View\Helper\JsBaseEngineTrait;
 
 /**
  * This is a CakePHP helper that helps users to integrate GoogleMap v3
@@ -29,9 +28,9 @@ class GoogleMapHelper extends Helper {
 
 	use JsBaseEngineTrait;
 
-	const API = 'maps.google.com/maps/api/js';
+	public const API = 'maps.google.com/maps/api/js';
 
-	const STATIC_API = 'maps.google.com/maps/api/staticmap';
+	public const STATIC_API = 'maps.google.com/maps/api/staticmap';
 
 	/**
 	 * @var int
@@ -58,13 +57,13 @@ class GoogleMapHelper extends Helper {
 	 */
 	public static $infoContentCount = 0;
 
-	const TYPE_ROADMAP = 'R';
+	public const TYPE_ROADMAP = 'R';
 
-	const TYPE_HYBRID = 'H';
+	public const TYPE_HYBRID = 'H';
 
-	const TYPE_SATELLITE = 'S';
+	public const TYPE_SATELLITE = 'S';
 
-	const TYPE_TERRAIN = 'T';
+	public const TYPE_TERRAIN = 'T';
 
 	/**
 	 * @var string[]
@@ -76,13 +75,13 @@ class GoogleMapHelper extends Helper {
 		self::TYPE_TERRAIN => 'TERRAIN',
 	];
 
-	const TRAVEL_MODE_DRIVING = 'D';
+	public const TRAVEL_MODE_DRIVING = 'D';
 
-	const TRAVEL_MODE_BICYCLING = 'B';
+	public const TRAVEL_MODE_BICYCLING = 'B';
 
-	const TRAVEL_MODE_TRANSIT = 'T';
+	public const TRAVEL_MODE_TRANSIT = 'T';
 
-	const TRAVEL_MODE_WALKING = 'W';
+	public const TRAVEL_MODE_WALKING = 'W';
 
 	/**
 	 * @var string[]
@@ -370,6 +369,7 @@ class GoogleMapHelper extends Helper {
 	public function gearsUrl() {
 		$this->_gearsIncluded = true;
 		$url = $this->_protocol() . 'code.google.com/apis/gears/gears_init.js';
+
 		return $url;
 	}
 
@@ -527,6 +527,7 @@ class GoogleMapHelper extends Helper {
 			return 'new google.maps.LatLng(' . $this->_runtimeConfig['map']['lat'] . ', ' . $this->_runtimeConfig['map']['lng'] . ')';
 		}
 		$this->_runtimeConfig['autoCenter'] = true;
+
 		return 'false';
 	}
 
@@ -541,8 +542,8 @@ class GoogleMapHelper extends Helper {
 	 * If you declare multiple ones, the last one will be the one shown as open.
 	 *
 	 * @param array $options
-	 * @return mixed Integer marker count or boolean false on failure
 	 * @throws \Cake\Core\Exception\Exception
+	 * @return mixed Integer marker count or boolean false on failure
 	 */
 	public function addMarker($options) {
 		$defaults = $this->_runtimeConfig['marker'];
@@ -800,6 +801,7 @@ function geocodeAddress(address) {
 			'icon' => $this->icon($url, ['size' => ['width' => 20, 'height' => 34]]),
 			'shadow' => $this->icon($shadow, ['size' => ['width' => 37, 'height' => 34], 'shadow' => ['width' => 10, 'height' => 34]]),
 		];
+
 		return $res;
 	}
 
@@ -828,6 +830,7 @@ function geocodeAddress(address) {
 
 			$res['shadow'] = $this->icon($shadow, $shadowOptions);
 		}
+
 		return $res;
 	}
 
@@ -890,6 +893,7 @@ function geocodeAddress(address) {
 )';
 		$this->icons[static::$iconCount] = $icon;
 		$this->_iconRemember[static::$iconCount] = ['url' => $url, 'options' => $options, 'id' => static::$iconCount];
+
 		return static::$iconCount++;
 	}
 
@@ -920,6 +924,7 @@ function geocodeAddress(address) {
 			}));
 			";
 		$this->map .= $windows;
+
 		return static::$infoWindowCount++;
 	}
 
@@ -972,6 +977,7 @@ function geocodeAddress(address) {
 	/**
 	 * Add directions to the map.
 	 *
+	 * @see https://developers.google.com/maps/documentation/javascript/3.exp/reference#DirectionsRequest
 	 * @param array|string $from Location as array(fixed lat/lng pair) or string (to be geocoded at runtime)
 	 * @param array|string $to Location as array(fixed lat/lng pair) or string (to be geocoded at runtime)
 	 * @param array $options
@@ -985,7 +991,6 @@ function geocodeAddress(address) {
 	 * - avoidHighways: Boolean,
 	 * - avoidTolls: Boolean
 	 * - region: String
-	 * @see https://developers.google.com/maps/documentation/javascript/3.exp/reference#DirectionsRequest
 	 * @return void
 	 */
 	public function addDirections($from, $to, array $options = []) {
@@ -1037,13 +1042,13 @@ function geocodeAddress(address) {
 	 *
 	 * This method adds a line between 2 points
 	 *
+	 * @see https://developers.google.com/maps/documentation/javascript/3.exp/reference#Polyline
 	 * @param array|string $from Location as array(fixed lat/lng pair) or string (to be geocoded at runtime)
 	 * @param array|string $to Location as array(fixed lat/lng pair) or string (to be geocoded at runtime)
 	 * @param array $options
 	 * - color (#FFFFFF ... #000000)
 	 * - opacity (0.1 ... 1, defaults to 1)
 	 * - weight in pixels (defaults to 2)
-	 * @see https://developers.google.com/maps/documentation/javascript/3.exp/reference#Polyline
 	 * @return void
 	 */
 	public function addPolyline($from, $to, array $options = []) {
@@ -1051,12 +1056,14 @@ function geocodeAddress(address) {
 			$from = 'new google.maps.LatLng(' . (float)$from['lat'] . ', ' . (float)$from['lng'] . ')';
 		} else {
 			throw new Exception('not implemented yet, use array of lat/lng');
+
 			//$from = '\'' . h($from) . '\'';
 		}
 		if (is_array($to)) {
 			$to = 'new google.maps.LatLng(' . (float)$to['lat'] . ', ' . (float)$to['lng'] . ')';
 		} else {
 			throw new Exception('not implemented yet, use array of lat/lng');
+
 			//$to = '\'' . h($to) . '\'';
 		}
 
@@ -1114,6 +1121,7 @@ function geocodeAddress(address) {
 		$script = '<script>
 		' . $this->finalize(true) . '
 </script>';
+
 		return $script;
 	}
 
@@ -1166,6 +1174,7 @@ function geocodeAddress(address) {
 	public function geolocateCallback($js) {
 		if ($js === false) {
 			$this->_runtimeConfig['callbacks']['geolocate'] = false;
+
 			return;
 		}
 		$this->_runtimeConfig['callbacks']['geolocate'] = $js;
@@ -1228,6 +1237,7 @@ function geocodeAddress(address) {
 		' . $this->name() . ' . setCenter(initialLocation);
 ';
 		}
+
 		return $js;
 	}
 
@@ -1313,7 +1323,7 @@ function geocodeAddress(address) {
 	/**
 	 * Returns a maps.google link
 	 *
-	 * @param string $title  Link title
+	 * @param string $title Link title
 	 * @param array $mapOptions
 	 * @param array $linkOptions
 	 * @return string HTML link
@@ -1398,6 +1408,7 @@ function geocodeAddress(address) {
 
 		// This was fixed in 3.5.1 to auto-escape URL query strings for security reasons
 		$escape = version_compare(Configure::version(), '3.5.1') < 0 ? true : false;
+
 		return $this->Html->image($this->staticMapUrl($options + ['escape' => $escape]), $attributes);
 	}
 
@@ -1587,6 +1598,7 @@ function geocodeAddress(address) {
 			}
 			$res[] = implode('|', $path);
 		}
+
 		return $res;
 	}
 
@@ -1686,6 +1698,7 @@ function geocodeAddress(address) {
 		if ($https === null) {
 			$https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
 		}
+
 		return $https ? 'https://' : '//';
 	}
 
@@ -1703,6 +1716,7 @@ function geocodeAddress(address) {
 		if (is_numeric($color)) {
 			return '0x' . $color;
 		}
+
 		return $color;
 	}
 
@@ -1717,6 +1731,7 @@ function geocodeAddress(address) {
 		$res = 'var ' . $name . ' = {' . PHP_EOL;
 		$res .= $this->_toObjectParams($array, $asString, $keyAsString);
 		$res .= '};';
+
 		return $res;
 	}
 
@@ -1733,6 +1748,7 @@ function geocodeAddress(address) {
 			$ke = ($keyAsString ? '"' : '');
 			$pieces[] = $ke . $key . $ke . ': ' . $e . $value . $e;
 		}
+
 		return implode(',' . PHP_EOL, $pieces);
 	}
 

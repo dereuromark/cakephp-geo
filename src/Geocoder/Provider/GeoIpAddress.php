@@ -26,7 +26,7 @@ class GeoIpAddress extends Address {
 	 *
 	 * @return static
 	 */
-	public function withHost(string $host = null) {
+	public function withHost(?string $host = null) {
 		$new = clone $this;
 		$new->host = $host;
 

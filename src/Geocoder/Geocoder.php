@@ -6,6 +6,8 @@ use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Http\Client as HttpCakeClient;
 use Cake\I18n\I18n;
+use Geo\Exception\InconclusiveException;
+use Geo\Exception\NotAccurateEnoughException;
 use Geocoder\Exception\CollectionIsEmpty;
 use Geocoder\Location;
 use Geocoder\Model\AddressCollection;
@@ -13,8 +15,6 @@ use Geocoder\Provider\GoogleMaps\GoogleMaps;
 use Geocoder\Query\GeocodeQuery;
 use Geocoder\Query\ReverseQuery;
 use Geocoder\StatefulGeocoder;
-use Geo\Exception\InconclusiveException;
-use Geo\Exception\NotAccurateEnoughException;
 use Http\Adapter\Cake\Client;
 use Locale;
 
@@ -32,19 +32,19 @@ class Geocoder {
 
 	use InstanceConfigTrait;
 
-	const TYPE_COUNTRY = 'country';
-	const TYPE_AAL1 = 'administrative_area_level_1';
-	const TYPE_AAL2 = 'administrative_area_level_2';
-	const TYPE_AAL3 = 'administrative_area_level_3';
-	const TYPE_AAL4 = 'administrative_area_level_4';
-	const TYPE_AAL5 = 'administrative_area_level_5';
-	const TYPE_LOC = 'locality';
-	const TYPE_SUBLOC = 'sublocality';
-	const TYPE_POSTAL = 'postal_code';
+	public const TYPE_COUNTRY = 'country';
+	public const TYPE_AAL1 = 'administrative_area_level_1';
+	public const TYPE_AAL2 = 'administrative_area_level_2';
+	public const TYPE_AAL3 = 'administrative_area_level_3';
+	public const TYPE_AAL4 = 'administrative_area_level_4';
+	public const TYPE_AAL5 = 'administrative_area_level_5';
+	public const TYPE_LOC = 'locality';
+	public const TYPE_SUBLOC = 'sublocality';
+	public const TYPE_POSTAL = 'postal_code';
 	//const TYPE_ROUTE = 'route'; // not available with GoogleMapsAPI
 	//const TYPE_INTERSEC = 'intersection';
-	const TYPE_ADDRESS = 'street_address';
-	const TYPE_NUMBER = 'street_number';
+	public const TYPE_ADDRESS = 'street_address';
+	public const TYPE_NUMBER = 'street_number';
 
 	/**
 	 * @var array
@@ -122,6 +122,7 @@ class Geocoder {
 			static::TYPE_ADDRESS => __('Street Address'),
 			static::TYPE_NUMBER => __('Street Number'),
 		];
+
 		return $array;
 	}
 
@@ -222,6 +223,7 @@ class Geocoder {
 					if ($address->getCountry() !== null) {
 						return true;
 					}
+
 					break;
 				case static::TYPE_AAL1:
 				case static::TYPE_AAL2:
@@ -231,34 +233,41 @@ class Geocoder {
 					if ($adminLevels->has($map[$expect])) {
 						return true;
 					}
+
 					break;
 				case static::TYPE_LOC:
 					if ($address->getLocality() !== null) {
 						return true;
 					}
+
 					break;
 				case static::TYPE_SUBLOC:
 					if ($address->getSubLocality() !== null) {
 						return true;
 					}
+
 					break;
 				case static::TYPE_POSTAL:
 					if ($address->getPostalCode() !== null) {
 						return true;
 					}
+
 					break;
 				case static::TYPE_ADDRESS:
 					if ($address->getStreetName() !== null) {
 						return true;
 					}
+
 					break;
 				case static::TYPE_NUMBER:
 					if ($address->getStreetNumber() !== null) {
 						return true;
 					}
+
 					break;
 			}
 		}
+
 		return false;
 	}
 
@@ -272,6 +281,7 @@ class Geocoder {
 				return true;
 			}
 		}
+
 		return false;
 	}
 
@@ -297,6 +307,7 @@ class Geocoder {
 		$geocoderClass = $this->getConfig('provider');
 		if (is_callable($geocoderClass)) {
 			$this->geocoder = $geocoderClass();
+
 			return;
 		}
 

@@ -4,8 +4,8 @@ namespace Geo\Test\Geocoder;
 
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
-use Geocoder\Provider\Nominatim\Nominatim;
 use Geo\Geocoder\Provider\GeoIpLookup;
+use Geocoder\Provider\Nominatim\Nominatim;
 use Http\Adapter\Cake\Client;
 use TestApp\Geocoder\Geocoder;
 

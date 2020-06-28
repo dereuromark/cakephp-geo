@@ -6,10 +6,10 @@ use Cake\Database\Schema\TableSchemaInterface;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
-use Geocoder\Formatter\StringFormatter;
 use Geo\Exception\InconclusiveException;
 use Geo\Exception\NotAccurateEnoughException;
 use Geo\Geocoder\Geocoder;
+use Geocoder\Formatter\StringFormatter;
 
 /**
  * GeocodedAddresses Model

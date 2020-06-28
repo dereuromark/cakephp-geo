@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Geo\Geocoder\Provider;
@@ -26,7 +26,7 @@ class GeoIpLookup extends AbstractHttpProvider {
 	/**
 	 * @var string
 	 */
-	const ENDPOINT_URL = 'http://api.geoiplookup.net/?query=%s';
+	public const ENDPOINT_URL = 'http://api.geoiplookup.net/?query=%s';
 
 	/**
 	 * @var string
@@ -39,9 +39,9 @@ class GeoIpLookup extends AbstractHttpProvider {
 	protected $referer;
 
 	/**
-	 * @param \Http\Client\HttpClient $client    an HTTP client
-	 * @param string     $userAgent Value of the User-Agent header
-	 * @param string     $referer   Value of the Referer header
+	 * @param \Http\Client\HttpClient $client an HTTP client
+	 * @param string $userAgent Value of the User-Agent header
+	 * @param string $referer Value of the Referer header
 	 */
 	public function __construct(HttpClient $client, string $userAgent, string $referer = '') {
 		parent::__construct($client);

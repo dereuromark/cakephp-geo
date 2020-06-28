@@ -83,6 +83,7 @@ trait JsBaseEngineTrait {
 	public function confirmReturn($message) {
 		$out = 'var _confirm = ' . $this->confirm($message);
 		$out .= "if (!_confirm) {\n\treturn false;\n}";
+
 		return $out;
 	}
 
@@ -134,17 +135,21 @@ trait JsBaseEngineTrait {
 		switch (true) {
 			case (is_array($val) || is_object($val)):
 				$val = $this->object($val);
+
 				break;
 			case ($val === null):
 				$val = 'null';
+
 				break;
 			case (is_bool($val)):
 				$val = ($val === true) ? 'true' : 'false';
+
 				break;
 			case (is_int($val)):
 				break;
 			case (is_float($val)):
 				$val = sprintf('%.11f', $val);
+
 				break;
 			default:
 				$val = $this->escape($val);
@@ -152,6 +157,7 @@ trait JsBaseEngineTrait {
 					$val = '"' . $val . '"';
 				}
 		}
+
 		return $val;
 	}
 
@@ -185,84 +191,102 @@ trait JsBaseEngineTrait {
 			switch (true) {
 				case $ord == 0x08:
 					$return .= '\b';
+
 					break;
 				case $ord == 0x09:
 					$return .= '\t';
+
 					break;
 				case $ord == 0x0A:
 					$return .= '\n';
+
 					break;
 				case $ord == 0x0C:
 					$return .= '\f';
+
 					break;
 				case $ord == 0x0D:
 					$return .= '\r';
+
 					break;
 				case $ord == 0x22:
 				case $ord == 0x2F:
 				case $ord == 0x5C:
 					$return .= '\\' . $string[$i];
+
 					break;
 				case (($ord >= 0x20) && ($ord <= 0x7F)):
 					$return .= $string[$i];
+
 					break;
 				case (($ord & 0xE0) == 0xC0):
 					if ($i + 1 >= $length) {
 						$i += 1;
 						$return .= '?';
+
 						break;
 					}
 					$charbits = $string[$i] . $string[$i + 1];
 					$char = static::utf8($charbits);
 					$return .= sprintf('\u%04s', dechex($char[0]));
 					$i += 1;
+
 					break;
 				case (($ord & 0xF0) == 0xE0):
 					if ($i + 2 >= $length) {
 						$i += 2;
 						$return .= '?';
+
 						break;
 					}
 					$charbits = $string[$i] . $string[$i + 1] . $string[$i + 2];
 					$char = static::utf8($charbits);
 					$return .= sprintf('\u%04s', dechex($char[0]));
 					$i += 2;
+
 					break;
 				case (($ord & 0xF8) == 0xF0):
 					if ($i + 3 >= $length) {
 						$i += 3;
 						$return .= '?';
+
 						break;
 					}
 					$charbits = $string[$i] . $string[$i + 1] . $string[$i + 2] . $string[$i + 3];
 					$char = static::utf8($charbits);
 					$return .= sprintf('\u%04s', dechex($char[0]));
 					$i += 3;
+
 					break;
 				case (($ord & 0xFC) == 0xF8):
 					if ($i + 4 >= $length) {
 						$i += 4;
 						$return .= '?';
+
 						break;
 					}
 					$charbits = $string[$i] . $string[$i + 1] . $string[$i + 2] . $string[$i + 3] . $string[$i + 4];
 					$char = static::utf8($charbits);
 					$return .= sprintf('\u%04s', dechex($char[0]));
 					$i += 4;
+
 					break;
 				case (($ord & 0xFE) == 0xFC):
 					if ($i + 5 >= $length) {
 						$i += 5;
 						$return .= '?';
+
 						break;
 					}
 					$charbits = $string[$i] . $string[$i + 1] . $string[$i + 2] . $string[$i + 3] . $string[$i + 4] . $string[$i + 5];
 					$char = static::utf8($charbits);
 					$return .= sprintf('\u%04s', dechex($char[0]));
 					$i += 5;
+
 					break;
 			}
 		}
+
 		return $return;
 	}
 
@@ -285,6 +309,7 @@ trait JsBaseEngineTrait {
 			$out[] = $key . ':' . $value;
 		}
 		sort($out);
+
 		return implode(', ', $out);
 	}
 
@@ -322,6 +347,7 @@ trait JsBaseEngineTrait {
 			}
 			$options[$callback] = 'function (' . $args . ') {' . $options[$callback] . '}';
 		}
+
 		return $options;
 	}
 
@@ -337,6 +363,7 @@ trait JsBaseEngineTrait {
 		//$mapOptions = $this->_mapOptions();
 		$options = $this->_prepareCallbacks($method, $options);
 		$options = $this->_parseOptions($options, array_keys($this->_callbackArguments[$method]));
+
 		return $options;
 	}
 
@@ -356,6 +383,7 @@ trait JsBaseEngineTrait {
 				$out .= '&';
 			}
 		}
+
 		return $out;
 	}
 
@@ -391,6 +419,7 @@ trait JsBaseEngineTrait {
 				}
 			}
 		}
+
 		return $map;
 	}
 

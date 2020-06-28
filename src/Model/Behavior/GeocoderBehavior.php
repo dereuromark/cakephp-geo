@@ -14,11 +14,11 @@ use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
-use Geocoder\Formatter\StringFormatter;
 use Geo\Exception\InconclusiveException;
 use Geo\Exception\NotAccurateEnoughException;
 use Geo\Geocoder\Calculator;
 use Geo\Geocoder\Geocoder;
+use Geocoder\Formatter\StringFormatter;
 use RuntimeException;
 
 /**
@@ -179,8 +179,8 @@ class GeocoderBehavior extends Behavior {
 	 * Run before a model is saved, used to set up slug for model.
 	 *
 	 * @param \Geo\Model\Entity\GeocodedAddress $entity The entity that is going to be saved
-	 * @return \Geo\Model\Entity\GeocodedAddress|null
 	 * @throws \RuntimeException
+	 * @return \Geo\Model\Entity\GeocodedAddress|null
 	 */
 	public function geocode(Entity $entity) {
 		$addressFields = (array)$this->_config['address'];
@@ -203,6 +203,7 @@ class GeocoderBehavior extends Behavior {
 			if ($entity instanceof EntityInterface) {
 				$this->invalidate($entity);
 			}
+
 			return null;
 		}
 
@@ -242,6 +243,7 @@ class GeocoderBehavior extends Behavior {
 			if ($entity instanceof Entity) {
 				$this->invalidate($entity);
 			}
+
 			return null;
 		}
 
@@ -252,6 +254,7 @@ class GeocoderBehavior extends Behavior {
 			if ($entity instanceof Entity) {
 				$this->invalidate($entity);
 			}
+
 			return null;
 		}
 
@@ -282,6 +285,7 @@ class GeocoderBehavior extends Behavior {
 		foreach ($entityData as $key => $value) {
 			$entity[$key] = $value;
 		}
+
 		return $entity;
 	}
 
@@ -405,6 +409,7 @@ class GeocoderBehavior extends Behavior {
 		if ($distance !== null) {
 			$conditions[] = '1=1 HAVING ' . $tableName . '.' . $fieldName . ' < ' . (int)$distance;
 		}
+
 		return $conditions;
 	}
 
@@ -422,6 +427,7 @@ class GeocoderBehavior extends Behavior {
 			$tableName = $this->_table->getAlias();
 		}
 		$fieldName = (!empty($fieldName) ? $fieldName : 'distance');
+
 		return [$tableName . '.' . $fieldName => $this->distanceExpr($lat, $lng, null, null, $tableName)];
 	}
 
@@ -436,6 +442,7 @@ class GeocoderBehavior extends Behavior {
 		if (is_array($latitude)) {
 			$latitude = array_shift($latitude);
 		}
+
 		return $latitude <= 90 && $latitude >= -90;
 	}
 
@@ -450,6 +457,7 @@ class GeocoderBehavior extends Behavior {
 		if (is_array($longitude)) {
 			$longitude = array_shift($longitude);
 		}
+
 		return $longitude <= 180 && $longitude >= -180;
 	}
 
@@ -457,8 +465,8 @@ class GeocoderBehavior extends Behavior {
 	 * Uses the Geocode class to query
 	 *
 	 * @param string $address
-	 * @return \Geocoder\Location|null
 	 * @throws \RuntimeException
+	 * @return \Geocoder\Location|null
 	 */
 	protected function _execute(string $address) {
 		/** @var \Geo\Model\Table\GeocodedAddressesTable|null $GeocodedAddresses */
@@ -470,6 +478,7 @@ class GeocoderBehavior extends Behavior {
 			if ($result) {
 				/** @var \Geocoder\Model\Address|null $data */
 				$data = $result->data;
+
 				return $data ?: null;
 			}
 		}
@@ -523,6 +532,7 @@ class GeocoderBehavior extends Behavior {
 		if (!isset($this->_Calculator)) {
 			$this->_Calculator = new Calculator();
 		}
+
 		return $this->_Calculator->convert(6371.04, Calculator::UNIT_KM, $unit);
 	}
 
