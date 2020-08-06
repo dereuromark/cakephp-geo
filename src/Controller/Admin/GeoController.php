@@ -16,7 +16,7 @@ class GeoController extends AppController {
 	/**
 	 * @var string
 	 */
-	public $modelClass = 'Geo.GeocodedAddresses';
+	protected $modelClass = 'Geo.GeocodedAddresses';
 
 	/**
 	 * @return void

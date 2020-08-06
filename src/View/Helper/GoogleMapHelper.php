@@ -98,7 +98,7 @@ class GoogleMapHelper extends Helper {
 	 *
 	 * @var array
 	 */
-	public $helpers = ['Html'];
+	protected $helpers = ['Html'];
 
 	/**
 	 * Google maker config instance variable
