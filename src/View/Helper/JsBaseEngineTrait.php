@@ -107,7 +107,7 @@ trait JsBaseEngineTrait {
 	 * - `prefix` - String prepended to the returned data.
 	 * - `postfix` - String appended to the returned data.
 	 *
-	 * @param array $data Data to be converted.
+	 * @param array|object $data Data to be converted.
 	 * @param array $options Set of options, see above.
 	 * @return string A JSON code block
 	 */
@@ -158,7 +158,7 @@ trait JsBaseEngineTrait {
 				}
 		}
 
-		return $val;
+		return (string)$val;
 	}
 
 	/**

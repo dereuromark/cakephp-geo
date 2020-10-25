@@ -118,7 +118,7 @@ class Calculator {
 			$res *= $this->_units[$unit];
 		}
 
-		return ceil($res);
+		return (int)ceil($res);
 	}
 
 	/**

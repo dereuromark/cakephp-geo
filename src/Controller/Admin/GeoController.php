@@ -34,6 +34,7 @@ class GeoController extends AppController {
 		$Table->addBehavior('Geo.Geocoder', ['address' => 'address', 'on' => 'beforeMarshal']);
 
 		if ($this->request->is('post')) {
+			/** @var \Geo\Model\Entity\GeocodedAddress|null $geocodedAddress */
 			$geocodedAddress = $this->GeocodedAddresses->find()->where(['address' => $this->request->getData('address')])->first();
 			if ($geocodedAddress && $this->request->getData('reset_cache')) {
 				$this->GeocodedAddresses->deleteOrFail($geocodedAddress);

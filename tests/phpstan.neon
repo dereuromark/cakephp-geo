@@ -1,6 +1,10 @@
 parameters:
-	autoload_files:
+	checkMissingIterableValueType: false
+	checkGenericClassInNonGenericObjectType: false
+	bootstrapFiles:
 		- %rootDir%/../../../tests/bootstrap.php
 		- %rootDir%/../../../tests/shim.php
 	ignoreErrors:
 		- '#Access to an undefined property .+EntityInterface::\$geo.+.#'
+		- '#Cannot access offset .+ on array\|float\|string.#'
+		- '#Cannot assign offset int\|string to ArrayObject\|.+GeocodedAddress.#'

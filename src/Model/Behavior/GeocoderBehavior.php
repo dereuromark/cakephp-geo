@@ -8,7 +8,7 @@ use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -125,12 +125,12 @@ class GeocoderBehavior extends Behavior {
 	 * This has the downside that it has to run every time. The other events trigger
 	 * geocoding only if the address data has been modified (fields marked as dirty).
 	 *
-	 * @param \Cake\Event\Event $event
+	 * @param \Cake\Event\EventInterface $event
 	 * @param \ArrayObject $data
 	 * @param \ArrayObject $options
 	 * @return void
 	 */
-	public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options) {
+	public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options) {
 		if ($this->_config['on'] === 'beforeMarshal') {
 			$addressFields = (array)$this->_config['address'];
 
@@ -148,12 +148,12 @@ class GeocoderBehavior extends Behavior {
 	}
 
 	/**
-	 * @param \Cake\Event\Event $event The beforeSave event that was fired
+	 * @param \Cake\Event\EventInterface $event The beforeSave event that was fired
 	 * @param \Geo\Model\Entity\GeocodedAddress $entity The entity that is going to be saved
 	 * @param \ArrayObject $options the options passed to the save method
 	 * @return void
 	 */
-	public function beforeRules(Event $event, Entity $entity, ArrayObject $options) {
+	public function beforeRules(EventInterface $event, Entity $entity, ArrayObject $options) {
 		if ($this->_config['on'] === 'beforeRules') {
 			if (!$this->geocode($entity)) {
 				$event->stopPropagation();
@@ -162,12 +162,12 @@ class GeocoderBehavior extends Behavior {
 	}
 
 	/**
-	 * @param \Cake\Event\Event $event The beforeSave event that was fired
+	 * @param \Cake\Event\EventInterface $event The beforeSave event that was fired
 	 * @param \Geo\Model\Entity\GeocodedAddress $entity The entity that is going to be saved
 	 * @param \ArrayObject $options the options passed to the save method
 	 * @return void
 	 */
-	public function beforeSave(Event $event, Entity $entity, ArrayObject $options) {
+	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options) {
 		if ($this->_config['on'] === 'beforeSave') {
 			if (!$this->geocode($entity)) {
 				$event->stopPropagation();
@@ -182,7 +182,7 @@ class GeocoderBehavior extends Behavior {
 	 * @throws \RuntimeException
 	 * @return \Geo\Model\Entity\GeocodedAddress|null
 	 */
-	public function geocode(Entity $entity) {
+	public function geocode(EntityInterface $entity) {
 		$addressFields = (array)$this->_config['address'];
 
 		$addressData = [];
@@ -200,26 +200,23 @@ class GeocoderBehavior extends Behavior {
 			if ($this->_config['allowEmpty'] || ($entity->lat && $entity->lng)) {
 				return $entity;
 			}
-			if ($entity instanceof EntityInterface) {
-				$this->invalidate($entity);
-			}
+
+			$this->invalidate($entity);
 
 			return null;
 		}
 
+		/** @var \Geo\Model\Entity\GeocodedAddress|null $result */
 		$result = $this->_geocode($entity, $addressData);
-		if (is_array($result)) {
-			throw new RuntimeException('Array type not expected');
-		}
 
 		return $result;
 	}
 
 	/**
 	 * @param \Geo\Model\Entity\GeocodedAddress|\ArrayObject $entity
-	 * @param array $addressData
+	 * @param string[] $addressData
 	 *
-	 * @return \Geo\Model\Entity\GeocodedAddress|array|null
+	 * @return \Geo\Model\Entity\GeocodedAddress|\ArrayObject|null
 	 */
 	protected function _geocode($entity, array $addressData) {
 		$entityData = [
@@ -258,10 +255,11 @@ class GeocoderBehavior extends Behavior {
 			return null;
 		}
 
-		if ($address->getCoordinates()) {
+		$coordinates = $address->getCoordinates();
+		if ($coordinates) {
 			// Valid lat/lng found
-			$entityData[$this->_config['lat']] = $address->getCoordinates()->getLatitude();
-			$entityData[$this->_config['lng']] = $address->getCoordinates()->getLongitude();
+			$entityData[$this->_config['lat']] = $coordinates->getLatitude();
+			$entityData[$this->_config['lng']] = $coordinates->getLongitude();
 		}
 
 		if (!empty($this->_config['formattedAddress'])) {
@@ -270,14 +268,14 @@ class GeocoderBehavior extends Behavior {
 			$entityData[$this->_config['formattedAddress']] = $formatter->format($address, $this->_config['addressFormat']);
 		}
 
-		$entityData['geocoder_result'] = $address->toArray();
+		$geocodedData = $address->toArray();
+		$entityData['geocoder_result'] = $geocodedData;
 		$entityData['geocoder_result']['address_data'] = implode(' ', $addressData);
 
 		if (!empty($this->_config['update'])) {
 			foreach ($this->_config['update'] as $key => $field) {
-				//FIXME, not so easy with the new library
-				if (!empty($geocode[$key])) {
-					$entityData[$field] = $geocode[$key];
+				if (!empty($geocodedData[$key])) {
+					$entityData[$field] = $geocodedData[$key];
 				}
 			}
 		}
@@ -469,10 +467,9 @@ class GeocoderBehavior extends Behavior {
 	 * @return \Geocoder\Location|null
 	 */
 	protected function _execute(string $address) {
-		/** @var \Geo\Model\Table\GeocodedAddressesTable|null $GeocodedAddresses */
-		$GeocodedAddresses = null;
+		/** @var \Geo\Model\Table\GeocodedAddressesTable $GeocodedAddresses */
+		$GeocodedAddresses = TableRegistry::get('Geo.GeocodedAddresses');
 		if ($this->getConfig('cache')) {
-			$GeocodedAddresses = TableRegistry::get('Geo.GeocodedAddresses');
 			/** @var \Geo\Model\Entity\GeocodedAddress|null $result */
 			$result = $GeocodedAddresses->find()->where(['address' => $address])->first();
 			if ($result) {
@@ -496,7 +493,6 @@ class GeocoderBehavior extends Behavior {
 		}
 
 		if ($this->getConfig('cache')) {
-			/** @var \Geo\Model\Entity\GeocodedAddress $addressEntity */
 			$addressEntity = $GeocodedAddresses->newEntity([
 				'address' => $address,
 			]);
@@ -504,12 +500,14 @@ class GeocoderBehavior extends Behavior {
 			if ($result) {
 				$formatter = new StringFormatter();
 				$addressEntity->formatted_address = $formatter->format($result, $this->_config['addressFormat']);
-				if ($result->getCoordinates()) {
-					$addressEntity->lat = $result->getCoordinates()->getLatitude();
-					$addressEntity->lng = $result->getCoordinates()->getLongitude();
+				$coordinates = $result->getCoordinates();
+				if ($coordinates) {
+					$addressEntity->lat = $coordinates->getLatitude();
+					$addressEntity->lng = $coordinates->getLongitude();
 				}
-				if ($result->getCountry()) {
-					$addressEntity->country = $result->getCountry()->getCode();
+				$country = $result->getCountry();
+				if ($country) {
+					$addressEntity->country = $country->getCode();
 				}
 				$addressEntity->data = $result;
 			}

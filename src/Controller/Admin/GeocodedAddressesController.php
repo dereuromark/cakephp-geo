@@ -40,7 +40,7 @@ class GeocodedAddressesController extends AppController {
 	}
 
 	/**
-	 * @return \Cake\Http\Response
+	 * @return \Cake\Http\Response|null
 	 */
 	public function clearEmpty() {
 		$this->request->allowMethod('post');
@@ -53,7 +53,7 @@ class GeocodedAddressesController extends AppController {
 	}
 
 	/**
-	 * @return \Cake\Http\Response
+	 * @return \Cake\Http\Response|null
 	 */
 	public function clearAll() {
 		$this->request->allowMethod('post');

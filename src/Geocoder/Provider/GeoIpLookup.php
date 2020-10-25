@@ -99,13 +99,6 @@ class GeoIpLookup extends AbstractHttpProvider {
 	/**
 	 * @inheritDoc
 	 */
-	public function reverse($latitude, $longitude) {
-		throw new UnsupportedOperation('The geoiplookup.net provider is not able to do reverse geocoding.');
-	}
-
-	/**
-	 * @inheritDoc
-	 */
 	public function getName(): string {
 		return 'geo_ip_lookup';
 	}

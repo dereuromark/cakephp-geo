@@ -90,12 +90,14 @@ class GeocodedAddressesTable extends Table {
 			'address' => $address,
 		]);
 		if ($result) {
-			if ($result->getCoordinates()) {
-				$geocodedAddress->lat = $result->getCoordinates()->getLatitude();
-				$geocodedAddress->lng = $result->getCoordinates()->getLongitude();
+			$coordinates = $result->getCoordinates();
+			if ($coordinates) {
+				$geocodedAddress->lat = $coordinates->getLatitude();
+				$geocodedAddress->lng = $coordinates->getLongitude();
 			}
-			if ($result->getCountry()) {
-				$geocodedAddress->country = $result->getCountry()->getCode();
+			$country = $result->getCountry();
+			if ($country) {
+				$geocodedAddress->country = $country->getCode();
 			}
 			$formatter = new StringFormatter();
 			$geocodedAddress->formatted_address = $formatter->format($result, '%S %n, %z %L');

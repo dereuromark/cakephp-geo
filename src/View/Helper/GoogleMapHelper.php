@@ -1107,7 +1107,12 @@ function geocodeAddress(address) {
 	 * @return string JSON
 	 */
 	public function escapeString($content) {
-		return json_encode($content);
+		$result = json_encode($content);
+		if ($result === false) {
+			return '';
+		}
+
+		return $result;
 	}
 
 	/**
