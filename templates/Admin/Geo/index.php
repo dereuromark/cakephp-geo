@@ -1,7 +1,7 @@
 <?php
 /**
  * @var \App\View\AppView $this
- * @var \Cake\ORM\Entity $entity
+ * @var \Geo\Model\Entity\GeocodedAddress $entity
  */
 ?>
 

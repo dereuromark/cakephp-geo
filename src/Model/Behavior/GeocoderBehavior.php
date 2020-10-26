@@ -54,7 +54,7 @@ class GeocoderBehavior extends Behavior {
 		//'bounds' => '',
 		'overwrite' => false, // Overwrite existing
 		'update' => [],
-		'on' => 'beforeSave', // Use beforeMarshal if you need it for validation
+		'on' => 'beforeSave', // Use beforeMarshal or afterMarshal if you need it for validation
 		'minAccuracy' => Geocoder::TYPE_COUNTRY,
 		'allowInconclusive' => true,
 		'unit' => Calculator::UNIT_KM,
@@ -148,12 +148,27 @@ class GeocoderBehavior extends Behavior {
 	}
 
 	/**
+	 * @param \Cake\Event\EventInterface $event
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 *
+	 * @return void
+	 */
+	public function afterMarshal(EventInterface $event, EntityInterface $entity): void
+	{
+		if ($this->_config['on'] === 'afterMarshal') {
+			if (!$this->geocode($entity)) {
+				$event->stopPropagation();
+			}
+		}
+	}
+
+	/**
 	 * @param \Cake\Event\EventInterface $event The beforeSave event that was fired
 	 * @param \Geo\Model\Entity\GeocodedAddress $entity The entity that is going to be saved
 	 * @param \ArrayObject $options the options passed to the save method
 	 * @return void
 	 */
-	public function beforeRules(EventInterface $event, Entity $entity, ArrayObject $options) {
+	public function beforeRules(EventInterface $event, EntityInterface $entity, ArrayObject $options) {
 		if ($this->_config['on'] === 'beforeRules') {
 			if (!$this->geocode($entity)) {
 				$event->stopPropagation();
