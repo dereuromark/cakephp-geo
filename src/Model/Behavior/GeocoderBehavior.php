@@ -149,12 +149,11 @@ class GeocoderBehavior extends Behavior {
 
 	/**
 	 * @param \Cake\Event\EventInterface $event
-	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param \Geo\Model\Entity\GeocodedAddress $entity
 	 *
 	 * @return void
 	 */
-	public function afterMarshal(EventInterface $event, EntityInterface $entity): void
-	{
+	public function afterMarshal(EventInterface $event, EntityInterface $entity): void {
 		if ($this->_config['on'] === 'afterMarshal') {
 			if (!$this->geocode($entity)) {
 				$event->stopPropagation();
