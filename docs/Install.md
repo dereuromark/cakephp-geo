@@ -35,3 +35,13 @@ Plugin::loadAll([
         'Geo' => ['bootstrap' => true]
 ]);
 ```
+
+## Optional packages
+
+Depending on what tools you use (e.g. geocoding), you might need additional packages.
+So depending on the type of engine/adapter, you might need for example the following for geocoding using GoogleMaps:
+
+        "php-http/cakephp-adapter": "^0.3.0",
+        "php-http/message": "^1.8.0"
+        
+Add this to your composer.json require section then.
