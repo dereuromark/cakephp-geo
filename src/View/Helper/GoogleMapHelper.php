@@ -1150,7 +1150,7 @@ function geocodeAddress(address) {
 		}
 
 		if ($this->_runtimeConfig['showMarker'] && !empty($this->markers) && is_array($this->markers)) {
-			$script .= implode($this->markers, ' ');
+			$script .= implode(' ', $this->markers);
 		}
 
 		if ($this->_runtimeConfig['autoCenter']) {
