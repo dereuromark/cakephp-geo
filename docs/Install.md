@@ -39,9 +39,14 @@ Plugin::loadAll([
 ## Optional packages
 
 Depending on what tools you use (e.g. geocoding), you might need additional packages.
-So depending on the type of engine/adapter, you might need for example the following for geocoding using GoogleMaps:
+So depending on the type of engine/adapter, you might need for example the following for geocoding:
 
         "php-http/cakephp-adapter": "^0.3.0",
-        "php-http/message": "^1.8.0"
+        "php-http/message": "^1.8.0",
         
 Add this to your composer.json require section then.
+
+For using GoogleMaps as concrete adapter, you might also need for example:
+
+        "geocoder-php/provider-implementation": "^1.0",
+        "geocoder-php/google-maps-provider": "^4.4.0",
