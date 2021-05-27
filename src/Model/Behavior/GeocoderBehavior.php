@@ -211,7 +211,10 @@ class GeocoderBehavior extends Behavior {
 			}
 		}
 		if (!$dirty) {
-			if ($this->_config['allowEmpty'] || ($entity->lat && $entity->lng)) {
+			if (
+				$this->_config['allowEmpty'] ||
+				($entity->{$this->_config['lat']} && $entity->{$this->_config['lng']})
+			) {
 				return $entity;
 			}
 
