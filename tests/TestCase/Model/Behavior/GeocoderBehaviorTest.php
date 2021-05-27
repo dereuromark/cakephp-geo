@@ -338,7 +338,12 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	public function testAllowEmptyFalse() {
 		$this->Addresses->removeBehavior('Geocoder');
-		$this->Addresses->addBehavior('Geocoder', ['allowEmpty' => false, 'expect' => [Geocoder::TYPE_POSTAL]]);
+		$this->Addresses->addBehavior('Geocoder', [
+			'allowEmpty' => false,
+			'expect' => [Geocoder::TYPE_POSTAL],
+			'lat' => 'latitude',
+			'lng' => 'longitude',
+		]);
 
 		$data = [
 			'city' => '',
@@ -346,6 +351,15 @@ class GeocoderBehaviorTest extends TestCase {
 		$entity = $this->_getEntity($data);
 		$res = $this->Addresses->save($entity);
 		$this->assertFalse($res);
+
+		$data = [
+			'first_name' => 'ADmad',
+			'latitude' => 40,
+			'longitude' => 16,
+		];
+		$entity = $this->_getEntity($data);
+		$res = $this->Addresses->save($entity);
+		$this->assertTrue((bool)$res);
 	}
 
 	/**
