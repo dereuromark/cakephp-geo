@@ -14,7 +14,7 @@ Possible config options are:
 - region (for some providers
 - ssl (for some providers)
 - address: (array|string, optional) set to the field name that contains the string from where to generate the slug, or a set of field names to concatenate for generating the slug.
-- overwrite: lat/lng overwrite on changes, defaults to false
+- overwrite: lat/lng overwrite existing coordinates, defaults to true (TODO)
 - update: what fields to update (key=>value array pairs)
 - on: beforeMarshal/afterMarshal/beforeSave (defaults to beforeSave) - Set to false if you only want to use the validation rules etc
 - unit: defaults to km
@@ -22,6 +22,7 @@ Possible config options are:
 - minAccuracy: `Geocoder::TYPE_*` constants
 - expect: (array)postal_code, locality, sublocality, ...
 - addressFormat: Defaults to `'%S %n, %z %L'`
+- lat/lng: to customize these field names
 
 Note that it is usually better to set global configs in your `app.php` using the `Geocoder` key.
 
@@ -93,6 +94,15 @@ $addresses = $this->paginate($query);
 They will be ordered by `['distance' => 'ASC']`, so all records with the smallest distances first.
 
 Note that you need to first geocode all your data. On the fly geocoding is not an option for pagination and larger data-sets.
+
+### Using coordinates value object
+You can also use `coordinates` as `Geocoder\Model\Coordinates` instead.
+```php
+$coordinates = new Coordinates(13.3, 19.2);
+$options = ['coordinates' => $coordinates, 'distance' => 200];
+
+$query = $this->Addresses->find('distance', $options);
+```
 
 ## Batch geocoding
 

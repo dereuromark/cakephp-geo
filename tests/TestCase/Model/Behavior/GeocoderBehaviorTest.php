@@ -13,7 +13,9 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Geo\Geocoder\Calculator;
 use Geo\Geocoder\Geocoder;
+use Geocoder\Model\Coordinates;
 use TestApp\Controller\TestController;
+use InvalidArgumentException;
 
 class GeocoderBehaviorTest extends TestCase {
 
@@ -77,13 +79,13 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->Addresses->addBehavior('Geocoder', ['lat' => 'x', 'lng' => 'y']);
 		$expr = $this->Addresses->distanceExpr(12.1, 14.2);
 		//$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.x)) * COS(PI()/2 - RADIANS(90 - 12.1)) * COS(RADIANS(Addresses.y) - RADIANS(14.2)) + SIN(PI()/2 - RADIANS(90 - Addresses.x)) * SIN(PI()/2 - RADIANS(90 - 12.1)))';
-		$this->assertInstanceOf('\Cake\Database\Expression\QueryExpression', $expr);
+		$this->assertInstanceOf(QueryExpression::class, $expr);
 
 		$this->Addresses->removeBehavior('Geocoder');
 		$this->Addresses->addBehavior('Geocoder', ['lat' => 'x', 'lng' => 'y']);
 		$expr = $this->Addresses->distanceExpr('User.lat', 'User.lng');
 		//$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.x)) * COS(PI()/2 - RADIANS(90 - User.lat)) * COS(RADIANS(Addresses.y) - RADIANS(User.lng)) + SIN(PI()/2 - RADIANS(90 - Addresses.x)) * SIN(PI()/2 - RADIANS(90 - User.lat)))';
-		$this->assertInstanceOf('\Cake\Database\Expression\QueryExpression', $expr);
+		$this->assertInstanceOf(QueryExpression::class, $expr);
 	}
 
 	/**
@@ -111,6 +113,34 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->assertTrue($result[0]['distance'] < $result[1]['distance']);
 		$this->assertTrue($result[1]['distance'] < $result[2]['distance']);
 		$this->assertTrue($result[0]['distance'] > 620 && $result[0]['distance'] < 650);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testSetDistanceAsValueObject() {
+		$driver = $this->db->getDriver();
+		$this->skipIf(!($driver instanceof Mysql || $driver instanceof Postgres), 'The virtualFields test is only compatible with Mysql/Postgres.');
+
+		$coordinates = new Coordinates(13.3, 19.2);
+		$options = ['coordinates' => $coordinates];
+		$query = $this->Addresses->find()->find('distance', $options);
+
+		$result = $query->toArray();
+
+		$this->assertTrue($result[0]['distance'] < $result[1]['distance']);
+		$this->assertTrue($result[1]['distance'] < $result[2]['distance']);
+		$this->assertTrue($result[0]['distance'] > 620 && $result[0]['distance'] < 650);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testFindDistanceOptionsMissing() {
+		$this->expectException(InvalidArgumentException::class);
+
+		$options = [];
+		$this->Addresses->find()->find('distance', $options);
 	}
 
 	/**

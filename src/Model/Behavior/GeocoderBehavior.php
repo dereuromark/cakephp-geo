@@ -20,6 +20,7 @@ use Geo\Geocoder\Calculator;
 use Geo\Geocoder\Geocoder;
 use Geocoder\Formatter\StringFormatter;
 use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * A geocoding behavior for CakePHP to easily geocode addresses.
@@ -37,6 +38,10 @@ use RuntimeException;
  */
 class GeocoderBehavior extends Behavior {
 
+	public const OPTION_COORDINATES = 'coordinates';
+	public const OPTION_LAT = 'lat';
+	public const OPTION_LNG = 'lng';
+
 	/**
 	 * @var array
 	 */
@@ -44,15 +49,14 @@ class GeocoderBehavior extends Behavior {
 		'address' => null,
 		'allowEmpty' => true,
 		'expect' => [],
-		'lat' => 'lat', // Field name in your entity
-		'lng' => 'lng', // Field name in your entity
+		'lat' => self::OPTION_LAT, // Field name in your entity
+		'lng' => self::OPTION_LNG, // Field name in your entity
 		'formattedAddress' => 'formatted_address', // Field name in your entity
 		'addressFormat' => '%S %n, %z %L', // For class StringFormatter
 		'locale' => null, // For GoogleMaps provider
 		'region' => null, // For GoogleMaps provider
 		'ssl' => true, // For GoogleMaps provider
-		//'bounds' => '',
-		'overwrite' => false, // Overwrite existing
+		'overwrite' => true, // Overwrite existing
 		'update' => [],
 		'on' => 'beforeSave', // Use beforeMarshal or afterMarshal if you need it for validation
 		'minAccuracy' => Geocoder::TYPE_COUNTRY,
@@ -310,6 +314,7 @@ class GeocoderBehavior extends Behavior {
 	 * Options:
 	 * - lat (required)
 	 * - lng (required)
+	 * - coordinates (replaces lat/lng as value object alternative)
 	 * - tableName
 	 * - distance
 	 * - sort
@@ -320,7 +325,8 @@ class GeocoderBehavior extends Behavior {
 	 */
 	public function findDistance(Query $query, array $options) {
 		$options += ['tableName' => null, 'sort' => true];
-		$sql = $this->distanceExpr($options['lat'], $options['lng'], null, null, $options['tableName']);
+		$options = $this->assertCoordinates($options);
+		$sql = $this->distanceExpr($options[static::OPTION_LAT], $options[static::OPTION_LNG], null, null, $options['tableName']);
 
 		if ($query->isAutoFieldsEnabled() === null) {
 			$query->enableAutoFields(true);
@@ -573,6 +579,28 @@ class GeocoderBehavior extends Behavior {
 			}
 			$entity->setError($field, $message);
 		}
+	}
+
+	/**
+	 * @param array $options
+	 *
+	 * @return array
+	 */
+	protected function assertCoordinates(array $options): array {
+		if (!empty($options[static::OPTION_COORDINATES])) {
+			/** @var \Geocoder\Model\Coordinates $coordinates */
+			$coordinates = $options[static::OPTION_COORDINATES];
+			$options[static::OPTION_LAT] = $coordinates->getLatitude();
+			$options[static::OPTION_LNG] = $coordinates->getLongitude();
+		}
+
+		if (empty($options[static::OPTION_LAT]) || empty($options[static::OPTION_LNG])) {
+			$error = sprintf('Fields %s or %s value object are missing.', static::OPTION_LNG . '/' . static::OPTION_LNG, static::OPTION_COORDINATES);
+
+			throw new InvalidArgumentException($error);
+		}
+
+		return $options;
 	}
 
 }
