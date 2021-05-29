@@ -3,6 +3,8 @@ Geocode your entity data.
 
 ## Adding the behavior
 
+For a quick start see [this](https://github.com/dereuromark/cakephp-geo/blob/master/docs/Install.md#optional-packages) composer install tip.
+
 Either in your Table class or at runtime:
 ```php
 $this->addBehavior('Geo.Geocoder', $config);
@@ -14,7 +16,7 @@ Possible config options are:
 - region (for some providers
 - ssl (for some providers)
 - address: (array|string, optional) set to the field name that contains the string from where to generate the slug, or a set of field names to concatenate for generating the slug.
-- overwrite: lat/lng overwrite existing coordinates, defaults to true (TODO)
+- overwrite: lat/lng overwrite existing coordinates, defaults to true
 - update: what fields to update (key=>value array pairs)
 - on: beforeMarshal/afterMarshal/beforeSave (defaults to beforeSave) - Set to false if you only want to use the validation rules etc
 - unit: defaults to km
