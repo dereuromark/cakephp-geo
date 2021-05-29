@@ -51,4 +51,4 @@ For using GoogleMaps as concrete adapter, you might also need for example:
         "geocoder-php/provider-implementation": "^1.0",
         "geocoder-php/google-maps-provider": "^4.4.0",
 
-Alternative packages that are compatible can be found on [Packgist](https://packagist.org/providers/geocoder-php/provider-implementation).
+Alternative packages that are compatible can be found on [Packagist](https://packagist.org/providers/geocoder-php/provider-implementation).
