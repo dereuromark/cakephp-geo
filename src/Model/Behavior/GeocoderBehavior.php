@@ -201,6 +201,16 @@ class GeocoderBehavior extends Behavior {
 	 * @return \Geo\Model\Entity\GeocodedAddress|null
 	 */
 	public function geocode(EntityInterface $entity) {
+		$latField = $this->_config[static::OPTION_LAT];
+		$lngField = $this->_config[static::OPTION_LNG];
+
+		if (
+			!$this->_config['overwrite'] &&
+			$entity->{$latField} && $entity->{$lngField}
+		) {
+			return $entity;
+		}
+
 		$addressFields = (array)$this->_config['address'];
 
 		$addressData = [];
@@ -217,7 +227,7 @@ class GeocoderBehavior extends Behavior {
 		if (!$dirty) {
 			if (
 				$this->_config['allowEmpty'] ||
-				($entity->{$this->_config['lat']} && $entity->{$this->_config['lng']})
+				($entity->{$latField} && $entity->{$lngField})
 			) {
 				return $entity;
 			}

@@ -393,6 +393,54 @@ class GeocoderBehaviorTest extends TestCase {
 	}
 
 	/**
+	 * @return void
+	 */
+	public function testOverwrite() {
+		$this->Addresses->removeBehavior('Geocoder');
+		$this->Addresses->addBehavior('Geocoder', [
+			'allowEmpty' => false,
+			'address' => ['street', 'zip', 'city']
+		]);
+		$data = [
+			'street' => 'Krebenweg 22',
+			'zip' => '74523',
+			'city' => 'Bibersfeld',
+			'lat' => 40,
+			'lng' => 16,
+		];
+		$entity = $this->_getEntity($data);
+		$res = $this->Addresses->save($entity);
+		// Lat, lng is overwritten since `overwrite` is true by default.
+		$this->assertTrue(round($res['lat']) === 49.0 && round($res['lng']) === 10.0);
+
+		$this->Addresses->removeBehavior('Geocoder');
+		$this->Addresses->addBehavior('Geocoder', [
+			'overwrite' => false,
+			'allowEmpty' => false,
+			'address' => ['street', 'zip', 'city'],
+		]);
+
+		$data = [
+			'street' => 'Krebenweg 22',
+			'zip' => '74523',
+			'city' => 'Bibersfeld',
+			'lat' => 40,
+			'lng' => 16,
+		];
+		$entity = $this->_getEntity($data);
+		$res = $this->Addresses->save($entity);
+		$this->assertTrue((bool)$res);
+		$this->assertTrue($res['lat'] === 40 && $res['lng'] === 16);
+
+		// Editing address fields does not modifying lat, lng since they are already set.
+		$res->street = 'blah blah';
+		$res->zip = 'xxxxxx';
+		$res = $this->Addresses->save($entity);
+		$this->assertTrue((bool)$res);
+		$this->assertTrue($res['lat'] === 40 && $res['lng'] === 16);
+	}
+
+	/**
 	 * Gets a new Entity
 	 *
 	 * @param array $data
