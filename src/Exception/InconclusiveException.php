@@ -8,7 +8,7 @@
 
 namespace Geo\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
-class InconclusiveException extends Exception {
+class InconclusiveException extends CakeException {
 }
