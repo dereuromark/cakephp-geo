@@ -41,3 +41,4 @@ phpunit.xml.dist export-ignore
 .editorconfig export-ignore
 tests/TestApp export-ignore
 tests/test_files export-ignore
+.github/ export-ignore

@@ -28,8 +28,14 @@ class GoogleMapHelper extends Helper {
 
 	use JsBaseEngineTrait;
 
+	/**
+	 * @var string
+	 */
 	public const API = 'maps.google.com/maps/api/js';
 
+	/**
+	 * @var string
+	 */
 	public const STATIC_API = 'maps.google.com/maps/api/staticmap';
 
 	/**
@@ -57,16 +63,28 @@ class GoogleMapHelper extends Helper {
 	 */
 	public static $infoContentCount = 0;
 
+	/**
+	 * @var string
+	 */
 	public const TYPE_ROADMAP = 'R';
 
+	/**
+	 * @var string
+	 */
 	public const TYPE_HYBRID = 'H';
 
+	/**
+	 * @var string
+	 */
 	public const TYPE_SATELLITE = 'S';
 
+	/**
+	 * @var string
+	 */
 	public const TYPE_TERRAIN = 'T';
 
 	/**
-	 * @var string[]
+	 * @var array<string>
 	 */
 	public $types = [
 		self::TYPE_ROADMAP => 'ROADMAP',
@@ -75,16 +93,28 @@ class GoogleMapHelper extends Helper {
 		self::TYPE_TERRAIN => 'TERRAIN',
 	];
 
+	/**
+	 * @var string
+	 */
 	public const TRAVEL_MODE_DRIVING = 'D';
 
+	/**
+	 * @var string
+	 */
 	public const TRAVEL_MODE_BICYCLING = 'B';
 
+	/**
+	 * @var string
+	 */
 	public const TRAVEL_MODE_TRANSIT = 'T';
 
+	/**
+	 * @var string
+	 */
 	public const TRAVEL_MODE_WALKING = 'W';
 
 	/**
-	 * @var string[]
+	 * @var array<string>
 	 */
 	public $travelModes = [
 		self::TRAVEL_MODE_DRIVING => 'DRIVING',
@@ -133,14 +163,14 @@ class GoogleMapHelper extends Helper {
 	public $map = '';
 
 	/**
-	 * @var string[]
+	 * @var array<string>
 	 */
 	protected $_mapIds = []; // Remember already used ones (valid xhtml contains ids not more than once)
 
 	/**
 	 * Default settings
 	 *
-	 * @var array
+	 * @var array<string, mixed>
 	 */
 	protected $_defaultConfig = [
 		'zoom' => null, // global, both map and staticMap
@@ -363,7 +393,7 @@ class GoogleMapHelper extends Helper {
 	}
 
 	/**
-	 * @deprecated
+	 * @deprecated Not in use.
 	 * @return string
 	 */
 	public function gearsUrl() {
@@ -511,7 +541,7 @@ class GoogleMapHelper extends Helper {
 		unset($this->_runtimeConfig['div']['width']);
 		unset($this->_runtimeConfig['div']['height']);
 
-		$defaultText = isset($this->_runtimeConfig['content']) ? $this->_runtimeConfig['content'] : __('Map cannot be displayed!');
+		$defaultText = $this->_runtimeConfig['content'] ?? __('Map cannot be displayed!');
 		$result .= $this->Html->tag('div', $defaultText, $this->_runtimeConfig['div']);
 
 		return $result;
@@ -1610,7 +1640,7 @@ function geocodeAddress(address) {
 	/**
 	 * Prepare markers for staticMap
 	 *
-	 * @param array $pos markerArrays
+	 * @param array<array<string, mixed>> $pos markerArrays
 	 * - lat: xx.xxxxxx (necessary)
 	 * - lng: xx.xxxxxx (necessary)
 	 * - address: (instead of lat/lng)
@@ -1618,12 +1648,12 @@ function geocodeAddress(address) {
 	 * - label: a-z or numbers (optional, default: s)
 	 * - icon: custom icon (png, gif, jpg - max 64x64 - max 5 different icons per image)
 	 * - shadow: TRUE/FALSE
-	 * @param array $style (global) (overridden by custom marker styles)
+	 * @param array<string, mixed> $style (global) (overridden by custom marker styles)
 	 * - color
 	 * - label
 	 * - icon
 	 * - shadow
-	 * @return array markers: color:green|label:Z|48,11|Berlin
+	 * @return array<string> Markers: color:green|label:Z|48,11|Berlin
 	 *
 	 * NEW: size:mid|color:red|label:E|37.400465,-122.073003|37.437328,-122.159928&markers=size:small|color:blue|37.369110,-122.096034
 	 * OLD: 40.702147,-74.015794,blueS|40.711614,-74.012318,greenG{|...}

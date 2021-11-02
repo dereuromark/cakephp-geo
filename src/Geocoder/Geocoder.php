@@ -32,22 +32,65 @@ class Geocoder {
 
 	use InstanceConfigTrait;
 
+	/**
+	 * @var string
+	 */
 	public const TYPE_COUNTRY = 'country';
+
+	/**
+	 * @var string
+	 */
 	public const TYPE_AAL1 = 'administrative_area_level_1';
+
+	/**
+	 * @var string
+	 */
 	public const TYPE_AAL2 = 'administrative_area_level_2';
+
+	/**
+	 * @var string
+	 */
 	public const TYPE_AAL3 = 'administrative_area_level_3';
+
+	/**
+	 * @var string
+	 */
 	public const TYPE_AAL4 = 'administrative_area_level_4';
+
+	/**
+	 * @var string
+	 */
 	public const TYPE_AAL5 = 'administrative_area_level_5';
+
+	/**
+	 * @var string
+	 */
 	public const TYPE_LOC = 'locality';
+
+	/**
+	 * @var string
+	 */
 	public const TYPE_SUBLOC = 'sublocality';
+
+	/**
+	 * @var string
+	 */
 	public const TYPE_POSTAL = 'postal_code';
+
 	//const TYPE_ROUTE = 'route'; // not available with GoogleMapsAPI
 	//const TYPE_INTERSEC = 'intersection';
+	/**
+	 * @var string
+	 */
 	public const TYPE_ADDRESS = 'street_address';
+
+	/**
+	 * @var string
+	 */
 	public const TYPE_NUMBER = 'street_number';
 
 	/**
-	 * @var array
+	 * @var array<string, mixed>
 	 */
 	protected $_defaultConfig = [
 		'locale' => null, // For GoogleMaps provider
@@ -311,6 +354,7 @@ class Geocoder {
 			return;
 		}
 
+		/** @var \Http\Client\HttpClient $adapterClass */
 		$adapterClass = $this->getConfig('adapter');
 		$this->adapter = new $adapterClass(new HttpCakeClient(), new ResponseFactory());
 

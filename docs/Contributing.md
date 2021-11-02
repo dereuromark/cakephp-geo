@@ -14,7 +14,6 @@ I am looking forward to your contributions. There are several ways to help out:
 There are a few guidelines that I need contributors to follow:
 * Coding standards (see link below) `composer cs-check` (and `composer cs-fix` to fix)
 * Passing tests (you can enable travis to assert your changes pass): `composer test`
-  * Make sure you downloaded a `phpunit.phar` for this (or ran `composer setup`).
 
 # Additional Resources
 

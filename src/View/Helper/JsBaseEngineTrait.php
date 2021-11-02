@@ -56,7 +56,7 @@ trait JsBaseEngineTrait {
 	 * Redirects to a URL. Creates a window.location modification snippet
 	 * that can be used to trigger 'redirects' from JavaScript.
 	 *
-	 * @param string|array|null $url URL
+	 * @param array|string|null $url URL
 	 * @return string completed redirect in javascript
 	 */
 	public function redirect($url = null) {
@@ -107,7 +107,7 @@ trait JsBaseEngineTrait {
 	 * - `prefix` - String prepended to the returned data.
 	 * - `postfix` - String appended to the returned data.
 	 *
-	 * @param array|object $data Data to be converted.
+	 * @param object|array $data Data to be converted.
 	 * @param array $options Set of options, see above.
 	 * @return string A JSON code block
 	 */

@@ -16,10 +16,29 @@ class Calculator {
 
 	use InstanceConfigTrait;
 
+	/**
+	 * @var string
+	 */
 	public const UNIT_KM = 'K';
+
+	/**
+	 * @var string
+	 */
 	public const UNIT_NAUTICAL = 'N';
+
+	/**
+	 * @var string
+	 */
 	public const UNIT_FEET = 'F';
+
+	/**
+	 * @var string
+	 */
 	public const UNIT_INCHES = 'I';
+
+	/**
+	 * @var string
+	 */
 	public const UNIT_MILES = 'M';
 
 	/**
@@ -40,7 +59,7 @@ class Calculator {
 	 * - pause: timeout to prevent blocking
 	 * - ...
 	 *
-	 * @var array
+	 * @var array<string, mixed>
 	 */
 	protected $_defaultConfig = [
 		'units' => [
@@ -124,8 +143,8 @@ class Calculator {
 	/**
 	 * Geocoder::calculateDistance()
 	 *
-	 * @param array|\ArrayObject $pointX
-	 * @param array|\ArrayObject $pointY
+	 * @param \ArrayObject|array $pointX
+	 * @param \ArrayObject|array $pointY
 	 * @return float
 	 */
 	public static function calculateDistance($pointX, $pointY) {

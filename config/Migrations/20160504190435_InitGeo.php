@@ -48,7 +48,7 @@ class InitGeo extends AbstractMigration {
 			  [
 				  'address',
 			  ],
-			  ['unique' => true]
+			  ['unique' => true],
 		  )
 		  ->create();
 		}

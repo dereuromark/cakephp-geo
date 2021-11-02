@@ -16,10 +16,10 @@ use Geocoder\Formatter\StringFormatter;
  *
  * @method \Geo\Model\Entity\GeocodedAddress get($primaryKey, $options = [])
  * @method \Geo\Model\Entity\GeocodedAddress newEntity($data = null, array $options = [])
- * @method \Geo\Model\Entity\GeocodedAddress[] newEntities(array $data, array $options = [])
+ * @method array<\Geo\Model\Entity\GeocodedAddress> newEntities(array $data, array $options = [])
  * @method \Geo\Model\Entity\GeocodedAddress|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
  * @method \Geo\Model\Entity\GeocodedAddress patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \Geo\Model\Entity\GeocodedAddress[] patchEntities($entities, array $data, array $options = [])
+ * @method array<\Geo\Model\Entity\GeocodedAddress> patchEntities($entities, array $data, array $options = [])
  * @method \Geo\Model\Entity\GeocodedAddress findOrCreate($search, callable $callback = null, $options = [])
  * @method \Geo\Model\Entity\GeocodedAddress saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
  * @method \Geo\Model\Entity\GeocodedAddress[]|\Cake\Datasource\ResultSetInterface|false saveMany($entities, $options = [])
@@ -76,7 +76,7 @@ class GeocodedAddressesTable extends Table {
 	/**
 	 * @param string $address
 	 *
-	 * @return bool|\Geo\Model\Entity\GeocodedAddress
+	 * @return \Geo\Model\Entity\GeocodedAddress|bool
 	 */
 	public function retrieve($address) {
 		/** @var \Geo\Model\Entity\GeocodedAddress|null $entity */

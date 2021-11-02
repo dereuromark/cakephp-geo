@@ -9,6 +9,13 @@
 
 	<exclude-pattern>/TestApp/templates/</exclude-pattern>
 
-	<rule ref="vendor/fig-r/psr2r-sniffer"/>
+	<rule ref="vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml"/>
+
+	<rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">
+		<exclude-pattern>*/config/Migrations/*</exclude-pattern>
+	</rule>
+	<rule ref="Spryker.Classes.ClassFileName.NoMatch">
+		<exclude-pattern>*/config/Migrations/*</exclude-pattern>
+	</rule>
 
 </ruleset>

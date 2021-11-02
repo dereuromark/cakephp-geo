@@ -19,8 +19,8 @@ use Geo\Exception\NotAccurateEnoughException;
 use Geo\Geocoder\Calculator;
 use Geo\Geocoder\Geocoder;
 use Geocoder\Formatter\StringFormatter;
-use RuntimeException;
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * A geocoding behavior for CakePHP to easily geocode addresses.
@@ -38,12 +38,23 @@ use InvalidArgumentException;
  */
 class GeocoderBehavior extends Behavior {
 
+	/**
+	 * @var string
+	 */
 	public const OPTION_COORDINATES = 'coordinates';
+
+	/**
+	 * @var string
+	 */
 	public const OPTION_LAT = 'lat';
+
+	/**
+	 * @var string
+	 */
 	public const OPTION_LNG = 'lng';
 
 	/**
-	 * @var array
+	 * @var array<string, mixed>
 	 */
 	protected $_defaultConfig = [
 		'address' => null,
@@ -75,7 +86,7 @@ class GeocoderBehavior extends Behavior {
 	protected $_Geocoder;
 
 	/**
-	 * @var \Geo\Geocoder\Calculator
+	 * @var \Geo\Geocoder\Calculator|null
 	 */
 	protected $_Calculator;
 
@@ -245,7 +256,7 @@ class GeocoderBehavior extends Behavior {
 
 	/**
 	 * @param \Geo\Model\Entity\GeocodedAddress|\ArrayObject $entity
-	 * @param string[] $addressData
+	 * @param array<string> $addressData
 	 *
 	 * @return \Geo\Model\Entity\GeocodedAddress|\ArrayObject|null
 	 */
@@ -447,8 +458,8 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * Snippet for custom pagination
 	 *
-	 * @param float|string $lat
-	 * @param float|string $lng
+	 * @param string|float $lat
+	 * @param string|float $lng
 	 * @param string|null $fieldName
 	 * @param string|null $tableName
 	 * @return array
@@ -466,7 +477,7 @@ class GeocoderBehavior extends Behavior {
 	 * Returns if a latitude is valid or not.
 	 * validation rule for models
 	 *
-	 * @param float|float[] $latitude
+	 * @param array<float>|float $latitude
 	 * @return bool
 	 */
 	public function validateLatitude($latitude) {
@@ -481,7 +492,7 @@ class GeocoderBehavior extends Behavior {
 	 * Returns if a longitude is valid or not.
 	 * validation rule for models
 	 *
-	 * @param float|float[] $longitude
+	 * @param array<float>|float $longitude
 	 * @return bool
 	 */
 	public function validateLongitude($longitude) {
@@ -572,7 +583,7 @@ class GeocoderBehavior extends Behavior {
 	 * @return void
 	 */
 	protected function invalidate($entity) {
-		$errorMessage = $this->_config['validationError'] !== null ? $this->_config['validationError'] : __('Could not geocode this address. Please refine.');
+		$errorMessage = $this->_config['validationError'] ?? __('Could not geocode this address. Please refine.');
 		if ($errorMessage === false) {
 			return;
 		}

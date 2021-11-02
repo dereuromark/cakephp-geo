@@ -14,13 +14,13 @@ use Cake\TestSuite\TestCase;
 use Geo\Geocoder\Calculator;
 use Geo\Geocoder\Geocoder;
 use Geocoder\Model\Coordinates;
-use TestApp\Controller\TestController;
 use InvalidArgumentException;
+use TestApp\Controller\TestController;
 
 class GeocoderBehaviorTest extends TestCase {
 
 	/**
-	 * @var string[]
+	 * @var array<string>
 	 */
 	protected $fixtures = [
 		'plugin.Geo.Addresses',
@@ -399,7 +399,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->Addresses->removeBehavior('Geocoder');
 		$this->Addresses->addBehavior('Geocoder', [
 			'allowEmpty' => false,
-			'address' => ['street', 'zip', 'city']
+			'address' => ['street', 'zip', 'city'],
 		]);
 		$data = [
 			'street' => 'Krebenweg 22',
