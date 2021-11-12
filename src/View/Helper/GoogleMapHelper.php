@@ -1264,7 +1264,8 @@ function geocodeAddress(address) {
 	 * @return string
 	 */
 	protected function _geolocationCallback() {
-		if (($js = $this->_runtimeConfig['callbacks']['geolocate']) === false) {
+		$js = $this->_runtimeConfig['callbacks']['geolocate'];
+		if ($js === false) {
 			return '';
 		}
 		if ($js === null) {
@@ -1345,7 +1346,8 @@ function geocodeAddress(address) {
 			'scale' => '',
 		];
 		$res = [];
-		if (!empty($options['style']) && ($m = $mapping[$type])) {
+		if (!empty($options['style']) && !empty($mapping[$type])) {
+			$m = $mapping[$type];
 			$res[] = 'style: google.maps.' . $m . '.' . $options['style'];
 		}
 		if (!empty($options['pos'])) {

@@ -11,11 +11,11 @@ class MigrationsGeoCreated extends AbstractMigration {
 	 */
 	public function change() {
 		$this->table('geocoded_addresses')
-		  ->addColumn('created', 'datetime', [
-			  'default' => null,
-			  'null' => true,
-		  ])
-		  ->update();
+			->addColumn('created', 'datetime', [
+				'default' => null,
+				'null' => true,
+			])
+			->update();
 	}
 
 }

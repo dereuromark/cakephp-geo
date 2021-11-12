@@ -385,16 +385,6 @@ class GoogleMapHelperTest extends TestCase {
 
 		$this->GoogleMap->addMarker(['lat' => 47.19847, 'lng' => 11.1514, 'title' => 'Marker3']);
 
-		/*
-		$options = array(
-		'lat'=>48.15144,
-		'lng'=>10.198,
-		'content'=>'Thanks for using this'
-	);
-		$this->GoogleMap->addInfoWindow($options);
-		//$this->GoogleMap->addEvent();
-		*/
-
 		$result .= $this->GoogleMap->script();
 
 		$this->assertTextContains('new google.maps.MarkerImage("https://www.google.com/mapfiles/marker_greenE.png"', $result);
