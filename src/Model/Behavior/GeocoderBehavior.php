@@ -341,7 +341,7 @@ class GeocoderBehavior extends Behavior {
 	 * - sort
 	 *
 	 * @param \Cake\ORM\Query $query Query.
-	 * @param array $options Array of options as described above
+	 * @param array<string, mixed> $options Array of options as described above
 	 * @return \Cake\ORM\Query
 	 */
 	public function findDistance(Query $query, array $options) {
@@ -603,7 +603,7 @@ class GeocoderBehavior extends Behavior {
 	}
 
 	/**
-	 * @param array $options
+	 * @param array<string, mixed> $options
 	 *
 	 * @return array
 	 */

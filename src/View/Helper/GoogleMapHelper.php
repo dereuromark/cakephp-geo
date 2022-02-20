@@ -442,7 +442,7 @@ class GoogleMapHelper extends Helper {
 	 * - type: FALSE, normal, menu, hierarchical
 	 * TIP: faster/shorter by using only the first character (e.g. "H" for "hierarchical")
 	 *
-	 * @param array $options
+	 * @param array<string, mixed> $options
 	 * @return void
 	 */
 	public function setControls(array $options = []) {
@@ -467,7 +467,7 @@ class GoogleMapHelper extends Helper {
 	 * This the initialization point of the script
 	 * Returns the div container you can echo on the website
 	 *
-	 * @param array $options associative array of settings are passed
+	 * @param array<string, mixed> $options associative array of settings are passed
 	 * @return string divContainer
 	 */
 	public function map(array $options = []) {
@@ -571,7 +571,7 @@ class GoogleMapHelper extends Helper {
 	 * Note, that you can only set one marker to "open" for single window mode.
 	 * If you declare multiple ones, the last one will be the one shown as open.
 	 *
-	 * @param array $options
+	 * @param array<string, mixed> $options
 	 * @throws \Cake\Core\Exception\Exception
 	 * @return mixed Integer marker count or boolean false on failure
 	 */
@@ -873,7 +873,7 @@ function geocodeAddress(address) {
 	 * Generate icon object
 	 *
 	 * @param string $url (required)
-	 * @param array $options (optional):
+	 * @param array<string, mixed> $options (optional):
 	 * - size: array(width=>x, height=>y)
 	 * - origin: array(width=>x, height=>y)
 	 * - anchor: array(width=>x, height=>y)
@@ -930,7 +930,7 @@ function geocodeAddress(address) {
 	/**
 	 * Creates a new InfoWindow.
 	 *
-	 * @param array $options
+	 * @param array<string, mixed> $options
 	 * - lat, lng, content, maxWidth, pixelOffset, zIndex
 	 * @return int windowCount
 	 */
@@ -1010,7 +1010,7 @@ function geocodeAddress(address) {
 	 * @see https://developers.google.com/maps/documentation/javascript/3.exp/reference#DirectionsRequest
 	 * @param array|string $from Location as array(fixed lat/lng pair) or string (to be geocoded at runtime)
 	 * @param array|string $to Location as array(fixed lat/lng pair) or string (to be geocoded at runtime)
-	 * @param array $options
+	 * @param array<string, mixed> $options
 	 * - directionsDiv: Div to place directions in text form
 	 * - travelMode: TravelMode,
 	 * - transitOptions: TransitOptions,
@@ -1075,7 +1075,7 @@ function geocodeAddress(address) {
 	 * @see https://developers.google.com/maps/documentation/javascript/3.exp/reference#Polyline
 	 * @param array|string $from Location as array(fixed lat/lng pair) or string (to be geocoded at runtime)
 	 * @param array|string $to Location as array(fixed lat/lng pair) or string (to be geocoded at runtime)
-	 * @param array $options
+	 * @param array<string, mixed> $options
 	 * - color (#FFFFFF ... #000000)
 	 * - opacity (0.1 ... 1, defaults to 1)
 	 * - weight in pixels (defaults to 2)
@@ -1336,7 +1336,7 @@ function geocodeAddress(address) {
 
 	/**
 	 * @param string $type
-	 * @param array $options
+	 * @param array<string, mixed> $options
 	 * @return string JSON like js string
 	 */
 	protected function _controlOptions($type, $options) {
@@ -1379,7 +1379,7 @@ function geocodeAddress(address) {
 	 * - query: Additional query strings as array
 	 * - escape: defaults to true
 	 *
-	 * @param array $options Options
+	 * @param array<string, mixed> $options Options
 	 * @return string link: http://...
 	 */
 	public function mapUrl(array $options = []) {
@@ -1423,7 +1423,7 @@ function geocodeAddress(address) {
 	 * Creates a plain image map.
 	 *
 	 * @link http://code.google.com/intl/de-DE/apis/maps/documentation/staticmaps
-	 * @param array $options Options
+	 * @param array<string, mixed> $options Options
 	 * - string $size [necessary: VALxVAL, e.g. 500x400 - max 640x640]
 	 * - string $center: x,y or address [necessary, if no markers are given; else tries to take defaults if available] or TRUE/FALSE
 	 * - int $zoom [optional; if no markers are given, default value is used; if set to "auto" and ]*
@@ -1467,7 +1467,7 @@ function geocodeAddress(address) {
 	 * Options:
 	 * - escape: defaults to true (Deprecated as of CakePHP 3.5.1 and now has to be always false)
 	 *
-	 * @param array $options
+	 * @param array<string, mixed> $options
 	 * - see staticMap() for details
 	 * @return string urlOfImage: http://...
 	 */

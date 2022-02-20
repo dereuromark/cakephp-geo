@@ -108,7 +108,7 @@ trait JsBaseEngineTrait {
 	 * - `postfix` - String appended to the returned data.
 	 *
 	 * @param object|array $data Data to be converted.
-	 * @param array $options Set of options, see above.
+	 * @param array<string, mixed> $options Set of options, see above.
 	 * @return string A JSON code block
 	 */
 	public function object($data = [], $options = []) {
@@ -295,7 +295,7 @@ trait JsBaseEngineTrait {
 	 * Similar to object() but treats any non-integer value as a string,
 	 * does not include `{ }`
 	 *
-	 * @param array $options Options to be converted
+	 * @param array<string, mixed> $options Options to be converted
 	 * @param array $safeKeys Keys that should not be escaped.
 	 * @return string Parsed JSON options without enclosing { }.
 	 */
@@ -318,7 +318,7 @@ trait JsBaseEngineTrait {
 	 * _callbackArgs array.
 	 *
 	 * @param string $method Name of the method you are preparing callbacks for.
-	 * @param array $options Array of options being parsed
+	 * @param array<string, mixed> $options Array of options being parsed
 	 * @param array $callbacks Additional Keys that contain callbacks
 	 * @return array Array of options with callbacks added.
 	 */
@@ -356,7 +356,7 @@ trait JsBaseEngineTrait {
 	 * Runs _mapOptions, _prepareCallbacks, and _parseOptions in order.
 	 *
 	 * @param string $method Name of method processing options for.
-	 * @param array $options Array of options to process.
+	 * @param array<string, mixed> $options Array of options to process.
 	 * @return string Parsed options string.
 	 */
 	protected function _processOptions($method, $options) {
