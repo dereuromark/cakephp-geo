@@ -3,7 +3,7 @@
 namespace Geo\View\Helper;
 
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\View\Helper;
@@ -572,7 +572,7 @@ class GoogleMapHelper extends Helper {
 	 * If you declare multiple ones, the last one will be the one shown as open.
 	 *
 	 * @param array<string, mixed> $options
-	 * @throws \Cake\Core\Exception\Exception
+	 * @throws \Cake\Core\Exception\CakeException
 	 * @return mixed Integer marker count or boolean false on failure
 	 */
 	public function addMarker($options) {
@@ -639,7 +639,7 @@ function geocodeAddress(address) {
 	});
 }";
 			if (!isset($options['address'])) {
-				throw new Exception('Either use lat/lng or address to add a marker');
+				throw new CakeException('Either use lat/lng or address to add a marker');
 			}
 			$position = 'geocodeAddress("' . h($options['address']) . '")';
 		} else {
@@ -1085,14 +1085,14 @@ function geocodeAddress(address) {
 		if (is_array($from)) {
 			$from = 'new google.maps.LatLng(' . (float)$from['lat'] . ', ' . (float)$from['lng'] . ')';
 		} else {
-			throw new Exception('not implemented yet, use array of lat/lng');
+			throw new CakeException('not implemented yet, use array of lat/lng');
 
 			//$from = '\'' . h($from) . '\'';
 		}
 		if (is_array($to)) {
 			$to = 'new google.maps.LatLng(' . (float)$to['lat'] . ', ' . (float)$to['lng'] . ')';
 		} else {
-			throw new Exception('not implemented yet, use array of lat/lng');
+			throw new CakeException('not implemented yet, use array of lat/lng');
 
 			//$to = '\'' . h($to) . '\'';
 		}
