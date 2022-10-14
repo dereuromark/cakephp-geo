@@ -1,9 +1,12 @@
 parameters:
+	level: 8
+	paths:
+		- src/
+	bootstrapFiles:
+		- tests/bootstrap.php
+		- tests/shim.php
 	checkMissingIterableValueType: false
 	checkGenericClassInNonGenericObjectType: false
-	bootstrapFiles:
-		- %rootDir%/../../../tests/bootstrap.php
-		- %rootDir%/../../../tests/shim.php
 	ignoreErrors:
 		- '#Access to an undefined property .+EntityInterface::\$geo.+.#'
 		- '#Cannot assign offset int\|string to ArrayObject\|.+GeocodedAddress.#'
