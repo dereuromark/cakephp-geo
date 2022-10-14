@@ -16,6 +16,13 @@ if (!empty($addresses)) {
 }
 ```
 
+Since it is using GoogleMaps geocoding service underneath by default, make sure to set the corresponding app config:
+```php
+    'Geocoder' => [
+        'apiKey' => '...',
+    ],
+```
+
 ## Reverse Geocoding
 
 ```php
