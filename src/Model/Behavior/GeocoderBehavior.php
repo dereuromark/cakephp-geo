@@ -157,6 +157,7 @@ class GeocoderBehavior extends Behavior {
 			}
 
 			if (!$this->_geocode($data, $addressData)) {
+				$event->setResult(false);
 				$event->stopPropagation();
 			}
 		}
@@ -171,6 +172,7 @@ class GeocoderBehavior extends Behavior {
 	public function afterMarshal(EventInterface $event, EntityInterface $entity): void {
 		if ($this->_config['on'] === 'afterMarshal') {
 			if (!$this->geocode($entity)) {
+				$event->setResult(false);
 				$event->stopPropagation();
 			}
 		}
@@ -185,6 +187,7 @@ class GeocoderBehavior extends Behavior {
 	public function beforeRules(EventInterface $event, EntityInterface $entity, ArrayObject $options) {
 		if ($this->_config['on'] === 'beforeRules') {
 			if (!$this->geocode($entity)) {
+				$event->setResult(false);
 				$event->stopPropagation();
 			}
 		}
@@ -199,6 +202,7 @@ class GeocoderBehavior extends Behavior {
 	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options) {
 		if ($this->_config['on'] === 'beforeSave') {
 			if (!$this->geocode($entity)) {
+				$event->setResult(false);
 				$event->stopPropagation();
 			}
 		}
