@@ -1443,10 +1443,7 @@ function geocodeAddress(address) {
 		$defaultAttributes = ['alt' => __d('tools', 'Map')];
 		$attributes += $defaultAttributes;
 
-		// This was fixed in 3.5.1 to auto-escape URL query strings for security reasons
-		$escape = version_compare(Configure::version(), '3.5.1') < 0 ? true : false;
-
-		return $this->Html->image($this->staticMapUrl($options + ['escape' => $escape]), $attributes);
+		return $this->Html->image($this->staticMapUrl($options + ['escape' => false]), $attributes);
 	}
 
 	/**
