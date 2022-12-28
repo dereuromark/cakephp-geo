@@ -40,7 +40,7 @@ Possible config options are:
 ## Display a basic link to a map
 ```php
 $link = $this->GoogleMap->mapLink('<To Munich>!', ['to' => '<Munich>, Germany']);
-// Generates: <a href="http://maps.google.com/maps?daddr=%3CMunich%3E%2C+Germany">&lt;To Munich&gt;!</a>
+// Generates: <a href="https://maps.google.com/maps?daddr=%3CMunich%3E%2C+Germany">&lt;To Munich&gt;!</a>
 ```
 
 ## Display a static map
@@ -90,7 +90,7 @@ $map = $this->GoogleMap->staticMap($options);
 In case you want to use JS to pop-up the image, you can use:
 ```php
 $config = [
-    'markers' => $mapMarkers, 
+    'markers' => $mapMarkers,
     'escape' => false,
 ];
 $url = $this->GoogleMap->staticMapUrl($config);

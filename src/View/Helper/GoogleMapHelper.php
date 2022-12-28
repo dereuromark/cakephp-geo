@@ -842,8 +842,8 @@ function geocodeAddress(address) {
 	 * custom icons: http://code.google.com/p/google-maps-icons/wiki/NumericIcons#Lettered_Balloons_from_A_to_Z,_in_10_Colors
 	 * custom shadows: http://www.cycloloco.com/shadowmaker/shadowmaker.htm
 	 *
-	 * @param string $image Image Url (http://...)
-	 * @param string|null $shadow ShadowImage Url (http://...)
+	 * @param string $image Image Url (https://...)
+	 * @param string|null $shadow ShadowImage Url (https://...)
 	 * @param array $imageOptions Image options
 	 * @param array $shadowOptions Shadow image options
 	 * @return array Resulting array
@@ -1380,7 +1380,7 @@ function geocodeAddress(address) {
 	 * - escape: defaults to true
 	 *
 	 * @param array<string, mixed> $options Options
-	 * @return string link: http://...
+	 * @return string link: https://...
 	 */
 	public function mapUrl(array $options = []) {
 		$url = $this->_protocol() . 'maps.google.com/maps?';
@@ -1422,7 +1422,7 @@ function geocodeAddress(address) {
 	/**
 	 * Creates a plain image map.
 	 *
-	 * @link http://code.google.com/intl/de-DE/apis/maps/documentation/staticmaps
+	 * @link https://code.google.com/intl/de-DE/apis/maps/documentation/staticmaps
 	 * @param array<string, mixed> $options Options
 	 * - string $size [necessary: VALxVAL, e.g. 500x400 - max 640x640]
 	 * - string $center: x,y or address [necessary, if no markers are given; else tries to take defaults if available] or TRUE/FALSE
@@ -1466,7 +1466,7 @@ function geocodeAddress(address) {
 	 *
 	 * @param array<string, mixed> $options
 	 * - see staticMap() for details
-	 * @return string urlOfImage: http://...
+	 * @return string urlOfImage: https://...
 	 */
 	public function staticMapUrl(array $options = []) {
 		$mapUrl = $this->_protocol() . static::STATIC_API;

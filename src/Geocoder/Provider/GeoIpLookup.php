@@ -26,7 +26,7 @@ class GeoIpLookup extends AbstractHttpProvider {
 	/**
 	 * @var string
 	 */
-	public const ENDPOINT_URL = 'http://api.geoiplookup.net/?query=%s';
+	public const ENDPOINT_URL = 'https://api.geoiplookup.net/?query=%s';
 
 	/**
 	 * @var string
