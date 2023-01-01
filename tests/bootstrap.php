@@ -1,7 +1,9 @@
 <?php
 
 use Cake\Core\Configure;
+use Cake\View\View;
 use Geo\Plugin;
+use TestApp\Controller\AppController;
 
 require dirname(__DIR__) . '/vendor/cakephp/cakephp/src/basics.php';
 require dirname(__DIR__) . '/vendor/autoload.php';
@@ -70,13 +72,13 @@ $cache = [
 
 Cake\Cache\Cache::setConfig($cache);
 
-class_alias(\TestApp\Controller\AppController::class, 'App\Controller\AppController');
-class_alias(\Cake\View\View::class, 'App\View\AppView');
+class_alias(AppController::class, 'App\Controller\AppController');
+class_alias(View::class, 'App\View\AppView');
 
 Cake\Core\Plugin::getCollection()->add(new Plugin());
 
 if (file_exists(CONFIG . 'app_local.php')) {
-	\Cake\Core\Configure::load('app_local', 'default');
+	Configure::load('app_local', 'default');
 }
 
 // Ensure default test connection is defined
