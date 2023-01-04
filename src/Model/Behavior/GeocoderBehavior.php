@@ -11,7 +11,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Geo\Exception\InconclusiveException;
@@ -56,7 +56,7 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * @var array<string, mixed>
 	 */
-	protected $_defaultConfig = [
+	protected array $_defaultConfig = [
 		'address' => null,
 		'allowEmpty' => true,
 		'expect' => [],
@@ -344,11 +344,11 @@ class GeocoderBehavior extends Behavior {
 	 * - distance
 	 * - sort
 	 *
-	 * @param \Cake\ORM\Query $query Query.
+	 * @param \Cake\ORM\Query\SelectQuery $query Query.
 	 * @param array<string, mixed> $options Array of options as described above
-	 * @return \Cake\ORM\Query
+	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	public function findDistance(Query $query, array $options) {
+	public function findDistance(SelectQuery $query, array $options): SelectQuery {
 		$options += ['tableName' => null, 'sort' => true];
 		$options = $this->assertCoordinates($options);
 		$sql = $this->distanceExpr($options[static::OPTION_LAT], $options[static::OPTION_LNG], null, null, $options['tableName']);
@@ -516,7 +516,7 @@ class GeocoderBehavior extends Behavior {
 	 */
 	protected function _execute(string $address) {
 		/** @var \Geo\Model\Table\GeocodedAddressesTable $GeocodedAddresses */
-		$GeocodedAddresses = TableRegistry::get('Geo.GeocodedAddresses');
+		$GeocodedAddresses = TableRegistry::getTableLocator()->get('Geo.GeocodedAddresses');
 		if ($this->getConfig('cache')) {
 			/** @var \Geo\Model\Entity\GeocodedAddress|null $result */
 			$result = $GeocodedAddresses->find()->where(['address' => $address])->first();

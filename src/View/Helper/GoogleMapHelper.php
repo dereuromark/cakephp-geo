@@ -128,7 +128,7 @@ class GoogleMapHelper extends Helper {
 	 *
 	 * @var array
 	 */
-	protected $helpers = ['Html'];
+	protected array $helpers = ['Html'];
 
 	/**
 	 * Google maker config instance variable
@@ -165,14 +165,14 @@ class GoogleMapHelper extends Helper {
 	/**
 	 * @var array<string>
 	 */
-	protected $_mapIds = []; // Remember already used ones (valid xhtml contains ids not more than once)
+	protected array $_mapIds = []; // Remember already used ones (valid xhtml contains ids not more than once)
 
 	/**
 	 * Default settings
 	 *
 	 * @var array<string, mixed>
 	 */
-	protected $_defaultConfig = [
+	protected array $_defaultConfig = [
 		'zoom' => null, // global, both map and staticMap
 		'lat' => null, // global, both map and staticMap
 		'lng' => null, // global, both map and staticMap
@@ -272,7 +272,7 @@ class GoogleMapHelper extends Helper {
 	/**
 	 * @var array
 	 */
-	protected $_runtimeConfig = [];
+	protected array $_runtimeConfig = [];
 
 	/**
 	 * @var bool
@@ -867,7 +867,7 @@ function geocodeAddress(address) {
 	/**
 	 * @var array
 	 */
-	protected $_iconRemember = [];
+	protected array $_iconRemember = [];
 
 	/**
 	 * Generate icon object

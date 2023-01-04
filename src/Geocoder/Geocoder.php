@@ -92,7 +92,7 @@ class Geocoder {
 	/**
 	 * @var array<string, mixed>
 	 */
-	protected $_defaultConfig = [
+	protected array $_defaultConfig = [
 		'locale' => null, // For GoogleMaps provider
 		'region' => null, // For GoogleMaps provider
 		'ssl' => true, // For GoogleMaps provider
@@ -110,7 +110,7 @@ class Geocoder {
 	 *
 	 * @var array
 	 */
-	protected $_types = [
+	protected array $_types = [
 		self::TYPE_COUNTRY,
 		self::TYPE_AAL1,
 		self::TYPE_AAL3,

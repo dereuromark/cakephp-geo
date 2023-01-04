@@ -15,7 +15,7 @@ class GeocodedAddressesTableTest extends TestCase {
 	 *
 	 * @var array
 	 */
-	protected $fixtures = [
+	protected array $fixtures = [
 		'plugin.Geo.GeocodedAddresses',
 	];
 
@@ -29,7 +29,7 @@ class GeocodedAddressesTableTest extends TestCase {
 	 */
 	public function setUp(): void {
 		parent::setUp();
-		$config = TableRegistry::exists('GeocodedAddresses') ? [] : ['className' => 'Geo\Model\Table\GeocodedAddressesTable'];
+		$config = TableRegistry::getTableLocator()->exists('GeocodedAddresses') ? [] : ['className' => 'Geo\Model\Table\GeocodedAddressesTable'];
 		$this->GeocodedAddresses = TableRegistry::getTableLocator()->get('GeocodedAddresses', $config);
 	}
 

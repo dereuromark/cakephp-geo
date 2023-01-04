@@ -25,7 +25,7 @@ trait JsBaseEngineTrait {
 	 *
 	 * @var array
 	 */
-	protected $_optionMap = [];
+	protected array $_optionMap = [];
 
 	/**
 	 * An array of lowercase method names in the Engine that are buffered unless otherwise disabled.
@@ -40,7 +40,7 @@ trait JsBaseEngineTrait {
 	 *
 	 * @var array
 	 */
-	protected $_callbackArguments = [];
+	protected array $_callbackArguments = [];
 
 	/**
 	 * Create an `alert()` message in JavaScript

@@ -3,9 +3,6 @@
 ## Installation
 * [Installation](Install.md)
 
-## Upgrade Guide
-* [Upgrade guide from 2.x to 3.x](Upgrade.md)
-
 ## Documentation
 * [Geocoder behavior](Behavior/Geocoder.md)
 * [Geocoder lib](Geocoder/Geocoder.md)

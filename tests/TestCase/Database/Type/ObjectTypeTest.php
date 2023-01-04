@@ -3,7 +3,7 @@
 namespace Geo\Test\Database\Type;
 
 use Cake\Database\Driver\Sqlite;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use Geo\Database\Type\ObjectType;
 
@@ -15,11 +15,11 @@ class ObjectTypeTest extends TestCase {
 	public function testToPhp() {
 		$objectType = new ObjectType();
 
-		$value = serialize(new FrozenTime());
+		$value = serialize(new DateTime());
 		$driver = new Sqlite();
 
 		$result = $objectType->toPHP($value, $driver);
-		$this->assertInstanceOf(FrozenTime::class, $result);
+		$this->assertInstanceOf(DateTime::class, $result);
 
 		$result = $objectType->toPHP(null, $driver);
 		$this->assertNull($result);
@@ -31,7 +31,7 @@ class ObjectTypeTest extends TestCase {
 	public function testTo() {
 		$objectType = new ObjectType();
 
-		$value = new FrozenTime();
+		$value = new DateTime();
 		$driver = new Sqlite();
 
 		$result = $objectType->toDatabase($value, $driver);
@@ -47,7 +47,7 @@ class ObjectTypeTest extends TestCase {
 	public function testMarshal() {
 		$objectType = new ObjectType();
 
-		$value = new FrozenTime();
+		$value = new DateTime();
 
 		$result = $objectType->marshal($value);
 

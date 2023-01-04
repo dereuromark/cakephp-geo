@@ -16,7 +16,7 @@ class GeoControllerTest extends TestCase {
 	/**
 	 * @var array
 	 */
-	protected $fixtures = [
+	protected array $fixtures = [
 		'plugin.Geo.GeocodedAddresses',
 	];
 

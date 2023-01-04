@@ -14,7 +14,7 @@ class AddressesFixture extends TestFixture {
 	 *
 	 * @var array
 	 */
-	public $fields = [
+	public array $fields = [
 		'id' => ['type' => 'integer'],
 		'foreign_id' => ['type' => 'string', 'null' => true, 'default' => null, 'length' => 36],
 		'model' => ['type' => 'string', 'null' => true, 'default' => null, 'length' => 30],
@@ -39,7 +39,7 @@ class AddressesFixture extends TestFixture {
 	 *
 	 * @var array
 	 */
-	public $records = [
+	public array $records = [
 		[
 			'foreign_id' => '6',
 			'model' => 'Partner',

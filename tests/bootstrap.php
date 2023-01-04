@@ -103,3 +103,8 @@ Cake\Datasource\ConnectionManager::setConfig('test', [
 Configure::write('Geocoder', [
 	'apiKey' => env('API_KEY'), // local, set through `export API_KEY=".."` in CLI
 ]);
+
+if (env('FIXTURE_SCHEMA_METADATA')) {
+	$loader = new Cake\TestSuite\Fixture\SchemaLoader();
+	$loader->loadInternalFile(env('FIXTURE_SCHEMA_METADATA'));
+}

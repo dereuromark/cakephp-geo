@@ -44,7 +44,7 @@ class Calculator {
 	/**
 	 * @var array
 	 */
-	protected $_units = [
+	protected array $_units = [
 		self::UNIT_KM => 1.609344,
 		self::UNIT_NAUTICAL => 0.868976242,
 		self::UNIT_FEET => 5280,
@@ -61,7 +61,7 @@ class Calculator {
 	 *
 	 * @var array<string, mixed>
 	 */
-	protected $_defaultConfig = [
+	protected array $_defaultConfig = [
 		'units' => [
 		],
 	];

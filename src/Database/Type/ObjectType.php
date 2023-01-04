@@ -2,7 +2,7 @@
 
 namespace Geo\Database\Type;
 
-use Cake\Database\DriverInterface;
+use Cake\Database\Driver;
 use Cake\Database\Type\BaseType;
 use PDO;
 
@@ -13,11 +13,11 @@ class ObjectType extends BaseType {
 
 	/**
 	 * @param string|null $value
-	 * @param \Cake\Database\DriverInterface $driver
+	 * @param \Cake\Database\Driver $driver
 	 *
 	 * @return object|null
 	 */
-	public function toPHP($value, DriverInterface $driver) {
+	public function toPHP(mixed $value, Driver $driver): mixed {
 		if ($value === null) {
 			return $value;
 		}
@@ -30,7 +30,7 @@ class ObjectType extends BaseType {
 	 *
 	 * @return object|null
 	 */
-	public function marshal($value) {
+	public function marshal(mixed $value): mixed {
 		if ($value === null) {
 			return $value;
 		}
@@ -43,11 +43,11 @@ class ObjectType extends BaseType {
 
 	/**
 	 * @param object|null $value
-	 * @param \Cake\Database\DriverInterface $driver
+	 * @param \Cake\Database\Driver $driver
 	 *
 	 * @return string|null
 	 */
-	public function toDatabase($value, DriverInterface $driver) {
+	public function toDatabase(mixed $value, Driver $driver): mixed {
 		if ($value === null) {
 			return $value;
 		}
@@ -57,11 +57,11 @@ class ObjectType extends BaseType {
 
 	/**
 	 * @param mixed|null $value
-	 * @param \Cake\Database\DriverInterface $driver
+	 * @param \Cake\Database\Driver $driver
 	 *
 	 * @return int
 	 */
-	public function toStatement($value, DriverInterface $driver) {
+	public function toStatement(mixed $value, Driver $driver): int {
 		if ($value === null) {
 			return PDO::PARAM_NULL;
 		}

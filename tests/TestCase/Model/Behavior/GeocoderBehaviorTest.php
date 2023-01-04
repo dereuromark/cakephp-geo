@@ -22,7 +22,7 @@ class GeocoderBehaviorTest extends TestCase {
 	/**
 	 * @var array<string>
 	 */
-	protected $fixtures = [
+	protected array $fixtures = [
 		'plugin.Geo.Addresses',
 	];
 
@@ -46,7 +46,7 @@ class GeocoderBehaviorTest extends TestCase {
 
 		Configure::write('Geocoder.locale', 'DE');
 
-		$this->Addresses = TableRegistry::get('Geo.Addresses');
+		$this->Addresses = TableRegistry::getTableLocator()->get('Geo.Addresses');
 		$this->Addresses->addBehavior('Geocoder');
 
 		$this->db = ConnectionManager::get('test');
@@ -61,7 +61,7 @@ class GeocoderBehaviorTest extends TestCase {
 		parent::tearDown();
 
 		unset($this->Addresses, $this->Addresses);
-		TableRegistry::clear();
+		TableRegistry::getTableLocator()->clear();
 	}
 
 	/**
