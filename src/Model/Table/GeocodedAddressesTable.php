@@ -63,11 +63,10 @@ class GeocodedAddressesTable extends Table {
 	}
 
 	/**
-	 * @param \Cake\Database\Schema\TableSchemaInterface $schema
-	 *
 	 * @return \Cake\Database\Schema\TableSchemaInterface
 	 */
-	protected function _initializeSchema(TableSchemaInterface $schema): TableSchemaInterface {
+	public function getSchema(): TableSchemaInterface {
+		$schema = parent::getSchema();
 		$schema->setColumnType('data', 'object');
 
 		return $schema;
