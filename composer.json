@@ -32,7 +32,7 @@
 		"geocoder-php/nominatim-provider": "^5.1",
 		"dereuromark/cakephp-tools": "dev-cake5",
 		"fig-r/psr2r-sniffer": "dev-next",
-		"phpunit/phpunit": "^9.5"
+		"phpunit/phpunit": "^9.5.16"
 	},
 	"support": {
 		"source": "https://github.com/dereuromark/cakephp-geo"
