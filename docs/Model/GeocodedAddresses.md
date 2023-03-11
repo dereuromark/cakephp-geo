@@ -27,7 +27,7 @@ if ($address && $address->lat && $address->lng) {
 
 Don't forget to add the Type mapping of `Geo\Database\Type\ObjectType` in your bootstrap.php.
 ```php
-Type::map('object', 'Geo\Database\Type\ObjectType');
+TypeFactory::map('object', 'Geo\Database\Type\ObjectType');
 ```
 (see cookbook: https://book.cakephp.org/3.0/en/orm/database-basics.html#adding-custom-types) 
 
