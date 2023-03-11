@@ -1,7 +1,7 @@
 <?php
 
 use Cake\Core\Configure;
-use Cake\Database\Type;
+use Cake\Database\TypeFactory;
 use Cake\Log\Log;
 
 $className = Configure::read('Log.defaultClassName') ?: 'Cake\Log\Engine\FileLog';
@@ -15,4 +15,4 @@ if (!Log::getConfig('geo')) {
 	]);
 }
 
-Type::map('object', 'Geo\Database\Type\ObjectType');
+TypeFactory::map('object', 'Geo\Database\Type\ObjectType');
