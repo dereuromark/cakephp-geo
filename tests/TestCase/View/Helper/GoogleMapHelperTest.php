@@ -164,7 +164,7 @@ class GoogleMapHelperTest extends TestCase {
 	 * @return void
 	 */
 	public function testStaticMarkers() {
-		$m = $this->markerElements = [
+		$m = [
 			[
 				'address' => '44.3,11.2',
 			],

@@ -2,9 +2,10 @@
 
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\View\View;
-use Geo\Plugin;
+use Geo\Plugin as GeoPlugin;
 use TestApp\Controller\AppController;
 
 require dirname(__DIR__) . '/vendor/cakephp/cakephp/src/basics.php';
@@ -77,7 +78,7 @@ Cache::setConfig($cache);
 class_alias(AppController::class, 'App\Controller\AppController');
 class_alias(View::class, 'App\View\AppView');
 
-Cake\Core\Plugin::getCollection()->add(new Plugin());
+Plugin::getCollection()->add(new GeoPlugin());
 
 if (file_exists(CONFIG . 'app_local.php')) {
 	Configure::load('app_local', 'default');
