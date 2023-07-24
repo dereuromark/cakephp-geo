@@ -1,6 +1,8 @@
 <?php
 
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
+use Cake\Datasource\ConnectionManager;
 use Cake\View\View;
 use Geo\Plugin;
 use TestApp\Controller\AppController;
@@ -39,7 +41,7 @@ define('CAKE', CORE_PATH . 'src' . DS);
 
 define('WWW_ROOT', APP . 'webroot' . DS);
 
-Cake\Core\Configure::write('App', [
+Configure::write('App', [
 	'encoding' => 'utf8',
 	'namespace' => 'TestApp',
 	'paths' => [
@@ -47,7 +49,7 @@ Cake\Core\Configure::write('App', [
 	],
 ]);
 
-Cake\Core\Configure::write('debug', true);
+Configure::write('debug', true);
 
 $cache = [
 	'default' => [
@@ -70,7 +72,7 @@ $cache = [
 	],
 ];
 
-Cake\Cache\Cache::setConfig($cache);
+Cache::setConfig($cache);
 
 class_alias(AppController::class, 'App\Controller\AppController');
 class_alias(View::class, 'App\View\AppView');
@@ -87,7 +89,7 @@ if (!getenv('db_class')) {
 	putenv('db_dsn=sqlite::memory:');
 }
 
-Cake\Datasource\ConnectionManager::setConfig('test', [
+ConnectionManager::setConfig('test', [
 	'className' => 'Cake\Database\Connection',
 	'driver' => getenv('db_class') ?: null,
 	'dsn' => getenv('db_dsn') ?: null,
