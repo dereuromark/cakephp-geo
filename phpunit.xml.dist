@@ -1,4 +1,5 @@
-<phpunit bootstrap="tests/bootstrap.php" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="tests/bootstrap.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
 	<php>
 		<!-- E_ALL & ~E_USER_DEPRECATED (16383)-->
 		<!-- E_ALL (32767) -->
@@ -14,13 +15,13 @@
 	</testsuites>
 
 	<extensions>
-		<extension class="\Cake\TestSuite\Fixture\PHPUnitExtension"/>
+		<bootstrap class="\Cake\TestSuite\Fixture\Extension\PHPUnitExtension"/>
 	</extensions>
 
-	<filter>
-		<whitelist>
+	<source>
+		<include>
 			<directory suffix=".php">src/</directory>
-		</whitelist>
-	</filter>
+		</include>
+	</source>
 
 </phpunit>

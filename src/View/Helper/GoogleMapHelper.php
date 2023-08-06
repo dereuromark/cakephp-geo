@@ -1179,7 +1179,7 @@ function geocodeAddress(address) {
 			$script .= $this->_geolocate();
 		}
 
-		if ($this->_runtimeConfig['showMarker'] && !empty($this->markers) && is_array($this->markers)) {
+		if ($this->_runtimeConfig['showMarker'] && !empty($this->markers)) {
 			$script .= implode(' ', $this->markers);
 		}
 
