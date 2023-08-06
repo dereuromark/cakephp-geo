@@ -4,12 +4,10 @@ use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
+use Cake\TestSuite\Fixture\SchemaLoader;
 use Cake\View\View;
-use Geo\Plugin as GeoPlugin;
+use Geo\GeoPlugin;
 use TestApp\Controller\AppController;
-
-require dirname(__DIR__) . '/vendor/cakephp/cakephp/src/basics.php';
-require dirname(__DIR__) . '/vendor/autoload.php';
 
 if (!defined('WINDOWS')) {
 	if (DS == '\\' || substr(PHP_OS, 0, 3) === 'WIN') {
@@ -41,6 +39,11 @@ define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 define('CAKE', CORE_PATH . 'src' . DS);
 
 define('WWW_ROOT', APP . 'webroot' . DS);
+
+require dirname(__DIR__) . '/vendor/autoload.php';
+require CORE_PATH . 'config/bootstrap.php';
+
+require CAKE_CORE_INCLUDE_PATH . '/src/functions.php';
 
 Configure::write('App', [
 	'encoding' => 'utf8',
@@ -108,6 +111,6 @@ Configure::write('Geocoder', [
 ]);
 
 if (env('FIXTURE_SCHEMA_METADATA')) {
-	$loader = new Cake\TestSuite\Fixture\SchemaLoader();
+	$loader = new SchemaLoader();
 	$loader->loadInternalFile(env('FIXTURE_SCHEMA_METADATA'));
 }

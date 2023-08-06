@@ -8,7 +8,7 @@ use Cake\Routing\RouteBuilder;
 /**
  * Plugin for Geo
  */
-class Plugin extends BasePlugin {
+class GeoPlugin extends BasePlugin {
 
 	/**
 	 * @var bool

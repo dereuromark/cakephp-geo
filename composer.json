@@ -25,6 +25,7 @@
 	"require-dev": {
 		"ext-intl": "*",
 		"ext-json": "*",
+		"psr/http-message": "2.0.x-dev as 1.0.0",
 		"geocoder-php/provider-implementation": "^1.0",
 		"php-http/cakephp-adapter": "dev-next",
 		"php-http/message": "^1.8.0",
@@ -33,7 +34,7 @@
 		"geocoder-php/nominatim-provider": "^5.1",
 		"dereuromark/cakephp-tools": "dev-cake5",
 		"fig-r/psr2r-sniffer": "dev-next",
-		"phpunit/phpunit": "^9.5.16"
+		"phpunit/phpunit": "^10.1"
 	},
 	"support": {
 		"source": "https://github.com/dereuromark/cakephp-geo"
