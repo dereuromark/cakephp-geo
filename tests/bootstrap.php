@@ -42,7 +42,6 @@ define('WWW_ROOT', APP . 'webroot' . DS);
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 require CORE_PATH . 'config/bootstrap.php';
-
 require CAKE_CORE_INCLUDE_PATH . '/src/functions.php';
 
 Configure::write('App', [

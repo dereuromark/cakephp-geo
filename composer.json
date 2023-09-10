@@ -20,7 +20,7 @@
 	],
 	"require": {
 		"php": ">=8.1",
-		"cakephp/cakephp": "5.x-dev"
+		"cakephp/cakephp": "^5.0.0"
 	},
 	"require-dev": {
 		"ext-intl": "*",
@@ -51,6 +51,8 @@
 			"TestApp\\": "tests/TestApp/src/"
 		}
 	},
+	"prefer-stable": true,
+	"minimum-stability": "dev",
 	"scripts": {
 		"test": "phpunit",
 		"test-coverage": "phpunit --log-junit webroot/coverage/unitreport.xml --coverage-html webroot/coverage --coverage-clover webroot/coverage/coverage.xml",
@@ -66,6 +68,5 @@
 			"dealerdirect/phpcodesniffer-composer-installer": true,
 			"php-http/discovery": true
 		}
-	},
-	"minimum-stability": "dev"
+	}
 }
