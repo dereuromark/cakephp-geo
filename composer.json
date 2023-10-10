@@ -52,7 +52,7 @@
 		}
 	},
 	"prefer-stable": true,
-	"minimum-stability": "dev",
+	"minimum-stability": "stable",
 	"scripts": {
 		"test": "phpunit",
 		"test-coverage": "phpunit --log-junit webroot/coverage/unitreport.xml --coverage-html webroot/coverage --coverage-clover webroot/coverage/coverage.xml",
