@@ -10,7 +10,7 @@
 
 	<testsuites>
 		<testsuite name="geo">
-			<directory>tests/</directory>
+			<directory>tests/TestCase/</directory>
 		</testsuite>
 	</testsuites>
 
