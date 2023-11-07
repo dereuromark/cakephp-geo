@@ -25,14 +25,14 @@
 	"require-dev": {
 		"ext-intl": "*",
 		"ext-json": "*",
-		"psr/http-message": "2.0.x-dev as 1.0.0",
+		"psr/http-message": "^2.0.0",
 		"geocoder-php/provider-implementation": "^1.0",
-		"php-http/cakephp-adapter": "dev-next",
+		"php-http/cakephp-adapter": "^0.4.0",
 		"php-http/message": "^1.8.0",
 		"willdurand/geocoder": "^4.6.0",
 		"geocoder-php/google-maps-provider": "^4.4.0",
 		"geocoder-php/nominatim-provider": "^5.1",
-		"dereuromark/cakephp-tools": "dev-cake5",
+		"dereuromark/cakephp-tools": "^3.0.0",
 		"fig-r/psr2r-sniffer": "dev-next",
 		"phpunit/phpunit": "^10.1"
 	},
