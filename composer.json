@@ -26,7 +26,7 @@
 		"ext-intl": "*",
 		"ext-json": "*",
 		"geocoder-php/provider-implementation": "^1.0",
-		"php-http/cakephp-adapter": "0.3.x-dev",
+		"php-http/cakephp-adapter": "^0.3.0",
 		"php-http/message": "^1.8.0",
 		"geocoder-php/google-maps-provider": "^4.4.0",
 		"geocoder-php/nominatim-provider": "^5.1",
