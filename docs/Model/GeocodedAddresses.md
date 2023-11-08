@@ -18,7 +18,7 @@ bin/cake migrations migrate -p Geo
 
 Then instead of using the Geocoder class directly, you go through this Table:
 ```php
-$GeocodedAddresses = TableRegistry::get('Geo.GeocodedAddresses');
+$GeocodedAddresses = TableRegistry::getTableLocator()->get('Geo.GeocodedAddresses');
 $address = $GeocodedAddresses->retrieve($args['locality_search']);
 if ($address && $address->lat && $address->lng) {
     // Do something with it
@@ -40,7 +40,7 @@ If you use [Search](https://github.com/FriendsOfCake/search) plugin, the followi
 ->callback('distance', [
     'callback' => function (Query $query, array $args, Callback $manager) {
         if (!empty($args['location'])) {
-            $GeocodedAddresses = TableRegistry::get('Geo.GeocodedAddresses');
+            $GeocodedAddresses = TableRegistry::getTableLocator()->get('Geo.GeocodedAddresses');
             $address = $GeocodedAddresses->retrieve($args['location']);
             if ($address && $address->lat && $address->lng) {
                 $query->find('distance', ['lat' => $address->lat, 'lng' => $address->lng, 'tableName' => 'MyTableName', 'distance' => 100, 'sort' => false]);
