@@ -89,7 +89,7 @@ We want to find all addresses within a distance of 200 km of the given lat/lng:
 $options = ['lat' => 13.3, 'lng' => 19.2, 'distance' => 200];
 
 $query = $this->Addresses->find('distance', $options);
-$query->orderAsc('distance');
+$query->orderByAsc('distance');
 
 $addresses = $this->paginate($query);
 ```

@@ -367,7 +367,7 @@ class GeocoderBehavior extends Behavior {
 
 		if ($options['sort']) {
 			$sort = $options['sort'] === true ? 'ASC' : $options['sort'];
-			$query->order(['distance' => $sort]);
+			$query->orderBy(['distance' => $sort]);
 		}
 
 		return $query;

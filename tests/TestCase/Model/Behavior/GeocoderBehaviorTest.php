@@ -8,6 +8,7 @@ use Cake\Database\Driver\Postgres;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
+use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -168,18 +169,20 @@ class GeocoderBehaviorTest extends TestCase {
 		$driver = $this->db->getDriver();
 		$this->skipIf(!($driver instanceof Mysql || $driver instanceof Postgres), 'The virtualFields test is only compatible with Mysql/Postgres.');
 
-		$controller = new TestController();
-		$controller->Addresses->addBehavior('Geocoder');
+		$controller = new TestController(new ServerRequest());
+		$controller->getTableLocator()->get('Addresses')->addBehavior('Geocoder');
 		$options = ['lat' => 13.3, 'lng' => 19.2, 'distance' => 3000];
 
 		/** @var \Cake\ORM\Query $query */
-		$query = $controller->Addresses->find('distance', $options);
-		$query->order(['distance' => 'ASC']);
+		$query = $controller->getTableLocator()->get('Addresses')->find('distance', $options);
+		$query->orderByAsc('distance');
 
-		$res = $controller->paginate($query)->toArray();
+		$res = $controller->paginate($query);
 
-		$this->assertEquals(2, count($res));
-		$this->assertTrue($res[0]['distance'] < $res[1]['distance']);
+		$this->assertSame(2, $res->count());
+
+		$items = $res->items()->__serialize();
+		$this->assertTrue($items[0]['distance'] < $items[1]['distance']);
 	}
 
 	/**

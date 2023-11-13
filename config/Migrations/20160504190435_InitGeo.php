@@ -27,17 +27,13 @@ class InitGeo extends AbstractMigration {
 				  'limit' => 3,
 				  'null' => true,
 				])
-				->addColumn('lat', 'decimal', [
+				->addColumn('lat', 'float', [
 				  'default' => null,
 				  'null' => true,
-				  'precision' => 10,
-				  'scale' => 7,
 				])
-				->addColumn('lng', 'decimal', [
+				->addColumn('lng', 'float', [
 				  'default' => null,
 				  'null' => true,
-				  'precision' => 10,
-				  'scale' => 7,
 				])
 				->addColumn('data', 'text', [
 				  'default' => null,
