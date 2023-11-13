@@ -41,7 +41,6 @@ class GeocodedAddressesFixture extends TestFixture {
 	 */
 	public array $records = [
 		[
-			'id' => 1,
 			'address' => 'Lorem ipsum dolor sit amet',
 			'formatted_address' => 'Lorem ipsum dolor sit amet',
 			'country' => 'L',
