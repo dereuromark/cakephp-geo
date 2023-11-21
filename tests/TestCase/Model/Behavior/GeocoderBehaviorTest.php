@@ -107,7 +107,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->skipIf(!($driver instanceof Mysql || $driver instanceof Postgres), 'The virtualFields test is only compatible with Mysql/Postgres.');
 
 		$options = ['lat' => 13.3, 'lng' => 19.2]; //array('order' => array('Address.distance' => 'ASC'));
-		$query = $this->Addresses->find()->find('distance', $options);
+		$query = $this->Addresses->find()->find('distance', ...$options);
 
 		$result = $query->toArray();
 
@@ -125,7 +125,7 @@ class GeocoderBehaviorTest extends TestCase {
 
 		$coordinates = new Coordinates(13.3, 19.2);
 		$options = ['coordinates' => $coordinates];
-		$query = $this->Addresses->find()->find('distance', $options);
+		$query = $this->Addresses->find()->find('distance', ...$options);
 
 		$result = $query->toArray();
 
@@ -141,7 +141,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->expectException(InvalidArgumentException::class);
 
 		$options = [];
-		$this->Addresses->find()->find('distance', $options);
+		$this->Addresses->find()->find('distance', ...$options);
 	}
 
 	/**
@@ -155,7 +155,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->Addresses->addBehavior('Geocoder', ['unit' => Calculator::UNIT_MILES]);
 
 		$options = ['lat' => 13.3, 'lng' => 19.2]; //$options = array('order' => array('Address.distance' => 'ASC'));
-		$res = $this->Addresses->find()->find('distance', $options)->toArray();
+		$res = $this->Addresses->find()->find('distance', ...$options)->toArray();
 
 		$this->assertTrue($res[0]['distance'] < $res[1]['distance']);
 		$this->assertTrue($res[1]['distance'] < $res[2]['distance']);
@@ -174,7 +174,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$options = ['lat' => 13.3, 'lng' => 19.2, 'distance' => 3000];
 
 		/** @var \Cake\ORM\Query $query */
-		$query = $controller->getTableLocator()->get('Addresses')->find('distance', $options);
+		$query = $controller->getTableLocator()->get('Addresses')->find('distance', ...$options);
 		$query->orderByAsc('distance');
 
 		$res = $controller->paginate($query);

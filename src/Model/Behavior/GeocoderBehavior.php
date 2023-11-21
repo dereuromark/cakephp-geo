@@ -19,6 +19,7 @@ use Geo\Exception\NotAccurateEnoughException;
 use Geo\Geocoder\Calculator;
 use Geo\Geocoder\Geocoder;
 use Geocoder\Formatter\StringFormatter;
+use Geocoder\Model\Coordinates;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -345,11 +346,24 @@ class GeocoderBehavior extends Behavior {
 	 * - sort
 	 *
 	 * @param \Cake\ORM\Query\SelectQuery $query Query.
-	 * @param array<string, mixed> $options Array of options as described above
+	 * @param float|null $lat
+	 * @param float|null $lng
+	 * @param \Geocoder\Model\Coordinates|null $coordinates
+	 * @param int|null $distance
+	 * @param string|null $tableName
+	 * @param bool $sort
+	 *
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	public function findDistance(SelectQuery $query, array $options): SelectQuery {
-		$options += ['tableName' => null, 'sort' => true];
+	public function findDistance(SelectQuery $query, ?float $lat = null, ?float $lng = null, ?Coordinates $coordinates = null, ?int $distance = null, ?string $tableName = null, bool $sort = true): SelectQuery {
+		$options = [
+			'tableName' => $tableName,
+			'sort' => $sort,
+			'lat' => $lat,
+			'lng' => $lng,
+			'distance' => $distance,
+			'coordinates' => $coordinates,
+		];
 		$options = $this->assertCoordinates($options);
 		$sql = $this->distanceExpr($options[static::OPTION_LAT], $options[static::OPTION_LNG], null, null, $options['tableName']);
 
@@ -360,7 +374,7 @@ class GeocoderBehavior extends Behavior {
 		$query->select(['distance' => $query->newExpr($sql)]);
 		if (isset($options['distance'])) {
 			// Some SQL versions cannot reuse the select() distance field, so we better reuse the $sql snippet
-			$query->where(function ($exp) use ($sql, $options) {
+			$query->where(function (QueryExpression $exp) use ($sql, $options) {
 				return $exp->lt($sql, $options['distance']);
 			});
 		}

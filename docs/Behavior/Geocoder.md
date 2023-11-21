@@ -88,7 +88,7 @@ We want to find all addresses within a distance of 200 km of the given lat/lng:
 // In a controller action
 $options = ['lat' => 13.3, 'lng' => 19.2, 'distance' => 200];
 
-$query = $this->Addresses->find('distance', $options);
+$query = $this->Addresses->find('distance', ...$options);
 $query->orderByAsc('distance');
 
 $addresses = $this->paginate($query);
@@ -103,7 +103,7 @@ You can also use `coordinates` as `Geocoder\Model\Coordinates` instead.
 $coordinates = new Coordinates(13.3, 19.2);
 $options = ['coordinates' => $coordinates, 'distance' => 200];
 
-$query = $this->Addresses->find('distance', $options);
+$query = $this->Addresses->find('distance', ...$options);
 ```
 
 ## Batch geocoding
