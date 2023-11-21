@@ -75,7 +75,7 @@ class GeocodedAddressesTable extends Table {
 	/**
 	 * @param string $address
 	 *
-	 * @return \Geo\Model\Entity\GeocodedAddress|bool
+	 * @return \Geo\Model\Entity\GeocodedAddress|false
 	 */
 	public function retrieve($address) {
 		/** @var \Geo\Model\Entity\GeocodedAddress|null $entity */
