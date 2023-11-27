@@ -14,16 +14,20 @@ use Geocoder\Formatter\StringFormatter;
 /**
  * GeocodedAddresses Model
  *
- * @method \Geo\Model\Entity\GeocodedAddress get($primaryKey, $options = [])
- * @method \Geo\Model\Entity\GeocodedAddress newEntity($data = null, array $options = [])
+ * @method \Geo\Model\Entity\GeocodedAddress get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
+ * @method \Geo\Model\Entity\GeocodedAddress newEntity(array $data, array $options = [])
  * @method array<\Geo\Model\Entity\GeocodedAddress> newEntities(array $data, array $options = [])
- * @method \Geo\Model\Entity\GeocodedAddress|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \Geo\Model\Entity\GeocodedAddress|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
  * @method \Geo\Model\Entity\GeocodedAddress patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method array<\Geo\Model\Entity\GeocodedAddress> patchEntities($entities, array $data, array $options = [])
- * @method \Geo\Model\Entity\GeocodedAddress findOrCreate($search, callable $callback = null, $options = [])
- * @method \Geo\Model\Entity\GeocodedAddress saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \Cake\Datasource\ResultSetInterface<\Geo\Model\Entity\GeocodedAddress>|false saveMany($entities, $options = [])
+ * @method array<\Geo\Model\Entity\GeocodedAddress> patchEntities(iterable $entities, array $data, array $options = [])
+ * @method \Geo\Model\Entity\GeocodedAddress findOrCreate($search, ?callable $callback = null, array $options = [])
+ * @method \Geo\Model\Entity\GeocodedAddress saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<\Geo\Model\Entity\GeocodedAddress>|false saveMany(iterable $entities, array $options = [])
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
+ * @method \Geo\Model\Entity\GeocodedAddress newEmptyEntity()
+ * @method \Cake\Datasource\ResultSetInterface<\Geo\Model\Entity\GeocodedAddress> saveManyOrFail(iterable $entities, array $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<\Geo\Model\Entity\GeocodedAddress>|false deleteMany(iterable $entities, array $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<\Geo\Model\Entity\GeocodedAddress> deleteManyOrFail(iterable $entities, array $options = [])
  */
 class GeocodedAddressesTable extends Table {
 
