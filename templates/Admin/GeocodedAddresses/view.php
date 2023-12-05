@@ -24,12 +24,8 @@
             <td><?= h($geocodedAddress->country) ?></td>
         </tr>
         <tr>
-            <th><?= __('Lat') ?></th>
-            <td><?= $this->Number->format($geocodedAddress->lat) ?></td>
-        </tr>
-        <tr>
-            <th><?= __('Lng') ?></th>
-            <td><?= $this->Number->format($geocodedAddress->lng) ?></td>
+            <th><?= __('Coordinates') ?></th>
+            <td><?= $geocodedAddress->lat && $geocodedAddress->lng ? $this->Number->format($geocodedAddress->lat) . ' / ' . $this->Number->format($geocodedAddress->lng) : '-' ?></td>
         </tr>
         <tr>
             <th><?= __('Data') ?></th>

@@ -21,8 +21,7 @@ use Cake\Core\Plugin; ?>
                 <th><?= $this->Paginator->sort('address') ?></th>
                 <th><?= $this->Paginator->sort('formatted_address') ?></th>
                 <th><?= $this->Paginator->sort('country') ?></th>
-                <th><?= $this->Paginator->sort('lat') ?></th>
-                <th><?= $this->Paginator->sort('lng') ?></th>
+                <th><?= __('Coordinates') ?></th>
                 <th class="actions"><?= __('Actions') ?></th>
             </tr>
         </thead>
@@ -32,12 +31,11 @@ use Cake\Core\Plugin; ?>
                 <td><?= h($geocodedAddress->address) ?></td>
                 <td><?= h($geocodedAddress->formatted_address) ?></td>
                 <td><?= h($geocodedAddress->country) ?></td>
-                <td><?= $this->Number->format($geocodedAddress->lat) ?></td>
-                <td><?= $this->Number->format($geocodedAddress->lng) ?></td>
+                <td><?= $geocodedAddress->lat && $geocodedAddress->lng ? $this->Number->format($geocodedAddress->lat) . ' / ' . $this->Number->format($geocodedAddress->lng) : '-' ?></td>
                 <td class="actions">
-                <?= $this->Html->link(Plugin::isLoaded('Tools') ? $this->Format->icon('view') : __('View'), ['action' => 'view', $geocodedAddress->id], ['escapeTitle' => false]); ?>
-                <?= $this->Html->link(Plugin::isLoaded('Tools') ? $this->Format->icon('edit') : __('Edit'), ['action' => 'edit', $geocodedAddress->id], ['escapeTitle' => false]); ?>
-                <?= $this->Form->postLink(Plugin::isLoaded('Tools') ? $this->Format->icon('delete') : __('Delete'), ['action' => 'delete', $geocodedAddress->id], ['escapeTitle' => false, 'confirm' => __('Are you sure you want to delete # {0}?', $geocodedAddress->id)]); ?>
+                <?= $this->Html->link(Plugin::isLoaded('Tools') ? $this->Icon->render('view') : __('View'), ['action' => 'view', $geocodedAddress->id], ['escapeTitle' => false]); ?>
+                <?= $this->Html->link(Plugin::isLoaded('Tools') ? $this->Icon->render('edit') : __('Edit'), ['action' => 'edit', $geocodedAddress->id], ['escapeTitle' => false]); ?>
+                <?= $this->Form->postLink(Plugin::isLoaded('Tools') ? $this->Icon->render('delete') : __('Delete'), ['action' => 'delete', $geocodedAddress->id], ['escapeTitle' => false, 'confirm' => __('Are you sure you want to delete # {0}?', $geocodedAddress->id)]); ?>
                 </td>
             </tr>
             <?php endforeach; ?>
