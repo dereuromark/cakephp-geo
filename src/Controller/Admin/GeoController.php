@@ -14,9 +14,9 @@ use Cake\ORM\Table;
 class GeoController extends AppController {
 
 	/**
-	 * @var string
+	 * @var string|null
 	 */
-	protected $modelClass = 'Geo.GeocodedAddresses';
+	protected ?string $defaultTable = 'Geo.GeocodedAddresses';
 
 	/**
 	 * @return void

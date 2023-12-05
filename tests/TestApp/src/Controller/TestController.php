@@ -5,8 +5,8 @@ namespace TestApp\Controller;
 class TestController extends AppController {
 
 	/**
-	 * @var string
+	 * @var string|null
 	 */
-	protected $modelClass = 'Geo.Addresses';
+	protected ?string $defaultTable = 'Geo.Addresses';
 
 }
