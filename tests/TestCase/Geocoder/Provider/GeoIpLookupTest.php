@@ -5,7 +5,6 @@ namespace Geo\Test\Geocoder;
 use Cake\TestSuite\TestCase;
 use Geo\Geocoder\Provider\GeoIpAddress;
 use Geo\Geocoder\Provider\GeoIpLookup;
-use Http\Adapter\Cake\Client;
 
 class GeoIpLookupTest extends TestCase {
 
@@ -20,7 +19,7 @@ class GeoIpLookupTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$client = new Client();
+		$client = new HttpClient();
 		$this->GeoIpLookup = new GeoIpLookup($client, 'User Agent');
 	}
 
