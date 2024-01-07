@@ -355,7 +355,7 @@ class Geocoder {
 
 		/** @var \Cake\Http\Client $adapterClass */
 		$adapterClass = $this->getConfig('adapter');
-		$this->adapter = new $adapterClass(new Client(), new ResponseFactory());
+		$this->adapter = new $adapterClass();
 
 		$provider = new GoogleMaps($this->adapter, $this->getConfig('region'), $this->getConfig('apiKey'));
 		$geocoder = new StatefulGeocoder($provider, $this->getConfig('locale') ?: 'en');
