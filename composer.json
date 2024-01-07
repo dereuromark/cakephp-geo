@@ -33,12 +33,13 @@
 		"geocoder-php/google-maps-provider": "^4.7.0",
 		"geocoder-php/nominatim-provider": "^5.7",
 		"geocoder-php/provider-implementation": "^1.0",
-		"php-http/cakephp-adapter": "^0.4.0",
 		"php-http/discovery": "^1.18.0",
-		"php-http/message": "^1.8.0",
+		"php-http/message": "^1.16.0",
+		"geocoder-php/common-http": "^4.6.0",
 		"phpunit/phpunit": "^10.1",
 		"psr/http-message": "2.0.x-dev as 1.0.0",
-		"willdurand/geocoder": "^4.6.0"
+		"willdurand/geocoder": "^4.6.0",
+		"symfony/http-client": "^6.0 || ^7.0"
 	},
 	"minimum-stability": "stable",
 	"prefer-stable": true,
@@ -59,6 +60,9 @@
 			"dealerdirect/phpcodesniffer-composer-installer": true,
 			"php-http/discovery": true
 		}
+	},
+	"conflict": {
+		"php-http/cakephp-adapter": "*"
 	},
 	"scripts": {
 		"cs-check": "phpcs --extensions=php",
