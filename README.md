@@ -37,7 +37,3 @@ See [Sandbox examples](https://sandbox.dereuromark.de/sandbox/geo-examples) for 
 ## Installation & Docs
 
 - [Documentation](docs/README.md)
-
-
-### Legacy versions
-Please see the original [Tools plugin](https://github.com/dereuromark/cakephp-tools) if you need the Geo tools for CakePHP 2.x versions.
