@@ -6,7 +6,9 @@ use Cake\Http\Client\Response;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 
-/** @deprecated Not in use anymore - directly use {@link \Cake\Http\Client} instead. */
+/**
+ * @deprecated Not in use anymore - directly use {@link \Cake\Http\Client} instead.
+ */
 class ResponseFactory implements ResponseFactoryInterface {
 
 	/**
