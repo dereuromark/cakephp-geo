@@ -50,7 +50,8 @@
 		}
 	},
 	"conflict": {
-		"php-http/cakephp-adapter": "*"
+		"php-http/cakephp-adapter": "*",
+		"php-http/discovery": "<1.15.1"
 	},
 	"scripts": {
 		"test": "phpunit",
