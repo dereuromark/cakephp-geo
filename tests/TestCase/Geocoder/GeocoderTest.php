@@ -2,11 +2,11 @@
 
 namespace Geo\Test\Geocoder;
 
+use Cake\Http\Client;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use Geo\Geocoder\Provider\GeoIpLookup;
 use Geocoder\Provider\Nominatim\Nominatim;
-use Http\Adapter\Cake\Client;
 use TestApp\Geocoder\Geocoder;
 
 class GeocoderTest extends TestCase {

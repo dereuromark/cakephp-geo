@@ -6,6 +6,7 @@
 
 namespace Geo\Geocoder\Provider;
 
+use Cake\Http\Client;
 use Cake\Utility\Xml;
 use Geocoder\Collection;
 use Geocoder\Exception\InvalidServerResponse;
@@ -16,7 +17,6 @@ use Geocoder\Model\AddressCollection;
 use Geocoder\Model\AdminLevel;
 use Geocoder\Query\GeocodeQuery;
 use Geocoder\Query\ReverseQuery;
-use Http\Client\HttpClient;
 
 /**
  * @author Mark Scherer
@@ -39,11 +39,11 @@ class GeoIpLookup extends AbstractHttpProvider {
 	protected $referer;
 
 	/**
-	 * @param \Http\Client\HttpClient $client an HTTP client
+	 * @param \Cake\Http\Client $client an HTTP client
 	 * @param string $userAgent Value of the User-Agent header
 	 * @param string $referer Value of the Referer header
 	 */
-	public function __construct(HttpClient $client, string $userAgent, string $referer = '') {
+	public function __construct(Client $client, string $userAgent, string $referer = '') {
 		parent::__construct($client);
 
 		$this->userAgent = $userAgent;
