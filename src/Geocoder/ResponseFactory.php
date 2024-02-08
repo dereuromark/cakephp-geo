@@ -3,14 +3,23 @@
 namespace Geo\Geocoder;
 
 use Cake\Http\Client\Response;
-use Http\Message\ResponseFactory as ResponseFactoryInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
 
+/**
+ * @deprecated Not in use anymore - directly use {@link \Cake\Http\Client} instead.
+ */
 class ResponseFactory implements ResponseFactoryInterface {
 
 	/**
-	 * @inheritDoc
+	 * @param int $code
+	 * @param string $reasonPhrase
+	 * @param array<string> $headers
+	 * @param string|null $body
+	 *
+	 * @return \Psr\Http\Message\ResponseInterface
 	 */
-	public function createResponse($statusCode = 200, $reasonPhrase = null, array $headers = [], $body = null, $protocolVersion = '1.1') {
+	public function createResponse(int $code = 200, string $reasonPhrase = '', array $headers = [], ?string $body = null): ResponseInterface {
 		return new Response($headers, (string)$body);
 	}
 

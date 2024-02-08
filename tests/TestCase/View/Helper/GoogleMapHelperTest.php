@@ -235,7 +235,7 @@ class GoogleMapHelperTest extends TestCase {
 			'title' => '<b>Yeah!</b>',
 		];
 		$is = $this->GoogleMap->staticMap($options, $attr);
-		$expected = '<img src="//maps.google.com/maps/api/staticmap?size=200x100&amp;format=png&amp;mobile=false&amp;center=1&amp;maptype=roadmap" title="&lt;b&gt;Yeah!&lt;/b&gt;" alt="Map"/>';
+		$expected = '<img src="//maps.google.com/maps/api/staticmap?size=200x100&amp;format=png&amp;mobile=false&amp;center=1&amp;maptype=roadmap" title="&lt;b&gt;Yeah!&lt;/b&gt;" alt="Map">';
 		$this->assertSame($expected, $is);
 
 		$pos = [

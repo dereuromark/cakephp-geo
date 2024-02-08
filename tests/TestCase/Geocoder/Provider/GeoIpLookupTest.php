@@ -2,10 +2,10 @@
 
 namespace Geo\Test\Geocoder;
 
+use Cake\Http\Client;
 use Cake\TestSuite\TestCase;
 use Geo\Geocoder\Provider\GeoIpAddress;
 use Geo\Geocoder\Provider\GeoIpLookup;
-use Http\Adapter\Cake\Client;
 
 class GeoIpLookupTest extends TestCase {
 
