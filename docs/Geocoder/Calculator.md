@@ -4,23 +4,27 @@
 ## Distance calculation
 
 ```php
-$distance = this->Calculator->distance($lat, $lng);
+$calculator = new \Geo\Geocoder\Calculator();
+$distance = $calculator->distance(array $pointX, array $pointY);
 ```
 
 Distance in miles instead:
 ```php
-$distance = this->Calculator->distance($lat, $lng, Calculator::UNIT_MILES);
+$calculator = new \Geo\Geocoder\Calculator();
+$distance = $calculator->distance(array $pointX, array $pointY, Calculator::UNIT_MILES);
 ```
 
 ## Blur coordinates
 The idea is to secure the user's exact coordinates and hide them by blurring them to a certain degree.
 
 ```php
-$distance = this->Calculator->blur($lat, $lng, 2);
+$calculator = new \Geo\Geocoder\Calculator();
+$distance = $calculator->blur($float, 2);
 ```
 
 ## Convert distances
 
 ```php
-$newDistance = this->Calculator->convert($oldDistance, $from, $to);
+$calculator = new \Geo\Geocoder\Calculator();
+$newDistance = $calculator->convert($value, $fromUnit, $toUnit);
 ```

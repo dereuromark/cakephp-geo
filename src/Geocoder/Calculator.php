@@ -87,7 +87,7 @@ class Calculator {
 	 * @throws \Exception
 	 * @return float convertedValue
 	 */
-	public function convert($value, $fromUnit, $toUnit) {
+	public function convert(float $value, string $fromUnit, string $toUnit): float {
 		$fromUnit = strtoupper($fromUnit);
 		$toUnit = strtoupper($toUnit);
 
@@ -122,7 +122,7 @@ class Calculator {
 	 * @param string|null $unit Unit char or constant (M=miles, K=kilometers, N=nautical miles, I=inches, F=feet)
 	 * @return int Distance in km
 	 */
-	public function distance(array $pointX, array $pointY, $unit = null) {
+	public function distance(array $pointX, array $pointY, ?string $unit = null): int {
 		if (empty($unit)) {
 			$unit = array_keys($this->_units);
 			$unit = $unit[0];
@@ -141,13 +141,18 @@ class Calculator {
 	}
 
 	/**
-	 * Geocoder::calculateDistance()
-	 *
-	 * @param \ArrayObject|array $pointX
-	 * @param \ArrayObject|array $pointY
+	 * @param \ArrayObject|\Geo\Geocoder\GeoCoordinate|array $pointX
+	 * @param \ArrayObject|\Geo\Geocoder\GeoCoordinate|array $pointY
 	 * @return float
 	 */
 	public static function calculateDistance($pointX, $pointY) {
+		if ($pointX instanceof GeoCoordinate) {
+			$pointX = $pointX->toArray(true);
+		}
+		if ($pointY instanceof GeoCoordinate) {
+			$pointY = $pointY->toArray(true);
+		}
+
 		$res = 69.09 * rad2deg(acos(sin(deg2rad($pointX['lat'])) * sin(deg2rad($pointY['lat']))
 			+ cos(deg2rad($pointX['lat'])) * cos(deg2rad($pointY['lat'])) * cos(deg2rad($pointX['lng']
 			- $pointY['lng']))));
@@ -165,7 +170,7 @@ class Calculator {
 	 * @throws \Exception
 	 * @return float Coordinates
 	 */
-	public static function blur($coordinate, $level = 0) {
+	public static function blur(float $coordinate, int $level = 0): float {
 		if (!$level) {
 			return $coordinate;
 		}
@@ -173,9 +178,6 @@ class Calculator {
 		$scrambleVal = 0.000001 * mt_rand(10, 200) * pow(2, $level) * (mt_rand(0, 1) === 0 ? 1 : -1);
 
 		return $coordinate + $scrambleVal;
-
-		//$scrambleVal *= (float)(2^$level);
-		// TODO: + - by chance!!!
 	}
 
 }

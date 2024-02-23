@@ -7,6 +7,7 @@
 * [Geocoder behavior](Behavior/Geocoder.md)
 * [Geocoder lib](Geocoder/Geocoder.md)
 * [Calculator lib](Geocoder/Calculator.md)
+* [Geo lib](Geocoder/Geo.md)
 * [GoogleMap helper](Helper/GoogleMap.md)
 * [GeocodedAddresses result cache](Model/GeocodedAddresses.md)
 
