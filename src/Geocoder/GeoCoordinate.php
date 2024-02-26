@@ -2,7 +2,11 @@
 
 namespace Geo\Geocoder;
 
-class GeoCoordinate implements \Stringable {
+use InvalidArgumentException;
+use JsonSerializable;
+use Stringable;
+
+class GeoCoordinate implements JsonSerializable, Stringable {
 
 	protected float $latitude;
 
@@ -56,10 +60,39 @@ class GeoCoordinate implements \Stringable {
 	}
 
 	/**
+	 * @param string $coordinate
+	 *
+	 * @return static
+	 */
+	public static function fromString(string $coordinate): static {
+		if (!str_contains($coordinate, ',')) {
+			throw new InvalidArgumentException('Coordinate must be in format: lat,lng');
+		}
+
+		[$lat, $lng] = explode(',', $coordinate);
+
+		return new static($lat, $lng);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function toString(): string {
+		return $this->latitude . ',' . $this->longitude;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function __toString(): string {
-		return $this->latitude . ',' . $this->longitude;
+		return $this->toString();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function jsonSerialize(): string {
+		return $this->toString();
 	}
 
 }
