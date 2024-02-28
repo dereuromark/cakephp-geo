@@ -254,6 +254,73 @@ class GeocoderBehaviorTest extends TestCase {
 		$res = $this->Addresses->save($entity);
 
 		$this->assertTrue(!empty($res));
+		$this->assertSame('Bibersfeld', $res->geocoder_result['address_data']);
+	}
+	/**
+	 * @return void
+	 */
+	public function testAddressClosure() {
+		$this->Addresses->removeBehavior('Geocoder');
+		$this->Addresses->addBehavior('Geocoder', [
+			'address' => [
+				'street',
+				'zip',
+				'city',
+				function($entity) {
+					if ($entity->country && $entity->country->id && $entity->country_id) {
+						return $entity->country->name;
+					}
+					if ($entity->get('country_name')) {
+						return $entity->get('country_name');
+					}
+
+					if ($entity->country_id) {
+						// One can use this, but we fake it for simplicity of the test
+						//$country = TableRegistry::getTableLocator('Countries')->get($entity->country_id);
+						return 'Deutschland';
+					}
+
+					return null;
+				},
+			],
+		]);
+
+		$data = [
+			'street' => 'Krebenweg 22',
+			'zip' => '74523',
+			'city' => 'Bibersfeld',
+			'country_id' => 1,
+		];
+		$entity = $this->_getEntity($data);
+		$res = $this->Addresses->save($entity);
+
+		$this->assertTrue(!empty($res['lat']) && !empty($res['lng']));
+		$this->assertTrue(round($res['lat']) === 49.0 && round($res['lng']) === 10.0);
+
+		$this->assertSame('Deutschland', $res->geocoder_result['country']);
+		$this->assertSame('DE', $res->geocoder_result['countryCode']);
+		$this->assertSame('Krebenweg 22 74523 Bibersfeld Deutschland', $res->geocoder_result['address_data']);
+
+		// inconclusive
+		$data = [
+			//'street' => 'Leopoldstraße',
+			'city' => 'München',
+		];
+		$entity = $this->_getEntity($data);
+		$res = $this->Addresses->save($entity);
+
+		$this->assertTrue(!empty($res['lat']) && !empty($res['lng']));
+		//FIXME
+		$this->assertStringContainsString('München', $res['formatted_address']);
+		//$this->assertEquals('München, Deutschland', $res['formatted_address']);
+
+		$data = [
+			'city' => 'Bibersfeld',
+		];
+		$entity = $this->_getEntity($data);
+		$res = $this->Addresses->save($entity);
+
+		$this->assertTrue(!empty($res));
 	}
 
 	/**
