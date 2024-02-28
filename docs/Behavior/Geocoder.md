@@ -15,7 +15,8 @@ Possible config options are:
 - locale (for example DE)
 - region (for some providers
 - ssl (for some providers)
-- address: (array|string, optional) set to the field name that contains the string from where to generate the slug, or a set of field names to concatenate for generating the slug.
+- address: (array|string, optional) set to the field name that contains the string from where
+  to generate the slug, or a set of field names to concatenate for generating the slug.
 - overwrite: lat/lng overwrite existing coordinates, defaults to true
 - update: what fields to update (key=>value array pairs)
 - on: beforeMarshal/afterMarshal/beforeSave (defaults to beforeSave) - Set to false if you only want to use the validation rules etc
@@ -29,10 +30,10 @@ Possible config options are:
 Note that it is usually better to set global configs in your `app.php` using the `Geocoder` key.
 
 ## Configure your own Geocoder
-By default it will use the GoogleMaps provider.
+By default, it will use the GoogleMaps provider.
 
 Please see [geocoder-php/Geocoder](https://github.com/geocoder-php/Geocoder) library on what other providers you can use out of the box.
-You can chose from
+You can choose from
 - 12+ address-based Geocoder providers
 - 10+ IP-based Geocoder providers
 
@@ -104,6 +105,39 @@ $coordinates = new Coordinates(13.3, 19.2);
 $options = ['coordinates' => $coordinates, 'distance' => 200];
 
 $query = $this->Addresses->find('distance', ...$options);
+```
+When using the plugin's native `GeoCoordinate` value object, use
+```php
+$geoCoordinate = new GeoCoordinate(13.3, 19.2);
+$coordinates = $geoCoordinate->toGeocoderCoordinates();
+$options = ['coordinates' => $coordinates, 'distance' => 200];
+```
+
+### Address elements as closure
+Sometimes, you need to have more logic for a specific address field.
+In this case you can use a closure to make dynamic lookups where needed.
+
+Example: Cities and their Countries when saving a city (cities/add or cities/edit/ID).
+
+```php
+$this->addBehavior('Geo.Geocoder', [
+    'address' => ['street', 'postal_code', 'city', function(City $entity) {
+        // If there is a matching relation
+        if ($entity->country && $entity->country->id && $entity->country_id) {
+            return $entity->country->name;
+        }
+        // If there is a virtual or tmp field
+        if ($entity->get('country_name')) {
+            return $entity->get('country_name');
+        }
+        // Do an actual DB lookup with the ID given in the form
+        if ($entity->country_id) {
+            $country = $this->Countries->get($entity->country_id);
+            return $country->name;
+        }
+
+        return null;
+    }]]);
 ```
 
 ## Batch geocoding

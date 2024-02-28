@@ -232,14 +232,28 @@ class GeocoderBehavior extends Behavior {
 		$addressData = [];
 		$dirty = false;
 		foreach ($addressFields as $field) {
-			$fieldData = $entity->get($field);
+			$isClosure = $field instanceof \Closure;
+			if ($isClosure) {
+				$fieldData = $field($entity);
+			} else {
+				$fieldData = $entity->get($field);
+			}
 			if ($fieldData) {
 				$addressData[] = $fieldData;
+			}
+
+			if ($isClosure) {
+				if ($fieldData) {
+					$dirty = true;
+				}
+
+				continue;
 			}
 			if ($entity->isDirty($field)) {
 				$dirty = true;
 			}
 		}
+
 		if (!$dirty) {
 			if (
 				$this->_config['allowEmpty'] ||

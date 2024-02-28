@@ -2,6 +2,7 @@
 
 namespace Geo\Geocoder;
 
+use Geocoder\Model\Coordinates;
 use InvalidArgumentException;
 use JsonSerializable;
 use Stringable;
@@ -57,6 +58,22 @@ class GeoCoordinate implements JsonSerializable, Stringable {
 		$lng = $data['longitude'] ?? $data['lng'];
 
 		return new static($lat, $lng);
+	}
+
+	/**
+	 * @param \Geocoder\Model\Coordinates $coordinates
+	 *
+	 * @return static
+	 */
+	public function fromGeocoderCoordinates(Coordinates $coordinates): static {
+		return new static($coordinates->getLatitude(), $coordinates->getLongitude());
+	}
+
+	/**
+	 * @return \Geocoder\Model\Coordinates
+	 */
+	public function toGeocoderCoordinates(): Coordinates {
+		return new Coordinates($this->latitude, $this->longitude);
 	}
 
 	/**
