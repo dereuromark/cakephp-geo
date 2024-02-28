@@ -121,7 +121,7 @@ Example: Cities and their Countries when saving a city (cities/add or cities/edi
 
 ```php
 $this->addBehavior('Geo.Geocoder', [
-    'address' => ['street', 'postal_code', 'city', function(City $entity) {
+    'address' => ['street', 'postal_code', 'city', function (City $entity) {
         // If there is a matching relation
         if ($entity->country && $entity->country->id && $entity->country_id) {
             return $entity->country->name;
