@@ -30,7 +30,7 @@
 		"geocoder-php/google-maps-provider": "^4.4.0",
 		"geocoder-php/nominatim-provider": "^5.1",
 		"dereuromark/cakephp-tools": "^2.0.0",
-		"fig-r/psr2r-sniffer": "dev-master",
+		"fig-r/psr2r-sniffer": "^1.5.1",
 		"phpunit/phpunit": "^9.5",
 		"symfony/http-client": "^6.0 || ^7.0"
 	},
