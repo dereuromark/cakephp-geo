@@ -1,6 +1,6 @@
 <?php
 
-namespace Geo\Test\Database\Type;
+namespace Geo\Test\TestCase\Database\Type;
 
 use Cake\Database\Driver\Sqlite;
 use Cake\I18n\DateTime;

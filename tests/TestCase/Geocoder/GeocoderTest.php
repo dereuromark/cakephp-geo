@@ -1,6 +1,6 @@
 <?php
 
-namespace Geo\Test\Geocoder;
+namespace Geo\Test\TestCase\Geocoder;
 
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;

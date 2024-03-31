@@ -1,6 +1,6 @@
 <?php
 
-namespace Geo\Test\Model\Behavior;
+namespace Geo\Test\TestCase\Model\Behavior;
 
 use Cake\Core\Configure;
 use Cake\Database\Driver\Mysql;

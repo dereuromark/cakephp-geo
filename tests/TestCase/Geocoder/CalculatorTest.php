@@ -1,6 +1,6 @@
 <?php
 
-namespace Geo\Test\Geocoder;
+namespace Geo\Test\TestCase\Geocoder;
 
 use Cake\TestSuite\TestCase;
 use Geo\Geocoder\Calculator;

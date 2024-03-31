@@ -1,6 +1,6 @@
 <?php
 
-namespace Geo\Test\Geocoder;
+namespace Geo\Test\TestCase\Geocoder\Provider;
 
 use Cake\Http\Client;
 use Cake\TestSuite\TestCase;

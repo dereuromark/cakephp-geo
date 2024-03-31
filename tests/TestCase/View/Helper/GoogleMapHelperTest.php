@@ -1,6 +1,6 @@
 <?php
 
-namespace Geo\Test\View\Helper;
+namespace Geo\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
