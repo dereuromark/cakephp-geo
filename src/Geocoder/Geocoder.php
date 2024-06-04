@@ -133,23 +133,23 @@ class Geocoder {
 	protected $adapter;
 
 	/**
-	 * @param array $config
+	 * @param array<string, mixed> $config
 	 */
 	public function __construct(array $config = []) {
 		$defaults = (array)Configure::read('Geocoder');
 		$this->setConfig($config + $defaults);
 
 		if ($this->getConfig('locale') === true) {
-			$this->setConfig('locale', strtolower(Locale::getPrimaryLanguage(I18n::getLocale())));
+			$this->setConfig('locale', strtolower((string)Locale::getPrimaryLanguage(I18n::getLocale())));
 		}
 
 		if ($this->getConfig('region') === true) {
-			$this->setConfig('region', strtolower(Locale::getRegion(I18n::getLocale())));
+			$this->setConfig('region', strtolower((string)Locale::getRegion(I18n::getLocale())));
 		}
 	}
 
 	/**
-	 * @return array
+	 * @return array<string, string>
 	 */
 	public function accuracyTypes() {
 		$array = [

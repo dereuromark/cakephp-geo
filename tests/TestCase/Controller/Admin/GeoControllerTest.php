@@ -14,7 +14,7 @@ class GeoControllerTest extends TestCase {
 	use IntegrationTestTrait;
 
 	/**
-	 * @var array
+	 * @var array<string>
 	 */
 	protected array $fixtures = [
 		'plugin.Geo.GeocodedAddresses',
