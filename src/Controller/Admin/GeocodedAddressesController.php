@@ -32,9 +32,7 @@ class GeocodedAddressesController extends AppController {
 	 * @return \Cake\Http\Response|null|void
 	 */
 	public function view($id = null) {
-		$geocodedAddress = $this->GeocodedAddresses->get($id, [
-			'contain' => [],
-		]);
+		$geocodedAddress = $this->GeocodedAddresses->get($id);
 
 		$this->set('geocodedAddress', $geocodedAddress);
 	}
@@ -73,9 +71,7 @@ class GeocodedAddressesController extends AppController {
 	 * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
 	 */
 	public function edit($id = null) {
-		$geocodedAddress = $this->GeocodedAddresses->get($id, [
-			'contain' => [],
-		]);
+		$geocodedAddress = $this->GeocodedAddresses->get($id);
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$geocodedAddress = $this->GeocodedAddresses->patchEntity($geocodedAddress, $this->request->getData());
 			if ($this->GeocodedAddresses->save($geocodedAddress)) {
