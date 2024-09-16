@@ -2,7 +2,6 @@
 
 namespace Geo\Test\TestCase\Controller\Admin;
 
-use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -26,7 +25,7 @@ class GeoControllerTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		Router::reload();
+		$this->loadPlugins(['Geo']);
 	}
 
 	/**
