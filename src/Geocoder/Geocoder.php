@@ -9,6 +9,7 @@ use Cake\I18n\I18n;
 use Geo\Exception\InconclusiveException;
 use Geo\Exception\NotAccurateEnoughException;
 use Geocoder\Exception\CollectionIsEmpty;
+use Geocoder\Exception\InvalidServerResponse;
 use Geocoder\Location;
 use Geocoder\Model\AddressCollection;
 use Geocoder\Provider\GoogleMaps\GoogleMaps;
@@ -16,6 +17,7 @@ use Geocoder\Query\GeocodeQuery;
 use Geocoder\Query\ReverseQuery;
 use Geocoder\StatefulGeocoder;
 use Locale;
+use RuntimeException;
 
 /**
  * Geocode via google (UPDATE: api3)
@@ -140,11 +142,11 @@ class Geocoder {
 		$this->setConfig($config + $defaults);
 
 		if ($this->getConfig('locale') === true) {
-			$this->setConfig('locale', strtolower(Locale::getPrimaryLanguage(I18n::getLocale())));
+			$this->setConfig('locale', strtolower((string)Locale::getPrimaryLanguage(I18n::getLocale())));
 		}
 
 		if ($this->getConfig('region') === true) {
-			$this->setConfig('region', strtolower(Locale::getRegion(I18n::getLocale())));
+			$this->setConfig('region', strtolower((string)Locale::getRegion(I18n::getLocale())));
 		}
 	}
 
@@ -189,6 +191,8 @@ class Geocoder {
 			$result = $this->geocoder->geocodeQuery(GeocodeQuery::create($address));
 		} catch (CollectionIsEmpty $e) {
 			throw new InconclusiveException(sprintf('Inconclusive result (total of %s)', 0), 0, $e);
+		} catch (InvalidServerResponse $e) {
+			throw new RuntimeException(sprintf('Problem with API key `%s`', $this->getConfig('apiKey')) . ': ' . $e->getMessage(), 0, $e);
 		}
 
 		if (!$this->_config['allowInconclusive'] && !$this->isConclusive($result)) {
