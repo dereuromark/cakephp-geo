@@ -73,7 +73,7 @@ jobs:
             vendor/bin/phpunit
           fi
       - name: Validate prefer-lowest
-        if: matrix.prefer-lowest == 'prefer-lowest
+        if: matrix.prefer-lowest == 'prefer-lowest'
         run: vendor/bin/validate-prefer-lowest -m
 
       - name: Upload coverage reports to Codecov
