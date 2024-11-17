@@ -38,7 +38,7 @@ trait JsBaseEngineTrait {
 	/**
 	 * Contains a list of callback names -> default arguments.
 	 *
-	 * @var array
+	 * @var array<string, array<string, mixed>>
 	 */
 	protected array $_callbackArguments = [];
 
@@ -296,7 +296,7 @@ trait JsBaseEngineTrait {
 	 * does not include `{ }`
 	 *
 	 * @param array<string, mixed> $options Options to be converted
-	 * @param array $safeKeys Keys that should not be escaped.
+	 * @param array<string> $safeKeys Keys that should not be escaped.
 	 * @return string Parsed JSON options without enclosing { }.
 	 */
 	protected function _parseOptions($options, $safeKeys = []) {
@@ -319,10 +319,10 @@ trait JsBaseEngineTrait {
 	 *
 	 * @param string $method Name of the method you are preparing callbacks for.
 	 * @param array<string, mixed> $options Array of options being parsed
-	 * @param array $callbacks Additional Keys that contain callbacks
+	 * @param array<string> $callbacks Additional Keys that contain callbacks
 	 * @return array Array of options with callbacks added.
 	 */
-	protected function _prepareCallbacks($method, $options, $callbacks = []) {
+	protected function _prepareCallbacks($method, $options, array $callbacks = []) {
 		$wrapCallbacks = true;
 		if (isset($options['wrapCallbacks'])) {
 			$wrapCallbacks = $options['wrapCallbacks'];
@@ -335,7 +335,7 @@ trait JsBaseEngineTrait {
 		if (isset($this->_callbackArguments[$method])) {
 			$callbackOptions = $this->_callbackArguments[$method];
 		}
-		$callbacks = array_unique(array_merge(array_keys($callbackOptions), (array)$callbacks));
+		$callbacks = array_unique(array_merge(array_keys($callbackOptions), $callbacks));
 
 		foreach ($callbacks as $callback) {
 			if (empty($options[$callback])) {

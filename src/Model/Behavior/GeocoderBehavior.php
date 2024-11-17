@@ -115,7 +115,7 @@ class GeocoderBehavior extends Behavior {
 	 * you should override the constructor.
 	 *
 	 * @param \Cake\ORM\Table $table The table this behavior is attached to.
-	 * @param array $config The config for this behavior.
+	 * @param array<string, mixed> $config The config for this behavior.
 	 */
 	public function __construct(Table $table, array $config = []) {
 		$defaults = (array)Configure::read('Geocoder');

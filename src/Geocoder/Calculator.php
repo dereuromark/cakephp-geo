@@ -67,7 +67,7 @@ class Calculator {
 	];
 
 	/**
-	 * @param array $config
+	 * @param array<string, mixed> $config
 	 */
 	public function __construct(array $config = []) {
 		$this->setConfig($config);
@@ -117,8 +117,8 @@ class Calculator {
 	 * 'SIN( PI()/2 - RADIANS(90 - '. $data['Location']['lat'] . '))) ' .
 	 * 'AS distance'
 	 *
-	 * @param array $pointX
-	 * @param array $pointY
+	 * @param array<string, mixed> $pointX
+	 * @param array<string, mixed> $pointY
 	 * @param string|null $unit Unit char or constant (M=miles, K=kilometers, N=nautical miles, I=inches, F=feet)
 	 * @return int Distance in km
 	 */
@@ -141,8 +141,8 @@ class Calculator {
 	}
 
 	/**
-	 * @param \ArrayObject|\Geo\Geocoder\GeoCoordinate|array $pointX
-	 * @param \ArrayObject|\Geo\Geocoder\GeoCoordinate|array $pointY
+	 * @param \Geo\Geocoder\GeoCoordinate|array<string, mixed> $pointX
+	 * @param \Geo\Geocoder\GeoCoordinate|array<string, mixed> $pointY
 	 * @return float
 	 */
 	public static function calculateDistance($pointX, $pointY) {

@@ -513,7 +513,7 @@ class GeocoderBehaviorTest extends TestCase {
 	/**
 	 * Gets a new Entity
 	 *
-	 * @param array $data
+	 * @param array<string, mixed> $data
 	 * @return \Cake\ORM\Entity
 	 */
 	protected function _getEntity($data) {

@@ -7,7 +7,6 @@ use Cake\Core\Exception\CakeException;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\View\Helper;
-use Cake\View\View;
 
 /**
  * This is a CakePHP helper that helps users to integrate GoogleMap v3
@@ -285,20 +284,7 @@ class GoogleMapHelper extends Helper {
 	protected $_gearsIncluded = false;
 
 	/**
-	 * @var bool
-	 */
-	protected $_located = false;
-
-	/**
-	 * @param \Cake\View\View $View
-	 * @param array $config
-	 */
-	public function __construct(View $View, array $config = []) {
-		parent::__construct($View, $config);
-	}
-
-	/**
-	 * @param array $config
+	 * @param array<string, mixed> $config
 	 * @return void
 	 */
 	public function initialize(array $config): void {
@@ -366,7 +352,7 @@ class GoogleMapHelper extends Helper {
 	 * You can adds more after the URL like "&key=value&..." via
 	 * - query string array: additional query strings (e.g. callback for deferred execution - not supported yet by this helper)
 	 *
-	 * @param array $query
+	 * @param array<string, mixed> $query
 	 * @return string Full URL
 	 */
 	public function apiUrl(array $query = []) {
@@ -701,7 +687,7 @@ function geocodeAddress(address) {
 	 *
 	 * @param mixed $directions
 	 * - bool TRUE for autoDirections (using lat/lng)
-	 * @param array $markerOptions
+	 * @param array<string, mixed> $markerOptions
 	 * - options array of marker for autoDirections etc (optional)
 	 * @return string HTML
 	 */
@@ -844,8 +830,8 @@ function geocodeAddress(address) {
 	 *
 	 * @param string $image Image Url (https://...)
 	 * @param string|null $shadow ShadowImage Url (https://...)
-	 * @param array $imageOptions Image options
-	 * @param array $shadowOptions Shadow image options
+	 * @param array<string, mixed> $imageOptions Image options
+	 * @param array<string, mixed> $shadowOptions Shadow image options
 	 * @return array Resulting array
 	 */
 	public function addIcon($image, $shadow = null, array $imageOptions = [], array $shadowOptions = []) {
@@ -879,7 +865,7 @@ function geocodeAddress(address) {
 	 * - anchor: array(width=>x, height=>y)
 	 * @return int Icon count
 	 */
-	public function icon($url, array $options = []) {
+	public function icon(string $url, array $options = []) {
 		// The shadow image is larger in the horizontal dimension
 		// while the position and offset are the same as for the main image.
 		if (empty($options['size'])) {
@@ -1361,8 +1347,8 @@ function geocodeAddress(address) {
 	 * Returns a maps.google link
 	 *
 	 * @param string $title Link title
-	 * @param array $mapOptions
-	 * @param array $linkOptions
+	 * @param array<string, mixed> $mapOptions
+	 * @param array<string, mixed> $linkOptions
 	 * @return string HTML link
 	 */
 	public function mapLink($title, $mapOptions = [], $linkOptions = []) {
@@ -1433,7 +1419,7 @@ function geocodeAddress(address) {
 	 * - string $visible: $area (x|y|...)
 	 * - array $paths [optional, @see staticPaths() method]
 	 * - string $language [optional]
-	 * @param array $attributes HTML attributes for the image
+	 * @param array<string, mixed> $attributes HTML attributes for the image
 	 * - title
 	 * - alt (defaults to 'Map')
 	 * - url (tip: you can pass $this->link(...) and it will create a link to maps.google.com)
@@ -1450,8 +1436,8 @@ function geocodeAddress(address) {
 	 * Create a link to a plain image map
 	 *
 	 * @param string $title Link title
-	 * @param array $mapOptions
-	 * @param array $linkOptions
+	 * @param array<string, mixed> $mapOptions
+	 * @param array<string, mixed> $linkOptions
 	 * @return string HTML link
 	 */
 	public function staticMapLink($title, array $mapOptions = [], array $linkOptions = []) {
