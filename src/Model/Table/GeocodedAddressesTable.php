@@ -49,6 +49,8 @@ class GeocodedAddressesTable extends Table {
 		$this->setDisplayField('address');
 		$this->setPrimaryKey('id');
 
+		$this->getSchema()->setColumnType('data', 'object');
+
 		$this->addBehavior('Timestamp');
 	}
 
@@ -64,16 +66,6 @@ class GeocodedAddressesTable extends Table {
 	 */
 	public function clearAll() {
 		return $this->deleteAll('1=1');
-	}
-
-	/**
-	 * @return \Cake\Database\Schema\TableSchemaInterface
-	 */
-	public function getSchema(): TableSchemaInterface {
-		$schema = parent::getSchema();
-		$schema->setColumnType('data', 'object');
-
-		return $schema;
 	}
 
 	/**
