@@ -9,5 +9,4 @@ parameters:
 	checkGenericClassInNonGenericObjectType: false
 	ignoreErrors:
 		- '#Access to an undefined property .+EntityInterface::\$geo.+.#'
-		- '#Cannot assign offset int\|string to ArrayObject\|.+GeocodedAddress.#'
 		- '#Unsafe usage of new static\(\)#'
