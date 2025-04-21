@@ -5,8 +5,8 @@ parameters:
 	bootstrapFiles:
 		- tests/bootstrap.php
 		- tests/shim.php
-	checkMissingIterableValueType: false
-	checkGenericClassInNonGenericObjectType: false
 	ignoreErrors:
+		- identifier: missingType.iterableValue
+		- identifier: missingType.generics
 		- '#Access to an undefined property .+EntityInterface::\$geo.+.#'
 		- '#Unsafe usage of new static\(\)#'
