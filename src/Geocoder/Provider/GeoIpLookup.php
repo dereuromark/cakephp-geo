@@ -122,9 +122,9 @@ class GeoIpLookup extends AbstractHttpProvider {
 			throw new InvalidServerResponse(sprintf('Could not execute query %s', $address));
 		}
 
-		/** @var \DOMDocument|\SimpleXMLElement|null $data */
+		/** @var \DOMDocument|\SimpleXMLElement $data */
 		$data = Xml::build($response);
-		if ($data === null || empty($data->results)) {
+		if (empty($data->results)) {
 			return new AddressCollection([]);
 		}
 
