@@ -16,7 +16,7 @@ If we have a search form with a field `locality_search`, we can easily add some 
         $GeocodedAddresses = TableRegistry::getTableLocator()->get('Geo.GeocodedAddresses');
         $address = $GeocodedAddresses->retrieve($args['locality_search']);
         if ($address && $address->lat && $address->lng) {
-            $query->find('distance', [
+            $query->find('distance', ...[
                 'lat' => $address->lat,
                 'lng' => $address->lng,
                 'tableName' => 'Events',

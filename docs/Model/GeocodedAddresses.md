@@ -29,7 +29,7 @@ Don't forget to add the Type mapping of `Geo\Database\Type\ObjectType` in your b
 ```php
 TypeFactory::map('object', 'Geo\Database\Type\ObjectType');
 ```
-(see cookbook: https://book.cakephp.org/3.0/en/orm/database-basics.html#adding-custom-types) 
+(see cookbook: https://book.cakephp.org/3.0/en/orm/database-basics.html#adding-custom-types)
 
 If you need more complex solutions, you can also manually put the Geocoder and the GeocodedAddresses Table classes together.
 
@@ -43,9 +43,9 @@ If you use [Search](https://github.com/FriendsOfCake/search) plugin, the followi
             $GeocodedAddresses = TableRegistry::getTableLocator()->get('Geo.GeocodedAddresses');
             $address = $GeocodedAddresses->retrieve($args['location']);
             if ($address && $address->lat && $address->lng) {
-                $query->find('distance', ['lat' => $address->lat, 'lng' => $address->lng, 'tableName' => 'MyTableName', 'distance' => 100, 'sort' => false]);
+                $query->find('distance', ...['lat' => $address->lat, 'lng' => $address->lng, 'tableName' => 'MyTableName', 'distance' => 100, 'sort' => false]);
             }
         }
     },
 ])
-```       
+```
