@@ -146,7 +146,7 @@ class GeocoderBehavior extends Behavior {
 	 * @param \ArrayObject $options
 	 * @return void
 	 */
-	public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options) {
+	public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void {
 		if ($this->_config['on'] === 'beforeMarshal') {
 			$addressFields = (array)$this->_config['address'];
 
@@ -185,7 +185,7 @@ class GeocoderBehavior extends Behavior {
 	 * @param \ArrayObject $options the options passed to the save method
 	 * @return void
 	 */
-	public function beforeRules(EventInterface $event, EntityInterface $entity, ArrayObject $options) {
+	public function beforeRules(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		if ($this->_config['on'] === 'beforeRules') {
 			if (!$this->geocode($entity)) {
 				$event->setResult(false);
@@ -200,7 +200,7 @@ class GeocoderBehavior extends Behavior {
 	 * @param \ArrayObject $options the options passed to the save method
 	 * @return void
 	 */
-	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options) {
+	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		if ($this->_config['on'] === 'beforeSave') {
 			if (!$this->geocode($entity)) {
 				$event->setResult(false);
