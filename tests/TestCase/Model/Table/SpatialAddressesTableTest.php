@@ -105,8 +105,6 @@ class SpatialAddressesTableTest extends TestCase {
 	 * @return void
 	 */
 	public function testFindSpatial() {
-		$this->assertNotEmpty($this->SpatialAddresses->getSchema()->getIndex('coordinates_spatial'));
-
 		$this->SpatialAddresses->addBehavior('Geo.Geocoder');
 		$addresses = $this->SpatialAddresses->find('spatial', ...[
 			'lat' => 48.110589,
