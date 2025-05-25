@@ -9,22 +9,22 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 
 /**
- * GeocodedAddresses Model
+ * SpatialAddresses Model
  *
- * @method \Geo\Model\Entity\GeocodedAddress get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
- * @method \Geo\Model\Entity\GeocodedAddress newEntity(array $data, array $options = [])
- * @method array<\Geo\Model\Entity\GeocodedAddress> newEntities(array $data, array $options = [])
- * @method \Geo\Model\Entity\GeocodedAddress|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method \Geo\Model\Entity\GeocodedAddress patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method array<\Geo\Model\Entity\GeocodedAddress> patchEntities(iterable $entities, array $data, array $options = [])
- * @method \Geo\Model\Entity\GeocodedAddress findOrCreate($search, ?callable $callback = null, array $options = [])
- * @method \Geo\Model\Entity\GeocodedAddress saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method \Cake\Datasource\ResultSetInterface<\Geo\Model\Entity\GeocodedAddress>|false saveMany(iterable $entities, array $options = [])
+ * @method \TestApp\Model\Entity\SpatialAddress get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
+ * @method \TestApp\Model\Entity\SpatialAddress newEntity(array $data, array $options = [])
+ * @method array<\TestApp\Model\Entity\SpatialAddress> newEntities(array $data, array $options = [])
+ * @method \TestApp\Model\Entity\SpatialAddress|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \TestApp\Model\Entity\SpatialAddress patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method array<\TestApp\Model\Entity\SpatialAddress> patchEntities(iterable $entities, array $data, array $options = [])
+ * @method \TestApp\Model\Entity\SpatialAddress findOrCreate($search, ?callable $callback = null, array $options = [])
+ * @method \TestApp\Model\Entity\SpatialAddress saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<\TestApp\Model\Entity\SpatialAddress>|false saveMany(iterable $entities, array $options = [])
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
- * @method \Geo\Model\Entity\GeocodedAddress newEmptyEntity()
- * @method \Cake\Datasource\ResultSetInterface<\Geo\Model\Entity\GeocodedAddress> saveManyOrFail(iterable $entities, array $options = [])
- * @method \Cake\Datasource\ResultSetInterface<\Geo\Model\Entity\GeocodedAddress>|false deleteMany(iterable $entities, array $options = [])
- * @method \Cake\Datasource\ResultSetInterface<\Geo\Model\Entity\GeocodedAddress> deleteManyOrFail(iterable $entities, array $options = [])
+ * @method \TestApp\Model\Entity\SpatialAddress newEmptyEntity()
+ * @method \Cake\Datasource\ResultSetInterface<\TestApp\Model\Entity\SpatialAddress> saveManyOrFail(iterable $entities, array $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<\TestApp\Model\Entity\SpatialAddress>|false deleteMany(iterable $entities, array $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<\TestApp\Model\Entity\SpatialAddress> deleteManyOrFail(iterable $entities, array $options = [])
  */
 class SpatialAddressesTable extends Table {
 
@@ -46,7 +46,7 @@ class SpatialAddressesTable extends Table {
 		$this->setDisplayField('address');
 		$this->setPrimaryKey('id');
 
-		//$this->getSchema()->setColumnType('data', 'object');
+		//$this->getSchema()->setColumnType('coordinates', 'point');
 
 		$this->addBehavior('Timestamp');
 	}
