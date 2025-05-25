@@ -108,7 +108,7 @@ Configure::write('Geocoder', [
  */
 $db = ConnectionManager::get('test');
 if ($db->getDriver() instanceof \Cake\Database\Driver\Postgres) {
-	//$db->execute('CREATE EXTENSION postgis;');
+	$db->execute('CREATE EXTENSION postgis;');
 }
 
 if (env('FIXTURE_SCHEMA_METADATA')) {

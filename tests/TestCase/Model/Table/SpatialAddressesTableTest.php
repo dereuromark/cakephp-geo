@@ -3,7 +3,6 @@
 namespace Geo\Test\TestCase\Model\Table;
 
 use Cake\Database\Driver\Mysql;
-use Cake\Database\Driver\Postgres;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
