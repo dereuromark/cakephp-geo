@@ -35,6 +35,11 @@ jobs:
         run: |
           sudo service mysql start
           mysql -h 127.0.0.1 -u root -proot -e 'CREATE DATABASE cakephp;'
+      - name: Setup Geography for PostgreSQL
+        if: matrix.db-type == 'pgsql'
+        run: |
+          sudo apt-get install postgis
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
