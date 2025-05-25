@@ -1,53 +1,51 @@
 <?php
 
-use Phinx\Migration\AbstractMigration;
+use Migrations\BaseMigration;
 
 // phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 // phpcs:disable PSR2R.Classes.ClassFileName.NoMatch
-class InitGeo extends AbstractMigration {
+class InitGeo extends BaseMigration {
 
 	/**
 	 * @inheritDoc
 	 */
 	public function up() {
-		if (!$this->hasTable('geocoded_addresses')) {
-			$this->table('geocoded_addresses')
-				->addColumn('address', 'string', [
-				  'default' => null,
-				  'limit' => 255,
-				  'null' => false,
-				])
-				->addColumn('formatted_address', 'string', [
-				  'default' => null,
-				  'limit' => 255,
-				  'null' => true,
-				])
-				->addColumn('country', 'string', [
-				  'default' => null,
-				  'limit' => 3,
-				  'null' => true,
-				])
-				->addColumn('lat', 'float', [
-				  'default' => null,
-				  'null' => true,
-				])
-				->addColumn('lng', 'float', [
-				  'default' => null,
-				  'null' => true,
-				])
-				->addColumn('data', 'text', [
-				  'default' => null,
-				  'limit' => null,
-				  'null' => true,
-				])
-				->addIndex(
-					[
-					  'address',
-					],
-					['unique' => true],
-				)
-				->create();
-		}
+		$this->table('geocoded_addresses')
+			->addColumn('address', 'string', [
+			  'default' => null,
+			  'limit' => 255,
+			  'null' => false,
+			])
+			->addColumn('formatted_address', 'string', [
+			  'default' => null,
+			  'limit' => 255,
+			  'null' => true,
+			])
+			->addColumn('country', 'string', [
+			  'default' => null,
+			  'limit' => 3,
+			  'null' => true,
+			])
+			->addColumn('lat', 'float', [
+			  'default' => null,
+			  'null' => true,
+			])
+			->addColumn('lng', 'float', [
+			  'default' => null,
+			  'null' => true,
+			])
+			->addColumn('data', 'text', [
+			  'default' => null,
+			  'limit' => null,
+			  'null' => true,
+			])
+			->addIndex(
+				[
+				  'address',
+				],
+				['unique' => true],
+			)
+			->create();
 	}
 
 	/**

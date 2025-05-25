@@ -1,10 +1,10 @@
 <?php
 
-use Phinx\Migration\AbstractMigration;
+use Migrations\BaseMigration;
 
 // phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 // phpcs:disable PSR2R.Classes.ClassFileName.NoMatch
-class MigrationsGeoCreated extends AbstractMigration {
+class MigrationsGeoCreated extends BaseMigration {
 
 	/**
 	 * @inheritDoc
