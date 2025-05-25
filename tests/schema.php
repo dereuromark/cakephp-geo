@@ -33,6 +33,10 @@ foreach ($iterator as $file) {
 		'indexes' => $indexes,
 	];
 	$tables[$tableName] = $table;
+
+	if (str_contains(getenv('DB_URL'), 'postgres')) {
+		unset($tables['spatial_addresses']);
+	}
 }
 
 return $tables;
