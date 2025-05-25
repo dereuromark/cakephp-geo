@@ -28,11 +28,11 @@ class SpatialAddressesTableTest extends TestCase {
 	 * @return void
 	 */
 	public function setUp(): void {
-		parent::setUp();
-
 		$db = ConnectionManager::get('test');
 		$driver = $db->getDriver();
 		$this->skipIf(!($driver instanceof Mysql), 'The functionality/test is only compatible with Mysql right now.');
+
+		parent::setUp();
 
 		$config = TableRegistry::getTableLocator()->exists('SpatialAddresses') ? [] : ['className' => 'TestApp\Model\Table\SpatialAddressesTable'];
 		$this->SpatialAddresses = TableRegistry::getTableLocator()->get('SpatialAddresses', $config);
