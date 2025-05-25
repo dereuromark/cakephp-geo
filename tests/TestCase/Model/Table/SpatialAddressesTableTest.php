@@ -33,7 +33,7 @@ class SpatialAddressesTableTest extends TestCase {
 
 		$db = ConnectionManager::get('test');
 		$driver = $db->getDriver();
-		$this->skipIf(!($driver instanceof Mysql || $driver instanceof Postgres), 'The virtualFields test is only compatible with Mysql/Postgres.');
+		$this->skipIf(!($driver instanceof Mysql), 'The functionality/test is only compatible with Mysql right now.');
 
 		$config = TableRegistry::getTableLocator()->exists('SpatialAddresses') ? [] : ['className' => 'TestApp\Model\Table\SpatialAddressesTable'];
 		$this->SpatialAddresses = TableRegistry::getTableLocator()->get('SpatialAddresses', $config);
@@ -72,8 +72,6 @@ class SpatialAddressesTableTest extends TestCase {
 			$entity = $this->SpatialAddresses->newEntity($entry);
 			$this->SpatialAddresses->saveOrFail($entity);
 		}
-
-		//debug($this->SpatialAddresses->getSchema()->getIndex('coordinates_spatial'));
 	}
 
 	/**
@@ -107,6 +105,8 @@ class SpatialAddressesTableTest extends TestCase {
 	 * @return void
 	 */
 	public function testFindSpatial() {
+		$this->assertNotEmpty($this->SpatialAddresses->getSchema()->getIndex('coordinates_spatial'));
+
 		$this->SpatialAddresses->addBehavior('Geo.Geocoder');
 		$addresses = $this->SpatialAddresses->find('spatial', ...[
 			'lat' => 48.110589,
@@ -117,13 +117,30 @@ class SpatialAddressesTableTest extends TestCase {
 			->toArray();
 
 		$distances = Hash::extract($addresses, '{n}.distance');
-		$expeected = [
+		$expected = [
 			5.66,
 			5.79,
 		];
 		foreach ($distances as $key => $distance) {
-			$this->assertSame($expeected[$key], round($distance, 2));
+			$this->assertSame($expected[$key], round($distance, 2));
 		}
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testFindSpatialExplain() {
+		$this->assertNotEmpty($this->SpatialAddresses->getSchema()->getIndex('coordinates_spatial'));
+
+		$this->SpatialAddresses->addBehavior('Geo.Geocoder');
+
+		$sql = <<<SQL
+EXPLAIN SELECT (ST_Distance_Sphere(coordinates, ST_GeomFromText('POINT(11.42223 48.110589)')) / 1000) AS `distance`, `SpatialAddresses`.`id` AS `SpatialAddresses__id`, `SpatialAddresses`.`address` AS `SpatialAddresses__address`, `SpatialAddresses`.`lat` AS `SpatialAddresses__lat`, `SpatialAddresses`.`lng` AS `SpatialAddresses__lng`, `SpatialAddresses`.`coordinates` AS `SpatialAddresses__coordinates`, `SpatialAddresses`.`created` AS `SpatialAddresses__created`, `SpatialAddresses`.`modified` AS `SpatialAddresses__modified` FROM `spatial_addresses` `SpatialAddresses` WHERE (ST_Distance_Sphere(coordinates, ST_GeomFromText('POINT(11.42223 48.110589)')) / 1000) <= 100 ORDER BY `distance` ASC
+SQL;
+		$result = $this->SpatialAddresses->getConnection()->execute($sql)->fetchAssoc();
+
+		// Should be type range or index, not ALL
+		debug($result);
 	}
 
 }

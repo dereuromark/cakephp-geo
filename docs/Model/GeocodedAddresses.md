@@ -16,8 +16,6 @@ You need to enable `Geo.GeocodedAddresses` Table. Just make sure you added the t
 bin/cake migrations migrate -p Geo
 ```
 
-Note: Configure `Geo.spatial` enables spatial functionality for this lookup table.
-
 Then instead of using the Geocoder class directly, you go through this Table:
 ```php
 $GeocodedAddresses = TableRegistry::getTableLocator()->get('Geo.GeocodedAddresses');
@@ -27,7 +25,7 @@ if ($address && $address->lat && $address->lng) {
 }
 ```
 
-Don't forget to add the Type mapping of `Geo\Database\Type\ObjectType` in your bootstrap.php.
+Remember to add the Type mapping of `Geo\Database\Type\ObjectType` in your bootstrap.php.
 ```php
 TypeFactory::map('object', 'Geo\Database\Type\ObjectType');
 ```

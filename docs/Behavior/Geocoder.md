@@ -166,3 +166,18 @@ You can test the geocoding and also remove cache data where needed.
 
 ## Providers
 Full list of existing providers [here](https://github.com/geocoder-php/Geocoder#providers).
+
+## Spatial
+You can also use the "spatial" finder using coordinates as POINT instead of lat/lng.
+```php
+$query = $this->Addresses->find('spatial', [
+    'lat' => 13.3,
+    'lng' => 19.2,
+    'distance' => 100,
+]);
+```
+Note: This only works with PostGIS and MySQL 5.7+ (and MariaDB 10.4+) databases, as they support spatial data types.
+
+There can be a performance improvement when using spatial indexes, so you might want to consider using this for larger datasets.
+In reality I didnt get the index to work, though. Only managed to limit down the looked up entries from full table scan to range, which
+sped it up, too.
