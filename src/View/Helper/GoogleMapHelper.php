@@ -237,8 +237,7 @@ class GoogleMapHelper extends Helper {
 			'class' => 'map',
 			'escape' => true,
 		],
-		'event' => [
-		],
+		'event' => [],
 		'animation' => [
 			//TODO
 		],
@@ -959,8 +958,8 @@ function geocodeAddress(address) {
 			});
 		";
 		if ($open) {
-			$event = 'gInfoWindows' . static::$mapCount . "[$infoWindow].open(" . $this->name() .
-				', gMarkers' . static::$mapCount . '[' . $marker . ']);';
+			$event = 'gInfoWindows' . static::$mapCount . "[$infoWindow].open(" . $this->name()
+				. ', gMarkers' . static::$mapCount . '[' . $marker . ']);';
 			$this->addCustom($event);
 		}
 	}

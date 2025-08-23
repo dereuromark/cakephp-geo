@@ -398,7 +398,8 @@ class GoogleMapHelperTest extends TestCase {
 	 */
 	public function testDynamic2() {
 		$options = [
-			'zoom' => 6, 'type' => 'H',
+			'zoom' => 6,
+			'type' => 'H',
 			'autoCenter' => true,
 			'div' => ['id' => 'someother'], //'height'=>'111',
 			'map' => ['typeOptions' => ['style' => 'DROPDOWN_MENU']],

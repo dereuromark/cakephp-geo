@@ -113,7 +113,8 @@ trait JsBaseEngineTrait {
 	 */
 	public function object($data = [], $options = []) {
 		$defaultOptions = [
-			'prefix' => '', 'postfix' => '',
+			'prefix' => '',
+			'postfix' => '',
 		];
 		$options += $defaultOptions;
 

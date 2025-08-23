@@ -12,36 +12,36 @@ class InitGeo extends BaseMigration {
 	public function up() {
 		$this->table('geocoded_addresses')
 			->addColumn('address', 'string', [
-			  'default' => null,
-			  'limit' => 255,
-			  'null' => false,
+				'default' => null,
+				'limit' => 255,
+				'null' => false,
 			])
 			->addColumn('formatted_address', 'string', [
-			  'default' => null,
-			  'limit' => 255,
-			  'null' => true,
+				'default' => null,
+				'limit' => 255,
+				'null' => true,
 			])
 			->addColumn('country', 'string', [
-			  'default' => null,
-			  'limit' => 3,
-			  'null' => true,
+				'default' => null,
+				'limit' => 3,
+				'null' => true,
 			])
 			->addColumn('lat', 'float', [
-			  'default' => null,
-			  'null' => true,
+				'default' => null,
+				'null' => true,
 			])
 			->addColumn('lng', 'float', [
-			  'default' => null,
-			  'null' => true,
+				'default' => null,
+				'null' => true,
 			])
 			->addColumn('data', 'text', [
-			  'default' => null,
-			  'limit' => null,
-			  'null' => true,
+				'default' => null,
+				'limit' => null,
+				'null' => true,
 			])
 			->addIndex(
 				[
-				  'address',
+					'address',
 				],
 				['unique' => true],
 			)

@@ -23,8 +23,7 @@ class GeoController extends AppController {
 	 */
 	public function index() {
 		$Table = new Table();
-		$schema = [
-		];
+		$schema = [];
 		$Table->setAlias('Table');
 		$Table->setSchema($schema);
 
