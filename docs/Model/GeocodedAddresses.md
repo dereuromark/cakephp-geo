@@ -25,7 +25,7 @@ if ($address && $address->lat && $address->lng) {
 }
 ```
 
-Don't forget to add the Type mapping of `Geo\Database\Type\ObjectType` in your bootstrap.php.
+Remember to add the Type mapping of `Geo\Database\Type\ObjectType` in your bootstrap.php.
 ```php
 TypeFactory::map('object', 'Geo\Database\Type\ObjectType');
 ```

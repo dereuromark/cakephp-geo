@@ -9,7 +9,7 @@ use App\Controller\AppController;
  *
  * @property \Geo\Model\Table\GeocodedAddressesTable $GeocodedAddresses
  *
- * @method \Cake\Datasource\ResultSetInterface<\Geo\Model\Entity\GeocodedAddress> paginate($object = null, array $settings = [])
+ * @method \Cake\Datasource\ResultSetInterface<\Geo\Model\Entity\GeocodedAddress> paginate(\Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface|string|null $object = null, array $settings = [])
  */
 class GeocodedAddressesController extends AppController {
 
