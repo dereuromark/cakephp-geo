@@ -14,7 +14,7 @@ class GeocodedAddressesFixture extends TestFixture {
 	 *
 	 * @var array
 	 */
-    // @codingStandardsIgnoreStart
+    // phpcs:disable
     public array $fields = [
         'id' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'autoIncrement' => true, 'precision' => null],
         'address' => ['type' => 'string', 'length' => 255, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'fixed' => null],
