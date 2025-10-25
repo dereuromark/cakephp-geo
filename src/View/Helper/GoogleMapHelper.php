@@ -358,7 +358,7 @@ class GoogleMapHelper extends Helper {
 		$url = $this->_protocol() . static::API;
 
 		if ($this->_runtimeConfig['map']['api']) {
-			 $query['v'] = $this->_runtimeConfig['map']['api'];
+			$query['v'] = $this->_runtimeConfig['map']['api'];
 		}
 		if ($this->_runtimeConfig['key']) {
 			$query['key'] = $this->_runtimeConfig['key'];
