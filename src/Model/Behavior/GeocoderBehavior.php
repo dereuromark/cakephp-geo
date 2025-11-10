@@ -385,7 +385,7 @@ class GeocoderBehavior extends Behavior {
 			$query->enableAutoFields(true);
 		}
 
-		$query->select(['distance' => $query->newExpr($sql)]);
+		$query->select(['distance' => $query->expr($sql)]);
 		if (isset($options['distance'])) {
 			// Some SQL versions cannot reuse the select() distance field, so we better reuse the $sql snippet
 			$query->where(function (QueryExpression $exp) use ($sql, $options) {
