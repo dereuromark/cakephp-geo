@@ -173,7 +173,7 @@ class GeocoderBehaviorTest extends TestCase {
 		$controller->getTableLocator()->get('Addresses')->addBehavior('Geocoder');
 		$options = ['lat' => 13.3, 'lng' => 19.2, 'distance' => 3000];
 
-		/** @var \Cake\ORM\Query $query */
+		/** @var \Cake\ORM\Query\SelectQuery $query */
 		$query = $controller->getTableLocator()->get('Addresses')->find('distance', ...$options);
 		$query->orderByAsc('distance');
 
