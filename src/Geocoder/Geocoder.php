@@ -336,14 +336,79 @@ class Geocoder {
 	 * @return bool
 	 */
 	public function isAccurateEnough(Location $address) {
-		$levels = array_keys($this->_types);
-		$values = array_values($this->_types);
-		$map = array_combine($levels, $values);
-
 		$expected = $this->_config['minAccuracy'];
+		if (!$expected) {
+			return true;
+		}
 
-		//TODO
-		return true;
+		$minAccuracyIndex = array_search($expected, $this->_types, true);
+		if ($minAccuracyIndex === false) {
+			return true;
+		}
+
+		$adminLevels = $address->getAdminLevels();
+		$adminLevelMap = [
+			static::TYPE_AAL1 => 1,
+			static::TYPE_AAL2 => 2,
+			static::TYPE_AAL3 => 3,
+			static::TYPE_AAL4 => 4,
+			static::TYPE_AAL5 => 5,
+		];
+
+		// Check all accuracy levels from minimum required to most accurate
+		for ($i = $minAccuracyIndex; $i < count($this->_types); $i++) {
+			$type = $this->_types[$i];
+			switch ($type) {
+				case static::TYPE_COUNTRY:
+					if ($address->getCountry() !== null) {
+						return true;
+					}
+
+					break;
+				case static::TYPE_AAL1:
+				case static::TYPE_AAL2:
+				case static::TYPE_AAL3:
+				case static::TYPE_AAL4:
+				case static::TYPE_AAL5:
+					if ($adminLevels->has($adminLevelMap[$type])) {
+						return true;
+					}
+
+					break;
+				case static::TYPE_LOC:
+					if ($address->getLocality() !== null) {
+						return true;
+					}
+
+					break;
+				case static::TYPE_SUBLOC:
+					if ($address->getSubLocality() !== null) {
+						return true;
+					}
+
+					break;
+				case static::TYPE_POSTAL:
+					if ($address->getPostalCode() !== null) {
+						return true;
+					}
+
+					break;
+				case static::TYPE_ADDRESS:
+					if ($address->getStreetName() !== null) {
+						return true;
+					}
+
+					break;
+				case static::TYPE_NUMBER:
+					if ($address->getStreetNumber() !== null) {
+						return true;
+					}
+
+					break;
+			}
+		}
+
+		return false;
 	}
 
 	/**

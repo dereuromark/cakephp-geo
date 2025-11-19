@@ -354,7 +354,7 @@ class GoogleMapHelper extends Helper {
 	 * @param array<string, mixed> $query
 	 * @return string Full URL
 	 */
-	public function apiUrl(array $query = []) {
+	public function apiUrl(array $query = []): string {
 		$url = $this->_protocol() . static::API;
 
 		if ($this->_runtimeConfig['map']['api']) {
@@ -381,7 +381,7 @@ class GoogleMapHelper extends Helper {
 	 * @deprecated Not in use.
 	 * @return string
 	 */
-	public function gearsUrl() {
+	public function gearsUrl(): string {
 		$this->_gearsIncluded = true;
 		$url = $this->_protocol() . 'code.google.com/apis/gears/gears_init.js';
 
@@ -391,14 +391,14 @@ class GoogleMapHelper extends Helper {
 	/**
 	 * @return string currentMapObject
 	 */
-	public function name() {
+	public function name(): string {
 		return 'map' . static::$mapCount;
 	}
 
 	/**
 	 * @return string currentContainerId
 	 */
-	public function id() {
+	public function id(): string {
 		return $this->_runtimeConfig['div']['id'];
 	}
 
@@ -409,7 +409,7 @@ class GoogleMapHelper extends Helper {
 	 * @param bool $full true=optionsAsWell
 	 * @return void
 	 */
-	public function reset($full = true) {
+	public function reset(bool $full = true): void {
 		static::$markerCount = static::$infoWindowCount = 0;
 		$this->markers = $this->infoWindows = [];
 		if ($full) {
@@ -430,7 +430,7 @@ class GoogleMapHelper extends Helper {
 	 * @param array<string, mixed> $options
 	 * @return void
 	 */
-	public function setControls(array $options = []) {
+	public function setControls(array $options = []): void {
 		if (isset($options['streetView'])) {
 			$this->_runtimeConfig['map']['streetViewControl'] = $options['streetView'];
 		}
@@ -455,7 +455,7 @@ class GoogleMapHelper extends Helper {
 	 * @param array<string, mixed> $options associative array of settings are passed
 	 * @return string divContainer
 	 */
-	public function map(array $options = []) {
+	public function map(array $options = []): string {
 		$this->reset();
 		$this->_runtimeConfig = Hash::merge($this->_runtimeConfig, $options);
 		$this->_runtimeConfig['map'] = $options + $this->_runtimeConfig['map'];
@@ -560,7 +560,7 @@ class GoogleMapHelper extends Helper {
 	 * @throws \Cake\Core\Exception\CakeException
 	 * @return mixed Integer marker count or boolean false on failure
 	 */
-	public function addMarker($options) {
+	public function addMarker(array $options): mixed {
 		$defaults = $this->_runtimeConfig['marker'];
 		if (isset($options['icon']) && is_array($options['icon'])) {
 			$defaults = $options['icon'] + $defaults;
@@ -732,7 +732,7 @@ function geocodeAddress(address) {
 	 * @param string $content
 	 * @return int Current marker counter
 	 */
-	public function addInfoContent($content) {
+	public function addInfoContent(string $content): int {
 		$this->infoContents[static::$markerCount] = $this->escapeString($content);
 		$event = "
 			gWindowContents" . static::$mapCount . '.push(' . $this->escapeString($content) . ");
@@ -762,7 +762,7 @@ function geocodeAddress(address) {
 	 * NOTE: for special ones only first parameter counts!
 	 * @return array Array(icon, shadow, shape, ...)
 	 */
-	public function iconSet($color, $char = null, $size = 'm') {
+	public function iconSet(string $color, ?string $char = null, string $size = 'm'): array {
 		$colors = ['red', 'green', 'yellow', 'blue', 'purple', 'white', 'black'];
 		if (!in_array($color, $colors)) {
 			$color = 'red';
@@ -833,7 +833,7 @@ function geocodeAddress(address) {
 	 * @param array<string, mixed> $shadowOptions Shadow image options
 	 * @return array Resulting array
 	 */
-	public function addIcon($image, $shadow = null, array $imageOptions = [], array $shadowOptions = []) {
+	public function addIcon(string $image, ?string $shadow = null, array $imageOptions = [], array $shadowOptions = []): array {
 		$res = ['url' => $image];
 		$res['icon'] = $this->icon($image, $imageOptions);
 		if ($shadow) {
@@ -864,7 +864,7 @@ function geocodeAddress(address) {
 	 * - anchor: array(width=>x, height=>y)
 	 * @return int Icon count
 	 */
-	public function icon(string $url, array $options = []) {
+	public function icon(string $url, array $options = []): int {
 		// The shadow image is larger in the horizontal dimension
 		// while the position and offset are the same as for the main image.
 		if (empty($options['size'])) {
@@ -872,6 +872,10 @@ function geocodeAddress(address) {
 			//trigger_error('Please specify size manually [width => ..., height => ...] for performance reasons.', E_USER_DEPRECATED);
 			if (!empty($options['imagePath'])) {
 				$path = realpath($options['imagePath']);
+				$allowedDir = realpath(WWW_ROOT . 'img' . DS);
+				if (!$path || !$allowedDir || strpos($path, $allowedDir) !== 0) {
+					throw new CakeException('Invalid image path');
+				}
 			} else {
 				$path = $url;
 				if (!preg_match('#^((https?://)|//)#i', $path)) {
@@ -919,7 +923,7 @@ function geocodeAddress(address) {
 	 * - lat, lng, content, maxWidth, pixelOffset, zIndex
 	 * @return int windowCount
 	 */
-	public function addInfoWindow(array $options = []) {
+	public function addInfoWindow(array $options = []): int {
 		$defaults = $this->_runtimeConfig['infoWindow'];
 		$options += $defaults;
 
@@ -951,7 +955,7 @@ function geocodeAddress(address) {
 	 * @param bool $open Also open it right away.
 	 * @return void
 	 */
-	public function addEvent($marker, $infoWindow, $open = false) {
+	public function addEvent(int $marker, int $infoWindow, bool $open = false): void {
 		$this->map .= "
 			google.maps.event.addListener(gMarkers" . static::$mapCount . "[{$marker}], 'click', function() {
 				gInfoWindows" . static::$mapCount . "[$infoWindow].open(" . $this->name() . ", this);
@@ -971,7 +975,7 @@ function geocodeAddress(address) {
 	 * @param string $event (js)
 	 * @return void
 	 */
-	public function addCustomEvent($marker, $event) {
+	public function addCustomEvent(int $marker, string $event): void {
 		$this->map .= "
 			google.maps.event.addListener(gMarkers" . static::$mapCount . "[{$marker}], 'click', function() {
 				$event
@@ -985,7 +989,7 @@ function geocodeAddress(address) {
 	 * @param string $js Custom JS
 	 * @return void
 	 */
-	public function addCustom($js) {
+	public function addCustom(string $js): void {
 		$this->map .= $js;
 	}
 
@@ -1008,7 +1012,7 @@ function geocodeAddress(address) {
 	 * - region: String
 	 * @return void
 	 */
-	public function addDirections($from, $to, array $options = []) {
+	public function addDirections(array|string $from, array|string $to, array $options = []): void {
 		$id = 'd' . static::$markerCount++;
 		$defaults = $this->_runtimeConfig['directions'];
 		$options += $defaults;
@@ -1066,7 +1070,7 @@ function geocodeAddress(address) {
 	 * - weight in pixels (defaults to 2)
 	 * @return void
 	 */
-	public function addPolyline($from, $to, array $options = []) {
+	public function addPolyline(array|string $from, array|string $to, array $options = []): void {
 		if (is_array($from)) {
 			$from = 'new google.maps.LatLng(' . (float)$from['lat'] . ', ' . (float)$from['lng'] . ')';
 		} else {
@@ -1110,7 +1114,7 @@ function geocodeAddress(address) {
 	 * @param int $index infoWindowCount
 	 * @return void
 	 */
-	public function setContentInfoWindow($content, $index) {
+	public function setContentInfoWindow(string $content, int $index): void {
 		$this->map .= "
 			gInfoWindows" . static::$mapCount . "[$index]. setContent(" . $this->escapeString($content) . ');';
 	}
@@ -1121,7 +1125,7 @@ function geocodeAddress(address) {
 	 * @param mixed $content
 	 * @return string JSON
 	 */
-	public function escapeString($content) {
+	public function escapeString(mixed $content): string {
 		$result = json_encode($content);
 		if ($result === false) {
 			return '';

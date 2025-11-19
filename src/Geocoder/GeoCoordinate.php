@@ -88,7 +88,7 @@ class GeoCoordinate implements JsonSerializable, Stringable {
 
 		[$lat, $lng] = explode(',', $coordinate);
 
-		return new static($lat, $lng);
+		return new static((float)$lat, (float)$lng);
 	}
 
 	/**
