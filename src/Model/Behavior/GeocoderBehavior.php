@@ -14,6 +14,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Closure;
 use Geo\Exception\InconclusiveException;
 use Geo\Exception\NotAccurateEnoughException;
 use Geo\Geocoder\Calculator;
@@ -232,7 +233,7 @@ class GeocoderBehavior extends Behavior {
 		$addressData = [];
 		$dirty = false;
 		foreach ($addressFields as $field) {
-			$isClosure = $field instanceof \Closure;
+			$isClosure = $field instanceof Closure;
 			if ($isClosure) {
 				$fieldData = $field($entity);
 			} else {
@@ -478,13 +479,13 @@ class GeocoderBehavior extends Behavior {
 
 		// Validate field and table names to prevent SQL injection
 		if (!preg_match('/^[a-zA-Z0-9_]+$/', $tableName)) {
-			throw new \InvalidArgumentException('Invalid table name');
+			throw new InvalidArgumentException('Invalid table name');
 		}
 		if (!preg_match('/^[a-zA-Z0-9_]+$/', $fieldLat)) {
-			throw new \InvalidArgumentException('Invalid field name');
+			throw new InvalidArgumentException('Invalid field name');
 		}
 		if (!preg_match('/^[a-zA-Z0-9_]+$/', $fieldLng)) {
-			throw new \InvalidArgumentException('Invalid field name');
+			throw new InvalidArgumentException('Invalid field name');
 		}
 
 		$conditions = [
@@ -495,7 +496,7 @@ class GeocoderBehavior extends Behavior {
 
 		// Validate distance field name
 		if (!preg_match('/^[a-zA-Z0-9_]+$/', $fieldName)) {
-			throw new \InvalidArgumentException('Invalid field name');
+			throw new InvalidArgumentException('Invalid field name');
 		}
 
 		if ($distance !== null) {
