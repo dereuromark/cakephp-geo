@@ -17,6 +17,7 @@ use Cake\ORM\TableRegistry;
 use Closure;
 use Geo\Exception\InconclusiveException;
 use Geo\Exception\NotAccurateEnoughException;
+use Geo\Geocoder\CachedLocation;
 use Geo\Geocoder\Calculator;
 use Geo\Geocoder\Geocoder;
 use Geocoder\Formatter\StringFormatter;
@@ -568,10 +569,13 @@ class GeocoderBehavior extends Behavior {
 			/** @var \Geo\Model\Entity\GeocodedAddress|null $result */
 			$result = $GeocodedAddresses->find()->where(['address' => $address])->first();
 			if ($result) {
-				/** @var \Geocoder\Model\Address|null $data */
 				$data = $result->data;
-
-				return $data ?: null;
+				// Reconstruct Location from JSON data (array)
+				if (is_array($data) && $data) {
+					return CachedLocation::createFromArray($data);
+				}
+				// Invalid or empty cached data - delete and re-geocode
+				$GeocodedAddresses->delete($result);
 			}
 		}
 
@@ -604,7 +608,8 @@ class GeocoderBehavior extends Behavior {
 				if ($country) {
 					$addressEntity->country = $country->getCode();
 				}
-				$addressEntity->data = $result;
+				// Store as JSON array instead of serialized object to avoid __PHP_Incomplete_Class issues
+				$addressEntity->data = $result->toArray();
 			}
 
 			if (!$GeocodedAddresses->save($addressEntity, ['atomic' => false])) {
