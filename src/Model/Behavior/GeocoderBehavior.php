@@ -20,6 +20,7 @@ use Geo\Exception\NotAccurateEnoughException;
 use Geo\Geocoder\Calculator;
 use Geo\Geocoder\Geocoder;
 use Geocoder\Formatter\StringFormatter;
+use Geocoder\Location;
 use Geocoder\Model\Coordinates;
 use InvalidArgumentException;
 use RuntimeException;
@@ -568,10 +569,13 @@ class GeocoderBehavior extends Behavior {
 			/** @var \Geo\Model\Entity\GeocodedAddress|null $result */
 			$result = $GeocodedAddresses->find()->where(['address' => $address])->first();
 			if ($result) {
-				/** @var \Geocoder\Model\Address|null $data */
 				$data = $result->data;
-
-				return $data ?: null;
+				// Validate cached data is properly unserialized (not __PHP_Incomplete_Class)
+				if ($data instanceof Location) {
+					return $data;
+				}
+				// Invalid cached data - delete and re-geocode
+				$GeocodedAddresses->delete($result);
 			}
 		}
 
