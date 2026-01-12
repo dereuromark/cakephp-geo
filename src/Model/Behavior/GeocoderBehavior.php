@@ -17,11 +17,10 @@ use Cake\ORM\TableRegistry;
 use Closure;
 use Geo\Exception\InconclusiveException;
 use Geo\Exception\NotAccurateEnoughException;
+use Geo\Geocoder\CachedLocation;
 use Geo\Geocoder\Calculator;
 use Geo\Geocoder\Geocoder;
 use Geocoder\Formatter\StringFormatter;
-use Geo\Geocoder\CachedLocation;
-use Geocoder\Location;
 use Geocoder\Model\Coordinates;
 use InvalidArgumentException;
 use RuntimeException;
@@ -571,15 +570,11 @@ class GeocoderBehavior extends Behavior {
 			$result = $GeocodedAddresses->find()->where(['address' => $address])->first();
 			if ($result) {
 				$data = $result->data;
-				// Handle both old serialized objects and new JSON format
-				if ($data instanceof Location) {
-					return $data;
-				}
 				// Reconstruct Location from JSON data (array)
-				if (is_array($data)) {
+				if (is_array($data) && $data) {
 					return CachedLocation::createFromArray($data);
 				}
-				// Invalid cached data - delete and re-geocode
+				// Invalid or empty cached data - delete and re-geocode
 				$GeocodedAddresses->delete($result);
 			}
 		}

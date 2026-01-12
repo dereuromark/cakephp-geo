@@ -17,8 +17,8 @@ use Geocoder\Model\Country;
  * This class can be reconstructed from JSON data, avoiding PHP object serialization
  * issues like __PHP_Incomplete_Class.
  */
-class CachedLocation implements Location
-{
+class CachedLocation implements Location {
+
 	private ?Coordinates $coordinates = null;
 
 	private ?Bounds $bounds = null;
@@ -44,8 +44,7 @@ class CachedLocation implements Location
 	/**
 	 * @param array<string, mixed> $data
 	 */
-	public function __construct(array $data = [])
-	{
+	public function __construct(array $data = []) {
 		$this->adminLevels = new AdminLevelCollection();
 
 		if (!empty($data)) {
@@ -60,8 +59,7 @@ class CachedLocation implements Location
 	 *
 	 * @return static
 	 */
-	public static function createFromArray(array $data): static
-	{
+	public static function createFromArray(array $data): static {
 		return new static($data);
 	}
 
@@ -72,8 +70,7 @@ class CachedLocation implements Location
 	 *
 	 * @return void
 	 */
-	protected function fromArray(array $data): void
-	{
+	protected function fromArray(array $data): void {
 		if (isset($data['providedBy'])) {
 			$this->providedBy = (string)$data['providedBy'];
 		}
@@ -126,88 +123,77 @@ class CachedLocation implements Location
 	/**
 	 * @inheritDoc
 	 */
-	public function getCoordinates(): ?Coordinates
-	{
+	public function getCoordinates(): ?Coordinates {
 		return $this->coordinates;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function getBounds(): ?Bounds
-	{
+	public function getBounds(): ?Bounds {
 		return $this->bounds;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function getStreetNumber(): string|int|null
-	{
+	public function getStreetNumber(): string|int|null {
 		return $this->streetNumber;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function getStreetName(): ?string
-	{
+	public function getStreetName(): ?string {
 		return $this->streetName;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function getLocality(): ?string
-	{
+	public function getLocality(): ?string {
 		return $this->locality;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function getPostalCode(): ?string
-	{
+	public function getPostalCode(): ?string {
 		return $this->postalCode;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function getSubLocality(): ?string
-	{
+	public function getSubLocality(): ?string {
 		return $this->subLocality;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function getAdminLevels(): AdminLevelCollection
-	{
+	public function getAdminLevels(): AdminLevelCollection {
 		return $this->adminLevels;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function getCountry(): ?Country
-	{
+	public function getCountry(): ?Country {
 		return $this->country;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function getTimezone(): ?string
-	{
+	public function getTimezone(): ?string {
 		return $this->timezone;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function toArray(): array
-	{
+	public function toArray(): array {
 		$adminLevels = [];
 		foreach ($this->adminLevels as $adminLevel) {
 			$adminLevels[] = [
@@ -254,8 +240,7 @@ class CachedLocation implements Location
 	/**
 	 * @inheritDoc
 	 */
-	public function getProvidedBy(): string
-	{
+	public function getProvidedBy(): string {
 		return $this->providedBy;
 	}
 
