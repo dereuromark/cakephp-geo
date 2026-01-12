@@ -13,7 +13,7 @@ use Cake\ORM\Entity;
  * @property string|null $country
  * @property float|null $lat
  * @property float|null $lng
- * @property object $data !
+ * @property array<string, mixed>|null $data
  * @property \Cake\I18n\DateTime $created
  */
 class GeocodedAddress extends Entity {

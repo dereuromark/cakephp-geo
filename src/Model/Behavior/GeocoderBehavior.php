@@ -20,6 +20,7 @@ use Geo\Exception\NotAccurateEnoughException;
 use Geo\Geocoder\Calculator;
 use Geo\Geocoder\Geocoder;
 use Geocoder\Formatter\StringFormatter;
+use Geo\Geocoder\CachedLocation;
 use Geocoder\Location;
 use Geocoder\Model\Coordinates;
 use InvalidArgumentException;
@@ -570,9 +571,13 @@ class GeocoderBehavior extends Behavior {
 			$result = $GeocodedAddresses->find()->where(['address' => $address])->first();
 			if ($result) {
 				$data = $result->data;
-				// Validate cached data is properly unserialized (not __PHP_Incomplete_Class)
+				// Handle both old serialized objects and new JSON format
 				if ($data instanceof Location) {
 					return $data;
+				}
+				// Reconstruct Location from JSON data (array)
+				if (is_array($data)) {
+					return CachedLocation::createFromArray($data);
 				}
 				// Invalid cached data - delete and re-geocode
 				$GeocodedAddresses->delete($result);
@@ -608,7 +613,8 @@ class GeocoderBehavior extends Behavior {
 				if ($country) {
 					$addressEntity->country = $country->getCode();
 				}
-				$addressEntity->data = $result;
+				// Store as JSON array instead of serialized object to avoid __PHP_Incomplete_Class issues
+				$addressEntity->data = $result->toArray();
 			}
 
 			if (!$GeocodedAddresses->save($addressEntity, ['atomic' => false])) {

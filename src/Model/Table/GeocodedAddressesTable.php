@@ -48,7 +48,7 @@ class GeocodedAddressesTable extends Table {
 		$this->setDisplayField('address');
 		$this->setPrimaryKey('id');
 
-		$this->getSchema()->setColumnType('data', 'object');
+		$this->getSchema()->setColumnType('data', 'json');
 
 		$this->addBehavior('Timestamp');
 	}
@@ -95,7 +95,7 @@ class GeocodedAddressesTable extends Table {
 			}
 			$formatter = new StringFormatter();
 			$geocodedAddress->formatted_address = $formatter->format($result, '%S %n, %z %L');
-			$geocodedAddress->data = $result;
+			$geocodedAddress->data = $result->toArray();
 		}
 
 		return $this->save($geocodedAddress);
