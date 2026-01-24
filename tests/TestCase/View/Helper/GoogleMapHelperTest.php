@@ -84,6 +84,26 @@ class GoogleMapHelperTest extends TestCase {
 	/**
 	 * @return void
 	 */
+	public function testApiUrlWithLibrariesString() {
+		$this->GoogleMap = new GoogleMapHelper($this->View, ['libraries' => 'places']);
+
+		$result = $this->GoogleMap->apiUrl();
+		$this->assertSame('//maps.google.com/maps/api/js?v=3&libraries=places', $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testApiUrlWithLibrariesArray() {
+		$this->GoogleMap = new GoogleMapHelper($this->View, ['libraries' => ['places', 'geometry']]);
+
+		$result = $this->GoogleMap->apiUrl();
+		$this->assertSame('//maps.google.com/maps/api/js?v=3&libraries=places%2Cgeometry', $result);
+	}
+
+	/**
+	 * @return void
+	 */
 	public function testIcon() {
 		$result = $this->GoogleMap->icon('img/icon.png', ['size' => ['width' => 12, 'height' => 12]]);
 
@@ -461,6 +481,68 @@ class GoogleMapHelperTest extends TestCase {
 		$this->assertSame(0, $googleMap::$markerCount);
 
 		//$this->assertTextContains('<div id="someother"', $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testPlacesAutocomplete() {
+		$result = $this->GoogleMap->placesAutocomplete('location');
+
+		$this->assertTextContains('<input type="text"', $result);
+		$this->assertTextContains('id="location"', $result);
+		$this->assertTextContains('name="location"', $result);
+		$this->assertTextContains('<input type="hidden" name="location_lat" id="location_lat"', $result);
+		$this->assertTextContains('<input type="hidden" name="location_lng" id="location_lng"', $result);
+
+		$scripts = $this->View->fetch('script');
+		$this->assertTextContains('google.maps.places.Autocomplete(inputElement', $scripts);
+		$this->assertTextContains("getElementById('location')", $scripts);
+		$this->assertTextContains("getElementById('location_lat')", $scripts);
+		$this->assertTextContains("getElementById('location_lng')", $scripts);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testPlacesAutocompleteWithOptions() {
+		$result = $this->GoogleMap->placesAutocomplete('address', [
+			'field' => [
+				'id' => 'custom-id',
+				'label' => 'Enter Address',
+				'class' => 'form-control',
+			],
+			'lat' => '_latitude',
+			'lng' => '_longitude',
+			'autocomplete' => [
+				'types' => ['geocode'],
+				'componentRestrictions' => ['country' => 'de'],
+			],
+		]);
+
+		$this->assertTextContains('id="custom-id"', $result);
+		$this->assertTextContains('Enter Address', $result);
+		$this->assertTextContains('class="form-control"', $result);
+		$this->assertTextContains('<input type="hidden" name="address_latitude" id="custom-id_latitude"', $result);
+		$this->assertTextContains('<input type="hidden" name="address_longitude" id="custom-id_longitude"', $result);
+
+		$scripts = $this->View->fetch('script');
+		$this->assertTextContains('"types":["geocode"]', $scripts);
+		$this->assertTextContains('"componentRestrictions":{"country":"de"}', $scripts);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testPlacesAutocompleteWithCallback() {
+		$this->GoogleMap->placesAutocomplete('location', [
+			'callbacks' => [
+				'placeChanged' => 'console.log(place.formatted_address);',
+			],
+		]);
+
+		$scripts = $this->View->fetch('script');
+		$this->assertTextContains('console.log(place.formatted_address);', $scripts);
 	}
 
 }

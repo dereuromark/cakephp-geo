@@ -36,6 +36,7 @@ Possible config options are:
 - directions: Multiple directions options
 - language
 - geolocate
+- libraries: Google Maps API libraries to load (e.g., 'places' or ['places', 'geometry'])
 
 ## Display a basic link to a map
 ```php
@@ -151,3 +152,60 @@ In general it is advised to defer JS execution by putting it to the end of the H
 
 ### Custom JS
 With `->addCustom($js)` you can inject any custom JS to work alongside the google map helper code.
+
+## Places Autocomplete
+The helper supports Google Places Autocomplete for address input fields. This creates an autocomplete-enabled input with hidden fields to store the selected place's latitude and longitude.
+
+### Basic usage
+First, load the helper with the `places` library:
+```php
+$this->loadHelper('Geo.GoogleMap', [
+    'key' => 'your-api-key',
+    'libraries' => 'places',
+    'autoScript' => true,
+]);
+```
+
+Then use the `placesAutocomplete()` method in your form:
+```php
+echo $this->GoogleMap->placesAutocomplete('location');
+```
+
+This generates:
+- A text input for the autocomplete
+- Hidden fields `location_lat` and `location_lng` that are automatically populated when a place is selected
+
+### Custom options
+You can customize the field and autocomplete behavior:
+```php
+echo $this->GoogleMap->placesAutocomplete('address', [
+    'field' => [
+        'label' => 'Enter your address',
+        'class' => 'form-control',
+        'placeholder' => 'Start typing...',
+    ],
+    'lat' => '_latitude',  // Custom suffix for lat field
+    'lng' => '_longitude', // Custom suffix for lng field
+    'autocomplete' => [
+        'types' => ['geocode'],
+        'componentRestrictions' => ['country' => 'de'],
+    ],
+]);
+```
+
+### Custom callbacks
+You can add custom JavaScript to execute when a place is selected:
+```php
+echo $this->GoogleMap->placesAutocomplete('location', [
+    'callbacks' => [
+        'placeChanged' => 'console.log("Selected: " + place.formatted_address);',
+    ],
+]);
+```
+
+The callback has access to these variables:
+- `place`: The selected [PlaceResult](https://developers.google.com/maps/documentation/javascript/reference/places-service#PlaceResult) object
+- `autocomplete`: The Autocomplete instance
+- `inputElement`: The input DOM element
+- `latField`: The latitude hidden field
+- `lngField`: The longitude hidden field
