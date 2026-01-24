@@ -93,4 +93,29 @@ class CalculatorTest extends TestCase {
 		}
 	}
 
+	/**
+	 * @return void
+	 */
+	public function testTimezoneByCoordinates(): void {
+		// Berlin, Germany (using Berlin's reference coordinates)
+		$result = Calculator::timezoneByCoordinates(52.5, 13.4);
+		$this->assertSame('Europe/Berlin', $result);
+
+		// New York, USA
+		$result = Calculator::timezoneByCoordinates(40.7128, -74.0060);
+		$this->assertSame('America/New_York', $result);
+
+		// Tokyo, Japan
+		$result = Calculator::timezoneByCoordinates(35.6762, 139.6503);
+		$this->assertSame('Asia/Tokyo', $result);
+
+		// Sydney, Australia
+		$result = Calculator::timezoneByCoordinates(-33.8688, 151.2093);
+		$this->assertSame('Australia/Sydney', $result);
+
+		// London, UK
+		$result = Calculator::timezoneByCoordinates(51.5074, -0.1278);
+		$this->assertSame('Europe/London', $result);
+	}
+
 }

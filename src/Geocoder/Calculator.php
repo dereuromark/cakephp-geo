@@ -4,6 +4,7 @@ namespace Geo\Geocoder;
 
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
+use DateTimeZone;
 use Geo\Exception\CalculatorException;
 
 /**
@@ -177,6 +178,35 @@ class Calculator {
 		$scrambleVal = 0.000001 * mt_rand(10, 200) * pow(2, $level) * (mt_rand(0, 1) === 0 ? 1 : -1);
 
 		return $coordinate + $scrambleVal;
+	}
+
+	/**
+	 * Gets the timezone that is closest to the given coordinates.
+	 *
+	 * @param float $lat Latitude
+	 * @param float $lng Longitude
+	 * @return string|null Timezone identifier or null if none found
+	 */
+	public static function timezoneByCoordinates(float $lat, float $lng): ?string {
+		$current = ['timezone' => null, 'distance' => 0.0];
+		$identifiers = DateTimeZone::listIdentifiers();
+
+		foreach ($identifiers as $identifier) {
+			$timezone = new DateTimeZone($identifier);
+			$location = $timezone->getLocation();
+			if ($location === false) {
+				continue;
+			}
+
+			$point = ['lat' => $location['latitude'], 'lng' => $location['longitude']];
+			$distance = static::calculateDistance(['lat' => $lat, 'lng' => $lng], $point);
+
+			if ($current['timezone'] === null || $distance < $current['distance']) {
+				$current = ['timezone' => $identifier, 'distance' => $distance];
+			}
+		}
+
+		return $current['timezone'];
 	}
 
 }
