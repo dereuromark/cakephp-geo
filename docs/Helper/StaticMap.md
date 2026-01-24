@@ -5,12 +5,12 @@ It supports multiple providers with a unified API.
 
 ## Supported Providers
 
-| Provider | Constant | API Documentation |
-|----------|----------|-------------------|
-| Geoapify | `StaticMapHelper::PROVIDER_GEOAPIFY` | [Static Maps API](https://apidocs.geoapify.com/docs/maps/static/) |
-| Mapbox | `StaticMapHelper::PROVIDER_MAPBOX` | [Static Images API](https://docs.mapbox.com/api/maps/static-images/) |
-| Stadia | `StaticMapHelper::PROVIDER_STADIA` | [Static Maps API](https://docs.stadiamaps.com/static-maps/) |
-| Google | `StaticMapHelper::PROVIDER_GOOGLE` | [Maps Static API](https://developers.google.com/maps/documentation/maps-static/overview) |
+| Provider | API Documentation |
+|----------|-------------------|
+| Geoapify | [Static Maps API](https://apidocs.geoapify.com/docs/maps/static/) |
+| Mapbox | [Static Images API](https://docs.mapbox.com/api/maps/static-images/) |
+| Stadia | [Static Maps API](https://docs.stadiamaps.com/static-maps/) |
+| Google | [Maps Static API](https://developers.google.com/maps/documentation/maps-static/overview) |
 
 ## Adding the helper
 
