@@ -30,6 +30,7 @@ Also:
 
 And also:
 - GeocodedAddresses Table class for caching of API requests to prevent rate limits and speed up lookups.
+- NullProvider for testing without external API calls.
 
 
 ## Demo
