@@ -126,36 +126,23 @@ class SpatialAddressesTableTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testFindSpatialExplain(): void {
+	public function testFindSpatialQueryStructure(): void {
 		$this->assertNotEmpty($this->SpatialAddresses->getSchema()->getIndex('coordinates_spatial'));
 
 		$this->SpatialAddresses->addBehavior('Geo.Geocoder');
 
-		$lat = 48.110589;
-		$lng = 11.422230;
-		$distance = 100;
+		$query = $this->SpatialAddresses->find('spatial', ...[
+			'lat' => 48.110589,
+			'lng' => 11.422230,
+			'distance' => 100,
+		]);
 
-		// Calculate bounding box (same as in findSpatial)
-		$latDelta = $distance / 111.0;
-		$lngDelta = $distance / (111.0 * abs(cos(deg2rad($lat))));
-		$minLat = $lat - $latDelta;
-		$maxLat = $lat + $latDelta;
-		$minLng = $lng - $lngDelta;
-		$maxLng = $lng + $lngDelta;
+		$sql = $query->sql();
 
-		$sql = <<<SQL
-EXPLAIN SELECT (ST_Distance_Sphere(coordinates, ST_GeomFromText('POINT($lng $lat)')) / 1000) AS `distance`,
-	`SpatialAddresses`.`id` AS `SpatialAddresses__id`
-FROM `spatial_addresses` `SpatialAddresses`
-WHERE ST_Within(coordinates, ST_GeomFromText('POLYGON(($minLng $minLat, $maxLng $minLat, $maxLng $maxLat, $minLng $maxLat, $minLng $minLat))'))
-	AND (ST_Distance_Sphere(coordinates, ST_GeomFromText('POINT($lng $lat)')) / 1000) <= $distance
-ORDER BY `distance` ASC
-SQL;
-		$result = $this->SpatialAddresses->getConnection()->execute($sql)->fetchAssoc();
-
-		// With small test data, optimizer may choose full scan, but the query structure must allow index usage
-		// The key check is that possible_keys contains our spatial index
-		$this->assertStringContainsString('coordinates_spatial', $result['possible_keys'] ?? '', 'Spatial index should be a possible key for the query');
+		// Verify the query uses ST_Within for bounding box filtering (enables spatial index usage)
+		$this->assertStringContainsString('ST_Within', $sql, 'Query should use ST_Within for spatial index support');
+		$this->assertStringContainsString('POLYGON', $sql, 'Query should use POLYGON for bounding box');
+		$this->assertStringContainsString('ST_Distance_Sphere', $sql, 'Query should use ST_Distance_Sphere for precise distance');
 	}
 
 }

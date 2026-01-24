@@ -3,6 +3,9 @@
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Database\Driver\Mysql;
+use Cake\Database\Driver\Postgres;
+use Cake\Database\Exception\QueryException;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\Fixture\SchemaLoader;
 use Cake\View\View;
@@ -107,7 +110,7 @@ Configure::write('Geocoder', [
  * @var \Cake\Database\Connection $db
  */
 $db = ConnectionManager::get('test');
-if ($db->getDriver() instanceof \Cake\Database\Driver\Postgres) {
+if ($db->getDriver() instanceof Postgres) {
 	//$db->execute('CREATE EXTENSION postgis;')->fetchAll();
 	//debug($db->execute('SELECT postgis_full_version();')->fetchAssoc());
 }
@@ -117,10 +120,10 @@ if (env('FIXTURE_SCHEMA_METADATA')) {
 	$loader->loadInternalFile(env('FIXTURE_SCHEMA_METADATA'));
 }
 
-if ($db->getDriver() instanceof \Cake\Database\Driver\Mysql) {
+if ($db->getDriver() instanceof Mysql) {
 	try {
 		$db->execute('ALTER TABLE spatial_addresses ADD SPATIAL INDEX coordinates_spatial(coordinates);');
-	} catch (\Cake\Database\Exception\QueryException) {
+	} catch (QueryException) {
 		// Index already exists
 	}
 }
