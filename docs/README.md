@@ -9,6 +9,7 @@
 * [Calculator lib](Geocoder/Calculator.md)
 * [Geo lib](Geocoder/Geo.md)
 * [GoogleMap helper](Helper/GoogleMap.md)
+* [Leaflet helper](Helper/Leaflet.md)
 * [GeocodedAddresses result cache](Model/GeocodedAddresses.md)
 
 ## Contributing
