@@ -5,12 +5,12 @@ It supports multiple providers with a unified API.
 
 ## Supported Providers
 
-| Provider | API Documentation |
-|----------|-------------------|
-| Geoapify | [Static Maps API](https://apidocs.geoapify.com/docs/maps/static/) |
-| Mapbox | [Static Images API](https://docs.mapbox.com/api/maps/static-images/) |
-| Stadia | [Static Maps API](https://docs.stadiamaps.com/static-maps/) |
-| Google | [Maps Static API](https://developers.google.com/maps/documentation/maps-static/overview) |
+| Provider | Constant | API Documentation |
+|----------|----------|-------------------|
+| Geoapify | `StaticMapHelper::PROVIDER_GEOAPIFY` | [Static Maps API](https://apidocs.geoapify.com/docs/maps/static/) |
+| Mapbox | `StaticMapHelper::PROVIDER_MAPBOX` | [Static Images API](https://docs.mapbox.com/api/maps/static-images/) |
+| Stadia | `StaticMapHelper::PROVIDER_STADIA` | [Static Maps API](https://docs.stadiamaps.com/static-maps/) |
+| Google | `StaticMapHelper::PROVIDER_GOOGLE` | [Maps Static API](https://developers.google.com/maps/documentation/maps-static/overview) |
 
 ## Adding the helper
 
@@ -79,11 +79,13 @@ echo $this->StaticMap->link('View Map', [
 
 ## Switching Providers
 
-Switch providers per-call:
+Switch providers per-call using constants (recommended) or strings:
 ```php
+use Geo\View\Helper\StaticMapHelper;
+
 // Use Mapbox for this specific map
 echo $this->StaticMap->image([
-    'provider' => 'mapbox',
+    'provider' => StaticMapHelper::PROVIDER_MAPBOX,
     'lat' => 48.2082,
     'lng' => 16.3738,
     'zoom' => 12,
@@ -91,7 +93,7 @@ echo $this->StaticMap->image([
 
 // Use Google for another
 echo $this->StaticMap->image([
-    'provider' => 'google',
+    'provider' => StaticMapHelper::PROVIDER_GOOGLE,
     'lat' => 51.5074,
     'lng' => -0.1278,
     'zoom' => 10,

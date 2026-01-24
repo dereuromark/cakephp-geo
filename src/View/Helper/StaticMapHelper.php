@@ -25,6 +25,34 @@ use InvalidArgumentException;
 class StaticMapHelper extends Helper {
 
 	/**
+	 * Geoapify provider
+	 *
+	 * @var string
+	 */
+	public const PROVIDER_GEOAPIFY = 'geoapify';
+
+	/**
+	 * Mapbox provider
+	 *
+	 * @var string
+	 */
+	public const PROVIDER_MAPBOX = 'mapbox';
+
+	/**
+	 * Stadia Maps provider
+	 *
+	 * @var string
+	 */
+	public const PROVIDER_STADIA = 'stadia';
+
+	/**
+	 * Google Maps provider
+	 *
+	 * @var string
+	 */
+	public const PROVIDER_GOOGLE = 'google';
+
+	/**
 	 * @var array
 	 */
 	protected array $helpers = ['Html'];
@@ -33,24 +61,24 @@ class StaticMapHelper extends Helper {
 	 * @var array<string, mixed>
 	 */
 	protected array $_defaultConfig = [
-		'provider' => 'geoapify',
+		'provider' => self::PROVIDER_GEOAPIFY,
 		'size' => '400x300',
 		'format' => 'png',
 		'scale' => 1,
-		'geoapify' => [
+		self::PROVIDER_GEOAPIFY => [
 			'apiKey' => null,
 			'style' => 'osm-bright',
 		],
-		'mapbox' => [
+		self::PROVIDER_MAPBOX => [
 			'apiKey' => null,
 			'style' => 'streets-v12',
 			'username' => 'mapbox',
 		],
-		'stadia' => [
+		self::PROVIDER_STADIA => [
 			'apiKey' => null,
 			'style' => 'alidade_smooth',
 		],
-		'google' => [
+		self::PROVIDER_GOOGLE => [
 			'apiKey' => null,
 			'style' => 'roadmap',
 		],
@@ -60,10 +88,10 @@ class StaticMapHelper extends Helper {
 	 * @var array<string, class-string<StaticMapProviderInterface>>
 	 */
 	protected array $providerClasses = [
-		'geoapify' => GeoapifyProvider::class,
-		'mapbox' => MapboxProvider::class,
-		'stadia' => StadiaProvider::class,
-		'google' => GoogleProvider::class,
+		self::PROVIDER_GEOAPIFY => GeoapifyProvider::class,
+		self::PROVIDER_MAPBOX => MapboxProvider::class,
+		self::PROVIDER_STADIA => StadiaProvider::class,
+		self::PROVIDER_GOOGLE => GoogleProvider::class,
 	];
 
 	/**

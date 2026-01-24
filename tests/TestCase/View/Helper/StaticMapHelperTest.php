@@ -31,10 +31,10 @@ class StaticMapHelperTest extends TestCase {
 
 		$this->View = new View(null);
 		$this->StaticMap = new StaticMapHelper($this->View, [
-			'geoapify' => ['apiKey' => 'test-geoapify-key'],
-			'mapbox' => ['apiKey' => 'test-mapbox-key'],
-			'stadia' => ['apiKey' => 'test-stadia-key'],
-			'google' => ['apiKey' => 'test-google-key'],
+			StaticMapHelper::PROVIDER_GEOAPIFY => ['apiKey' => 'test-geoapify-key'],
+			StaticMapHelper::PROVIDER_MAPBOX => ['apiKey' => 'test-mapbox-key'],
+			StaticMapHelper::PROVIDER_STADIA => ['apiKey' => 'test-stadia-key'],
+			StaticMapHelper::PROVIDER_GOOGLE => ['apiKey' => 'test-google-key'],
 		]);
 	}
 
@@ -43,13 +43,13 @@ class StaticMapHelperTest extends TestCase {
 	 */
 	public function testConfigMergeDefaults(): void {
 		$config = [
-			'provider' => 'mapbox',
+			'provider' => StaticMapHelper::PROVIDER_MAPBOX,
 			'size' => '600x400',
 		];
 		$this->StaticMap = new StaticMapHelper($this->View, $config);
 
 		$result = $this->StaticMap->getConfig();
-		$this->assertSame('mapbox', $result['provider']);
+		$this->assertSame(StaticMapHelper::PROVIDER_MAPBOX, $result['provider']);
 		$this->assertSame('600x400', $result['size']);
 	}
 
@@ -57,13 +57,13 @@ class StaticMapHelperTest extends TestCase {
 	 * @return void
 	 */
 	public function testConfigFromConfigure(): void {
-		Configure::write('StaticMap.provider', 'stadia');
+		Configure::write('StaticMap.provider', StaticMapHelper::PROVIDER_STADIA);
 		Configure::write('StaticMap.size', '800x600');
 
 		$this->StaticMap = new StaticMapHelper($this->View);
 
 		$result = $this->StaticMap->getConfig();
-		$this->assertSame('stadia', $result['provider']);
+		$this->assertSame(StaticMapHelper::PROVIDER_STADIA, $result['provider']);
 		$this->assertSame('800x600', $result['size']);
 	}
 
@@ -86,7 +86,7 @@ class StaticMapHelperTest extends TestCase {
 	 */
 	public function testUrlWithProvider(): void {
 		$url = $this->StaticMap->url([
-			'provider' => 'mapbox',
+			'provider' => StaticMapHelper::PROVIDER_MAPBOX,
 			'lat' => 48.2082,
 			'lng' => 16.3738,
 		]);
@@ -273,9 +273,9 @@ class StaticMapHelperTest extends TestCase {
 	 * @return void
 	 */
 	public function testProvider(): void {
-		$provider = $this->StaticMap->provider('geoapify');
+		$provider = $this->StaticMap->provider(StaticMapHelper::PROVIDER_GEOAPIFY);
 
-		$this->assertSame('geoapify', $provider->getName());
+		$this->assertSame(StaticMapHelper::PROVIDER_GEOAPIFY, $provider->getName());
 	}
 
 	/**
@@ -284,7 +284,7 @@ class StaticMapHelperTest extends TestCase {
 	public function testProviderDefault(): void {
 		$provider = $this->StaticMap->provider();
 
-		$this->assertSame('geoapify', $provider->getName());
+		$this->assertSame(StaticMapHelper::PROVIDER_GEOAPIFY, $provider->getName());
 	}
 
 	/**
@@ -303,17 +303,17 @@ class StaticMapHelperTest extends TestCase {
 	public function testAvailableProviders(): void {
 		$providers = $this->StaticMap->availableProviders();
 
-		$this->assertContains('geoapify', $providers);
-		$this->assertContains('mapbox', $providers);
-		$this->assertContains('stadia', $providers);
-		$this->assertContains('google', $providers);
+		$this->assertContains(StaticMapHelper::PROVIDER_GEOAPIFY, $providers);
+		$this->assertContains(StaticMapHelper::PROVIDER_MAPBOX, $providers);
+		$this->assertContains(StaticMapHelper::PROVIDER_STADIA, $providers);
+		$this->assertContains(StaticMapHelper::PROVIDER_GOOGLE, $providers);
 	}
 
 	/**
 	 * @return void
 	 */
 	public function testSupportedStyles(): void {
-		$styles = $this->StaticMap->supportedStyles('geoapify');
+		$styles = $this->StaticMap->supportedStyles(StaticMapHelper::PROVIDER_GEOAPIFY);
 
 		$this->assertContains('osm-bright', $styles);
 	}
@@ -331,8 +331,8 @@ class StaticMapHelperTest extends TestCase {
 	 * @return void
 	 */
 	public function testProviderReuse(): void {
-		$provider1 = $this->StaticMap->provider('geoapify');
-		$provider2 = $this->StaticMap->provider('geoapify');
+		$provider1 = $this->StaticMap->provider(StaticMapHelper::PROVIDER_GEOAPIFY);
+		$provider2 = $this->StaticMap->provider(StaticMapHelper::PROVIDER_GEOAPIFY);
 
 		$this->assertSame($provider1, $provider2);
 	}
@@ -342,7 +342,7 @@ class StaticMapHelperTest extends TestCase {
 	 */
 	public function testGoogleProvider(): void {
 		$url = $this->StaticMap->url([
-			'provider' => 'google',
+			'provider' => StaticMapHelper::PROVIDER_GOOGLE,
 			'lat' => 48.2082,
 			'lng' => 16.3738,
 		]);
@@ -356,7 +356,7 @@ class StaticMapHelperTest extends TestCase {
 	 */
 	public function testStadiaProvider(): void {
 		$url = $this->StaticMap->url([
-			'provider' => 'stadia',
+			'provider' => StaticMapHelper::PROVIDER_STADIA,
 			'lat' => 48.2082,
 			'lng' => 16.3738,
 		]);
