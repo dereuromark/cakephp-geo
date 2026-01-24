@@ -12,7 +12,8 @@ A CakePHP plugin to
 - geocode locations/ips and save the information (lat/lng) along with the records
 - reverse geocode data
 - querying geocoded data by distance (using custom finder)
-- display (Google) maps (dynamic and static)
+- display Google maps (dynamic and static)
+- display Leaflet maps (open-source alternative)
 
 This branch is for **CakePHP 5.1+**. See [version map](https://github.com/dereuromark/cakephp-geo/wiki#cakephp-version-map) for details.
 
@@ -32,7 +33,7 @@ And also:
 
 
 ## Demo
-See [Sandbox examples](https://sandbox.dereuromark.de/sandbox/geo-examples) for live demos of the GoogleMaps helper and the Geocoder behavior.
+See [Sandbox examples](https://sandbox.dereuromark.de/sandbox/geo-examples) for live demos of the map helpers and the Geocoder behavior.
 
 ## Installation & Docs
 
