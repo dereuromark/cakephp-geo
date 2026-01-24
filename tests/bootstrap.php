@@ -118,5 +118,9 @@ if (env('FIXTURE_SCHEMA_METADATA')) {
 }
 
 if ($db->getDriver() instanceof \Cake\Database\Driver\Mysql) {
-	$db->execute('ALTER TABLE spatial_addresses ADD SPATIAL INDEX coordinates_spatial(coordinates);');
+	try {
+		$db->execute('ALTER TABLE spatial_addresses ADD SPATIAL INDEX coordinates_spatial(coordinates);');
+	} catch (\Cake\Database\Exception\QueryException) {
+		// Index already exists
+	}
 }

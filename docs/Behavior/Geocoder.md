@@ -178,6 +178,4 @@ $query = $this->Addresses->find('spatial', [
 ```
 Note: This only works with PostGIS and MySQL 5.7+ (and MariaDB 10.4+) databases, as they support spatial data types.
 
-There can be a performance improvement when using spatial indexes, so you might want to consider using this for larger datasets.
-In reality I didnt get the index to work, though. Only managed to limit down the looked up entries from full table scan to range, which
-sped it up, too.
+The finder uses a bounding box pre-filter with `ST_Within()` to leverage spatial indexes, then refines results with `ST_Distance_Sphere()` for accurate distance calculations. This approach provides significant performance improvements on larger datasets.

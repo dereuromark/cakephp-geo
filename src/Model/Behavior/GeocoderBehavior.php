@@ -440,6 +440,26 @@ class GeocoderBehavior extends Behavior {
 		// Filter by max distance if limit is provided
 		if (isset($options['distance'])) {
 			$distance = (float)$options['distance'];
+
+			// Calculate bounding box coordinates for spatial index usage
+			// 1 degree latitude ≈ 111 km, 1 degree longitude ≈ 111 km * cos(latitude)
+			$latDelta = $distance / 111.0;
+			$lngDelta = $distance / (111.0 * abs(cos(deg2rad($lat))));
+
+			$minLat = $lat - $latDelta;
+			$maxLat = $lat + $latDelta;
+			$minLng = $lng - $lngDelta;
+			$maxLng = $lng + $lngDelta;
+
+			// Bounding box filter using ST_Within (CAN use spatial index)
+			$envelope = "ST_GeomFromText('POLYGON(($minLng $minLat, $maxLng $minLat, $maxLng $maxLat, $minLng $maxLat, $minLng $minLat))')";
+			$query->where(function (QueryExpression $exp) use ($envelope) {
+				return $exp->add(
+					new QueryExpression("ST_Within(coordinates, $envelope)"),
+				);
+			});
+
+			// Precise distance filter (on already-filtered result set)
 			$query->where(function (QueryExpression $exp) use ($lat, $lng, $distance) {
 				return $exp->lte(
 					new QueryExpression("ST_Distance_Sphere(coordinates, ST_GeomFromText('POINT($lng $lat)')) / 1000"),

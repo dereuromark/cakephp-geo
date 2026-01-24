@@ -126,18 +126,36 @@ class SpatialAddressesTableTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testFindSpatialExplain() {
+	public function testFindSpatialExplain(): void {
 		$this->assertNotEmpty($this->SpatialAddresses->getSchema()->getIndex('coordinates_spatial'));
 
 		$this->SpatialAddresses->addBehavior('Geo.Geocoder');
 
+		$lat = 48.110589;
+		$lng = 11.422230;
+		$distance = 100;
+
+		// Calculate bounding box (same as in findSpatial)
+		$latDelta = $distance / 111.0;
+		$lngDelta = $distance / (111.0 * abs(cos(deg2rad($lat))));
+		$minLat = $lat - $latDelta;
+		$maxLat = $lat + $latDelta;
+		$minLng = $lng - $lngDelta;
+		$maxLng = $lng + $lngDelta;
+
 		$sql = <<<SQL
-EXPLAIN SELECT (ST_Distance_Sphere(coordinates, ST_GeomFromText('POINT(11.42223 48.110589)')) / 1000) AS `distance`, `SpatialAddresses`.`id` AS `SpatialAddresses__id`, `SpatialAddresses`.`address` AS `SpatialAddresses__address`, `SpatialAddresses`.`lat` AS `SpatialAddresses__lat`, `SpatialAddresses`.`lng` AS `SpatialAddresses__lng`, `SpatialAddresses`.`coordinates` AS `SpatialAddresses__coordinates`, `SpatialAddresses`.`created` AS `SpatialAddresses__created`, `SpatialAddresses`.`modified` AS `SpatialAddresses__modified` FROM `spatial_addresses` `SpatialAddresses` WHERE (ST_Distance_Sphere(coordinates, ST_GeomFromText('POINT(11.42223 48.110589)')) / 1000) <= 100 ORDER BY `distance` ASC
+EXPLAIN SELECT (ST_Distance_Sphere(coordinates, ST_GeomFromText('POINT($lng $lat)')) / 1000) AS `distance`,
+	`SpatialAddresses`.`id` AS `SpatialAddresses__id`
+FROM `spatial_addresses` `SpatialAddresses`
+WHERE ST_Within(coordinates, ST_GeomFromText('POLYGON(($minLng $minLat, $maxLng $minLat, $maxLng $maxLat, $minLng $maxLat, $minLng $minLat))'))
+	AND (ST_Distance_Sphere(coordinates, ST_GeomFromText('POINT($lng $lat)')) / 1000) <= $distance
+ORDER BY `distance` ASC
 SQL;
 		$result = $this->SpatialAddresses->getConnection()->execute($sql)->fetchAssoc();
 
-		// Should be type range or index, not ALL
-		debug($result);
+		// With small test data, optimizer may choose full scan, but the query structure must allow index usage
+		// The key check is that possible_keys contains our spatial index
+		$this->assertStringContainsString('coordinates_spatial', $result['possible_keys'] ?? '', 'Spatial index should be a possible key for the query');
 	}
 
 }
