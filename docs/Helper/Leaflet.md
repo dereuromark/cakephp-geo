@@ -122,7 +122,8 @@ $this->Leaflet->addMarker([
 ```
 
 ## Tile Providers
-The helper comes with built-in tile provider presets:
+The helper comes with built-in tile provider presets.
+See [Leaflet Tile Providers](LeafletTileProviders.md) for a comprehensive list of available providers.
 
 ```php
 // OpenStreetMap (default)
