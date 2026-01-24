@@ -139,15 +139,34 @@ $this->Leaflet->useTilePreset(\Geo\View\Helper\LeafletHelper::TILES_CARTO_DARK);
 $map = $this->Leaflet->map();
 ```
 
-### Custom tile layer
-You can also add custom tile layers:
+### Custom tile layer via map options (recommended)
+To use a custom tile provider instead of the default, pass the `tileLayer` option to `map()`:
+```php
+echo $this->Leaflet->map([
+    'zoom' => 10,
+    'lat' => 48.2082,
+    'lng' => 16.3738,
+    'tileLayer' => [
+        'url' => 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+        'options' => [
+            'attribution' => '&copy; OpenStreetMap, &copy; OpenTopoMap',
+            'maxZoom' => 17,
+        ],
+    ],
+]);
+```
+
+### Adding additional tile layers
+Use `addTileLayer()` to add an *additional* layer on top of the existing one (e.g., for overlays):
 ```php
 $this->Leaflet->map();
+// This adds a second layer ON TOP of the default OSM layer
 $this->Leaflet->addTileLayer(
     'https://{s}.custom-tiles.com/{z}/{x}/{y}.png',
     ['attribution' => '&copy; Custom Tiles']
 );
 ```
+Note: This does not replace the default tile layer, it adds another one on top.
 
 ## Drawing shapes
 
