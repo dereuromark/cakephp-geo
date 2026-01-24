@@ -164,5 +164,21 @@ If you include the routes, you have an admin backend for the geocoding as well a
 
 You can test the geocoding and also remove cache data where needed.
 
+## Testing
+
+To avoid API calls in your test suite, use the built-in `NullProvider` that returns empty results.
+
+Configure it globally in your test bootstrap:
+```php
+// tests/bootstrap.php
+use Cake\Core\Configure;
+use Geo\Geocoder\Provider\NullProvider;
+
+Configure::write('Geocoder.provider', fn () => new NullProvider());
+```
+
+This ensures all tests use the NullProvider instead of making real API calls.
+The behavior will handle empty results gracefully when `allowEmpty` is `true` (the default).
+
 ## Providers
 Full list of existing providers [here](https://github.com/geocoder-php/Geocoder#providers).
