@@ -22,6 +22,7 @@ use Cake\View\Helper;
  * @link https://www.dereuromark.de/2010/12/21/googlemapsv3-cakephp-helper/
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  * @property \Cake\View\Helper\HtmlHelper $Html
+ * @property \Cake\View\Helper\FormHelper $Form
  */
 class GoogleMapHelper extends Helper {
 
@@ -127,7 +128,7 @@ class GoogleMapHelper extends Helper {
 	 *
 	 * @var array
 	 */
-	protected array $helpers = ['Html'];
+	protected array $helpers = ['Html', 'Form'];
 
 	/**
 	 * Google maker config instance variable
@@ -265,6 +266,7 @@ class GoogleMapHelper extends Helper {
 		'localImages' => false,
 		'https' => null, // auto detect
 		'key' => null,
+		'libraries' => null, // e.g. 'places' or ['places', 'geometry']
 	];
 
 	/**
@@ -362,6 +364,10 @@ class GoogleMapHelper extends Helper {
 		}
 		if ($this->_runtimeConfig['key']) {
 			$query['key'] = $this->_runtimeConfig['key'];
+		}
+		if ($this->_runtimeConfig['libraries']) {
+			$libraries = $this->_runtimeConfig['libraries'];
+			$query['libraries'] = is_array($libraries) ? implode(',', $libraries) : $libraries;
 		}
 
 		if ($this->_runtimeConfig['language']) {
@@ -1773,6 +1779,101 @@ function geocodeAddress(address) {
 		}
 
 		return implode(',' . PHP_EOL, $pieces);
+	}
+
+	/**
+	 * Generate a Places Autocomplete input field.
+	 *
+	 * This creates an input field with Google Places Autocomplete functionality,
+	 * along with hidden fields to store the selected place's latitude and longitude.
+	 *
+	 * Requires the 'places' library to be loaded. Either configure it globally:
+	 * ```
+	 * $this->loadHelper('Geo.GoogleMap', ['libraries' => 'places', 'autoScript' => true]);
+	 * ```
+	 * Or ensure you include the API script with `libraries=places` parameter.
+	 *
+	 * @param string $fieldName The field name for the autocomplete input.
+	 * @param array<string, mixed> $options Options for the input and autocomplete:
+	 *   - `field`: Options passed to Form->control() for the main input field.
+	 *   - `lat`: Field name suffix for latitude hidden field (default: '_lat').
+	 *   - `lng`: Field name suffix for longitude hidden field (default: '_lng').
+	 *   - `autocomplete`: Options passed to google.maps.places.Autocomplete constructor.
+	 *     See https://developers.google.com/maps/documentation/javascript/reference/places-widget#AutocompleteOptions
+	 *   - `callbacks`: Custom JS callbacks:
+	 *     - `placeChanged`: JS function body executed when a place is selected.
+	 *       Has access to `place`, `autocomplete`, `inputElement`, `latField`, `lngField` variables.
+	 * @return string HTML for the autocomplete input with hidden lat/lng fields.
+	 */
+	public function placesAutocomplete(string $fieldName, array $options = []): string {
+		$options += [
+			'field' => [],
+			'lat' => '_lat',
+			'lng' => '_lng',
+			'autocomplete' => [],
+			'callbacks' => [],
+		];
+
+		$fieldOptions = $options['field'] + [
+			'type' => 'text',
+		];
+
+		$id = $fieldOptions['id'] ?? $this->_domId($fieldName);
+		$fieldOptions['id'] = $id;
+
+		$latFieldName = $fieldName . $options['lat'];
+		$lngFieldName = $fieldName . $options['lng'];
+		$latId = $id . $options['lat'];
+		$lngId = $id . $options['lng'];
+
+		$html = $this->Form->control($fieldName, $fieldOptions);
+		$html .= $this->Form->hidden($latFieldName, ['id' => $latId]);
+		$html .= $this->Form->hidden($lngFieldName, ['id' => $lngId]);
+
+		$autocompleteOptions = json_encode($options['autocomplete']) ?: '{}';
+		$placeChangedCallback = $options['callbacks']['placeChanged'] ?? '';
+
+		$js = <<<JS
+(function() {
+	var inputElement = document.getElementById('{$id}');
+	var latField = document.getElementById('{$latId}');
+	var lngField = document.getElementById('{$lngId}');
+	var autocompleteOptions = {$autocompleteOptions};
+	var autocomplete = new google.maps.places.Autocomplete(inputElement, autocompleteOptions);
+
+	inputElement.addEventListener('keydown', function(event) {
+		if (event.keyCode === 13) {
+			var pacContainer = document.querySelector('.pac-container');
+			if (pacContainer && pacContainer.style.display !== 'none') {
+				event.preventDefault();
+			}
+		}
+	});
+
+	autocomplete.addListener('place_changed', function() {
+		var place = autocomplete.getPlace();
+		if (place.geometry && place.geometry.location) {
+			latField.value = place.geometry.location.lat();
+			lngField.value = place.geometry.location.lng();
+		}
+		{$placeChangedCallback}
+	});
+})();
+JS;
+
+		$this->Html->scriptBlock($js, ['block' => $this->_runtimeConfig['block']]);
+
+		return $html;
+	}
+
+	/**
+	 * Generate a DOM-safe ID from a field name.
+	 *
+	 * @param string $fieldName The field name.
+	 * @return string The generated ID.
+	 */
+	protected function _domId(string $fieldName): string {
+		return str_replace(['.', ' ', '[', ']'], ['_', '_', '-', ''], $fieldName);
 	}
 
 }
