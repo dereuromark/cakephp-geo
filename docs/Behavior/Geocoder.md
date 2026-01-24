@@ -182,3 +182,16 @@ The behavior will handle empty results gracefully when `allowEmpty` is `true` (t
 
 ## Providers
 Full list of existing providers [here](https://github.com/geocoder-php/Geocoder#providers).
+
+## Spatial
+You can also use the "spatial" finder using coordinates as POINT instead of lat/lng.
+```php
+$query = $this->Addresses->find('spatial', [
+    'lat' => 13.3,
+    'lng' => 19.2,
+    'distance' => 100,
+]);
+```
+Note: This only works with PostGIS and MySQL 5.7+ (and MariaDB 10.4+) databases, as they support spatial data types.
+
+The finder uses a bounding box pre-filter with `ST_Within()` to leverage spatial indexes, then refines results with `ST_Distance_Sphere()` for accurate distance calculations. This approach provides significant performance improvements on larger datasets.

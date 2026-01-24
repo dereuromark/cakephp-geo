@@ -78,6 +78,7 @@ class GeocoderBehavior extends Behavior {
 		'unit' => Calculator::UNIT_KM,
 		'implementedFinders' => [
 			'distance' => 'findDistance',
+			'spatial' => 'findSpatial',
 		],
 		'validationError' => null,
 		'cache' => false, // Enable only if you got a GeocodedAddresses table running
@@ -404,6 +405,80 @@ class GeocoderBehavior extends Behavior {
 	}
 
 	/**
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param float|null $lat
+	 * @param float|null $lng
+	 * @param \Geocoder\Model\Coordinates|null $coordinates
+	 * @param int|null $distance
+	 * @param string|null $tableName
+	 * @param bool $sort
+	 * @return \Cake\ORM\Query\SelectQuery
+	 */
+	public function findSpatial(SelectQuery $query, ?float $lat = null, ?float $lng = null, ?Coordinates $coordinates = null, ?int $distance = null, ?string $tableName = null, bool $sort = true): SelectQuery {
+		$options = [
+			'tableName' => $tableName,
+			'sort' => $sort,
+			'lat' => $lat,
+			'lng' => $lng,
+			'distance' => $distance,
+			'coordinates' => $coordinates,
+		];
+		$options = $this->assertCoordinates($options);
+
+		if ($query->isAutoFieldsEnabled() === null) {
+			$query->enableAutoFields(true);
+		}
+
+		$lat = $options[static::OPTION_LAT];
+		$lng = $options[static::OPTION_LNG];
+
+		// Add distance calculation as a virtual field
+		$query->select([
+			'distance' => new QueryExpression(
+				"ST_Distance_Sphere(coordinates, ST_GeomFromText('POINT($lng $lat)')) / 1000",
+			),
+		]);
+
+		// Filter by max distance if limit is provided
+		if (isset($options['distance'])) {
+			$distance = (float)$options['distance'];
+
+			// Calculate bounding box coordinates for spatial index usage
+			// 1 degree latitude ≈ 111 km, 1 degree longitude ≈ 111 km * cos(latitude)
+			$latDelta = $distance / 111.0;
+			$lngDelta = $distance / (111.0 * abs(cos(deg2rad($lat))));
+
+			$minLat = $lat - $latDelta;
+			$maxLat = $lat + $latDelta;
+			$minLng = $lng - $lngDelta;
+			$maxLng = $lng + $lngDelta;
+
+			// Bounding box filter using ST_Within (CAN use spatial index)
+			$envelope = "ST_GeomFromText('POLYGON(($minLng $minLat, $maxLng $minLat, $maxLng $maxLat, $minLng $maxLat, $minLng $minLat))')";
+			$query->where(function (QueryExpression $exp) use ($envelope) {
+				return $exp->add(
+					new QueryExpression("ST_Within(coordinates, $envelope)"),
+				);
+			});
+
+			// Precise distance filter (on already-filtered result set)
+			$query->where(function (QueryExpression $exp) use ($lat, $lng, $distance) {
+				return $exp->lte(
+					new QueryExpression("ST_Distance_Sphere(coordinates, ST_GeomFromText('POINT($lng $lat)')) / 1000"),
+					$distance,
+				);
+			});
+		}
+
+		if ($options['sort']) {
+			$sort = $options['sort'] === true ? 'ASC' : $options['sort'];
+			$query->orderBy(['distance' => $sort]);
+		}
+
+		return $query;
+	}
+
+	/**
 	 * Forms a sql snippet for distance calculation on db level using two lat/lng points.
 	 *
 	 * @param string|float $lat Latitude field (Model.lat) or float value
@@ -675,6 +750,10 @@ class GeocoderBehavior extends Behavior {
 			$error = sprintf('Fields %s or %s value object are missing.', static::OPTION_LNG . '/' . static::OPTION_LNG, static::OPTION_COORDINATES);
 
 			throw new InvalidArgumentException($error);
+		}
+
+		if ($options[static::OPTION_LAT] < -90 || $options[static::OPTION_LAT] > 90 || $options[static::OPTION_LNG] < -180 || $options[static::OPTION_LNG] > 180) {
+			throw new InvalidArgumentException('Invalid latitude or longitude in (' . $options[static::OPTION_LAT] . '/' . $options[static::OPTION_LNG] . ').');
 		}
 
 		return $options;
