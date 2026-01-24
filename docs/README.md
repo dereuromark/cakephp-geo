@@ -10,6 +10,7 @@
 * [Geo lib](Geocoder/Geo.md)
 * [GoogleMap helper](Helper/GoogleMap.md)
 * [Leaflet helper](Helper/Leaflet.md)
+* [Leaflet tile providers](Helper/LeafletTileProviders.md)
 * [GeocodedAddresses result cache](Model/GeocodedAddresses.md)
 
 ## Contributing
