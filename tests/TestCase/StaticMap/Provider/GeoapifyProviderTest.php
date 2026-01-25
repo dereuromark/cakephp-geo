@@ -68,6 +68,54 @@ class GeoapifyProviderTest extends TestCase {
 	/**
 	 * @return void
 	 */
+	public function testBuildUrlWithMarkersExplicitZoom(): void {
+		$url = $this->provider->buildUrl(
+			['lat' => 48.2082, 'lng' => 16.3738, 'zoom' => 15],
+			[
+				['lat' => 48.2082, 'lng' => 16.3738, 'color' => 'red'],
+			],
+		);
+
+		$this->assertStringContainsString('center=lonlat%3A16.3738%2C48.2082', $url);
+		$this->assertStringContainsString('zoom=15', $url);
+		$this->assertStringContainsString('marker=', $url);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testBuildUrlAutoCalculatesBoundsForMarkers(): void {
+		$url = $this->provider->buildUrl(
+			[],
+			[
+				['lat' => 48.2082, 'lng' => 16.3738, 'color' => 'red'],
+				['lat' => 48.1951, 'lng' => 16.3715, 'color' => 'blue'],
+			],
+		);
+
+		$this->assertStringContainsString('center=', $url);
+		$this->assertStringContainsString('zoom=', $url);
+		$this->assertStringContainsString('marker=', $url);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testBuildUrlAutoCalculatesForSingleMarker(): void {
+		$url = $this->provider->buildUrl(
+			[],
+			[
+				['lat' => 48.2082, 'lng' => 16.3738, 'color' => 'red'],
+			],
+		);
+
+		$this->assertStringContainsString('center=', $url);
+		$this->assertStringContainsString('zoom=', $url);
+	}
+
+	/**
+	 * @return void
+	 */
 	public function testBuildUrlCustomSize(): void {
 		$url = $this->provider->buildUrl([
 			'lat' => 48.2082,
@@ -146,8 +194,8 @@ class GeoapifyProviderTest extends TestCase {
 		);
 
 		$this->assertStringContainsString('geometry=', $url);
-		$this->assertStringContainsString('polyline:', $url);
-		$this->assertStringContainsString('linecolor:%230000ff', $url); // URL-encoded #
+		$this->assertStringContainsString('polyline:16.3738,48.2082,15.4395,47.0707', $url);
+		$this->assertStringContainsString('linecolor:%230000ff', $url);
 		$this->assertStringContainsString('linewidth:3', $url);
 	}
 
@@ -162,6 +210,57 @@ class GeoapifyProviderTest extends TestCase {
 		]);
 
 		$this->assertStringContainsString('scaleFactor=2', $url);
+	}
+
+	/**
+	 * Test auto-fit behavior when paths are provided without center/zoom.
+	 *
+	 * @return void
+	 */
+	public function testBuildUrlAutoFitWithPaths(): void {
+		$url = $this->provider->buildUrl(
+			[],
+			[],
+			[
+				[
+					'points' => [
+						['lat' => 48.2082, 'lng' => 16.3738],
+						['lat' => 48.215, 'lng' => 16.36],
+						['lat' => 48.22, 'lng' => 16.38],
+						['lat' => 48.2082, 'lng' => 16.3738],
+					],
+					'color' => 'blue',
+					'weight' => 2,
+					'fillColor' => 'yellow',
+				],
+			],
+		);
+
+		$this->assertStringContainsString('center=', $url);
+		$this->assertStringContainsString('zoom=', $url);
+		$this->assertStringContainsString('geometry=polyline:16.3738,48.2082,16.36,48.215,16.38,48.22,16.3738,48.2082', $url);
+		$this->assertStringContainsString('linecolor:%230000ff', $url);
+		$this->assertStringContainsString('linewidth:2', $url);
+		$this->assertStringContainsString('fillcolor:%23ffff00', $url);
+	}
+
+	/**
+	 * Test auto-calculated bounds when markers are provided without explicit center/zoom.
+	 *
+	 * @return void
+	 */
+	public function testBuildUrlAutoCalculatesBoundsWithMarkers(): void {
+		$url = $this->provider->buildUrl(
+			[],
+			[
+				['lat' => 48.2082, 'lng' => 16.3738, 'color' => 'red'],
+				['lat' => 47.0707, 'lng' => 15.4395, 'color' => 'blue'],
+			],
+		);
+
+		$this->assertStringContainsString('center=', $url);
+		$this->assertStringContainsString('zoom=', $url);
+		$this->assertStringContainsString('marker=', $url);
 	}
 
 }

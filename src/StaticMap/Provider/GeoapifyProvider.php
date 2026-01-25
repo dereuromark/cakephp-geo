@@ -50,7 +50,6 @@ class GeoapifyProvider extends AbstractStaticMapProvider {
 
 		// Auto-calculate center and zoom if not provided
 		$options = $this->autoCalculateBounds($options, $markers, $paths);
-		$options['zoom'] = $options['zoom'] ?? 12;
 
 		$size = $this->parseSize($options['size']);
 
@@ -66,7 +65,7 @@ class GeoapifyProvider extends AbstractStaticMapProvider {
 			$params['scaleFactor'] = $options['scale'];
 		}
 
-		if ($options['lat'] !== null && $options['lng'] !== null) {
+		if ($options['lat'] !== null && $options['lng'] !== null && $options['zoom'] !== null) {
 			$params['center'] = 'lonlat:' . $options['lng'] . ',' . $options['lat'];
 			$params['zoom'] = $options['zoom'];
 		}
