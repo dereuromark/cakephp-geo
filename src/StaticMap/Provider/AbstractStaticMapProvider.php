@@ -156,7 +156,7 @@ abstract class AbstractStaticMapProvider implements StaticMapProviderInterface {
 	/**
 	 * Calculate center point from bounding box.
 	 *
-	 * @param array{minLat: float, maxLat: float, minLng: float, maxLng: float} $bounds
+	 * @param array{minLat: float, maxLat: float, minLng: float, maxLng: float}|array $bounds
 	 * @return array{lat: float, lng: float}
 	 */
 	protected function calculateCenter(array $bounds): array {
@@ -172,7 +172,7 @@ abstract class AbstractStaticMapProvider implements StaticMapProviderInterface {
 	 * Uses Mercator projection math to determine the zoom level that will
 	 * fit all points within the map viewport.
 	 *
-	 * @param array{minLat: float, maxLat: float, minLng: float, maxLng: float} $bounds
+	 * @param array{minLat: float, maxLat: float, minLng: float, maxLng: float}|array $bounds
 	 * @param int $mapWidth Map width in pixels
 	 * @param int $mapHeight Map height in pixels
 	 * @param int $padding Padding in pixels around the bounds
