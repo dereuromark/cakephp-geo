@@ -671,25 +671,44 @@ class LeafletHelper extends Helper {
 	 * @return string|null Javascript if $return is true
 	 */
 	public function finalize(bool $return = false): ?string {
-		$script = '
-jQuery(document).ready(function() {
-		';
-
-		$script .= $this->map;
+		$mapInit = $this->map;
 
 		// Add cluster group to map if clustering was enabled
 		if ($this->_useCluster) {
-			$script .= '
+			$mapInit .= '
 		' . $this->name() . '.addLayer(clusterGroup' . static::$mapCount . ');
 			';
 		}
 
 		if ($this->_runtimeConfig['autoCenter']) {
-			$script .= $this->_autoCenter();
+			$mapInit .= $this->_autoCenter();
 		}
 
-		$script .= '
+		// Wrap in appropriate loader based on clustering
+		if ($this->_useCluster) {
+			// When clustering is enabled, wait for markercluster library to load
+			$script = '
+(function() {
+	function initMap' . static::$mapCount . '() {
+		' . $mapInit . '
+	}
+
+	function waitForCluster() {
+		if (typeof L !== "undefined" && typeof L.markerClusterGroup === "function") {
+			jQuery(document).ready(initMap' . static::$mapCount . ');
+		} else {
+			setTimeout(waitForCluster, 50);
+		}
+	}
+	waitForCluster();
+})();';
+		} else {
+			$script = '
+jQuery(document).ready(function() {
+		' . $mapInit . '
 });';
+		}
+
 		static::$mapCount++;
 		if (!$return) {
 			$this->Html->scriptBlock($script, ['block' => true]);
