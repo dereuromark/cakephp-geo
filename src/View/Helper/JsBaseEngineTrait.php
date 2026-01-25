@@ -165,130 +165,19 @@ trait JsBaseEngineTrait {
 	/**
 	 * Escape a string to be JSON friendly.
 	 *
-	 * List of escaped elements:
-	 *
-	 * - "\r" => '\n'
-	 * - "\n" => '\n'
-	 * - '"' => '\"'
+	 * Uses json_encode() internally for proper UTF-8 handling.
 	 *
 	 * @param string $string String that needs to get escaped.
 	 * @return string Escaped string.
 	 */
 	public function escape($string) {
-		return $this->_utf8ToHex($string);
-	}
-
-	/**
-	 * Encode a string into JSON. Converts and escapes necessary characters.
-	 *
-	 * @param string $string The string that needs to be utf8->hex encoded
-	 * @return string
-	 */
-	protected function _utf8ToHex($string) {
-		$length = strlen($string);
-		$return = '';
-		for ($i = 0; $i < $length; ++$i) {
-			$ord = ord($string[$i]);
-			switch (true) {
-				case $ord == 0x08:
-					$return .= '\b';
-
-					break;
-				case $ord == 0x09:
-					$return .= '\t';
-
-					break;
-				case $ord == 0x0A:
-					$return .= '\n';
-
-					break;
-				case $ord == 0x0C:
-					$return .= '\f';
-
-					break;
-				case $ord == 0x0D:
-					$return .= '\r';
-
-					break;
-				case $ord == 0x22:
-				case $ord == 0x2F:
-				case $ord == 0x5C:
-					$return .= '\\' . $string[$i];
-
-					break;
-				case (($ord >= 0x20) && ($ord <= 0x7F)):
-					$return .= $string[$i];
-
-					break;
-				case (($ord & 0xE0) == 0xC0):
-					if ($i + 1 >= $length) {
-						$i += 1;
-						$return .= '?';
-
-						break;
-					}
-					$charbits = $string[$i] . $string[$i + 1];
-					$char = static::utf8($charbits);
-					$return .= sprintf('\u%04s', dechex($char[0]));
-					$i += 1;
-
-					break;
-				case (($ord & 0xF0) == 0xE0):
-					if ($i + 2 >= $length) {
-						$i += 2;
-						$return .= '?';
-
-						break;
-					}
-					$charbits = $string[$i] . $string[$i + 1] . $string[$i + 2];
-					$char = static::utf8($charbits);
-					$return .= sprintf('\u%04s', dechex($char[0]));
-					$i += 2;
-
-					break;
-				case (($ord & 0xF8) == 0xF0):
-					if ($i + 3 >= $length) {
-						$i += 3;
-						$return .= '?';
-
-						break;
-					}
-					$charbits = $string[$i] . $string[$i + 1] . $string[$i + 2] . $string[$i + 3];
-					$char = static::utf8($charbits);
-					$return .= sprintf('\u%04s', dechex($char[0]));
-					$i += 3;
-
-					break;
-				case (($ord & 0xFC) == 0xF8):
-					if ($i + 4 >= $length) {
-						$i += 4;
-						$return .= '?';
-
-						break;
-					}
-					$charbits = $string[$i] . $string[$i + 1] . $string[$i + 2] . $string[$i + 3] . $string[$i + 4];
-					$char = static::utf8($charbits);
-					$return .= sprintf('\u%04s', dechex($char[0]));
-					$i += 4;
-
-					break;
-				case (($ord & 0xFE) == 0xFC):
-					if ($i + 5 >= $length) {
-						$i += 5;
-						$return .= '?';
-
-						break;
-					}
-					$charbits = $string[$i] . $string[$i + 1] . $string[$i + 2] . $string[$i + 3] . $string[$i + 4] . $string[$i + 5];
-					$char = static::utf8($charbits);
-					$return .= sprintf('\u%04s', dechex($char[0]));
-					$i += 5;
-
-					break;
-			}
+		$encoded = json_encode($string, JSON_UNESCAPED_SLASHES);
+		if ($encoded === false) {
+			return '';
 		}
 
-		return $return;
+		// json_encode wraps string in quotes, strip them
+		return substr($encoded, 1, -1);
 	}
 
 	/**
@@ -366,62 +255,6 @@ trait JsBaseEngineTrait {
 		$options = $this->_parseOptions($options, array_keys($this->_callbackArguments[$method]));
 
 		return $options;
-	}
-
-	/**
-	 * Convert an array of data into a query string
-	 *
-	 * @param array $parameters Array of parameters to convert to a query string
-	 * @return string Querystring fragment
-	 */
-	protected function _toQuerystring($parameters) {
-		$out = '';
-		$keys = array_keys($parameters);
-		$count = count($parameters);
-		for ($i = 0; $i < $count; $i++) {
-			$out .= $keys[$i] . '=' . $parameters[$keys[$i]];
-			if ($i < $count - 1) {
-				$out .= '&';
-			}
-		}
-
-		return $out;
-	}
-
-	/**
-	 * Converts a multibyte character string
-	 * to the decimal value of the character
-	 *
-	 * @param string $string String to convert.
-	 * @return array
-	 */
-	protected static function utf8($string) {
-		$map = [];
-		$values = [];
-		$find = 1;
-		$length = strlen($string);
-		for ($i = 0; $i < $length; $i++) {
-			$value = ord($string[$i]);
-			if ($value < 128) {
-				$map[] = $value;
-			} else {
-				if (empty($values)) {
-					$find = ($value < 224) ? 2 : 3;
-				}
-				$values[] = $value;
-				if (count($values) === $find) {
-					if ($find == 3) {
-						$map[] = (($values[0] % 16) * 4096) + (($values[1] % 64) * 64) + ($values[2] % 64);
-					} else {
-						$map[] = (($values[0] % 32) * 64) + ($values[1] % 64);
-					}
-					$values = [];
-					$find = 1;
-				}
-			}
-		}
-
-		return $map;
 	}
 
 }
