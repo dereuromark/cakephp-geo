@@ -113,15 +113,17 @@ class StadiaProvider extends AbstractStaticMapProvider {
 	/**
 	 * Format markers for Stadia URL.
 	 *
-	 * Format: markers=lng,lat,marker_style|lng2,lat2,marker_style
+	 * Format: m=lat,lng,style&m=lat,lng,style (each marker as separate parameter)
 	 *
+	 * @link https://docs.stadiamaps.com/static-maps/
 	 * @param array<array<string, mixed>> $markers
 	 * @return string
 	 */
 	protected function formatMarkers(array $markers): string {
 		$formatted = [];
 		foreach ($markers as $marker) {
-			$parts = [$marker['lng'], $marker['lat']];
+			// Stadia uses lat,lng order (not lng,lat)
+			$parts = [$marker['lat'], $marker['lng']];
 
 			$markerStyle = 'marker';
 			if (!empty($marker['icon'])) {
@@ -139,10 +141,10 @@ class StadiaProvider extends AbstractStaticMapProvider {
 
 			$parts[] = $markerStyle;
 
-			$formatted[] = implode(',', $parts);
+			$formatted[] = 'm=' . implode(',', $parts);
 		}
 
-		return 'markers=' . implode('|', $formatted);
+		return implode('&', $formatted);
 	}
 
 	/**
