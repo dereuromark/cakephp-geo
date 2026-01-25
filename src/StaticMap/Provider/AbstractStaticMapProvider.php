@@ -178,7 +178,7 @@ abstract class AbstractStaticMapProvider implements StaticMapProviderInterface {
 	 * @param int $padding Padding in pixels around the bounds
 	 * @return int Zoom level (0-21)
 	 */
-	protected function calculateZoom(array $bounds, int $mapWidth, int $mapHeight, int $padding = 20): int {
+	protected function calculateZoom(array $bounds, int $mapWidth, int $mapHeight, int $padding = 40): int {
 		$latSpan = $bounds['maxLat'] - $bounds['minLat'];
 		$lngSpan = $bounds['maxLng'] - $bounds['minLng'];
 
@@ -187,7 +187,7 @@ abstract class AbstractStaticMapProvider implements StaticMapProviderInterface {
 			return 14;
 		}
 
-		// Apply padding
+		// Apply padding for markers/path endpoints visibility
 		$effectiveWidth = max(1, $mapWidth - 2 * $padding);
 		$effectiveHeight = max(1, $mapHeight - 2 * $padding);
 
@@ -208,8 +208,8 @@ abstract class AbstractStaticMapProvider implements StaticMapProviderInterface {
 			$latZoom = log($effectiveHeight * 180 / ($latSpan * $worldDim)) / log(2);
 		}
 
-		// Use the more restrictive zoom level
-		$zoom = min($lngZoom, $latZoom);
+		// Use the more restrictive zoom level, subtract 1 to be conservative
+		$zoom = min($lngZoom, $latZoom) - 1;
 
 		// Clamp to valid range
 		return max(0, min(21, (int)floor($zoom)));
