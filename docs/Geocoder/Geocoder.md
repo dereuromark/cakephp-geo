@@ -82,6 +82,37 @@ use Geo\Geocoder\Geocoder;
 ],
 ```
 
+### Provider Fallback Chain
+
+Use multiple providers with automatic fallback. If one provider fails due to rate limiting or server errors, the next provider in the chain is tried:
+
+```php
+use Geo\Geocoder\Geocoder;
+
+'Geocoder' => [
+    'providers' => [
+        Geocoder::PROVIDER_GOOGLE,      // Try Google first
+        Geocoder::PROVIDER_NOMINATIM,   // Fall back to Nominatim
+        Geocoder::PROVIDER_GEOAPIFY,    // Then Geoapify
+    ],
+    'google' => [
+        'apiKey' => env('GOOGLE_MAPS_API_KEY'),
+    ],
+    'nominatim' => [
+        'userAgent' => 'MyApp/1.0',
+    ],
+    'geoapify' => [
+        'apiKey' => env('GEOAPIFY_API_KEY'),
+    ],
+],
+```
+
+The chain automatically handles:
+- `QuotaExceeded` - API rate limit reached
+- `InvalidServerResponse` - Server errors or timeouts
+
+Other exceptions are thrown immediately without trying the next provider.
+
 ### Using a Callable (Legacy/Advanced)
 
 For advanced use cases or custom providers from geocoder-php:

@@ -8,6 +8,7 @@ use Cake\Http\Client;
 use Cake\I18n\I18n;
 use Geo\Exception\InconclusiveException;
 use Geo\Exception\NotAccurateEnoughException;
+use Geo\Geocoder\Provider\ChainProvider;
 use Geo\Geocoder\Provider\GeoapifyProvider;
 use Geo\Geocoder\Provider\GeocodingProviderInterface;
 use Geo\Geocoder\Provider\GoogleProvider;
@@ -144,6 +145,7 @@ class Geocoder {
 		'ssl' => true, // For GoogleMaps provider
 		'apiKey' => '', // For GoogleMaps provider,
 		'provider' => GoogleMaps::class, // Or use own callable, or provider name string
+		'providers' => [], // Array of provider names for fallback chain
 		'adapter' => Client::class, // Only for default provider
 		'allowInconclusive' => true,
 		'minAccuracy' => self::TYPE_COUNTRY, // deprecated?
@@ -529,6 +531,14 @@ class Geocoder {
 	 * @return void
 	 */
 	protected function _buildGeocoder() {
+		// Handle providers array (fallback chain)
+		$providers = $this->getConfig('providers');
+		if ($providers && is_array($providers)) {
+			$this->buildChainProvider($providers);
+
+			return;
+		}
+
 		$provider = $this->getConfig('provider');
 
 		// Handle callable provider (legacy support and advanced usage)
@@ -587,6 +597,42 @@ class Geocoder {
 		}
 
 		$this->providerInstance = new $className($providerConfig);
+	}
+
+	/**
+	 * Build a chain provider from an array of provider names.
+	 *
+	 * @param array<string> $providerNames Array of provider names
+	 * @return void
+	 */
+	protected function buildChainProvider(array $providerNames): void {
+		$chain = new ChainProvider();
+
+		foreach ($providerNames as $providerName) {
+			if (!isset(static::$providerClasses[$providerName])) {
+				continue;
+			}
+
+			$className = static::$providerClasses[$providerName];
+
+			// Get provider-specific config and merge with global settings
+			$providerConfig = (array)$this->getConfig($providerName);
+
+			// Add global config fallbacks
+			if (!isset($providerConfig['apiKey']) && $this->getConfig('apiKey')) {
+				$providerConfig['apiKey'] = $this->getConfig('apiKey');
+			}
+			if (!isset($providerConfig['locale']) && $this->getConfig('locale')) {
+				$providerConfig['locale'] = $this->getConfig('locale');
+			}
+			if (!isset($providerConfig['region']) && $this->getConfig('region')) {
+				$providerConfig['region'] = $this->getConfig('region');
+			}
+
+			$chain->addProvider(new $className($providerConfig));
+		}
+
+		$this->providerInstance = $chain;
 	}
 
 }
