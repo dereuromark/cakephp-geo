@@ -164,7 +164,7 @@ class StadiaProviderTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testBuildUrlAuto(): void {
+	public function testBuildUrlAutoCalculatesBoundsFromMarkers(): void {
 		$url = $this->provider->buildUrl(
 			[],
 			[
@@ -173,7 +173,10 @@ class StadiaProviderTest extends TestCase {
 			],
 		);
 
-		$this->assertStringContainsString('/auto/', $url);
+		// Center should be calculated as midpoint: lng=(16.3738+15.4395)/2, lat=(48.2082+47.0707)/2
+		$this->assertStringContainsString('15.90665,47.63945', $url);
+		// Should have calculated zoom level
+		$this->assertMatchesRegularExpression('/15\.90665,47\.63945,\d+/', $url);
 	}
 
 	/**

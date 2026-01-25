@@ -42,7 +42,7 @@ class MapboxProvider extends AbstractStaticMapProvider {
 		$options += [
 			'lat' => null,
 			'lng' => null,
-			'zoom' => 12,
+			'zoom' => null,
 			'size' => $config['size'],
 			'format' => $config['format'],
 			'style' => $config['style'],
@@ -51,6 +51,10 @@ class MapboxProvider extends AbstractStaticMapProvider {
 			'bearing' => 0,
 			'pitch' => 0,
 		];
+
+		// Auto-calculate center and zoom if not provided
+		$options = $this->autoCalculateBounds($options, $markers, $paths);
+		$options['zoom'] = $options['zoom'] ?? 12;
 
 		$size = $this->parseSize($options['size']);
 		$username = $options['username'];
