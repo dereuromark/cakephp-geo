@@ -41,12 +41,16 @@ class StadiaProvider extends AbstractStaticMapProvider {
 		$options += [
 			'lat' => null,
 			'lng' => null,
-			'zoom' => 12,
+			'zoom' => null,
 			'size' => $config['size'],
 			'format' => $config['format'],
 			'style' => $config['style'],
 			'scale' => $config['scale'],
 		];
+
+		// Auto-calculate center and zoom if not provided
+		$options = $this->autoCalculateBounds($options, $markers, $paths);
+		$options['zoom'] = $options['zoom'] ?? 12;
 
 		$size = $this->parseSize($options['size']);
 		$style = $options['style'];
