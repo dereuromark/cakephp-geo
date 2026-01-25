@@ -31,7 +31,7 @@ class GeoControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testIndex() {
+	public function testIndex(): void {
 		$this->disableErrorHandlerMiddleware();
 
 		$this->get(['prefix' => 'Admin', 'plugin' => 'Geo', 'controller' => 'Geo', 'action' => 'index']);

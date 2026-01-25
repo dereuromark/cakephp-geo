@@ -45,6 +45,15 @@ class GeocodedAddressesFixture extends TestFixture {
 			'data' => null,
 			'created' => '2011-04-21 16:51:01',
 		],
+		[
+			'address' => 'Empty geocode result',
+			'formatted_address' => null,
+			'country' => null,
+			'lat' => null,
+			'lng' => null,
+			'data' => null,
+			'created' => '2011-04-21 16:52:01',
+		],
 	];
 
 }
