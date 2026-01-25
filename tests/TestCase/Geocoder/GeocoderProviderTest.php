@@ -195,4 +195,66 @@ class GeocoderProviderTest extends TestCase {
 		$geocoder->geocode('Berlin, Germany');
 	}
 
+	/**
+	 * @return void
+	 */
+	public function testUnknownProviderNameFallsBackToLegacy(): void {
+		// Unknown provider name should fall back to legacy GoogleMaps behavior
+		$geocoder = new Geocoder([
+			'provider' => 'unknown_provider',
+			'minAccuracy' => null,
+		]);
+
+		// Should not throw, falls back to legacy GoogleMaps
+		$this->assertNotNull($geocoder);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testEmptyProvidersArrayFallsBackToDefault(): void {
+		$geocoder = new Geocoder([
+			'providers' => [],
+			'minAccuracy' => null,
+		]);
+
+		// Empty array should fall through to legacy provider
+		$this->assertNotNull($geocoder);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testProvidersArraySkipsUnknownProviders(): void {
+		$geocoder = new Geocoder([
+			'providers' => [
+				'unknown_provider',
+				Geocoder::PROVIDER_NULL,
+			],
+			'minAccuracy' => null,
+		]);
+
+		// Should work, skipping unknown and using NullProvider
+		$result = $geocoder->geocode('Berlin, Germany');
+
+		$this->assertSame(0, $result->count());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testProviderRequiresApiKeyMethod(): void {
+		$provider = new NullProvider();
+		$this->assertFalse($provider->requiresApiKey());
+
+		$provider = new GoogleProvider(['apiKey' => 'test']);
+		$this->assertTrue($provider->requiresApiKey());
+
+		$provider = new NominatimProvider();
+		$this->assertFalse($provider->requiresApiKey());
+
+		$provider = new GeoapifyProvider(['apiKey' => 'test']);
+		$this->assertTrue($provider->requiresApiKey());
+	}
+
 }

@@ -69,7 +69,10 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testDistance() {
-		$expr = $this->Addresses->distanceExpr(12, 14);
+		/** @var \Geo\Model\Behavior\GeocoderBehavior $behavior */
+		$behavior = $this->Addresses->getBehavior('Geocoder');
+
+		$expr = $behavior->distanceExpr(12, 14);
 		$expected = '(6371.04 * ACOS(((COS(((PI() / 2) - RADIANS((90 - Addresses.lat)))) * COS(PI()/2 - RADIANS(90 - 12)) * COS((RADIANS(Addresses.lng) - RADIANS(:param0)))) + (SIN(((PI() / 2) - RADIANS((90 - Addresses.lat)))) * SIN(((PI() / 2) - RADIANS(90 - 12)))))))';
 
 		$binder = new ValueBinder();
@@ -78,13 +81,17 @@ class GeocoderBehaviorTest extends TestCase {
 
 		$this->Addresses->removeBehavior('Geocoder');
 		$this->Addresses->addBehavior('Geocoder', ['lat' => 'x', 'lng' => 'y']);
-		$expr = $this->Addresses->distanceExpr(12.1, 14.2);
+		/** @var \Geo\Model\Behavior\GeocoderBehavior $behavior */
+		$behavior = $this->Addresses->getBehavior('Geocoder');
+		$expr = $behavior->distanceExpr(12.1, 14.2);
 		//$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.x)) * COS(PI()/2 - RADIANS(90 - 12.1)) * COS(RADIANS(Addresses.y) - RADIANS(14.2)) + SIN(PI()/2 - RADIANS(90 - Addresses.x)) * SIN(PI()/2 - RADIANS(90 - 12.1)))';
 		$this->assertInstanceOf(QueryExpression::class, $expr);
 
 		$this->Addresses->removeBehavior('Geocoder');
 		$this->Addresses->addBehavior('Geocoder', ['lat' => 'x', 'lng' => 'y']);
-		$expr = $this->Addresses->distanceExpr('User.lat', 'User.lng');
+		/** @var \Geo\Model\Behavior\GeocoderBehavior $behavior */
+		$behavior = $this->Addresses->getBehavior('Geocoder');
+		$expr = $behavior->distanceExpr('User.lat', 'User.lng');
 		//$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.x)) * COS(PI()/2 - RADIANS(90 - User.lat)) * COS(RADIANS(Addresses.y) - RADIANS(User.lng)) + SIN(PI()/2 - RADIANS(90 - Addresses.x)) * SIN(PI()/2 - RADIANS(90 - User.lat)))';
 		$this->assertInstanceOf(QueryExpression::class, $expr);
 	}
@@ -93,7 +100,10 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testDistanceField() {
-		$condition = $this->Addresses->distanceField(12, 14);
+		/** @var \Geo\Model\Behavior\GeocoderBehavior $behavior */
+		$behavior = $this->Addresses->getBehavior('Geocoder');
+
+		$condition = $behavior->distanceField(12, 14);
 		//$expected = '6371.04 * ACOS(COS(PI()/2 - RADIANS(90 - Addresses.lat)) * COS(PI()/2 - RADIANS(90 - 12)) * COS(RADIANS(Addresses.lng) - RADIANS(14)) + SIN(PI()/2 - RADIANS(90 - Addresses.lat)) * SIN(PI()/2 - RADIANS(90 - 12))) AS Addresses.distance';
 
 		$this->assertInstanceOf(QueryExpression::class, $condition['Addresses.distance']);
@@ -189,16 +199,19 @@ class GeocoderBehaviorTest extends TestCase {
 	 * @return void
 	 */
 	public function testValidate() {
-		$is = $this->Addresses->validateLatitude(44);
+		/** @var \Geo\Model\Behavior\GeocoderBehavior $behavior */
+		$behavior = $this->Addresses->getBehavior('Geocoder');
+
+		$is = $behavior->validateLatitude(44);
 		$this->assertTrue($is);
 
-		$is = $this->Addresses->validateLatitude(110);
+		$is = $behavior->validateLatitude(110);
 		$this->assertFalse($is);
 
-		$is = $this->Addresses->validateLongitude(150);
+		$is = $behavior->validateLongitude(150);
 		$this->assertTrue($is);
 
-		$is = $this->Addresses->validateLongitude(-190);
+		$is = $behavior->validateLongitude(-190);
 		$this->assertFalse($is);
 
 		$this->Addresses->getValidator()->add('lat', 'validateLatitude', ['provider' => 'table', 'rule' => 'validateLatitude', 'message' => 'validateLatitudeError']);
