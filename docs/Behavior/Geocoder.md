@@ -35,12 +35,12 @@ By default, it will use the GoogleMaps provider. You can switch providers using 
 
 ### Available Providers
 
-| Provider | Constant | API Key | Notes |
-|----------|----------|---------|-------|
-| Google Maps | `Geocoder::PROVIDER_GOOGLE` | Required | Default, most reliable |
-| Nominatim | `Geocoder::PROVIDER_NOMINATIM` | No | Free, OpenStreetMap-based |
-| Geoapify | `Geocoder::PROVIDER_GEOAPIFY` | Required (free tier) | Good alternative |
-| Null | `Geocoder::PROVIDER_NULL` | No | For testing |
+| Provider | API Key | Notes |
+|----------|---------|-------|
+| Google Maps | Required | Default, most reliable |
+| Nominatim | No | Free, OpenStreetMap-based |
+| Geoapify | Required (free tier) | Good alternative |
+| Null | No | For testing |
 
 ### Using Provider Constants
 
@@ -61,6 +61,8 @@ use Geo\Geocoder\Geocoder;
 Or using Geoapify:
 
 ```php
+use Geo\Geocoder\Geocoder;
+
 'Geocoder' => [
     'provider' => Geocoder::PROVIDER_GEOAPIFY,
     'geoapify' => [

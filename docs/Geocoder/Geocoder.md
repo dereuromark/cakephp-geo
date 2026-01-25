@@ -33,12 +33,12 @@ $result = $Geocoder->reverse($lat, $lng);
 
 The Geocoder supports multiple geocoding providers out of the box. Use provider constants to specify which provider to use:
 
-| Provider | Constant | API Key | Notes |
-|----------|----------|---------|-------|
-| Google Maps | `Geocoder::PROVIDER_GOOGLE` | Required | Default, most reliable |
-| Nominatim | `Geocoder::PROVIDER_NOMINATIM` | No | Free, OpenStreetMap-based |
-| Geoapify | `Geocoder::PROVIDER_GEOAPIFY` | Required (free tier) | Good alternative |
-| Null | `Geocoder::PROVIDER_NULL` | No | For testing |
+| Provider | API Key | Notes |
+|----------|---------|-------|
+| Google Maps | Required | Default, most reliable |
+| Nominatim | No | Free, OpenStreetMap-based |
+| Geoapify | Required (free tier) | Good alternative |
+| Null | No | For testing |
 
 ### Using String Provider Names
 
@@ -63,8 +63,10 @@ Configure providers with their specific settings:
 
 ```php
 // config/app_local.php
+use Geo\Geocoder\Geocoder;
+
 'Geocoder' => [
-    'provider' => 'nominatim',
+    'provider' => Geocoder::PROVIDER_NOMINATIM,
     'allowInconclusive' => true,
     'minAccuracy' => Geocoder::TYPE_COUNTRY,
     'google' => [
