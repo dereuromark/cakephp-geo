@@ -105,7 +105,7 @@ class GeoapifyProviderTest extends TestCase {
 
 		$this->assertStringContainsString('marker=', $url);
 		$this->assertStringContainsString('lonlat:16.3738,48.2082', $url);
-		$this->assertStringContainsString('color:#ff0000', $url);
+		$this->assertStringContainsString('color:%23ff0000', $url); // URL-encoded #
 		$this->assertStringContainsString('text:A', $url);
 	}
 
@@ -121,7 +121,7 @@ class GeoapifyProviderTest extends TestCase {
 			],
 		);
 
-		$this->assertStringContainsString('|', $url);
+		$this->assertStringContainsString('%7C', $url); // URL-encoded |
 		$this->assertStringContainsString('lonlat:16.3738,48.2082', $url);
 		$this->assertStringContainsString('lonlat:15.4395,47.0707', $url);
 	}
@@ -147,7 +147,7 @@ class GeoapifyProviderTest extends TestCase {
 
 		$this->assertStringContainsString('geometry=', $url);
 		$this->assertStringContainsString('polyline:', $url);
-		$this->assertStringContainsString('linecolor:#0000ff', $url);
+		$this->assertStringContainsString('linecolor:%230000ff', $url); // URL-encoded #
 		$this->assertStringContainsString('linewidth:3', $url);
 	}
 

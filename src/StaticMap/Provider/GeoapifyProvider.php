@@ -124,7 +124,7 @@ class GeoapifyProvider extends AbstractStaticMapProvider {
 			$parts = ['lonlat:' . $marker['lng'] . ',' . $marker['lat']];
 
 			if (!empty($marker['color'])) {
-				$parts[] = 'color:#' . $this->formatColor($marker['color']);
+				$parts[] = 'color:%23' . $this->formatColor($marker['color']);
 			}
 
 			if (!empty($marker['size'])) {
@@ -146,7 +146,7 @@ class GeoapifyProvider extends AbstractStaticMapProvider {
 			$formatted[] = implode(';', $parts);
 		}
 
-		return 'marker=' . implode('|', $formatted);
+		return 'marker=' . implode('%7C', $formatted);
 	}
 
 	/**
@@ -166,7 +166,7 @@ class GeoapifyProvider extends AbstractStaticMapProvider {
 			$pathStr = 'polyline:' . implode(',', $points);
 
 			if (!empty($path['color'])) {
-				$pathStr .= ';linecolor:#' . $this->formatColor($path['color']);
+				$pathStr .= ';linecolor:%23' . $this->formatColor($path['color']);
 			}
 
 			if (!empty($path['weight'])) {
@@ -174,13 +174,13 @@ class GeoapifyProvider extends AbstractStaticMapProvider {
 			}
 
 			if (!empty($path['fillColor'])) {
-				$pathStr .= ';fillcolor:#' . $this->formatColor($path['fillColor']);
+				$pathStr .= ';fillcolor:%23' . $this->formatColor($path['fillColor']);
 			}
 
 			$formatted[] = $pathStr;
 		}
 
-		return 'geometry=' . implode('|', $formatted);
+		return 'geometry=' . implode('%7C', $formatted);
 	}
 
 }
