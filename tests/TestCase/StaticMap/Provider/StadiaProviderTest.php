@@ -101,8 +101,9 @@ class StadiaProviderTest extends TestCase {
 			],
 		);
 
-		$this->assertStringContainsString('markers=', $url);
-		$this->assertStringContainsString('16.3738,48.2082', $url);
+		// Stadia uses m=lat,lng,style format for each marker
+		$this->assertStringContainsString('m=', $url);
+		$this->assertStringContainsString('48.2082,16.3738', $url);
 		$this->assertStringContainsString('ff0000', $url);
 	}
 
@@ -118,7 +119,9 @@ class StadiaProviderTest extends TestCase {
 			],
 		);
 
-		$this->assertStringContainsString('|', $url);
+		// Stadia uses multiple m= parameters (not pipe-separated)
+		$this->assertStringContainsString('m=48.2082,16.3738', $url);
+		$this->assertStringContainsString('m=47.0707,15.4395', $url);
 	}
 
 	/**
