@@ -9,6 +9,7 @@ use Geo\Geocoder\Provider\GeoapifyProvider;
 use Geo\Geocoder\Provider\GoogleProvider;
 use Geo\Geocoder\Provider\NominatimProvider;
 use Geo\Geocoder\Provider\NullProvider;
+use RuntimeException;
 
 class GeocoderProviderTest extends TestCase {
 
@@ -136,6 +137,62 @@ class GeocoderProviderTest extends TestCase {
 		]);
 
 		$this->assertSame('global-key', $geocoder->getConfig('apiKey'));
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testProvidersArrayCreatesChain(): void {
+		$geocoder = new Geocoder([
+			'providers' => [
+				Geocoder::PROVIDER_NULL,
+				Geocoder::PROVIDER_NULL,
+			],
+			'minAccuracy' => null,
+		]);
+
+		$result = $geocoder->geocode('Berlin, Germany');
+
+		$this->assertSame(0, $result->count());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testProvidersArrayWithConfigMerge(): void {
+		$geocoder = new Geocoder([
+			'providers' => [
+				Geocoder::PROVIDER_NOMINATIM,
+				Geocoder::PROVIDER_GEOAPIFY,
+			],
+			'locale' => 'de',
+			'nominatim' => [
+				'userAgent' => 'TestApp/1.0',
+			],
+		]);
+
+		$this->assertSame('de', $geocoder->getConfig('locale'));
+		$this->assertSame('TestApp/1.0', $geocoder->getConfig('nominatim.userAgent'));
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testConflictingProviderAndProvidersThrowsException(): void {
+		$this->expectException(RuntimeException::class);
+		$this->expectExceptionMessage('Cannot configure both \'provider\' and \'providers\'');
+
+		$geocoder = new Geocoder([
+			'provider' => Geocoder::PROVIDER_GOOGLE,
+			'providers' => [
+				Geocoder::PROVIDER_NOMINATIM,
+				Geocoder::PROVIDER_GEOAPIFY,
+			],
+			'minAccuracy' => null,
+		]);
+
+		// Trigger geocoder build
+		$geocoder->geocode('Berlin, Germany');
 	}
 
 }

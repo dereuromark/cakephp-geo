@@ -23,6 +23,13 @@ return [
 		// Provider selection (use constants or callable)
 		'provider' => Geocoder::PROVIDER_GOOGLE,
 
+		// Or use multiple providers with automatic fallback on rate limit/errors
+		// 'providers' => [
+		// 	Geocoder::PROVIDER_GOOGLE,
+		// 	Geocoder::PROVIDER_NOMINATIM,
+		// 	Geocoder::PROVIDER_GEOAPIFY,
+		// ],
+
 		// Global settings (used as fallbacks for provider-specific config)
 		'apiKey' => env('GEOCODER_API_KEY', ''),
 		'locale' => null, // e.g., 'en', 'de', or true to auto-detect from I18n
