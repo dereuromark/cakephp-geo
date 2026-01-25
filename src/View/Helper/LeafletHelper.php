@@ -195,6 +195,16 @@ class LeafletHelper extends Helper {
 	protected bool $_apiIncluded = false;
 
 	/**
+	 * @var bool
+	 */
+	protected bool $_clusterIncluded = false;
+
+	/**
+	 * @var bool
+	 */
+	protected bool $_useCluster = false;
+
+	/**
 	 * @param array<string, mixed> $config
 	 * @return void
 	 */
@@ -246,6 +256,7 @@ class LeafletHelper extends Helper {
 	public function reset(bool $full = true): void {
 		static::$markerCount = static::$popupCount = 0;
 		$this->markers = $this->popups = [];
+		$this->_useCluster = false;
 		if ($full) {
 			$this->_runtimeConfig = $this->_config;
 		}
@@ -373,8 +384,11 @@ class LeafletHelper extends Helper {
 			$markerOptionsJs = ', ' . $this->_buildJsObject($markerOptions);
 		}
 
+		// Add to cluster group if clustering is enabled, otherwise directly to map
+		$addTo = $this->_useCluster ? 'clusterGroup' . static::$mapCount : $this->name();
+
 		$marker = '
-		var x' . static::$markerCount . ' = L.marker(' . $position . $markerOptionsJs . ').addTo(' . $this->name() . ');
+		var x' . static::$markerCount . ' = L.marker(' . $position . $markerOptionsJs . ').addTo(' . $addTo . ');
 		lMarkers' . static::$mapCount . '.push(x' . static::$markerCount . ');
 		';
 
@@ -550,6 +564,40 @@ class LeafletHelper extends Helper {
 	}
 
 	/**
+	 * Enable marker clustering for this map.
+	 *
+	 * This will group nearby markers into clusters that expand on click.
+	 * Requires the Leaflet.markercluster plugin (auto-included when autoScript is true).
+	 *
+	 * @link https://github.com/Leaflet/Leaflet.markercluster
+	 * @param array<string, mixed> $options Cluster options (showCoverageOnHover, maxClusterRadius, etc.)
+	 * @return void
+	 */
+	public function enableClustering(array $options = []): void {
+		$this->_useCluster = true;
+
+		// Include markercluster scripts if autoScript is enabled
+		if ($this->_runtimeConfig['autoScript'] && !$this->_clusterIncluded) {
+			$cssUrl = 'https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css';
+			$cssDefaultUrl = 'https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css';
+			$jsUrl = 'https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js';
+
+			$this->Html->css($cssUrl, ['block' => $this->_runtimeConfig['block']]);
+			$this->Html->css($cssDefaultUrl, ['block' => $this->_runtimeConfig['block']]);
+			$this->Html->script($jsUrl, ['block' => $this->_runtimeConfig['block']]);
+			$this->_clusterIncluded = true;
+		}
+
+		// Initialize the cluster group
+		$optionsJs = $options ? $this->_buildJsObject($options) : '{}';
+		$cluster = '
+		var clusterGroup' . static::$mapCount . ' = L.markerClusterGroup(' . $optionsJs . ');
+		';
+
+		$this->map .= $cluster;
+	}
+
+	/**
 	 * Add a GeoJSON layer to the map.
 	 *
 	 * @param array<string, mixed> $data GeoJSON data
@@ -628,6 +676,13 @@ jQuery(document).ready(function() {
 		';
 
 		$script .= $this->map;
+
+		// Add cluster group to map if clustering was enabled
+		if ($this->_useCluster) {
+			$script .= '
+		' . $this->name() . '.addLayer(clusterGroup' . static::$mapCount . ');
+			';
+		}
 
 		if ($this->_runtimeConfig['autoCenter']) {
 			$script .= $this->_autoCenter();
