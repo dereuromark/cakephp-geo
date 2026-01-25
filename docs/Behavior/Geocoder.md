@@ -29,23 +29,52 @@ Possible config options are:
 
 Note that it is usually better to set global configs in your `app.php` using the `Geocoder` key.
 
-## Configure your own Geocoder
-By default, it will use the GoogleMaps provider.
+## Configure your Geocoder
 
-Please see [geocoder-php/Geocoder](https://github.com/geocoder-php/Geocoder) library on what other providers you can use out of the box.
-You can choose from
-- 12+ address-based Geocoder providers
-- 10+ IP-based Geocoder providers
+By default, it will use the GoogleMaps provider. You can switch providers using the built-in provider constants.
 
-You could easily switch to an IP based provider like this:
+### Available Providers
+
+| Provider | API Key | Notes |
+|----------|---------|-------|
+| Google Maps | Required | Default, most reliable |
+| Nominatim | No | Free, OpenStreetMap-based |
+| Geoapify | Required (free tier) | Good alternative |
+| Null | No | For testing |
+
+### Using Provider Constants
+
+Switch to a different provider easily:
+
 ```php
+use Geo\Geocoder\Geocoder;
+
 // in your app.php config
 'Geocoder' => [
-    'provider' => '\Geocoder\Provider\FreeGeoIp',
+    'provider' => Geocoder::PROVIDER_NOMINATIM,
+    'nominatim' => [
+        'userAgent' => 'MyApp/1.0',  // Required by OSM usage policy
+    ],
 ],
 ```
 
-Let's say you want to switch to OpenStreetMap and also use a different HTTP adapter:
+Or using Geoapify:
+
+```php
+use Geo\Geocoder\Geocoder;
+
+'Geocoder' => [
+    'provider' => Geocoder::PROVIDER_GEOAPIFY,
+    'geoapify' => [
+        'apiKey' => env('GEOAPIFY_API_KEY'),
+    ],
+],
+```
+
+### Using a Callable (Advanced)
+
+For advanced use cases or custom providers from the geocoder-php library:
+
 ```php
 // in your app.php config
 'Geocoder' => [
@@ -57,7 +86,12 @@ Let's say you want to switch to OpenStreetMap and also use a different HTTP adap
 ],
 ```
 
-Note: Don't forget that most providers need an apiKey to work.
+Please see [geocoder-php/Geocoder](https://github.com/geocoder-php/Geocoder) library on what other providers you can use.
+You can choose from:
+- 12+ address-based Geocoder providers
+- 10+ IP-based Geocoder providers
+
+Note: Most providers need an apiKey to work.
 
 ## Saving geocodable data
 
