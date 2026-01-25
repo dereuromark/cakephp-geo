@@ -8,6 +8,11 @@ use Cake\Http\Client;
 use Cake\I18n\I18n;
 use Geo\Exception\InconclusiveException;
 use Geo\Exception\NotAccurateEnoughException;
+use Geo\Geocoder\Provider\GeoapifyProvider;
+use Geo\Geocoder\Provider\GeocodingProviderInterface;
+use Geo\Geocoder\Provider\GoogleProvider;
+use Geo\Geocoder\Provider\NominatimProvider;
+use Geo\Geocoder\Provider\NullProvider;
 use Geocoder\Exception\CollectionIsEmpty;
 use Geocoder\Exception\InvalidServerResponse;
 use Geocoder\Location;
@@ -32,6 +37,34 @@ use RuntimeException;
 class Geocoder {
 
 	use InstanceConfigTrait;
+
+	/**
+	 * Provider constant for Google Maps.
+	 *
+	 * @var string
+	 */
+	public const PROVIDER_GOOGLE = 'google';
+
+	/**
+	 * Provider constant for Nominatim (OpenStreetMap).
+	 *
+	 * @var string
+	 */
+	public const PROVIDER_NOMINATIM = 'nominatim';
+
+	/**
+	 * Provider constant for Geoapify.
+	 *
+	 * @var string
+	 */
+	public const PROVIDER_GEOAPIFY = 'geoapify';
+
+	/**
+	 * Provider constant for NullProvider (testing).
+	 *
+	 * @var string
+	 */
+	public const PROVIDER_NULL = 'null';
 
 	/**
 	 * @var string
@@ -91,6 +124,18 @@ class Geocoder {
 	public const TYPE_NUMBER = 'street_number';
 
 	/**
+	 * Registry of provider name to class mappings.
+	 *
+	 * @var array<string, class-string<\Geo\Geocoder\Provider\GeocodingProviderInterface>>
+	 */
+	protected static array $providerClasses = [
+		self::PROVIDER_GOOGLE => GoogleProvider::class,
+		self::PROVIDER_NOMINATIM => NominatimProvider::class,
+		self::PROVIDER_GEOAPIFY => GeoapifyProvider::class,
+		self::PROVIDER_NULL => NullProvider::class,
+	];
+
+	/**
 	 * @var array<string, mixed>
 	 */
 	protected array $_defaultConfig = [
@@ -98,18 +143,22 @@ class Geocoder {
 		'region' => null, // For GoogleMaps provider
 		'ssl' => true, // For GoogleMaps provider
 		'apiKey' => '', // For GoogleMaps provider,
-		'provider' => GoogleMaps::class, // Or use own callable
+		'provider' => GoogleMaps::class, // Or use own callable, or provider name string
 		'adapter' => Client::class, // Only for default provider
 		'allowInconclusive' => true,
 		'minAccuracy' => self::TYPE_COUNTRY, // deprecated?
 		'expect' => [], # see $_types for details, one hit is enough to be valid
+		// Provider-specific config
+		'google' => [],
+		'nominatim' => [],
+		'geoapify' => [],
 	];
 
 	/**
 	 * This mainly does not work with the GoogleMap provider class as it loses information.
 	 * Will need an own implementation
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
 	protected array $_types = [
 		self::TYPE_COUNTRY,
@@ -125,14 +174,21 @@ class Geocoder {
 	];
 
 	/**
-	 * @var \Geocoder\Provider\Provider
+	 * Legacy geocoder instance (Provider or StatefulGeocoder).
+	 *
+	 * @var \Geocoder\Provider\Provider|null
 	 */
 	protected $geocoder;
 
 	/**
-	 * @var \Cake\Http\Client
+	 * @var \Cake\Http\Client|null
 	 */
 	protected $adapter;
+
+	/**
+	 * @var \Geo\Geocoder\Provider\GeocodingProviderInterface|null
+	 */
+	protected ?GeocodingProviderInterface $providerInstance = null;
 
 	/**
 	 * @param array<string, mixed> $config
@@ -148,6 +204,26 @@ class Geocoder {
 		if ($this->getConfig('region') === true) {
 			$this->setConfig('region', strtolower((string)Locale::getRegion(I18n::getLocale())));
 		}
+	}
+
+	/**
+	 * Register a custom provider class.
+	 *
+	 * @param string $name Provider name
+	 * @param class-string<\Geo\Geocoder\Provider\GeocodingProviderInterface> $className Provider class name
+	 * @return void
+	 */
+	public static function registerProvider(string $name, string $className): void {
+		static::$providerClasses[$name] = $className;
+	}
+
+	/**
+	 * Get all registered provider classes.
+	 *
+	 * @return array<string, class-string<\Geo\Geocoder\Provider\GeocodingProviderInterface>>
+	 */
+	public static function getProviders(): array {
+		return static::$providerClasses;
 	}
 
 	/**
@@ -187,8 +263,7 @@ class Geocoder {
 		$this->_buildGeocoder();
 
 		try {
-			/** @var \Geocoder\Model\AddressCollection $result */
-			$result = $this->geocoder->geocodeQuery(GeocodeQuery::create($address));
+			$result = $this->executeGeocode($address);
 		} catch (CollectionIsEmpty $e) {
 			throw new InconclusiveException(sprintf('Inconclusive result (total of %s)', 0), 0, $e);
 		} catch (InvalidServerResponse $e) {
@@ -220,14 +295,53 @@ class Geocoder {
 	public function reverse($lat, $lng, array $params = []) {
 		$this->_buildGeocoder();
 
-		/** @var \Geocoder\Model\AddressCollection $result */
-		$result = $this->geocoder->reverseQuery(ReverseQuery::fromCoordinates($lat, $lng));
+		$result = $this->executeReverse($lat, $lng);
+
 		if (!$this->_config['allowInconclusive'] && !$this->isConclusive($result)) {
 			throw new InconclusiveException(sprintf('Inconclusive result (total of %s)', $result->count()));
 		}
 		if ($this->_config['minAccuracy'] && !$this->containsAccurateEnough($result)) {
 			throw new NotAccurateEnoughException('Result is not accurate enough');
 		}
+
+		return $result;
+	}
+
+	/**
+	 * Execute geocode using the configured provider.
+	 *
+	 * @param string $address
+	 * @return \Geocoder\Model\AddressCollection
+	 */
+	protected function executeGeocode(string $address): AddressCollection {
+		if ($this->providerInstance !== null) {
+			return $this->providerInstance->geocode($address);
+		}
+
+		assert($this->geocoder !== null);
+
+		/** @var \Geocoder\Model\AddressCollection $result */
+		$result = $this->geocoder->geocodeQuery(GeocodeQuery::create($address));
+
+		return $result;
+	}
+
+	/**
+	 * Execute reverse geocode using the configured provider.
+	 *
+	 * @param float $lat
+	 * @param float $lng
+	 * @return \Geocoder\Model\AddressCollection
+	 */
+	protected function executeReverse(float $lat, float $lng): AddressCollection {
+		if ($this->providerInstance !== null) {
+			return $this->providerInstance->reverse($lat, $lng);
+		}
+
+		assert($this->geocoder !== null);
+
+		/** @var \Geocoder\Model\AddressCollection $result */
+		$result = $this->geocoder->reverseQuery(ReverseQuery::fromCoordinates($lat, $lng));
 
 		return $result;
 	}
@@ -415,21 +529,64 @@ class Geocoder {
 	 * @return void
 	 */
 	protected function _buildGeocoder() {
-		$geocoderClass = $this->getConfig('provider');
-		if (is_callable($geocoderClass)) {
-			$this->geocoder = $geocoderClass();
+		$provider = $this->getConfig('provider');
+
+		// Handle callable provider (legacy support and advanced usage)
+		if (is_callable($provider)) {
+			$this->geocoder = $provider();
 
 			return;
 		}
 
+		// Handle string provider name (new provider registry)
+		if (is_string($provider) && isset(static::$providerClasses[$provider])) {
+			$this->buildFromRegistry($provider);
+
+			return;
+		}
+
+		// Handle GeocodingProviderInterface instance
+		if ($provider instanceof GeocodingProviderInterface) {
+			$this->providerInstance = $provider;
+
+			return;
+		}
+
+		// Legacy: Handle class name (e.g., GoogleMaps::class)
 		/** @var \Cake\Http\Client $adapterClass */
 		$adapterClass = $this->getConfig('adapter');
 		$this->adapter = new $adapterClass();
 
-		$provider = new GoogleMaps($this->adapter, $this->getConfig('region'), $this->getConfig('apiKey'));
-		$geocoder = new StatefulGeocoder($provider, $this->getConfig('locale') ?: 'en');
+		$geocoderProvider = new GoogleMaps($this->adapter, $this->getConfig('region'), $this->getConfig('apiKey'));
+		$geocoder = new StatefulGeocoder($geocoderProvider, $this->getConfig('locale') ?: 'en');
 
 		$this->geocoder = $geocoder;
+	}
+
+	/**
+	 * Build provider from the registry.
+	 *
+	 * @param string $providerName The provider name
+	 * @return void
+	 */
+	protected function buildFromRegistry(string $providerName): void {
+		$className = static::$providerClasses[$providerName];
+
+		// Get provider-specific config and merge with global settings
+		$providerConfig = (array)$this->getConfig($providerName);
+
+		// Add global config fallbacks
+		if (!isset($providerConfig['apiKey']) && $this->getConfig('apiKey')) {
+			$providerConfig['apiKey'] = $this->getConfig('apiKey');
+		}
+		if (!isset($providerConfig['locale']) && $this->getConfig('locale')) {
+			$providerConfig['locale'] = $this->getConfig('locale');
+		}
+		if (!isset($providerConfig['region']) && $this->getConfig('region')) {
+			$providerConfig['region'] = $this->getConfig('region');
+		}
+
+		$this->providerInstance = new $className($providerConfig);
 	}
 
 }
