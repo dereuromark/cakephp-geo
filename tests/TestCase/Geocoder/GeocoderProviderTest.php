@@ -9,6 +9,7 @@ use Geo\Geocoder\Provider\GeoapifyProvider;
 use Geo\Geocoder\Provider\GoogleProvider;
 use Geo\Geocoder\Provider\NominatimProvider;
 use Geo\Geocoder\Provider\NullProvider;
+use RuntimeException;
 
 class GeocoderProviderTest extends TestCase {
 
@@ -172,6 +173,26 @@ class GeocoderProviderTest extends TestCase {
 
 		$this->assertSame('de', $geocoder->getConfig('locale'));
 		$this->assertSame('TestApp/1.0', $geocoder->getConfig('nominatim.userAgent'));
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testConflictingProviderAndProvidersThrowsException(): void {
+		$this->expectException(RuntimeException::class);
+		$this->expectExceptionMessage('Cannot configure both \'provider\' and \'providers\'');
+
+		$geocoder = new Geocoder([
+			'provider' => Geocoder::PROVIDER_GOOGLE,
+			'providers' => [
+				Geocoder::PROVIDER_NOMINATIM,
+				Geocoder::PROVIDER_GEOAPIFY,
+			],
+			'minAccuracy' => null,
+		]);
+
+		// Trigger geocoder build
+		$geocoder->geocode('Berlin, Germany');
 	}
 
 }

@@ -528,18 +528,31 @@ class Geocoder {
 	}
 
 	/**
-	 * @return void
+     * @throws \RuntimeException When both 'provider' and 'providers' are configured
+     * @return void
 	 */
 	protected function _buildGeocoder() {
-		// Handle providers array (fallback chain)
 		$providers = $this->getConfig('providers');
-		if ($providers && is_array($providers)) {
+		$provider = $this->getConfig('provider');
+
+		// Check for conflicting configuration
+		$hasProvidersArray = $providers && is_array($providers);
+		$hasCustomProvider = is_string($provider) && isset(static::$providerClasses[$provider]);
+		$hasCallableProvider = is_callable($provider);
+		$hasInstanceProvider = $provider instanceof GeocodingProviderInterface;
+
+		if ($hasProvidersArray && ($hasCustomProvider || $hasCallableProvider || $hasInstanceProvider)) {
+			throw new RuntimeException(
+				'Cannot configure both \'provider\' and \'providers\'. Use only one.',
+			);
+		}
+
+		// Handle providers array (fallback chain)
+		if ($hasProvidersArray) {
 			$this->buildChainProvider($providers);
 
 			return;
 		}
-
-		$provider = $this->getConfig('provider');
 
 		// Handle callable provider (legacy support and advanced usage)
 		if (is_callable($provider)) {
