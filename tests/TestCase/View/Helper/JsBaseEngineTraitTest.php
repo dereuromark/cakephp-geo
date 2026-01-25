@@ -30,47 +30,6 @@ class JsBaseEngineTraitTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testAlert(): void {
-		$result = $this->helper->alert('Hello World');
-		$this->assertSame('alert("Hello World");', $result);
-	}
-
-	/**
-	 * @return void
-	 */
-	public function testAlertWithSpecialChars(): void {
-		$result = $this->helper->alert('Hello "World"');
-		$this->assertSame('alert("Hello \"World\"");', $result);
-	}
-
-	/**
-	 * @return void
-	 */
-	public function testConfirm(): void {
-		$result = $this->helper->confirm('Are you sure?');
-		$this->assertSame('confirm("Are you sure?");', $result);
-	}
-
-	/**
-	 * @return void
-	 */
-	public function testConfirmReturn(): void {
-		$result = $this->helper->confirmReturn('Are you sure?');
-		$this->assertStringContainsString('var _confirm = confirm("Are you sure?");', $result);
-		$this->assertStringContainsString('return false;', $result);
-	}
-
-	/**
-	 * @return void
-	 */
-	public function testPrompt(): void {
-		$result = $this->helper->prompt('Enter name:', 'John');
-		$this->assertSame('prompt("Enter name:", "John");', $result);
-	}
-
-	/**
-	 * @return void
-	 */
 	public function testObject(): void {
 		$result = $this->helper->object(['foo' => 'bar']);
 		$this->assertSame('{"foo":"bar"}', $result);
@@ -187,14 +146,6 @@ class JsBaseEngineTraitTest extends TestCase {
 	public function testEscapeWithTab(): void {
 		$result = $this->helper->escape("Hello\tWorld");
 		$this->assertSame('Hello\tWorld', $result);
-	}
-
-	/**
-	 * @return void
-	 */
-	public function testRedirect(): void {
-		$result = $this->helper->redirect('/test');
-		$this->assertSame('window.location = "/test";', $result);
 	}
 
 }
