@@ -528,8 +528,8 @@ class Geocoder {
 	}
 
 	/**
-     * @throws \RuntimeException When both 'provider' and 'providers' are configured
-     * @return void
+	 * @throws \RuntimeException When both 'provider' and 'providers' are configured
+	 * @return void
 	 */
 	protected function _buildGeocoder() {
 		$providers = $this->getConfig('providers');

@@ -102,9 +102,9 @@ class ChainProvider implements GeocodingProviderInterface {
 	/**
 	 * Execute a callback with fallback to next provider on failure.
 	 *
-     * @param callable(\Geo\Geocoder\Provider\GeocodingProviderInterface): \Geocoder\Model\AddressCollection $callback
-     * @throws \RuntimeException When all providers fail
-     * @return \Geocoder\Model\AddressCollection
+	 * @param callable(\Geo\Geocoder\Provider\GeocodingProviderInterface): \Geocoder\Model\AddressCollection $callback
+	 * @throws \RuntimeException When all providers fail
+	 * @return \Geocoder\Model\AddressCollection
 	 */
 	protected function executeWithFallback(callable $callback): AddressCollection {
 		if (!$this->providers) {

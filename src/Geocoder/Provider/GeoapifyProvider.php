@@ -93,9 +93,9 @@ class GeoapifyProvider extends AbstractGeocodingProvider {
 	/**
 	 * Execute a query against the Geoapify API.
 	 *
-     * @param string $url The API URL
-     * @throws \Geocoder\Exception\InvalidServerResponse
-     * @return \Geocoder\Model\AddressCollection
+	 * @param string $url The API URL
+	 * @throws \Geocoder\Exception\InvalidServerResponse
+	 * @return \Geocoder\Model\AddressCollection
 	 */
 	protected function executeQuery(string $url): AddressCollection {
 		$response = $this->getHttpClient()->get($url);

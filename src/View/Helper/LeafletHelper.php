@@ -567,7 +567,7 @@ class LeafletHelper extends Helper {
 	 * Enable marker clustering for this map.
 	 *
 	 * This will group nearby markers into clusters that expand on click.
-	 * Requires the Leaflet.markercluster plugin (auto-included when autoScript is true).
+	 * Requires the Leaflet.markercluster plugin (auto-included when Leaflet API was auto-included).
 	 *
 	 * @link https://github.com/Leaflet/Leaflet.markercluster
 	 * @param array<string, mixed> $options Cluster options (showCoverageOnHover, maxClusterRadius, etc.)
@@ -576,8 +576,8 @@ class LeafletHelper extends Helper {
 	public function enableClustering(array $options = []): void {
 		$this->_useCluster = true;
 
-		// Include markercluster scripts if autoScript is enabled
-		if ($this->_runtimeConfig['autoScript'] && !$this->_clusterIncluded) {
+		// Include markercluster scripts if Leaflet API was auto-included at some point
+		if ($this->_apiIncluded && !$this->_clusterIncluded) {
 			$cssUrl = 'https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css';
 			$cssDefaultUrl = 'https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css';
 			$jsUrl = 'https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js';
@@ -671,25 +671,44 @@ class LeafletHelper extends Helper {
 	 * @return string|null Javascript if $return is true
 	 */
 	public function finalize(bool $return = false): ?string {
-		$script = '
-jQuery(document).ready(function() {
-		';
-
-		$script .= $this->map;
+		$mapInit = $this->map;
 
 		// Add cluster group to map if clustering was enabled
 		if ($this->_useCluster) {
-			$script .= '
+			$mapInit .= '
 		' . $this->name() . '.addLayer(clusterGroup' . static::$mapCount . ');
 			';
 		}
 
 		if ($this->_runtimeConfig['autoCenter']) {
-			$script .= $this->_autoCenter();
+			$mapInit .= $this->_autoCenter();
 		}
 
-		$script .= '
+		// Wrap in appropriate loader based on clustering
+		if ($this->_useCluster) {
+			// When clustering is enabled, wait for markercluster library to load
+			$script = '
+(function() {
+	function initMap' . static::$mapCount . '() {
+		' . $mapInit . '
+	}
+
+	function waitForCluster() {
+		if (typeof L !== "undefined" && typeof L.markerClusterGroup === "function") {
+			jQuery(document).ready(initMap' . static::$mapCount . ');
+		} else {
+			setTimeout(waitForCluster, 50);
+		}
+	}
+	waitForCluster();
+})();';
+		} else {
+			$script = '
+jQuery(document).ready(function() {
+		' . $mapInit . '
 });';
+		}
+
 		static::$mapCount++;
 		if (!$return) {
 			$this->Html->scriptBlock($script, ['block' => true]);
