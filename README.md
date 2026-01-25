@@ -14,6 +14,7 @@ A CakePHP plugin to
 - querying geocoded data by distance (using custom finder)
 - display Google maps (dynamic and static)
 - display Leaflet maps (open-source alternative)
+- display static maps from multiple providers (Geoapify, Mapbox, Stadia, Google)
 
 This branch is for **CakePHP 5.1+**. See [version map](https://github.com/dereuromark/cakephp-geo/wiki#cakephp-version-map) for details.
 

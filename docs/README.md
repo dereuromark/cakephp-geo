@@ -11,6 +11,7 @@
 * [GoogleMap helper](Helper/GoogleMap.md)
 * [Leaflet helper](Helper/Leaflet.md)
 * [Leaflet tile providers](Helper/LeafletTileProviders.md)
+* [StaticMap helper](Helper/StaticMap.md)
 * [GeocodedAddresses result cache](Model/GeocodedAddresses.md)
 
 ## Contributing
