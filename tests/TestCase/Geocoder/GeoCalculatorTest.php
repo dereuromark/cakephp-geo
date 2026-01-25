@@ -5,18 +5,24 @@ namespace Geo\Test\TestCase\Geocoder;
 use Cake\TestSuite\TestCase;
 use Geo\Geocoder\GeoCalculator;
 use Geo\Geocoder\GeoCoordinate;
+use RuntimeException;
 
 class GeoCalculatorTest extends TestCase {
 
 	/**
-	 * @var \Geocoder\Provider\Provider
+	 * @return void
 	 */
-	protected $Geocoder;
+	public function testGetCentralGeoCoordinateEmpty(): void {
+		$this->expectException(RuntimeException::class);
+		$this->expectExceptionMessage('No geo coordinates provided');
+
+		GeoCalculator::getCentralGeoCoordinate([]);
+	}
 
 	/**
 	 * @return void
 	 */
-	public function testGetCentralGeoCoordinate() {
+	public function testGetCentralGeoCoordinate(): void {
 		$coordinates = [
 			new GeoCoordinate(48.1, 17.2),
 		];

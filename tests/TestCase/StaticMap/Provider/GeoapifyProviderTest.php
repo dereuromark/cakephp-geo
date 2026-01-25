@@ -263,4 +263,105 @@ class GeoapifyProviderTest extends TestCase {
 		$this->assertStringContainsString('marker=', $url);
 	}
 
+	/**
+	 * Test with various named colors.
+	 *
+	 * @return void
+	 */
+	public function testBuildUrlWithNamedColors(): void {
+		$url = $this->provider->buildUrl(
+			['lat' => 48.2082, 'lng' => 16.3738],
+			[
+				['lat' => 48.2082, 'lng' => 16.3738, 'color' => 'green'],
+				['lat' => 48.195, 'lng' => 16.37, 'color' => 'yellow'],
+				['lat' => 48.21, 'lng' => 16.38, 'color' => 'purple'],
+			],
+		);
+
+		$this->assertStringContainsString('color:%2300ff00', $url); // green
+		$this->assertStringContainsString('color:%23ffff00', $url); // yellow
+		$this->assertStringContainsString('color:%23800080', $url); // purple
+	}
+
+	/**
+	 * Test with hex colors with # prefix.
+	 *
+	 * @return void
+	 */
+	public function testBuildUrlWithHexColors(): void {
+		$url = $this->provider->buildUrl(
+			['lat' => 48.2082, 'lng' => 16.3738],
+			[
+				['lat' => 48.2082, 'lng' => 16.3738, 'color' => '#FF5500'],
+			],
+		);
+
+		$this->assertStringContainsString('color:%23ff5500', $url);
+	}
+
+	/**
+	 * Test with 0x prefix colors.
+	 *
+	 * @return void
+	 */
+	public function testBuildUrlWith0xColors(): void {
+		$url = $this->provider->buildUrl(
+			['lat' => 48.2082, 'lng' => 16.3738],
+			[
+				['lat' => 48.2082, 'lng' => 16.3738, 'color' => '0xABCDEF'],
+			],
+		);
+
+		$this->assertStringContainsString('color:%23abcdef', $url);
+	}
+
+	/**
+	 * Test invalid size format.
+	 *
+	 * @return void
+	 */
+	public function testBuildUrlWithInvalidSize(): void {
+		$url = $this->provider->buildUrl([
+			'lat' => 48.2082,
+			'lng' => 16.3738,
+			'size' => 'invalid',
+		]);
+
+		// Should fallback to defaults
+		$this->assertStringContainsString('width=400', $url);
+		$this->assertStringContainsString('height=300', $url);
+	}
+
+	/**
+	 * Test marker with custom icon type.
+	 *
+	 * @return void
+	 */
+	public function testBuildUrlWithMarkerIcon(): void {
+		$url = $this->provider->buildUrl(
+			['lat' => 48.2082, 'lng' => 16.3738],
+			[
+				['lat' => 48.2082, 'lng' => 16.3738, 'icon' => 'awesome'],
+			],
+		);
+
+		$this->assertStringContainsString('type:awesome', $url);
+	}
+
+	/**
+	 * Test marker with custom size.
+	 *
+	 * @return void
+	 */
+	public function testBuildUrlWithMarkerSize(): void {
+		$url = $this->provider->buildUrl(
+			['lat' => 48.2082, 'lng' => 16.3738],
+			[
+				['lat' => 48.2082, 'lng' => 16.3738, 'size' => 'large'],
+			],
+		);
+
+		$this->assertStringContainsString('size:large', $url);
+	}
+
 }

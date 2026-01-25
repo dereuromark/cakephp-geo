@@ -3,7 +3,9 @@
 namespace Geo\Test\TestCase\Geocoder;
 
 use Cake\TestSuite\TestCase;
+use Geo\Exception\CalculatorException;
 use Geo\Geocoder\Calculator;
+use Geo\Geocoder\GeoCoordinate;
 
 class CalculatorTest extends TestCase {
 
@@ -91,6 +93,60 @@ class CalculatorTest extends TestCase {
 			$is = $this->Calculator->convert($value[0], $value[1], $value[2]);
 			$this->assertEquals($value[3], round($is, 8));
 		}
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testBlurWithZeroLevel(): void {
+		$coordinate = 48.1391;
+		$result = Calculator::blur($coordinate, 0);
+		$this->assertSame($coordinate, $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testConvertInvalidFromUnit(): void {
+		$this->expectException(CalculatorException::class);
+		$this->expectExceptionMessage('Invalid Unit');
+
+		$this->Calculator->convert(100, 'INVALID', 'K');
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testConvertInvalidToUnit(): void {
+		$this->expectException(CalculatorException::class);
+		$this->expectExceptionMessage('Invalid Unit');
+
+		$this->Calculator->convert(100, 'K', 'INVALID');
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testDistanceInvalidUnit(): void {
+		$this->expectException(CalculatorException::class);
+		$this->expectExceptionMessage('Invalid Unit: INVALID');
+
+		$pointX = ['lat' => 48.1391, 'lng' => 11.5802];
+		$pointY = ['lat' => 48.8934, 'lng' => 8.70492];
+		$this->Calculator->distance($pointX, $pointY, 'INVALID');
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testCalculateDistanceWithGeoCoordinates(): void {
+		$pointX = new GeoCoordinate(48.1391, 11.5802);
+		$pointY = new GeoCoordinate(48.8934, 8.70492);
+
+		$result = Calculator::calculateDistance($pointX, $pointY);
+
+		$this->assertGreaterThan(140, $result);
+		$this->assertLessThan(150, $result);
 	}
 
 	/**
