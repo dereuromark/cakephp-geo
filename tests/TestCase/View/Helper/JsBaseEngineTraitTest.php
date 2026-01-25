@@ -5,18 +5,12 @@ namespace Geo\Test\TestCase\View\Helper;
 use Cake\TestSuite\TestCase;
 use Geo\View\Helper\JsBaseEngineTrait;
 
-/**
- * Test class that uses the trait
- */
-class JsBaseEngineTestHelper {
-
-	use JsBaseEngineTrait;
-
-}
-
 class JsBaseEngineTraitTest extends TestCase {
 
-	protected JsBaseEngineTestHelper $helper;
+	/**
+	 * @var object
+	 */
+	protected object $helper;
 
 	/**
 	 * @return void
@@ -24,7 +18,9 @@ class JsBaseEngineTraitTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->helper = new JsBaseEngineTestHelper();
+		$this->helper = new class {
+			use JsBaseEngineTrait;
+		};
 	}
 
 	/**
