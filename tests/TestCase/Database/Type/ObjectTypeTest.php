@@ -2,6 +2,7 @@
 
 namespace Geo\Test\TestCase\Database\Type;
 
+use ArrayObject;
 use Cake\Database\Driver\Sqlite;
 use Cake\I18n\Date;
 use Cake\I18n\DateTime;
@@ -128,7 +129,7 @@ class ObjectTypeTest extends TestCase {
 		$driver = new Sqlite();
 
 		// ArrayObject is a valid serializable class but not in the allowed list
-		$disallowed = new \ArrayObject(['data' => 'test']);
+		$disallowed = new ArrayObject(['data' => 'test']);
 		$serialized = serialize($disallowed);
 
 		$result = $objectType->toPHP($serialized, $driver);
@@ -145,7 +146,7 @@ class ObjectTypeTest extends TestCase {
 		$objectType = new ObjectType();
 
 		// ArrayObject is a valid serializable class but not in the allowed list
-		$disallowed = new \ArrayObject(['data' => 'test']);
+		$disallowed = new ArrayObject(['data' => 'test']);
 		$serialized = serialize($disallowed);
 
 		$result = $objectType->marshal($serialized);
