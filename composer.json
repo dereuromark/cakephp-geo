@@ -9,7 +9,10 @@
 		"geocoding",
 		"helpers",
 		"maps",
-		"admin-panel"
+		"admin-panel",
+		"coordinates",
+		"location",
+		"google-maps"
 	],
 	"authors": [
 		{
