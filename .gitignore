@@ -9,3 +9,4 @@ tests/config/app_local.php
 webroot/coverage
 config/Migrations/schema-dump-default.lock
 composer.phar
+.phpcs.cache
