@@ -130,7 +130,7 @@ Don't forget to output the buffered JS at the end of your page, where also the o
 ```html
 echo $this->fetch('script');
 ```
-This code snippet is usually already in your `layout.ctp` at the end of the body tag.
+This code snippet is usually already in your `layout.php` at the end of the body tag.
 
 ### Inline JS
 Maybe you need inline JS instead, then you can call script() instead of finalize() directly:
