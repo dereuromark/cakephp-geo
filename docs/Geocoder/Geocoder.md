@@ -113,16 +113,18 @@ The chain automatically handles:
 
 Other exceptions are thrown immediately without trying the next provider.
 
-### Using a Callable (Legacy/Advanced)
+### Using a Callable (Advanced)
 
-For advanced use cases or custom providers from geocoder-php:
+For advanced use cases or custom providers from geocoder-php, use `Cake\Http\Client` directly (it implements PSR-18):
 
 ```php
+use Cake\Http\Client;
+
 'Geocoder' => [
     'provider' => function () {
         return \Geocoder\Provider\Nominatim\Nominatim::withOpenStreetMapServer(
-            new \Http\Adapter\Cake\Client(),
-            'User-Agent'
+            new Client(),
+            'MyApp/1.0'
         );
     },
 ],

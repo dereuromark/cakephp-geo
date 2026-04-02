@@ -11,8 +11,14 @@ Just make sure you added the table via Migrations plugin.
 If we have a search form with a field `locality_search`, we can easily add some filters here for it:
 
 ```php
+use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\TableRegistry;
+
 ->callback('locality_search', [
-    'callback' => function ($query, $args, $manager) {
+    'callback' => function (SelectQuery $query, array $args, $filter): bool {
+        if (empty($args['locality_search'])) {
+            return false;
+        }
         $GeocodedAddresses = TableRegistry::getTableLocator()->get('Geo.GeocodedAddresses');
         $address = $GeocodedAddresses->retrieve($args['locality_search']);
         if ($address && $address->lat && $address->lng) {
@@ -21,10 +27,13 @@ If we have a search form with a field `locality_search`, we can easily add some 
                 'lng' => $address->lng,
                 'tableName' => 'Events',
                 'distance' => 100,
-                'sort' => false
+                'sort' => false,
             ]);
+            return true;
         }
-    }
+
+        return false;
+    },
 ]);
 ```
 
