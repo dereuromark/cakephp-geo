@@ -73,16 +73,18 @@ use Geo\Geocoder\Geocoder;
 
 ### Using a Callable (Advanced)
 
-For advanced use cases or custom providers from the geocoder-php library:
+For advanced use cases or custom providers from the geocoder-php library, use `Cake\Http\Client` directly (it implements PSR-18):
 
 ```php
 // in your app.php config
+use Cake\Http\Client;
+
 'Geocoder' => [
     'provider' => function () {
         return \Geocoder\Provider\Nominatim\Nominatim::withOpenStreetMapServer(
-            new \Http\Adapter\Cake\Client(), 'User-Agent'
+            new Client(), 'MyApp/1.0'
         );
-    }
+    },
 ],
 ```
 
@@ -135,6 +137,8 @@ Note that you need to first geocode all your data. On the fly geocoding is not a
 ### Using coordinates value object
 You can also use `coordinates` as `Geocoder\Model\Coordinates` instead.
 ```php
+use Geocoder\Model\Coordinates;
+
 $coordinates = new Coordinates(13.3, 19.2);
 $options = ['coordinates' => $coordinates, 'distance' => 200];
 
@@ -142,6 +146,8 @@ $query = $this->Addresses->find('distance', ...$options);
 ```
 When using the plugin's native `GeoCoordinate` value object, use
 ```php
+use Geo\Geocoder\GeoCoordinate;
+
 $geoCoordinate = new GeoCoordinate(13.3, 19.2);
 $coordinates = $geoCoordinate->toGeocoderCoordinates();
 $options = ['coordinates' => $coordinates, 'distance' => 200];
