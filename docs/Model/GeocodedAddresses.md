@@ -29,7 +29,7 @@ Remember to add the Type mapping of `Geo\Database\Type\ObjectType` in your boots
 ```php
 TypeFactory::map('object', 'Geo\Database\Type\ObjectType');
 ```
-(see cookbook: https://book.cakephp.org/3.0/en/orm/database-basics.html#adding-custom-types)
+(see cookbook: https://book.cakephp.org/5/en/orm/database-basics.html#adding-custom-types)
 
 If you need more complex solutions, you can also manually put the Geocoder and the GeocodedAddresses Table classes together.
 
