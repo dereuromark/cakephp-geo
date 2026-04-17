@@ -472,7 +472,8 @@ class Geocoder {
 		];
 
 		// Check all accuracy levels from minimum required to most accurate
-		for ($i = $minAccuracyIndex; $i < count($this->_types); $i++) {
+		$typesCount = count($this->_types);
+		for ($i = $minAccuracyIndex; $i < $typesCount; $i++) {
 			$type = $this->_types[$i];
 			switch ($type) {
 				case static::TYPE_COUNTRY:
