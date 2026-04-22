@@ -6,14 +6,27 @@
  */
 use Cake\Core\Plugin;
 
+$cspNonce = (string)$this->getRequest()->getAttribute('cspNonce', '');
 ?>
 
 <nav class="actions large-3 medium-4 columns col-sm-4 col-xs-12" id="actions-sidebar">
     <ul class="side-nav nav nav-pills nav-stacked">
         <li class="heading"><?= __('Actions') ?></li>
 		<li><?= $this->Html->link(__('Overview'), ['controller' => 'Geo', 'action' => 'index']) ?></li>
-        <li><?= $this->Form->postLink(__('Clear empty Geocoded Addresses'), ['action' => 'clearEmpty'], ['confirm' => 'Sure?']) ?></li>
-		<li><?= $this->Form->postLink(__('Clear all Geocoded Addresses'), ['action' => 'clearAll'], ['confirm' => 'Sure?']) ?></li>
+        <li><?= $this->Form->postButton(__('Clear empty Geocoded Addresses'), ['action' => 'clearEmpty'], [
+            'class' => 'btn btn-link text-start w-100',
+            'form' => [
+                'class' => 'd-inline',
+                'data-confirm-message' => 'Sure?',
+            ],
+        ]) ?></li>
+		<li><?= $this->Form->postButton(__('Clear all Geocoded Addresses'), ['action' => 'clearAll'], [
+            'class' => 'btn btn-link text-start w-100',
+            'form' => [
+                'class' => 'd-inline',
+                'data-confirm-message' => 'Sure?',
+            ],
+        ]) ?></li>
     </ul>
 </nav>
 <div class="content action-index index large-9 medium-8 columns col-sm-8 col-xs-12">
@@ -38,7 +51,14 @@ use Cake\Core\Plugin;
                 <td class="actions">
                 <?= $this->Html->link(Plugin::isLoaded('Tools') ? $this->Icon->render('view') : __('View'), ['action' => 'view', $geocodedAddress->id], ['escapeTitle' => false]); ?>
                 <?= $this->Html->link(Plugin::isLoaded('Tools') ? $this->Icon->render('edit') : __('Edit'), ['action' => 'edit', $geocodedAddress->id], ['escapeTitle' => false]); ?>
-                <?= $this->Form->postLink(Plugin::isLoaded('Tools') ? $this->Icon->render('delete') : __('Delete'), ['action' => 'delete', $geocodedAddress->id], ['escapeTitle' => false, 'confirm' => __('Are you sure you want to delete # {0}?', $geocodedAddress->id)]); ?>
+                <?= $this->Form->postButton(Plugin::isLoaded('Tools') ? $this->Icon->render('delete') : __('Delete'), ['action' => 'delete', $geocodedAddress->id], [
+                    'escapeTitle' => false,
+                    'class' => 'btn btn-link p-0 align-baseline',
+                    'form' => [
+                        'class' => 'd-inline',
+                        'data-confirm-message' => __('Are you sure you want to delete # {0}?', $geocodedAddress->id),
+                    ],
+                ]); ?>
                 </td>
             </tr>
             <?php endforeach; ?>
@@ -47,3 +67,12 @@ use Cake\Core\Plugin;
 
     <?php echo Plugin::isLoaded('Tools') ? $this->element('Tools.pagination') : $this->element('pagination'); ?>
 </div>
+<script<?= $cspNonce !== '' ? ' nonce="' . h($cspNonce) . '"' : '' ?>>
+document.querySelectorAll('form[data-confirm-message]').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+        if (!confirm(this.dataset.confirmMessage)) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
