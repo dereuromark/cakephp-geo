@@ -3,12 +3,19 @@
  * @var \App\View\AppView $this
  * @var \Geo\Model\Entity\GeocodedAddress $geocodedAddress
  */
+$cspNonce = (string)$this->getRequest()->getAttribute('cspNonce', '');
 ?>
 <nav class="actions large-3 medium-4 columns col-sm-4 col-xs-12" id="actions-sidebar">
     <ul class="side-nav nav nav-pills nav-stacked">
         <li class="heading"><?= __('Actions') ?></li>
         <li><?= $this->Html->link(__('Edit Geocoded Address'), ['action' => 'edit', $geocodedAddress->id]) ?> </li>
-        <li><?= $this->Form->postLink(__('Delete Geocoded Address'), ['action' => 'delete', $geocodedAddress->id], ['confirm' => __('Are you sure you want to delete # {0}?', $geocodedAddress->id)]) ?> </li>
+        <li><?= $this->Form->postButton(__('Delete Geocoded Address'), ['action' => 'delete', $geocodedAddress->id], [
+            'class' => 'btn btn-link text-start w-100',
+            'form' => [
+                'class' => 'd-inline',
+                'data-confirm-message' => __('Are you sure you want to delete # {0}?', $geocodedAddress->id),
+            ],
+        ]) ?> </li>
         <li><?= $this->Html->link(__('List Geocoded Addresses'), ['action' => 'index']) ?> </li>
     </ul>
 </nav>
@@ -38,3 +45,12 @@
     </table>
 
 </div>
+<script<?= $cspNonce !== '' ? ' nonce="' . h($cspNonce) . '"' : '' ?>>
+document.querySelectorAll('form[data-confirm-message]').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+        if (!confirm(this.dataset.confirmMessage)) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
