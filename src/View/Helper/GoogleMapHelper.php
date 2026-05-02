@@ -632,9 +632,9 @@ function geocodeAddress(address) {
 			if (!isset($options['address'])) {
 				throw new CakeException('Either use lat/lng or address to add a marker');
 			}
-			$position = 'geocodeAddress("' . h($options['address']) . '")';
+			$position = 'geocodeAddress(' . json_encode((string)$options['address']) . ')';
 		} else {
-			$position = 'new google.maps.LatLng(' . $options['lat'] . ',' . $options['lng'] . ')';
+			$position = 'new google.maps.LatLng(' . sprintf('%F', (float)$options['lat']) . ',' . sprintf('%F', (float)$options['lng']) . ')';
 		}
 
 		$marker = "
@@ -713,22 +713,26 @@ function geocodeAddress(address) {
 		if (empty($options['to']) && empty($options['from'])) {
 			return '';
 		}
+		$escape = (bool)$options['escape'];
 		$form = '<form action="https://maps.google.com/maps" method="get" target="_blank">';
-		$form .= $options['escape'] ? h($options['label']) : $options['label'];
+		$form .= $escape ? h($options['label']) : $options['label'];
 		if (!empty($options['from'])) {
-			$form .= '<input type="hidden" name="saddr" value="' . $options['from'] . '" />';
+			$from = $escape ? h($options['from']) : $options['from'];
+			$form .= '<input type="hidden" name="saddr" value="' . $from . '" />';
 		} else {
 			$form .= '<input type="text" name="saddr" />';
 		}
 		if (!empty($options['to'])) {
-			$form .= '<input type="hidden" name="daddr" value="' . $options['to'] . '" />';
+			$to = $escape ? h($options['to']) : $options['to'];
+			$form .= '<input type="hidden" name="daddr" value="' . $to . '" />';
 		} else {
 			$form .= '<input type="text" name="daddr" />';
 		}
 		if (isset($options['zoom'])) {
-			$form .= '<input type="hidden" name="z" value="' . $options['zoom'] . '" />';
+			$form .= '<input type="hidden" name="z" value="' . (int)$options['zoom'] . '" />';
 		}
-		$form .= '<input type="submit" value="' . $options['submit'] . '" />';
+		$submit = $escape ? h($options['submit']) : $options['submit'];
+		$form .= '<input type="submit" value="' . $submit . '" />';
 		$form .= '</form>';
 
 		return '<div class="directions">' . $form . '</div>';

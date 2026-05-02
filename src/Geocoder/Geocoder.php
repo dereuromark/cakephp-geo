@@ -269,7 +269,10 @@ class Geocoder {
 		} catch (CollectionIsEmpty $e) {
 			throw new InconclusiveException(sprintf('Inconclusive result (total of %s)', 0), 0, $e);
 		} catch (InvalidServerResponse $e) {
-			throw new RuntimeException(sprintf('Problem with API key `%s`', $this->getConfig('apiKey')) . ': ' . $e->getMessage(), 0, $e);
+			$apiKey = $this->getConfig('apiKey');
+			$hint = $apiKey ? '***' . substr((string)$apiKey, -4) : '(empty)';
+
+			throw new RuntimeException(sprintf('Problem with API key %s: %s', $hint, $e->getMessage()), 0, $e);
 		}
 
 		if (!$this->_config['allowInconclusive'] && !$this->isConclusive($result)) {
