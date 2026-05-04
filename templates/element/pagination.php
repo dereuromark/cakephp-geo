@@ -14,19 +14,19 @@ if (!isset($separator)) {
 }
 
 if (empty($first)) {
-	$first = __d('tools', 'first');
+	$first = __d('geo', 'first');
 }
 if (empty($last)) {
-	$last = __d('tools', 'last');
+	$last = __d('geo', 'last');
 }
 if (empty($prev)) {
-	$prev = __d('tools', 'previous');
+	$prev = __d('geo', 'previous');
 }
 if (empty($next)) {
-	$next = __d('tools', 'next');
+	$next = __d('geo', 'next');
 }
 if (!isset($format)) {
-	$format = __d('tools', 'Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total');
+	$format = __d('geo', 'Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total');
 }
 if (!empty($reverse)) {
 	$tmp = $first;

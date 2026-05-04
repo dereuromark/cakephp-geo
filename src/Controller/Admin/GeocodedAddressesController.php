@@ -45,7 +45,7 @@ class GeocodedAddressesController extends AppController {
 
 		$this->GeocodedAddresses->clearEmpty();
 
-		$this->Flash->success(__('The empty geocoded addresses have been removed from cache.'));
+		$this->Flash->success(__d('geo', 'The empty geocoded addresses have been removed from cache.'));
 
 		return $this->redirect(['action' => 'index']);
 	}
@@ -58,7 +58,7 @@ class GeocodedAddressesController extends AppController {
 
 		$this->GeocodedAddresses->clearAll();
 
-		$this->Flash->success(__('All geocoded addresses have been removed from cache'));
+		$this->Flash->success(__d('geo', 'All geocoded addresses have been removed from cache'));
 
 		return $this->redirect(['action' => 'index']);
 	}
@@ -75,11 +75,11 @@ class GeocodedAddressesController extends AppController {
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$geocodedAddress = $this->GeocodedAddresses->patchEntity($geocodedAddress, $this->request->getData());
 			if ($this->GeocodedAddresses->save($geocodedAddress)) {
-				$this->Flash->success(__('The geocoded address has been saved.'));
+				$this->Flash->success(__d('geo', 'The geocoded address has been saved.'));
 
 				return $this->redirect(['action' => 'index']);
 			}
-			$this->Flash->error(__('The geocoded address could not be saved. Please, try again.'));
+			$this->Flash->error(__d('geo', 'The geocoded address could not be saved. Please, try again.'));
 		}
 		$this->set(compact('geocodedAddress'));
 	}
@@ -95,9 +95,9 @@ class GeocodedAddressesController extends AppController {
 		$this->request->allowMethod(['post', 'delete']);
 		$geocodedAddress = $this->GeocodedAddresses->get($id);
 		if ($this->GeocodedAddresses->delete($geocodedAddress)) {
-			$this->Flash->success(__('The geocoded address has been deleted.'));
+			$this->Flash->success(__d('geo', 'The geocoded address has been deleted.'));
 		} else {
-			$this->Flash->error(__('The geocoded address could not be deleted. Please, try again.'));
+			$this->Flash->error(__d('geo', 'The geocoded address could not be deleted. Please, try again.'));
 		}
 
 		return $this->redirect(['action' => 'index']);

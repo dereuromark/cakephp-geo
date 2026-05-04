@@ -532,7 +532,7 @@ class GoogleMapHelper extends Helper {
 		unset($this->_runtimeConfig['div']['width']);
 		unset($this->_runtimeConfig['div']['height']);
 
-		$defaultText = $this->_runtimeConfig['content'] ?? __('Map cannot be displayed!');
+		$defaultText = $this->_runtimeConfig['content'] ?? __d('geo', 'Map cannot be displayed!');
 		$result .= $this->Html->tag('div', $defaultText, $this->_runtimeConfig['div']);
 
 		return $result;
@@ -700,8 +700,8 @@ function geocodeAddress(address) {
 		$options = [
 			'from' => null,
 			'to' => null,
-			'label' => __('Enter your address'),
-			'submit' => __('Get directions'),
+			'label' => __d('geo', 'Enter your address'),
+			'submit' => __d('geo', 'Get directions'),
 			'escape' => true,
 			'zoom' => null, // auto
 		];
@@ -1439,7 +1439,7 @@ function geocodeAddress(address) {
 	 * @return string imageTag
 	 */
 	public function staticMap(array $options = [], array $attributes = []) {
-		$defaultAttributes = ['alt' => __d('tools', 'Map')];
+		$defaultAttributes = ['alt' => __d('geo', 'Map')];
 		$attributes += $defaultAttributes;
 
 		return $this->Html->image($this->staticMapUrl($options + ['escape' => false]), $attributes);

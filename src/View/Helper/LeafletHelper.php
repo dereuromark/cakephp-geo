@@ -346,7 +346,7 @@ class LeafletHelper extends Helper {
 		$divOptions['style'] .= 'height: ' . $divOptions['height'] . ';';
 		unset($divOptions['width'], $divOptions['height']);
 
-		$defaultText = $this->_runtimeConfig['content'] ?? __('Map cannot be displayed!');
+		$defaultText = $this->_runtimeConfig['content'] ?? __d('geo', 'Map cannot be displayed!');
 		$result .= $this->Html->tag('div', $defaultText, $divOptions);
 
 		return $result;
