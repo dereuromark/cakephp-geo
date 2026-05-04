@@ -233,16 +233,16 @@ class Geocoder {
 	 */
 	public function accuracyTypes() {
 		$array = [
-			static::TYPE_COUNTRY => __('Country'),
-			static::TYPE_AAL1 => __('Province'),
-			static::TYPE_AAL3 => __('Sub Province'),
-			static::TYPE_AAL4 => __('Region'),
-			static::TYPE_AAL5 => __('Sub Region'),
-			static::TYPE_LOC => __('Locality'),
-			static::TYPE_SUBLOC => __('Sub Locality'),
-			static::TYPE_POSTAL => __('Postal Code'),
-			static::TYPE_ADDRESS => __('Street Address'),
-			static::TYPE_NUMBER => __('Street Number'),
+			static::TYPE_COUNTRY => __d('geo', 'Country'),
+			static::TYPE_AAL1 => __d('geo', 'Province'),
+			static::TYPE_AAL3 => __d('geo', 'Sub Province'),
+			static::TYPE_AAL4 => __d('geo', 'Region'),
+			static::TYPE_AAL5 => __d('geo', 'Sub Region'),
+			static::TYPE_LOC => __d('geo', 'Locality'),
+			static::TYPE_SUBLOC => __d('geo', 'Sub Locality'),
+			static::TYPE_POSTAL => __d('geo', 'Postal Code'),
+			static::TYPE_ADDRESS => __d('geo', 'Street Address'),
+			static::TYPE_NUMBER => __d('geo', 'Street Number'),
 		];
 
 		return $array;

@@ -714,7 +714,7 @@ class GeocoderBehavior extends Behavior {
 	 * @return void
 	 */
 	protected function invalidate($entity) {
-		$errorMessage = $this->_config['validationError'] ?? __('Could not geocode this address. Please refine.');
+		$errorMessage = $this->_config['validationError'] ?? __d('geo', 'Could not geocode this address. Please refine.');
 		if ($errorMessage === false) {
 			return;
 		}

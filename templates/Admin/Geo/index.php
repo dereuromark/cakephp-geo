@@ -7,8 +7,8 @@
 
 <nav class="actions large-3 medium-4 columns col-sm-4 col-xs-12" id="actions-sidebar">
 	<ul class="side-nav nav nav-pills nav-stacked">
-		<li class="heading"><?= __('Actions') ?></li>
-		<li><?= $this->Html->link(__('List Geocoded Addresses'), ['controller' => 'GeocodedAddresses', 'action' => 'index']) ?></li>
+		<li class="heading"><?= __d('geo', 'Actions') ?></li>
+		<li><?= $this->Html->link(__d('geo', 'List Geocoded Addresses'), ['controller' => 'GeocodedAddresses', 'action' => 'index']) ?></li>
 	</ul>
 </nav>
 <div class="content action-form form large-9 medium-8 columns col-sm-8 col-xs-12">
@@ -19,14 +19,14 @@
 <h2>Geocode</h2>
 <?= $this->Form->create() ?>
 <fieldset>
-	<legend><?= __('Geocode {0}', __('Address')) ?></legend>
+	<legend><?= __d('geo', 'Geocode {0}', __d('geo', 'Address')) ?></legend>
 	<?php
 	echo $this->Form->control('address');
 	echo $this->Form->control('reset_cache', ['type' => 'checkbox']);
 
 	?>
 </fieldset>
-<?= $this->Form->button(__('Geocode')) ?>
+<?= $this->Form->button(__d('geo', 'Geocode')) ?>
 <?= $this->Form->end() ?>
 
 
