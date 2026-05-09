@@ -22,11 +22,11 @@ use Geocoder\Formatter\StringFormatter;
  * @method \Geo\Model\Entity\GeocodedAddress findOrCreate($search, ?callable $callback = null, array $options = [])
  * @method \Geo\Model\Entity\GeocodedAddress saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
  * @method \Cake\Datasource\ResultSetInterface<\Geo\Model\Entity\GeocodedAddress>|false saveMany(iterable $entities, array $options = [])
- * @mixin \Cake\ORM\Behavior\TimestampBehavior
  * @method \Geo\Model\Entity\GeocodedAddress newEmptyEntity()
  * @method \Cake\Datasource\ResultSetInterface<\Geo\Model\Entity\GeocodedAddress> saveManyOrFail(iterable $entities, array $options = [])
  * @method \Cake\Datasource\ResultSetInterface<\Geo\Model\Entity\GeocodedAddress>|false deleteMany(iterable $entities, array $options = [])
  * @method \Cake\Datasource\ResultSetInterface<\Geo\Model\Entity\GeocodedAddress> deleteManyOrFail(iterable $entities, array $options = [])
+ * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class GeocodedAddressesTable extends Table {
 

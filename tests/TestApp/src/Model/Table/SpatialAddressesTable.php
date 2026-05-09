@@ -20,11 +20,11 @@ use Cake\ORM\Table;
  * @method \TestApp\Model\Entity\SpatialAddress findOrCreate($search, ?callable $callback = null, array $options = [])
  * @method \TestApp\Model\Entity\SpatialAddress saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
  * @method \Cake\Datasource\ResultSetInterface<\TestApp\Model\Entity\SpatialAddress>|false saveMany(iterable $entities, array $options = [])
- * @mixin \Cake\ORM\Behavior\TimestampBehavior
  * @method \TestApp\Model\Entity\SpatialAddress newEmptyEntity()
  * @method \Cake\Datasource\ResultSetInterface<\TestApp\Model\Entity\SpatialAddress> saveManyOrFail(iterable $entities, array $options = [])
  * @method \Cake\Datasource\ResultSetInterface<\TestApp\Model\Entity\SpatialAddress>|false deleteMany(iterable $entities, array $options = [])
  * @method \Cake\Datasource\ResultSetInterface<\TestApp\Model\Entity\SpatialAddress> deleteManyOrFail(iterable $entities, array $options = [])
+ * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class SpatialAddressesTable extends Table {
 
