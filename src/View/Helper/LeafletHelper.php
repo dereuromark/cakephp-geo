@@ -540,7 +540,7 @@ class LeafletHelper extends Helper {
 	/**
 	 * Add a polygon to the map.
 	 *
-	 * @param array<array<string, float>>|\Geo\Geometry\Polygon $points Array of lat/lng pairs or polygon object
+	 * @param \Geo\Geometry\Polygon|array<array<string, float>> $points Array of lat/lng pairs or polygon object
 	 * @param array<string, mixed> $options
 	 * @return void
 	 */
@@ -600,7 +600,7 @@ class LeafletHelper extends Helper {
 	/**
 	 * Add a GeoJSON layer to the map.
 	 *
-	 * @param array<string, mixed>|string|\Geo\Geometry\GeoJsonInterface $data GeoJSON data
+	 * @param \Geo\Geometry\GeoJsonInterface|array<string, mixed>|string $data GeoJSON data
 	 * @param array<string, mixed> $options
 	 * @return void
 	 */
@@ -799,7 +799,7 @@ jQuery(document).ready(function() {
 	}
 
 	/**
-	 * @param array<array<string, float>>|\Geo\Geometry\Polygon $points
+	 * @param \Geo\Geometry\Polygon|array<array<string, float>> $points
 	 * @return array<int, mixed>
 	 */
 	protected function _polygonJsPoints(array|Polygon $points): array {
@@ -825,7 +825,7 @@ jQuery(document).ready(function() {
 	}
 
 	/**
-	 * @param array<string, mixed>|string|\Geo\Geometry\GeoJsonInterface $data
+	 * @param \Geo\Geometry\GeoJsonInterface|array<string, mixed>|string $data
 	 * @return string
 	 */
 	protected function _geoJsonString(array|string|GeoJsonInterface $data): string {

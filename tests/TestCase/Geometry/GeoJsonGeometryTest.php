@@ -21,6 +21,18 @@ class GeoJsonGeometryTest extends TestCase {
 		$this->assertSame(['lat' => 48.2082, 'lng' => 16.3738], $point->toLatLngArray());
 	}
 
+	public function testPointNamedConstructorsAndAccessors(): void {
+		$point = Point::fromLatLng(48.2082, 16.3738);
+
+		$this->assertSame(16.3738, $point->getLongitude());
+		$this->assertSame(48.2082, $point->getLatitude());
+		$this->assertSame($point->toGeoJsonArray(), $point->jsonSerialize());
+
+		$pointFromCoordinates = Point::fromCoordinates([16.4, 48.3]);
+		$this->assertSame(16.4, $pointFromCoordinates->getLongitude());
+		$this->assertSame(48.3, $pointFromCoordinates->getLatitude());
+	}
+
 	public function testPolygonFromLatLngPointsClosesRing(): void {
 		$polygon = Polygon::fromLatLngPoints([
 			['lat' => 48.2, 'lng' => 16.3],
@@ -50,6 +62,18 @@ class GeoJsonGeometryTest extends TestCase {
 		$this->assertCount(2, $result['features']);
 		$this->assertSame('Point', $result['features'][0]['geometry']['type']);
 		$this->assertSame('Polygon', $result['features'][1]['geometry']['type']);
+	}
+
+	public function testFeatureAndCollectionAccessors(): void {
+		$feature = new Feature(new Point(16.3738, 48.2082), ['name' => 'Vienna']);
+
+		$this->assertSame('Vienna', $feature->getProperties()['name']);
+		$this->assertInstanceOf(Point::class, $feature->getGeometry());
+		$this->assertSame($feature->toGeoJsonArray(), $feature->jsonSerialize());
+
+		$collection = new FeatureCollection([$feature]);
+		$this->assertCount(1, $collection->getFeatures());
+		$this->assertSame($collection->toGeoJsonArray(), $collection->jsonSerialize());
 	}
 
 }

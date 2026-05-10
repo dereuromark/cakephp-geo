@@ -2,14 +2,15 @@
 
 namespace Geo\Test\TestCase\View\Helper;
 
-use Cake\Core\Configure;
-use Cake\TestSuite\TestCase;
-use Cake\View\View;
+	use Cake\Core\Configure;
+	use Cake\TestSuite\TestCase;
+	use Cake\View\View;
 use Geo\Geometry\Feature;
 use Geo\Geometry\FeatureCollection;
-use Geo\Geometry\Point;
-use Geo\Geometry\Polygon;
-use Geo\View\Helper\LeafletHelper;
+	use Geo\Geometry\Point;
+	use Geo\Geometry\Polygon;
+	use Geo\View\Helper\LeafletHelper;
+	use InvalidArgumentException;
 
 class LeafletHelperTest extends TestCase {
 
@@ -343,6 +344,18 @@ class LeafletHelperTest extends TestCase {
 		$result = $this->Leaflet->script();
 
 		$this->assertTextContains('"coordinates":[16.3738,48.2082]', $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testAddGeoJsonInvalidStringThrowsException(): void {
+		$this->Leaflet->map();
+
+		$this->expectException(InvalidArgumentException::class);
+		$this->expectExceptionMessage('GeoJSON string must decode to an object/array structure.');
+
+		$this->Leaflet->addGeoJson('not-json');
 	}
 
 	/**
