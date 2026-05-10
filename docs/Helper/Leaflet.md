@@ -214,6 +214,10 @@ $this->Leaflet->addPolygon($points, [
 
 ## GeoJSON support
 ```php
+use Geo\Geometry\Feature;
+use Geo\Geometry\FeatureCollection;
+use Geo\Geometry\Point;
+
 $geoJson = [
     'type' => 'FeatureCollection',
     'features' => [
@@ -230,6 +234,33 @@ $geoJson = [
     ],
 ];
 $this->Leaflet->addGeoJson($geoJson);
+```
+
+You can also pass the plugin's GeoJSON value objects directly:
+
+```php
+$collection = new FeatureCollection([
+    new Feature(new Point(16.3738, 48.2082), ['name' => 'Vienna']),
+]);
+
+$this->Leaflet->addGeoJson($collection);
+```
+
+And `addPolygon()` now accepts a `Geo\Geometry\Polygon` object:
+
+```php
+use Geo\Geometry\Polygon;
+
+$polygon = Polygon::fromLatLngPoints([
+    ['lat' => 48.2, 'lng' => 16.3],
+    ['lat' => 48.3, 'lng' => 16.4],
+    ['lat' => 48.1, 'lng' => 16.5],
+]);
+
+$this->Leaflet->addPolygon($polygon, [
+    'color' => '#ff0000',
+    'fillOpacity' => 0.5,
+]);
 ```
 
 ## Multiple maps per page
