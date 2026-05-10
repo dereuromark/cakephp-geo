@@ -5,6 +5,9 @@ namespace Geo\View\Helper;
 use Cake\Core\Configure;
 use Cake\Utility\Hash;
 use Cake\View\Helper;
+use Geo\Geometry\GeoJsonInterface;
+use Geo\Geometry\Polygon;
+use InvalidArgumentException;
 
 /**
  * This is a CakePHP helper that helps users to integrate Leaflet.js
@@ -537,18 +540,15 @@ class LeafletHelper extends Helper {
 	/**
 	 * Add a polygon to the map.
 	 *
-	 * @param array<array<string, float>> $points Array of lat/lng pairs
+	 * @param \Geo\Geometry\Polygon|array<array<string, float>> $points Array of lat/lng pairs or polygon object
 	 * @param array<string, mixed> $options
 	 * @return void
 	 */
-	public function addPolygon(array $points, array $options = []): void {
+	public function addPolygon(array|Polygon $points, array $options = []): void {
 		$defaults = $this->_runtimeConfig['polygon'];
 		$options += $defaults;
 
-		$jsPoints = [];
-		foreach ($points as $point) {
-			$jsPoints[] = '[' . (float)$point['lat'] . ', ' . (float)$point['lng'] . ']';
-		}
+		$jsPoints = $this->_polygonJsPoints($points);
 
 		$polygonOptions = [
 			'color' => $options['color'],
@@ -557,7 +557,7 @@ class LeafletHelper extends Helper {
 		];
 
 		$polygon = '
-		L.polygon([' . implode(', ', $jsPoints) . '], ' . $this->_buildJsObject($polygonOptions) . ').addTo(' . $this->name() . ');
+		L.polygon(' . $this->_jsArray($jsPoints) . ', ' . $this->_buildJsObject($polygonOptions) . ').addTo(' . $this->name() . ');
 		';
 
 		$this->map .= $polygon;
@@ -600,12 +600,12 @@ class LeafletHelper extends Helper {
 	/**
 	 * Add a GeoJSON layer to the map.
 	 *
-	 * @param array<string, mixed> $data GeoJSON data
+	 * @param \Geo\Geometry\GeoJsonInterface|array<string, mixed>|string $data GeoJSON data
 	 * @param array<string, mixed> $options
 	 * @return void
 	 */
-	public function addGeoJson(array $data, array $options = []): void {
-		$geoJsonJs = json_encode($data);
+	public function addGeoJson(array|string|GeoJsonInterface $data, array $options = []): void {
+		$geoJsonJs = $this->_geoJsonString($data);
 
 		$optionsJs = '';
 		if ($options) {
@@ -793,6 +793,68 @@ jQuery(document).ready(function() {
 		$result = json_encode($options);
 		if ($result === false) {
 			return '{}';
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @param \Geo\Geometry\Polygon|array<array<string, float>> $points
+	 * @return array<int, mixed>
+	 */
+	protected function _polygonJsPoints(array|Polygon $points): array {
+		if ($points instanceof Polygon) {
+			$result = [];
+			foreach ($points->toLeafletRings() as $ring) {
+				$jsRing = [];
+				foreach ($ring as $point) {
+					$jsRing[] = [(float)$point['lat'], (float)$point['lng']];
+				}
+				$result[] = $jsRing;
+			}
+
+			return count($result) === 1 ? $result[0] : $result;
+		}
+
+		$result = [];
+		foreach ($points as $point) {
+			$result[] = [(float)$point['lat'], (float)$point['lng']];
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @param \Geo\Geometry\GeoJsonInterface|array<string, mixed>|string $data
+	 * @return string
+	 */
+	protected function _geoJsonString(array|string|GeoJsonInterface $data): string {
+		if ($data instanceof GeoJsonInterface) {
+			$data = $data->toGeoJsonArray();
+		} elseif (is_string($data)) {
+			$decoded = json_decode($data, true);
+			if (!is_array($decoded)) {
+				throw new InvalidArgumentException('GeoJSON string must decode to an object/array structure.');
+			}
+			$data = $decoded;
+		}
+
+		$result = json_encode($data);
+		if ($result === false) {
+			throw new InvalidArgumentException('GeoJSON data could not be encoded.');
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @param array<int, mixed> $value
+	 * @return string
+	 */
+	protected function _jsArray(array $value): string {
+		$result = json_encode($value);
+		if ($result === false) {
+			return '[]';
 		}
 
 		return $result;

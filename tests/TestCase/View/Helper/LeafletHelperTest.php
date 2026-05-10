@@ -2,10 +2,15 @@
 
 namespace Geo\Test\TestCase\View\Helper;
 
-use Cake\Core\Configure;
-use Cake\TestSuite\TestCase;
-use Cake\View\View;
-use Geo\View\Helper\LeafletHelper;
+	use Cake\Core\Configure;
+	use Cake\TestSuite\TestCase;
+	use Cake\View\View;
+use Geo\Geometry\Feature;
+use Geo\Geometry\FeatureCollection;
+	use Geo\Geometry\Point;
+	use Geo\Geometry\Polygon;
+	use Geo\View\Helper\LeafletHelper;
+	use InvalidArgumentException;
 
 class LeafletHelperTest extends TestCase {
 
@@ -272,7 +277,24 @@ class LeafletHelperTest extends TestCase {
 
 		$result = $this->Leaflet->script();
 
-		$this->assertTextContains('L.polygon([[48.2, 16.3], [48.3, 16.4], [48.1, 16.5]]', $result);
+		$this->assertTextContains('L.polygon([[48.2,16.3],[48.3,16.4],[48.1,16.5]]', $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testAddPolygonFromPolygonObject(): void {
+		$polygon = Polygon::fromLatLngPoints([
+			['lat' => 48.2, 'lng' => 16.3],
+			['lat' => 48.3, 'lng' => 16.4],
+			['lat' => 48.1, 'lng' => 16.5],
+		]);
+		$this->Leaflet->map();
+		$this->Leaflet->addPolygon($polygon);
+
+		$result = $this->Leaflet->script();
+
+		$this->assertTextContains('L.polygon([[48.2,16.3],[48.3,16.4],[48.1,16.5],[48.2,16.3]]', $result);
 	}
 
 	/**
@@ -293,6 +315,47 @@ class LeafletHelperTest extends TestCase {
 
 		$this->assertTextContains('L.geoJSON(', $result);
 		$this->assertTextContains('"type":"Feature"', $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testAddGeoJsonFromFeatureCollectionObject(): void {
+		$geoJson = new FeatureCollection([
+			new Feature(new Point(16.3738, 48.2082), ['name' => 'Vienna']),
+		]);
+		$this->Leaflet->map();
+		$this->Leaflet->addGeoJson($geoJson);
+
+		$result = $this->Leaflet->script();
+
+		$this->assertTextContains('"type":"FeatureCollection"', $result);
+		$this->assertTextContains('"coordinates":[16.3738,48.2082]', $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testAddGeoJsonFromString(): void {
+		$geoJson = '{"type":"Feature","geometry":{"type":"Point","coordinates":[16.3738,48.2082]}}';
+		$this->Leaflet->map();
+		$this->Leaflet->addGeoJson($geoJson);
+
+		$result = $this->Leaflet->script();
+
+		$this->assertTextContains('"coordinates":[16.3738,48.2082]', $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testAddGeoJsonInvalidStringThrowsException(): void {
+		$this->Leaflet->map();
+
+		$this->expectException(InvalidArgumentException::class);
+		$this->expectExceptionMessage('GeoJSON string must decode to an object/array structure.');
+
+		$this->Leaflet->addGeoJson('not-json');
 	}
 
 	/**

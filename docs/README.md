@@ -8,6 +8,7 @@
 * [Geocoder lib](Geocoder/Geocoder.md)
 * [Calculator lib](Geocoder/Calculator.md)
 * [Geo lib](Geocoder/Geo.md)
+* [GeoJSON geometry](Geometry/GeoJson.md)
 * [GoogleMap helper](Helper/GoogleMap.md)
 * [Leaflet helper](Helper/Leaflet.md)
 * [Leaflet tile providers](Helper/LeafletTileProviders.md)
