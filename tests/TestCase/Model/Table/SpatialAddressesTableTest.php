@@ -138,11 +138,29 @@ class SpatialAddressesTableTest extends TestCase {
 		]);
 
 		$sql = $query->sql();
+		$bindings = $query->getValueBinder()->bindings();
 
 		// Verify the query uses ST_Within for bounding box filtering (enables spatial index usage)
 		$this->assertStringContainsString('ST_Within', $sql, 'Query should use ST_Within for spatial index support');
-		$this->assertStringContainsString('POLYGON', $sql, 'Query should use POLYGON for bounding box');
+		$this->assertStringContainsString('ST_GeomFromText(:geoEnvelope', $sql, 'Query should bind the bounding box geometry');
+		$this->assertNotEmpty($bindings);
+		$this->assertTrue($this->containsBindingWithPrefix($bindings, 'POLYGON(('), 'Query should bind a POLYGON WKT for the bounding box');
 		$this->assertStringContainsString('ST_Distance_Sphere', $sql, 'Query should use ST_Distance_Sphere for precise distance');
+	}
+
+	/**
+	 * @param array<string, array<string, mixed>> $bindings
+	 * @param string $prefix
+	 * @return bool
+	 */
+	protected function containsBindingWithPrefix(array $bindings, string $prefix): bool {
+		foreach ($bindings as $binding) {
+			if (str_starts_with((string)$binding['value'], $prefix)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 }

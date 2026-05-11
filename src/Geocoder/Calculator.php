@@ -120,7 +120,7 @@ class Calculator {
 	 * @param array<string, mixed> $pointX
 	 * @param array<string, mixed> $pointY
 	 * @param string|null $unit Unit char or constant (M=miles, K=kilometers, N=nautical miles, I=inches, F=feet)
-	 * @return int Distance in km
+	 * @return int Distance in the requested unit, kilometers by default
 	 */
 	public function distance(array $pointX, array $pointY, ?string $unit = null): int {
 		if (empty($unit)) {
@@ -141,9 +141,14 @@ class Calculator {
 	}
 
 	/**
+	 * Calculate the great-circle distance using the haversine formula.
+	 *
+	 * The raw return unit remains miles for backward compatibility with the
+	 * existing conversion map consumed by {@see distance()}.
+	 *
 	 * @param \Geo\Geocoder\GeoCoordinate|array<string, mixed> $pointX
 	 * @param \Geo\Geocoder\GeoCoordinate|array<string, mixed> $pointY
-	 * @return float
+	 * @return float Distance in miles
 	 */
 	public static function calculateDistance($pointX, $pointY) {
 		if ($pointX instanceof GeoCoordinate) {
