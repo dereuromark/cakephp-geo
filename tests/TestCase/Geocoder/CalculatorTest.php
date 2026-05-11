@@ -39,7 +39,7 @@ class CalculatorTest extends TestCase {
 		$coords = [
 			['name' => 'MUC/Pforzheim (269km road, 2:33h)', 'x' => ['lat' => 48.1391, 'lng' => 11.5802], 'y' => ['lat' => 48.8934, 'lng' => 8.70492], 'd' => 228],
 			['name' => 'MUC/London (1142km road, 11:20h)', 'x' => ['lat' => 48.1391, 'lng' => 11.5802], 'y' => ['lat' => 51.508, 'lng' => -0.124688], 'd' => 919],
-			['name' => 'MUC/NewYork (--- road, ---h)', 'x' => ['lat' => 48.1391, 'lng' => 11.5802], 'y' => ['lat' => 40.700943, 'lng' => -73.853531], 'd' => 6479],
+			['name' => 'MUC/NewYork (--- road, ---h)', 'x' => ['lat' => 48.1391, 'lng' => 11.5802], 'y' => ['lat' => 40.700943, 'lng' => -73.853531], 'd' => 6480],
 		];
 
 		foreach ($coords as $coord) {
@@ -52,7 +52,7 @@ class CalculatorTest extends TestCase {
 
 		// String directly
 		$is = $this->Calculator->distance($coords[0]['x'], $coords[0]['y'], 'F');
-		$this->assertEquals(747236, $is);
+		$this->assertEquals(747273, $is);
 	}
 
 	/**
@@ -147,6 +147,31 @@ class CalculatorTest extends TestCase {
 
 		$this->assertGreaterThan(140, $result);
 		$this->assertLessThan(150, $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testCalculateDistanceShortRange(): void {
+		$pointX = ['lat' => 52.52, 'lng' => 13.405];
+		$pointY = ['lat' => 52.5201, 'lng' => 13.405];
+
+		$result = Calculator::calculateDistance($pointX, $pointY);
+
+		$this->assertEqualsWithDelta(0.0069, $result, 0.0005);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testCalculateDistanceAcrossAntimeridian(): void {
+		$pointX = ['lat' => 0.0, 'lng' => 179.9];
+		$pointY = ['lat' => 0.0, 'lng' => -179.9];
+
+		$result = Calculator::calculateDistance($pointX, $pointY);
+
+		$this->assertGreaterThan(13, $result);
+		$this->assertLessThan(14, $result);
 	}
 
 	/**
