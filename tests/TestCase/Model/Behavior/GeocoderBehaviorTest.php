@@ -14,8 +14,11 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Geo\Geocoder\Calculator;
 use Geo\Geocoder\Geocoder;
+use Geocoder\Model\AddressCollection;
 use Geocoder\Model\Coordinates;
 use InvalidArgumentException;
+use ReflectionMethod;
+use ReflectionProperty;
 use TestApp\Controller\TestController;
 
 class GeocoderBehaviorTest extends TestCase {
@@ -25,6 +28,7 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	protected array $fixtures = [
 		'plugin.Geo.Addresses',
+		'plugin.Geo.GeocodedAddresses',
 	];
 
 	/**
@@ -175,6 +179,25 @@ class GeocoderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 */
+	public function testFindSpatialBindsGeometryParameters(): void {
+		/** @var \Geo\Model\Behavior\GeocoderBehavior $behavior */
+		$behavior = $this->Addresses->getBehavior('Geocoder');
+
+		$query = $this->Addresses->find();
+		$query = $behavior->findSpatial($query, 13.3, 19.2, null, 3000);
+		$sql = $query->sql();
+		$bindings = $query->getValueBinder()->bindings();
+
+		$this->assertStringContainsString('ST_GeomFromText(:geoPoint', $sql);
+		$this->assertStringContainsString('ST_GeomFromText(:geoEnvelope', $sql);
+		$this->assertCount(3, $bindings);
+		$this->assertSame('POINT(19.2 13.3)', $this->firstBindingValueMatching($bindings, 'POINT('));
+		$this->assertStringStartsWith('POLYGON((', (string)$this->firstBindingValueMatching($bindings, 'POLYGON(('));
+	}
+
+	/**
+	 * @return void
+	 */
 	public function testPagination() {
 		$driver = $this->db->getDriver();
 		$this->skipIf(!($driver instanceof Mysql || $driver instanceof Postgres), 'The virtualFields test is only compatible with Mysql/Postgres.');
@@ -269,6 +292,36 @@ class GeocoderBehaviorTest extends TestCase {
 		$this->assertTrue(!empty($res));
 		$this->assertSame('Bibersfeld', $res->geocoder_result['address_data']);
 	}
+
+	/**
+	 * @return void
+	 */
+	public function testExecuteCachesMisses(): void {
+		$this->Addresses->removeBehavior('Geocoder');
+		$this->Addresses->addBehavior('Geo.Geocoder', ['cache' => true]);
+		/** @var \Geo\Model\Behavior\GeocoderBehavior $behavior */
+		$behavior = $this->Addresses->getBehavior('Geocoder');
+
+		$geocoder = $this->createMock(Geocoder::class);
+		$geocoder->expects($this->once())
+			->method('geocode')
+			->with('Missing Place')
+			->willReturn(new AddressCollection([]));
+		$behaviorReflection = new ReflectionMethod($behavior, '_execute');
+		$behaviorReflection->setAccessible(true);
+
+		$property = new ReflectionProperty($behavior, '_Geocoder');
+		$property->setAccessible(true);
+		$property->setValue($behavior, $geocoder);
+
+		$this->assertNull($behaviorReflection->invoke($behavior, 'Missing Place'));
+		$this->assertNull($behaviorReflection->invoke($behavior, 'Missing Place'));
+
+		/** @var \Geo\Model\Table\GeocodedAddressesTable $GeocodedAddresses */
+		$GeocodedAddresses = TableRegistry::getTableLocator()->get('Geo.GeocodedAddresses');
+		$record = $GeocodedAddresses->find()->where(['address' => 'Missing Place'])->firstOrFail();
+		$this->assertSame(['_miss' => true], $record->data);
+	}
 	/**
 	 * @return void
 	 */
@@ -334,6 +387,21 @@ class GeocoderBehaviorTest extends TestCase {
 		$res = $this->Addresses->save($entity);
 
 		$this->assertTrue(!empty($res));
+	}
+
+	/**
+	 * @param array<string, array<string, mixed>> $bindings
+	 * @param string $prefix
+	 * @return mixed
+	 */
+	protected function firstBindingValueMatching(array $bindings, string $prefix) {
+		foreach ($bindings as $binding) {
+			if (str_starts_with((string)$binding['value'], $prefix)) {
+				return $binding['value'];
+			}
+		}
+
+		$this->fail(sprintf('No binding matched prefix `%s`.', $prefix));
 	}
 
 	/**

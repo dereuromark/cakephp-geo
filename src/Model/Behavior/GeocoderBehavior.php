@@ -431,11 +431,14 @@ class GeocoderBehavior extends Behavior {
 
 		$lat = $options[static::OPTION_LAT];
 		$lng = $options[static::OPTION_LNG];
+		$pointWkt = $this->buildPointWkt($lng, $lat);
+		$pointPlaceholder = $query->getValueBinder()->placeholder('geoPoint');
+		$query->bind($pointPlaceholder, $pointWkt, 'string');
 
 		// Add distance calculation as a virtual field
 		$query->select([
 			'distance' => new QueryExpression(
-				"ST_Distance_Sphere(coordinates, ST_GeomFromText('POINT($lng $lat)')) / 1000",
+				"ST_Distance_Sphere(coordinates, ST_GeomFromText($pointPlaceholder)) / 1000",
 			),
 		]);
 
@@ -454,17 +457,18 @@ class GeocoderBehavior extends Behavior {
 			$maxLng = $lng + $lngDelta;
 
 			// Bounding box filter using ST_Within (CAN use spatial index)
-			$envelope = "ST_GeomFromText('POLYGON(($minLng $minLat, $maxLng $minLat, $maxLng $maxLat, $minLng $maxLat, $minLng $minLat))')";
-			$query->where(function (QueryExpression $exp) use ($envelope) {
+			$envelopePlaceholder = $query->getValueBinder()->placeholder('geoEnvelope');
+			$query->bind($envelopePlaceholder, $this->buildPolygonWkt($minLng, $minLat, $maxLng, $maxLat), 'string');
+			$query->where(function (QueryExpression $exp) use ($envelopePlaceholder) {
 				return $exp->add(
-					new QueryExpression("ST_Within(coordinates, $envelope)"),
+					new QueryExpression("ST_Within(coordinates, ST_GeomFromText($envelopePlaceholder))"),
 				);
 			});
 
 			// Precise distance filter (on already-filtered result set)
-			$query->where(function (QueryExpression $exp) use ($lat, $lng, $distance) {
+			$query->where(function (QueryExpression $exp) use ($pointPlaceholder, $distance) {
 				return $exp->lte(
-					new QueryExpression("ST_Distance_Sphere(coordinates, ST_GeomFromText('POINT($lng $lat)')) / 1000"),
+					new QueryExpression("ST_Distance_Sphere(coordinates, ST_GeomFromText($pointPlaceholder)) / 1000"),
 					$distance,
 				);
 			});
@@ -647,6 +651,10 @@ class GeocoderBehavior extends Behavior {
 				$data = $result->data;
 				// Reconstruct Location from JSON data (array)
 				if (is_array($data) && $data) {
+					if (!empty($data['_miss'])) {
+						return null;
+					}
+
 					return CachedLocation::createFromArray($data);
 				}
 				// Invalid or empty cached data - delete and re-geocode
@@ -685,6 +693,8 @@ class GeocoderBehavior extends Behavior {
 				}
 				// Store as JSON array instead of serialized object to avoid __PHP_Incomplete_Class issues
 				$addressEntity->data = $result->toArray();
+			} else {
+				$addressEntity->data = ['_miss' => true];
 			}
 
 			if (!$GeocodedAddresses->save($addressEntity, ['atomic' => false])) {
@@ -707,6 +717,49 @@ class GeocoderBehavior extends Behavior {
 		}
 
 		return $this->_Calculator->convert(6371.04, Calculator::UNIT_KM, $unit);
+	}
+
+	/**
+	 * @param float $lng
+	 * @param float $lat
+	 * @return string
+	 */
+	protected function buildPointWkt(float $lng, float $lat): string {
+		return 'POINT(' . $this->formatCoordinate($lng) . ' ' . $this->formatCoordinate($lat) . ')';
+	}
+
+	/**
+	 * @param float $minLng
+	 * @param float $minLat
+	 * @param float $maxLng
+	 * @param float $maxLat
+	 * @return string
+	 */
+	protected function buildPolygonWkt(float $minLng, float $minLat, float $maxLng, float $maxLat): string {
+		$points = [
+			[$minLng, $minLat],
+			[$maxLng, $minLat],
+			[$maxLng, $maxLat],
+			[$minLng, $maxLat],
+			[$minLng, $minLat],
+		];
+		$coordinates = array_map(function (array $point): string {
+			return $this->formatCoordinate($point[0]) . ' ' . $this->formatCoordinate($point[1]);
+		}, $points);
+
+		return 'POLYGON((' . implode(', ', $coordinates) . '))';
+	}
+
+	/**
+	 * @param float $value
+	 * @return string
+	 */
+	protected function formatCoordinate(float $value): string {
+		if ($value === 0.0) {
+			return '0';
+		}
+
+		return rtrim(rtrim(sprintf('%.12F', $value), '0'), '.');
 	}
 
 	/**

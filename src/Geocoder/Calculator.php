@@ -153,11 +153,35 @@ class Calculator {
 			$pointY = $pointY->toArray(true);
 		}
 
-		$res = 69.09 * rad2deg(acos(sin(deg2rad($pointX['lat'])) * sin(deg2rad($pointY['lat']))
-			+ cos(deg2rad($pointX['lat'])) * cos(deg2rad($pointY['lat'])) * cos(deg2rad($pointX['lng']
-			- $pointY['lng']))));
+		$latX = deg2rad((float)$pointX['lat']);
+		$latY = deg2rad((float)$pointY['lat']);
+		$deltaLat = $latY - $latX;
+		$deltaLng = deg2rad(static::normalizeLongitudeDelta((float)$pointY['lng'] - (float)$pointX['lng']));
+
+		$sinLat = sin($deltaLat / 2);
+		$sinLng = sin($deltaLng / 2);
+		$haversine = $sinLat * $sinLat
+			+ cos($latX) * cos($latY) * $sinLng * $sinLng;
+
+		// Keep the return unit in miles for BC with the existing converter map.
+		$res = 3958.7613 * 2 * asin(min(1.0, sqrt($haversine)));
 
 		return $res;
+	}
+
+	/**
+	 * Normalize a longitude delta to the shortest path around the globe.
+	 *
+	 * @param float $deltaLongitude
+	 * @return float
+	 */
+	protected static function normalizeLongitudeDelta(float $deltaLongitude): float {
+		$deltaLongitude = fmod($deltaLongitude + 180.0, 360.0);
+		if ($deltaLongitude < 0) {
+			$deltaLongitude += 360.0;
+		}
+
+		return $deltaLongitude - 180.0;
 	}
 
 	/**
