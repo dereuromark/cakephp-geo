@@ -1,9 +1,11 @@
 # Geocoder Class
 
-Note: This class is very low level.
-If you want to geocode addresses on save(), you should look into the behavior instead.
+::: info
+This class is very low level. If you want to geocode addresses on `save()`, look
+into the [Geocoder behavior](/behavior/) instead.
+:::
 
-## Basic Usage
+## Basic usage
 
 ```php
 use Geo\Geocoder\Geocoder;
@@ -12,18 +14,20 @@ $Geocoder = new Geocoder(['allowInconclusive' => true, 'minAccuracy' => Geocoder
 $addresses = $Geocoder->geocode($address);
 
 if (!empty($addresses)) {
-   $address = $addresses->first();
+    $address = $addresses->first();
 }
 ```
 
-Since it is using GoogleMaps geocoding service underneath by default, make sure to set the corresponding app config:
+Since it uses the Google Maps geocoding service by default, make sure to set the
+corresponding app config:
+
 ```php
-    'Geocoder' => [
-        'apiKey' => '...',
-    ],
+'Geocoder' => [
+    'apiKey' => '...',
+],
 ```
 
-## Reverse Geocoding
+## Reverse geocoding
 
 ```php
 $result = $Geocoder->reverse($lat, $lng);
@@ -31,7 +35,8 @@ $result = $Geocoder->reverse($lat, $lng);
 
 ## Providers
 
-The Geocoder supports multiple geocoding providers out of the box. Use provider constants to specify which provider to use:
+The Geocoder supports multiple geocoding providers out of the box. Use provider
+constants to specify which one to use:
 
 | Provider | API Key | Notes |
 |----------|---------|-------|
@@ -40,7 +45,7 @@ The Geocoder supports multiple geocoding providers out of the box. Use provider 
 | Geoapify | Required (free tier) | Good alternative |
 | Null | No | For testing |
 
-### Using String Provider Names
+### Using string provider names
 
 ```php
 use Geo\Geocoder\Geocoder;
@@ -57,7 +62,7 @@ $geocoder = new Geocoder([
 ]);
 ```
 
-### Provider-Specific Configuration
+### Provider-specific configuration
 
 Configure providers with their specific settings:
 
@@ -74,7 +79,7 @@ use Geo\Geocoder\Geocoder;
         'region' => 'us',
     ],
     'nominatim' => [
-        'userAgent' => 'MyApp/1.0',  // Required by OSM policy
+        'userAgent' => 'MyApp/1.0', // Required by OSM policy
     ],
     'geoapify' => [
         'apiKey' => env('GEOAPIFY_API_KEY'),
@@ -82,18 +87,19 @@ use Geo\Geocoder\Geocoder;
 ],
 ```
 
-### Provider Fallback Chain
+### Provider fallback chain
 
-Use multiple providers with automatic fallback. If one provider fails due to rate limiting or server errors, the next provider in the chain is tried:
+Use multiple providers with automatic fallback. If one provider fails due to
+rate limiting or server errors, the next provider in the chain is tried:
 
 ```php
 use Geo\Geocoder\Geocoder;
 
 'Geocoder' => [
     'providers' => [
-        Geocoder::PROVIDER_GOOGLE,      // Try Google first
-        Geocoder::PROVIDER_NOMINATIM,   // Fall back to Nominatim
-        Geocoder::PROVIDER_GEOAPIFY,    // Then Geoapify
+        Geocoder::PROVIDER_GOOGLE,    // Try Google first
+        Geocoder::PROVIDER_NOMINATIM, // Fall back to Nominatim
+        Geocoder::PROVIDER_GEOAPIFY,  // Then Geoapify
     ],
     'google' => [
         'apiKey' => env('GOOGLE_MAPS_API_KEY'),
@@ -108,14 +114,16 @@ use Geo\Geocoder\Geocoder;
 ```
 
 The chain automatically handles:
-- `QuotaExceeded` - API rate limit reached
-- `InvalidServerResponse` - Server errors or timeouts
+
+- `QuotaExceeded` — API rate limit reached.
+- `InvalidServerResponse` — server errors or timeouts.
 
 Other exceptions are thrown immediately without trying the next provider.
 
-### Using a Callable (Advanced)
+### Using a callable (advanced)
 
-For advanced use cases or custom providers from geocoder-php, use `Cake\Http\Client` directly (it implements PSR-18):
+For advanced use cases or custom providers from geocoder-php, use
+`Cake\Http\Client` directly (it implements PSR-18):
 
 ```php
 use Cake\Http\Client;
@@ -124,13 +132,13 @@ use Cake\Http\Client;
     'provider' => function () {
         return \Geocoder\Provider\Nominatim\Nominatim::withOpenStreetMapServer(
             new Client(),
-            'MyApp/1.0'
+            'MyApp/1.0',
         );
     },
 ],
 ```
 
-## Creating Custom Providers
+## Creating custom providers
 
 You can create custom providers by implementing `GeocodingProviderInterface`:
 
@@ -159,8 +167,9 @@ class MyCustomProvider extends AbstractGeocodingProvider {
 
     protected function buildProvider(): Provider {
         // Return a geocoder-php provider instance
-        // or throw UnsupportedOperation and override geocode/reverse methods
+        // or throw UnsupportedOperation and override the geocode/reverse methods
     }
+
 }
 ```
 
@@ -177,10 +186,15 @@ Geocoder::registerProvider('mycustom', MyCustomProvider::class);
 $geocoder = new Geocoder(['provider' => 'mycustom']);
 ```
 
-Or use it directly via callable:
+Or use it directly via a callable:
 
 ```php
 'Geocoder' => [
     'provider' => fn () => new MyCustomProvider(['apiKey' => '...']),
 ],
 ```
+
+## See also
+
+- [Geocoder behavior](/behavior/) — geocode entity data on save.
+- [Calculator](./calculator) — distance math and coordinate utilities.

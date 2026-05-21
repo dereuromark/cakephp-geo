@@ -1,8 +1,10 @@
 # GeoJSON Geometry
 
-The plugin now provides lightweight GeoJSON value objects you can use instead of passing raw arrays everywhere.
+The plugin provides lightweight GeoJSON value objects you can use instead of
+passing raw arrays everywhere.
 
 Available classes:
+
 - `Geo\Geometry\Point`
 - `Geo\Geometry\Polygon`
 - `Geo\Geometry\Feature`
@@ -30,7 +32,8 @@ $point = Point::fromLatLng(48.2082, 16.3738);
 
 ## Polygon
 
-GeoJSON uses `[lng, lat]` coordinate pairs and supports one outer ring plus optional inner rings (holes).
+GeoJSON uses `[lng, lat]` coordinate pairs and supports one outer ring plus
+optional inner rings (holes).
 
 ```php
 use Geo\Geometry\Polygon;
@@ -45,7 +48,8 @@ $polygon = new Polygon([
 ]);
 ```
 
-If your application already works with `lat`/`lng` arrays, use the convenience constructor:
+If your application already works with `lat`/`lng` arrays, use the convenience
+constructor:
 
 ```php
 $polygon = Polygon::fromLatLngPoints([
@@ -71,7 +75,8 @@ $collection = new FeatureCollection([
 
 ## Using the objects with Leaflet
 
-`LeafletHelper::addGeoJson()` now accepts:
+`LeafletHelper::addGeoJson()` accepts:
+
 - raw GeoJSON arrays
 - GeoJSON strings
 - any `GeoJsonInterface` implementation
@@ -88,3 +93,7 @@ $this->Leaflet->addPolygon($polygon, [
     'fillOpacity' => 0.4,
 ]);
 ```
+
+## See also
+
+- [Leaflet helper](/helpers/leaflet) — render these objects on an interactive map.

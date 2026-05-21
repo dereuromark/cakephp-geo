@@ -37,6 +37,15 @@ And also:
 ## Demo
 See [Sandbox examples](https://sandbox.dereuromark.de/sandbox/geo-examples) for live demos of the map helpers and the Geocoder behavior.
 
-## Installation & Docs
+## Documentation
 
-- [Documentation](docs/README.md)
+Full documentation lives at **[dereuromark.github.io/cakephp-geo](https://dereuromark.github.io/cakephp-geo/)**.
+
+A few good entry points:
+
+* [Getting started](https://dereuromark.github.io/cakephp-geo/guide/)
+* [Installation](https://dereuromark.github.io/cakephp-geo/guide/installation)
+* [Geocoder behavior](https://dereuromark.github.io/cakephp-geo/behavior/)
+* [Map helpers](https://dereuromark.github.io/cakephp-geo/helpers/google-map)
+
+The Markdown sources live in the [docs](docs/) directory of this repository.
