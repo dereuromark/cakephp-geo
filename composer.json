@@ -21,9 +21,11 @@
 			"role": "Maintainer"
 		}
 	],
-	"homepage": "https://github.com/dereuromark/cakephp-geo",
+	"homepage": "https://dereuromark.github.io/cakephp-geo/",
 	"support": {
-		"source": "https://github.com/dereuromark/cakephp-geo"
+		"issues": "https://github.com/dereuromark/cakephp-geo/issues",
+		"source": "https://github.com/dereuromark/cakephp-geo",
+		"docs": "https://dereuromark.github.io/cakephp-geo/"
 	},
 	"require": {
 		"php": ">=8.2",

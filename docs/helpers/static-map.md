@@ -1,9 +1,9 @@
-# StaticMap Helper
+# Static Map Helper
 
-The StaticMapHelper generates static map images from various providers without requiring JavaScript.
-It supports multiple providers with a unified API.
+The `StaticMapHelper` generates static map images from various providers without
+requiring JavaScript. It supports multiple providers with a unified API.
 
-## Supported Providers
+## Supported providers
 
 | Provider | API Documentation |
 |----------|-------------------|
@@ -15,16 +15,18 @@ It supports multiple providers with a unified API.
 ## Adding the helper
 
 In your View class or at runtime:
+
 ```php
 $this->loadHelper('Geo.StaticMap');
 ```
 
 ## Configuration
 
-Configure globally using Configure (e.g., config/app_local.php):
+Configure globally using Configure (for example `config/app_local.php`):
+
 ```php
 'StaticMap' => [
-    'provider' => 'geoapify',  // default provider
+    'provider' => 'geoapify', // default provider
     'size' => '400x300',
     'format' => 'png',
     'scale' => 1,
@@ -35,7 +37,7 @@ Configure globally using Configure (e.g., config/app_local.php):
     'mapbox' => [
         'apiKey' => env('MAPBOX_ACCESS_TOKEN'),
         'style' => 'streets-v12',
-        'username' => 'mapbox',  // for custom styles
+        'username' => 'mapbox', // for custom styles
     ],
     'stadia' => [
         'apiKey' => env('STADIA_API_KEY'),
@@ -48,9 +50,10 @@ Configure globally using Configure (e.g., config/app_local.php):
 ],
 ```
 
-## Basic Usage
+## Basic usage
 
 ### Display a static map image
+
 ```php
 echo $this->StaticMap->image([
     'lat' => 48.2082,
@@ -60,6 +63,7 @@ echo $this->StaticMap->image([
 ```
 
 ### Get just the URL
+
 ```php
 $url = $this->StaticMap->url([
     'lat' => 48.2082,
@@ -69,6 +73,7 @@ $url = $this->StaticMap->url([
 ```
 
 ### Create a link
+
 ```php
 echo $this->StaticMap->link('View Map', [
     'lat' => 48.2082,
@@ -77,9 +82,10 @@ echo $this->StaticMap->link('View Map', [
 ]);
 ```
 
-## Switching Providers
+## Switching providers
 
-Switch providers per-call using constants (recommended) or strings:
+Switch providers per call using constants (recommended) or strings:
+
 ```php
 use Geo\View\Helper\StaticMapHelper;
 
@@ -100,7 +106,7 @@ echo $this->StaticMap->image([
 ]);
 ```
 
-## Map Options
+## Map options
 
 Common options work across all providers:
 
@@ -116,7 +122,7 @@ Common options work across all providers:
 | markers | Array of markers | [] |
 | paths | Array of paths | [] |
 
-## Adding Markers
+## Adding markers
 
 ```php
 echo $this->StaticMap->image([
@@ -152,7 +158,7 @@ $positions = [
 // Apply styling and auto-labels
 $markers = $this->StaticMap->markers($positions, [
     'color' => 'red',
-    'autoLabel' => true,  // Adds A, B, C, ...
+    'autoLabel' => true, // Adds A, B, C, ...
 ]);
 
 echo $this->StaticMap->image([
@@ -168,11 +174,11 @@ echo $this->StaticMap->image([
 | lat | Latitude (required) |
 | lng | Longitude (required) |
 | color | Marker color (name or hex) |
-| label | Single character label |
+| label | Single-character label |
 | size | small, medium, large |
 | icon | Custom icon (provider-specific) |
 
-## Adding Paths
+## Adding paths
 
 Draw paths/polylines between points:
 
@@ -221,11 +227,12 @@ echo $this->StaticMap->image(['paths' => $paths]);
 | weight | Line thickness |
 | fillColor | Fill color (for polygons) |
 
-## Map Styles
+## Map styles
 
 Each provider has different available styles.
 
 ### Geoapify styles
+
 - osm-bright
 - osm-bright-grey
 - klokantech-basic
@@ -235,6 +242,7 @@ Each provider has different available styles.
 - (and more)
 
 ### Mapbox styles
+
 - streets-v12
 - outdoors-v12
 - light-v11
@@ -243,6 +251,7 @@ Each provider has different available styles.
 - satellite-streets-v12
 
 ### Stadia styles
+
 - alidade_smooth
 - alidade_smooth_dark
 - alidade_satellite
@@ -252,30 +261,34 @@ Each provider has different available styles.
 - stamen_watercolor
 
 ### Google styles
+
 - roadmap
 - satellite
 - terrain
 - hybrid
 
 Get supported styles programmatically:
+
 ```php
 $styles = $this->StaticMap->supportedStyles('geoapify');
 ```
 
-## Retina/HiDPI Images
+## Retina/HiDPI images
 
 For retina displays, use scale 2:
+
 ```php
 echo $this->StaticMap->image([
     'lat' => 48.2082,
     'lng' => 16.3738,
-    'scale' => 2,  // 2x resolution
+    'scale' => 2, // 2x resolution
 ]);
 ```
 
-## HTML Attributes
+## HTML attributes
 
 Pass HTML attributes to the image tag:
+
 ```php
 echo $this->StaticMap->image(
     [
@@ -286,16 +299,17 @@ echo $this->StaticMap->image(
         'class' => 'map-image',
         'alt' => 'Map of Vienna',
         'loading' => 'lazy',
-    ]
+    ],
 );
 ```
 
 ## Auto-center with markers
 
-When you provide markers but no center coordinates, some providers automatically center the map:
+When you provide markers but no center coordinates, some providers automatically
+center the map:
 
 ```php
-// No lat/lng specified - map auto-centers on markers
+// No lat/lng specified — the map auto-centers on the markers
 echo $this->StaticMap->image([
     'provider' => 'mapbox',
     'markers' => [
@@ -305,16 +319,23 @@ echo $this->StaticMap->image([
 ]);
 ```
 
-## Provider Access
+## Provider access
 
 Get the underlying provider instance:
+
 ```php
 $provider = $this->StaticMap->provider('geoapify');
 echo $provider->getName(); // 'geoapify'
 ```
 
 List available providers:
+
 ```php
 $providers = $this->StaticMap->availableProviders();
 // ['geoapify', 'mapbox', 'stadia', 'google']
 ```
+
+## See also
+
+- [Google Map helper](./google-map) — dynamic and static Google Maps.
+- [Leaflet helper](./leaflet) — interactive open-source maps.

@@ -1,5 +1,6 @@
-# Calculator Class
+# Calculator
 
+The `Calculator` class provides distance math and coordinate utilities.
 
 ## Distance calculation
 
@@ -9,17 +10,20 @@ $distance = $calculator->distance(array $pointX, array $pointY);
 ```
 
 Distance in miles instead:
+
 ```php
 $calculator = new \Geo\Geocoder\Calculator();
 $distance = $calculator->distance(array $pointX, array $pointY, Calculator::UNIT_MILES);
 ```
 
 ## Blur coordinates
-The idea is to secure the user's exact coordinates and hide them by blurring them to a certain degree.
+
+The idea is to protect the user's exact coordinates by blurring them to a
+certain degree.
 
 ```php
 $calculator = new \Geo\Geocoder\Calculator();
-$distance = $calculator->blur($float, 2);
+$blurred = $calculator->blur($float, 2);
 ```
 
 ## Convert distances
@@ -28,3 +32,7 @@ $distance = $calculator->blur($float, 2);
 $calculator = new \Geo\Geocoder\Calculator();
 $newDistance = $calculator->convert($value, $fromUnit, $toUnit);
 ```
+
+## See also
+
+- [Geo calculator](./geo-calculator) — central-point calculation across many coordinates.

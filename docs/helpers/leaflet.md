@@ -1,9 +1,12 @@
 # Leaflet Helper
-Using [Leaflet.js](https://leafletjs.com/) - an open-source JavaScript library for interactive maps.
+
+Using [Leaflet.js](https://leafletjs.com/) — an open-source JavaScript library
+for interactive maps.
 
 ## Adding the helper
 
 Either in your View class or at runtime:
+
 ```php
 $config = [
     'autoScript' => true,
@@ -11,32 +14,37 @@ $config = [
 $this->loadHelper('Geo.Leaflet', $config);
 ```
 
-You can easily configure this globally using Configure (e.g. config/app.php):
+You can configure this globally using Configure (for example `config/app.php`):
+
 ```php
-    'Leaflet' => [
-        'zoom' => 10,
-        'lat' => 48.2082,
-        'lng' => 16.3738,
-    ],
+'Leaflet' => [
+    'zoom' => 10,
+    'lat' => 48.2082,
+    'lng' => 16.3738,
+],
 ```
 
 Possible config options are:
-- zoom: Uses the defaultZoom of 5 otherwise
-- lat/lng: Default center coordinates
-- block: Display defaults to true to append the generated JS to the "scripts" block
-- map: Multiple map options (scrollWheelZoom, zoomControl, dragging)
-- tileLayer: Tile layer URL and options
-- div: Multiple div options (id, width, height, class)
-- marker: Multiple marker options
-- popup: Multiple popup options
-- polyline: Polyline styling options
-- circle: Circle styling options
-- polygon: Polygon styling options
-- autoCenter: Automatically fit bounds to all markers
-- autoScript: Auto-include Leaflet JS/CSS from CDN
+
+- `zoom` — uses the `defaultZoom` of 5 otherwise.
+- `lat` / `lng` — default center coordinates.
+- `block` — defaults to `true`, appending the generated JS to the `script`
+  block.
+- `map` — multiple map options (`scrollWheelZoom`, `zoomControl`, `dragging`).
+- `tileLayer` — tile-layer URL and options.
+- `div` — multiple div options (`id`, `width`, `height`, `class`).
+- `marker` — multiple marker options.
+- `popup` — multiple popup options.
+- `polyline` — polyline styling options.
+- `circle` — circle styling options.
+- `polygon` — polygon styling options.
+- `autoCenter` — automatically fit bounds to all markers.
+- `autoScript` — auto-include Leaflet JS/CSS from a CDN.
 
 ## Display a basic dynamic map
-Make sure you either loaded your helper with autoScript enabled, or you manually include the Leaflet CSS and JS files.
+
+Make sure you either loaded your helper with `autoScript` enabled, or you
+manually include the Leaflet CSS and JS files.
 
 ```php
 $options = [
@@ -46,7 +54,7 @@ $options = [
 ];
 $map = $this->Leaflet->map($options);
 
-// You can echo it now anywhere, it does not matter if you add markers afterwards
+// You can echo it now anywhere; it does not matter if you add markers afterwards
 echo $map;
 
 // Let's add some markers
@@ -64,23 +72,29 @@ $this->Leaflet->addMarker([
     'content' => 'The Belvedere Palace',
 ]);
 
-// Store the final JS in a HtmlHelper script block
+// Store the final JS in an HtmlHelper script block
 $this->Leaflet->finalize();
 ```
-Don't forget to output the buffered JS at the end of your page, where also the other files are included (after all JS files are included!):
+
+Don't forget to output the buffered JS at the end of your page, where the other
+files are included (after all JS files):
+
 ```php
 echo $this->fetch('script');
 ```
-This code snippet is usually already in your `layout.php` at the end of the body tag.
+
+This snippet is usually already in your `layout.php` at the end of the body tag.
 
 ### Inline JS
-Maybe you need inline JS instead, then you can call script() instead of finalize() directly:
+
+If you need inline JS instead, call `script()` instead of `finalize()`:
+
 ```php
 // Initialize
 $map = $this->Leaflet->map();
 
 // Add markers and stuff
-$this->Leaflet->addMarker([...]);
+$this->Leaflet->addMarker([/* ... */]);
 
 // Finalize
 $map .= $this->Leaflet->script();
@@ -90,6 +104,7 @@ echo $map;
 ```
 
 ## Adding markers with popups
+
 ```php
 // Simple marker
 $this->Leaflet->addMarker([
@@ -121,9 +136,10 @@ $this->Leaflet->addMarker([
 ]);
 ```
 
-## Tile Providers
-The helper comes with built-in tile provider presets.
-See [Leaflet Tile Providers](LeafletTileProviders.md) for a comprehensive list of available providers.
+## Tile providers
+
+The helper comes with built-in tile-provider presets. See
+[Leaflet tile providers](./leaflet-tile-providers) for a comprehensive list.
 
 ```php
 // OpenStreetMap (default)
@@ -140,7 +156,10 @@ $map = $this->Leaflet->map();
 ```
 
 ### Custom tile layer via map options (recommended)
-To use a custom tile provider instead of the default, pass the `tileLayer` option to `map()`:
+
+To use a custom tile provider instead of the default, pass the `tileLayer`
+option to `map()`:
+
 ```php
 echo $this->Leaflet->map([
     'zoom' => 10,
@@ -157,25 +176,32 @@ echo $this->Leaflet->map([
 ```
 
 ### Adding additional tile layers
-Use `addTileLayer()` to add an *additional* layer on top of the existing one (e.g., for overlays):
+
+Use `addTileLayer()` to add an *additional* layer on top of the existing one (for
+example, overlays):
+
 ```php
 $this->Leaflet->map();
 // This adds a second layer ON TOP of the default OSM layer
 $this->Leaflet->addTileLayer(
     'https://{s}.custom-tiles.com/{z}/{x}/{y}.png',
-    ['attribution' => '&copy; Custom Tiles']
+    ['attribution' => '&copy; Custom Tiles'],
 );
 ```
-Note: This does not replace the default tile layer, it adds another one on top.
+
+::: info
+This does not replace the default tile layer — it adds another one on top.
+:::
 
 ## Drawing shapes
 
 ### Polyline
+
 ```php
 $this->Leaflet->addPolyline(
     ['lat' => 48.2082, 'lng' => 16.3738],
     ['lat' => 47.0707, 'lng' => 15.4395],
-    ['color' => '#ff0000', 'weight' => 5]
+    ['color' => '#ff0000', 'weight' => 5],
 );
 
 // Or from multiple points
@@ -188,11 +214,12 @@ $this->Leaflet->addPolylineFromPoints($points, ['color' => '#00ff00']);
 ```
 
 ### Circle
+
 ```php
 $this->Leaflet->addCircle([
     'lat' => 48.2082,
     'lng' => 16.3738,
-    'radius' => 5000,  // meters
+    'radius' => 5000, // meters
     'color' => '#3388ff',
     'fillColor' => '#3388ff',
     'fillOpacity' => 0.2,
@@ -200,6 +227,7 @@ $this->Leaflet->addCircle([
 ```
 
 ### Polygon
+
 ```php
 $points = [
     ['lat' => 48.2, 'lng' => 16.3],
@@ -213,6 +241,7 @@ $this->Leaflet->addPolygon($points, [
 ```
 
 ## GeoJSON support
+
 ```php
 use Geo\Geometry\Feature;
 use Geo\Geometry\FeatureCollection;
@@ -236,7 +265,7 @@ $geoJson = [
 $this->Leaflet->addGeoJson($geoJson);
 ```
 
-You can also pass the plugin's GeoJSON value objects directly:
+You can also pass the plugin's [GeoJSON value objects](/geometry/) directly:
 
 ```php
 $collection = new FeatureCollection([
@@ -246,7 +275,7 @@ $collection = new FeatureCollection([
 $this->Leaflet->addGeoJson($collection);
 ```
 
-And `addPolygon()` now accepts a `Geo\Geometry\Polygon` object:
+And `addPolygon()` accepts a `Geo\Geometry\Polygon` object:
 
 ```php
 use Geo\Geometry\Polygon;
@@ -264,7 +293,9 @@ $this->Leaflet->addPolygon($polygon, [
 ```
 
 ## Multiple maps per page
-The helper automatically resets when you call `map()`. Each map gets a unique counter:
+
+The helper automatically resets when you call `map()`. Each map gets a unique
+counter:
 
 ```php
 // First map
@@ -279,6 +310,7 @@ $this->Leaflet->finalize();
 ```
 
 ## Auto-centering
+
 To automatically fit the map bounds to include all markers:
 
 ```php
@@ -292,7 +324,9 @@ $this->Leaflet->finalize();
 ```
 
 ## Custom JS
-With `->addCustom($js)` you can inject any custom JS to work alongside the Leaflet helper code:
+
+With `->addCustom($js)` you can inject any custom JS to work alongside the
+Leaflet helper code:
 
 ```php
 $this->Leaflet->map();
@@ -305,6 +339,7 @@ $this->Leaflet->finalize();
 ```
 
 ## Map options
+
 You can configure various Leaflet map options:
 
 ```php
@@ -313,9 +348,9 @@ $options = [
     'lat' => 48.2082,
     'lng' => 16.3738,
     'map' => [
-        'scrollWheelZoom' => false,  // Disable scroll wheel zoom
-        'zoomControl' => true,        // Show zoom controls
-        'dragging' => true,           // Allow map dragging
+        'scrollWheelZoom' => false, // Disable scroll-wheel zoom
+        'zoomControl' => true,      // Show zoom controls
+        'dragging' => true,         // Allow map dragging
     ],
     'div' => [
         'id' => 'my-map',
@@ -326,3 +361,8 @@ $options = [
 ];
 $map = $this->Leaflet->map($options);
 ```
+
+## See also
+
+- [Leaflet tile providers](./leaflet-tile-providers) — a catalog of tile sources.
+- [GeoJSON geometry](/geometry/) — the value objects used above.

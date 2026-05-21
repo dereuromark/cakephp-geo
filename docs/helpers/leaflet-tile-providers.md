@@ -1,10 +1,12 @@
-# Leaflet Tile Provider Alternatives
+# Leaflet Tile Providers
 
-A comprehensive list of tile providers for use with LeafletHelper.
+A comprehensive list of tile providers for use with the
+[Leaflet helper](./leaflet).
 
-## Free Tile Providers (No API Key Required)
+## Free tile providers (no API key required)
 
-### OpenStreetMap (Default)
+### OpenStreetMap (default)
+
 The default tile provider, community-maintained.
 
 ```php
@@ -17,12 +19,11 @@ $this->Leaflet->useTilePreset(\Geo\View\Helper\LeafletHelper::TILES_OSM);
 | URL | `https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png` |
 | Attribution | `© OpenStreetMap contributors` |
 | Max Zoom | 19 |
-| Rate Limit | Heavy use requires own tile server |
-| Terms | https://operations.osmfoundation.org/policies/tiles/ |
-
----
+| Rate Limit | Heavy use requires your own tile server |
+| Terms | [Tile usage policy](https://operations.osmfoundation.org/policies/tiles/) |
 
 ### CartoDB / CARTO
+
 Modern, clean map styles. Good for data visualization.
 
 ```php
@@ -39,7 +40,7 @@ $this->Leaflet->addTileLayer(
         'attribution' => '© OpenStreetMap contributors © CARTO',
         'subdomains' => 'abcd',
         'maxZoom' => 20,
-    ]
+    ],
 );
 ```
 
@@ -53,21 +54,24 @@ $this->Leaflet->addTileLayer(
 |----------|-------|
 | Max Zoom | 20 |
 | Rate Limit | 75,000 requests/month free |
-| Terms | https://carto.com/legal/ |
-
----
+| Terms | [CARTO legal](https://carto.com/legal/) |
 
 ### Stadia Maps (formerly Stamen)
-Artistic and thematic map styles. **Requires free API key since 2023.**
+
+Artistic and thematic map styles.
+
+::: warning
+Requires a free API key since 2023.
+:::
 
 ```php
-// Register at https://stadiamaps.com/ for free API key
+// Register at https://stadiamaps.com/ for a free API key
 $this->Leaflet->addTileLayer(
     'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png?api_key=YOUR_KEY',
     [
         'attribution' => '© Stadia Maps © Stamen Design © OpenStreetMap contributors',
         'maxZoom' => 20,
-    ]
+    ],
 );
 ```
 
@@ -81,11 +85,10 @@ $this->Leaflet->addTileLayer(
 | Property | Value |
 |----------|-------|
 | Free Tier | 200,000 requests/month |
-| Sign Up | https://stadiamaps.com/ |
-
----
+| Sign Up | [stadiamaps.com](https://stadiamaps.com/) |
 
 ### OpenTopoMap
+
 Topographic maps with elevation contours.
 
 ```php
@@ -94,7 +97,7 @@ $this->Leaflet->addTileLayer(
     [
         'attribution' => '© OpenTopoMap (CC-BY-SA)',
         'maxZoom' => 17,
-    ]
+    ],
 );
 ```
 
@@ -102,11 +105,10 @@ $this->Leaflet->addTileLayer(
 |----------|-------|
 | Max Zoom | 17 |
 | Best For | Hiking, outdoor activities |
-| Terms | https://opentopomap.org/about |
-
----
+| Terms | [About OpenTopoMap](https://opentopomap.org/about) |
 
 ### Esri (ArcGIS)
+
 Professional map styles from Esri.
 
 ```php
@@ -116,7 +118,7 @@ $this->Leaflet->addTileLayer(
     [
         'attribution' => 'Tiles © Esri',
         'maxZoom' => 18,
-    ]
+    ],
 );
 
 // World Imagery (Satellite)
@@ -125,7 +127,7 @@ $this->Leaflet->addTileLayer(
     [
         'attribution' => 'Tiles © Esri',
         'maxZoom' => 18,
-    ]
+    ],
 );
 
 // World Topo Map
@@ -134,7 +136,7 @@ $this->Leaflet->addTileLayer(
     [
         'attribution' => 'Tiles © Esri',
         'maxZoom' => 18,
-    ]
+    ],
 );
 ```
 
@@ -149,11 +151,10 @@ $this->Leaflet->addTileLayer(
 | Property | Value |
 |----------|-------|
 | Max Zoom | 18-19 |
-| Terms | https://www.esri.com/en-us/legal/terms/full-master-agreement |
-
----
+| Terms | [Esri master agreement](https://www.esri.com/en-us/legal/terms/full-master-agreement) |
 
 ### CyclOSM
+
 Bicycle-focused map with cycling infrastructure.
 
 ```php
@@ -162,13 +163,12 @@ $this->Leaflet->addTileLayer(
     [
         'attribution' => '© CyclOSM © OpenStreetMap contributors',
         'maxZoom' => 20,
-    ]
+    ],
 );
 ```
 
----
-
 ### Humanitarian OpenStreetMap (HOT)
+
 Humanitarian-focused styling.
 
 ```php
@@ -177,15 +177,14 @@ $this->Leaflet->addTileLayer(
     [
         'attribution' => '© OpenStreetMap contributors, Tiles style by HOT',
         'maxZoom' => 19,
-    ]
+    ],
 );
 ```
 
----
-
-## Providers Requiring API Keys
+## Providers requiring API keys
 
 ### Mapbox
+
 High-quality custom map styles. Very popular.
 
 ```php
@@ -198,20 +197,19 @@ $this->Leaflet->addTileLayer(
         'tileSize' => 512,
         'zoomOffset' => -1,
         'maxZoom' => 18,
-    ]
+    ],
 );
 ```
 
 | Property | Value |
 |----------|-------|
 | Free Tier | 50,000 map loads/month |
-| Sign Up | https://www.mapbox.com/ |
+| Sign Up | [mapbox.com](https://www.mapbox.com/) |
 | Styles | streets, satellite, outdoors, light, dark, + custom |
 
----
-
 ### Thunderforest
-Outdoor and transport focused maps.
+
+Outdoor- and transport-focused maps.
 
 ```php
 $apiKey = 'YOUR_THUNDERFOREST_API_KEY';
@@ -220,7 +218,7 @@ $this->Leaflet->addTileLayer(
     [
         'attribution' => '© Thunderforest © OpenStreetMap contributors',
         'maxZoom' => 22,
-    ]
+    ],
 );
 ```
 
@@ -236,11 +234,10 @@ $this->Leaflet->addTileLayer(
 | Property | Value |
 |----------|-------|
 | Free Tier | 150,000 tiles/month |
-| Sign Up | https://www.thunderforest.com/ |
-
----
+| Sign Up | [thunderforest.com](https://www.thunderforest.com/) |
 
 ### HERE Maps
+
 Enterprise-grade mapping.
 
 ```php
@@ -250,18 +247,17 @@ $this->Leaflet->addTileLayer(
     [
         'attribution' => '© HERE',
         'maxZoom' => 20,
-    ]
+    ],
 );
 ```
 
 | Property | Value |
 |----------|-------|
 | Free Tier | 250,000 transactions/month |
-| Sign Up | https://developer.here.com/ |
-
----
+| Sign Up | [developer.here.com](https://developer.here.com/) |
 
 ### TomTom
+
 Navigation-focused maps.
 
 ```php
@@ -271,18 +267,17 @@ $this->Leaflet->addTileLayer(
     [
         'attribution' => '© TomTom',
         'maxZoom' => 22,
-    ]
+    ],
 );
 ```
 
 | Property | Value |
 |----------|-------|
 | Free Tier | 2,500 transactions/day |
-| Sign Up | https://developer.tomtom.com/ |
-
----
+| Sign Up | [developer.tomtom.com](https://developer.tomtom.com/) |
 
 ### Jawg Maps
+
 Modern vector and raster tiles.
 
 ```php
@@ -293,7 +288,7 @@ $this->Leaflet->addTileLayer(
         'attribution' => '© Jawg © OpenStreetMap contributors',
         'maxZoom' => 22,
         'subdomains' => 'abcd',
-    ]
+    ],
 );
 ```
 
@@ -308,11 +303,9 @@ $this->Leaflet->addTileLayer(
 | Property | Value |
 |----------|-------|
 | Free Tier | 50,000 tiles/month |
-| Sign Up | https://www.jawg.io/ |
+| Sign Up | [jawg.io](https://www.jawg.io/) |
 
----
-
-## Adding Custom Presets to LeafletHelper
+## Adding custom presets to LeafletHelper
 
 You can extend the helper to add your own presets:
 
@@ -345,18 +338,18 @@ class MyLeafletHelper extends LeafletHelper {
             ],
         ],
     ];
+
 }
 ```
 
----
+## Using the leaflet-providers plugin
 
-## Using leaflet-providers Plugin
-
-For easy access to many providers, use the leaflet-providers plugin:
+For easy access to many providers, use the leaflet-providers plugin.
 
 ### Installation
 
 Add to your layout or view:
+
 ```html
 <script src="https://unpkg.com/leaflet-providers@latest/leaflet-providers.js"></script>
 ```
@@ -371,11 +364,12 @@ $this->Leaflet->addCustom("
 $this->Leaflet->finalize();
 ```
 
-### Available Providers via leaflet-providers
+### Available providers via leaflet-providers
 
-See full list: https://leaflet-extras.github.io/leaflet-providers/preview/
-
+See the
+[full list](https://leaflet-extras.github.io/leaflet-providers/preview/).
 Popular ones:
+
 - `OpenStreetMap.Mapnik`
 - `CartoDB.Positron`
 - `CartoDB.DarkMatter`
@@ -387,9 +381,7 @@ Popular ones:
 - `OpenTopoMap`
 - `CyclOSM`
 
----
-
-## Comparison Table
+## Comparison table
 
 | Provider | Free Tier | API Key | Best For |
 |----------|-----------|---------|----------|
@@ -402,11 +394,9 @@ Popular ones:
 | Thunderforest | 150k/month | Yes (free) | Cycling, transport |
 | HERE | 250k/month | Yes (free) | Enterprise |
 
-*Fair use policy applies
+*Fair-use policy applies.
 
----
-
-## Recommendations by Use Case
+## Recommendations by use case
 
 | Use Case | Recommended Provider |
 |----------|---------------------|
