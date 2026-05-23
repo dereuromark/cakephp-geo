@@ -1,0 +1,26 @@
+// cakephp-geo — database schema snapshot (DBML)
+//
+// A merged snapshot of all plugin migrations under config/Migrations/.
+// Hand-maintained: update it when you add a migration that changes these tables.
+// Paste into https://dbdiagram.io (or any DBML tool) to view/diagram.
+// DBML reference: https://dbml.dbdiagram.io/docs
+
+Project cakephp_geo {
+  database_type: 'Generic'
+  Note: 'Geo plugin tables only.'
+}
+
+Table geocoded_addresses {
+  id integer [pk, increment]
+  address varchar(255) [not null]
+  formatted_address varchar(255) [null]
+  country varchar(3) [null]
+  lat float [null]
+  lng float [null]
+  data text [null]
+  created datetime [not null]
+
+  indexes {
+    address [unique]
+  }
+}
