@@ -317,7 +317,7 @@ class Geocoder {
 	 * @return \Geocoder\Model\AddressCollection
 	 */
 	protected function executeGeocode(string $address): AddressCollection {
-		if ($this->providerInstance instanceof \Geo\Geocoder\Provider\GeocodingProviderInterface) {
+		if ($this->providerInstance instanceof GeocodingProviderInterface) {
 			return $this->providerInstance->geocode($address);
 		}
 
@@ -337,7 +337,7 @@ class Geocoder {
 	 * @return \Geocoder\Model\AddressCollection
 	 */
 	protected function executeReverse(float $lat, float $lng): AddressCollection {
-		if ($this->providerInstance instanceof \Geo\Geocoder\Provider\GeocodingProviderInterface) {
+		if ($this->providerInstance instanceof GeocodingProviderInterface) {
 			return $this->providerInstance->reverse($lat, $lng);
 		}
 

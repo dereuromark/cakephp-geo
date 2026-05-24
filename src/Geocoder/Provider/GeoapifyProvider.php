@@ -114,7 +114,7 @@ class GeoapifyProvider extends AbstractGeocodingProvider {
 		$addresses = [];
 		foreach ($data['features'] as $feature) {
 			$address = $this->parseFeature($feature);
-			if ($address instanceof \Geocoder\Model\Address) {
+			if ($address instanceof Address) {
 				$addresses[] = $address;
 			}
 		}
@@ -175,7 +175,7 @@ class GeoapifyProvider extends AbstractGeocodingProvider {
 		}
 
 		if (!empty($props['country_code'])) {
-			$builder->setCountryCode(strtoupper((string) $props['country_code']));
+			$builder->setCountryCode(strtoupper((string)$props['country_code']));
 		}
 
 		return $builder->build();

@@ -140,7 +140,7 @@ class StadiaProvider extends AbstractStaticMapProvider {
 
 			if (!empty($marker['size'])) {
 				$sizeMap = ['small' => 'sm', 'medium' => 'md', 'large' => 'lg'];
-				$markerStyle .= '-' . ($sizeMap[strtolower((string) $marker['size'])] ?? 'md');
+				$markerStyle .= '-' . ($sizeMap[strtolower((string)$marker['size'])] ?? 'md');
 			}
 
 			$parts[] = $markerStyle;

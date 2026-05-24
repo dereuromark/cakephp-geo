@@ -127,7 +127,7 @@ class Calculator {
 			$unit = array_keys($this->_units);
 			$unit = $unit[0];
 		}
-		$unit = strtoupper((string) $unit);
+		$unit = strtoupper((string)$unit);
 		if (!isset($this->_units[$unit])) {
 			throw new CalculatorException(sprintf('Invalid Unit: %s', $unit));
 		}

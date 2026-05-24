@@ -128,13 +128,13 @@ class MapboxProvider extends AbstractStaticMapProvider {
 			$size = 's';
 			if (!empty($marker['size'])) {
 				$sizeMap = ['small' => 's', 'medium' => 'm', 'large' => 'l'];
-				$size = $sizeMap[strtolower((string) $marker['size'])] ?? 's';
+				$size = $sizeMap[strtolower((string)$marker['size'])] ?? 's';
 			}
 
 			$pin = 'pin-' . $size;
 
 			if (!empty($marker['label'])) {
-				$pin .= '-' . strtolower(substr((string) $marker['label'], 0, 1));
+				$pin .= '-' . strtolower(substr((string)$marker['label'], 0, 1));
 			}
 
 			if (!empty($marker['color'])) {

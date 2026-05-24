@@ -205,13 +205,13 @@ class CachedLocation implements Location {
 
 		$country = null;
 		$countryCode = null;
-		if ($this->country instanceof \Geocoder\Model\Country) {
+		if ($this->country instanceof Country) {
 			$country = $this->country->getName();
 			$countryCode = $this->country->getCode();
 		}
 
 		$bounds = null;
-		if ($this->bounds instanceof \Geocoder\Model\Bounds) {
+		if ($this->bounds instanceof Bounds) {
 			$bounds = [
 				'south' => $this->bounds->getSouth(),
 				'west' => $this->bounds->getWest(),

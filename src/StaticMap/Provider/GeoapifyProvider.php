@@ -135,7 +135,7 @@ class GeoapifyProvider extends AbstractStaticMapProvider {
 			$parts[] = empty($marker['icon']) ? 'type:material' : 'type:' . $marker['icon'];
 
 			if (!empty($marker['label'])) {
-				$parts[] = 'text:' . urlencode((string) $marker['label']);
+				$parts[] = 'text:' . urlencode((string)$marker['label']);
 			}
 
 			$formatted[] = implode(';', $parts);

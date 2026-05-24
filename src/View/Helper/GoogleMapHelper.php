@@ -782,12 +782,12 @@ function geocodeAddress(address) {
 		}
 
 		if (!empty($char)) {
-            $color = $color === 'red' ? '' : '_' . $color;
-            $url = sprintf($this->setIcons['alpha'], $color, $char);
-        } else {
-            $color = $color === 'red' ? '' : '_' . $color;
-            $url = sprintf($this->setIcons['color'], $color);
-        }
+			$color = $color === 'red' ? '' : '_' . $color;
+			$url = sprintf($this->setIcons['alpha'], $color, $char);
+		} else {
+			$color = $color === 'red' ? '' : '_' . $color;
+			$url = sprintf($this->setIcons['color'], $color);
+		}
 
 		/*
         var iconImage = new google.maps.MarkerImage('images/' + images[0] + ' .png',
@@ -1489,7 +1489,7 @@ function geocodeAddress(address) {
 
 		// a position on the map that is supposed to stay visible at all cost
 		if (!empty($mapOptions['visible'])) {
-			$params['visible'] = urlencode((string) $mapOptions['visible']);
+			$params['visible'] = urlencode((string)$mapOptions['visible']);
 		}
 
 		// center and zoom are not necessary if path, visible or markers are given
@@ -1498,7 +1498,7 @@ function geocodeAddress(address) {
 		} elseif ($options['center'] === true && $mapOptions['lat'] !== null && $mapOptions['lng'] !== null) {
 			$params['center'] = urlencode($mapOptions['lat'] . ',' . $mapOptions['lng']);
 		} elseif (!empty($options['center'])) {
-			$params['center'] = urlencode((string) $options['center']);
+			$params['center'] = urlencode((string)$options['center']);
 		} /*else {
 			// try to read from markers array???
 			if (isset($options['markers']) && count($options['markers']) == 1) {
@@ -1507,23 +1507,23 @@ function geocodeAddress(address) {
 		}*/
 
 		if (!isset($options['zoom']) || $options['zoom'] === false) {
-            // dont use it
-        } elseif ($options['zoom'] === 'auto') {
-            if (!empty($options['markers']) && str_contains($options['zoom'], '|')) {
+			// dont use it
+		} elseif ($options['zoom'] === 'auto') {
+			if (!empty($options['markers']) && str_contains($options['zoom'], '|')) {
 					// let google find the best zoom value itself
-				} else {
-					// do something here?
-				}
-        } else {
-				$params['zoom'] = $options['zoom'];
+			} else {
+				// do something here?
 			}
+		} else {
+				$params['zoom'] = $options['zoom'];
+		}
 
 		if (array_key_exists($mapOptions['type'], $this->types)) {
 			$params['maptype'] = $this->types[$mapOptions['type']];
 		} else {
 			$params['maptype'] = $mapOptions['type'];
 		}
-		$params['maptype'] = strtolower((string) $params['maptype']);
+		$params['maptype'] = strtolower((string)$params['maptype']);
 
 		// old: {latitude},{longitude},{color}{alpha-character}
 		// new: @see staticMarkers()
@@ -1599,7 +1599,7 @@ function geocodeAddress(address) {
 
 			$path = [];
 			foreach ($options as $key => $value) {
-				$path[] = $key . ':' . urlencode((string) $value);
+				$path[] = $key . ':' . urlencode((string)$value);
 			}
 			foreach ($markers as $pos) {
 				if (is_array($pos)) {
@@ -1660,7 +1660,7 @@ function geocodeAddress(address) {
 			if (!empty($p['lat']) && !empty($p['lng'])) {
 				$p['address'] = $p['lat'] . ',' . $p['lng'];
 			}
-			$p['address'] = urlencode((string) $p['address']);
+			$p['address'] = urlencode((string)$p['address']);
 
 			$values = [];
 
@@ -1671,7 +1671,7 @@ function geocodeAddress(address) {
 			}
 			// label? A-Z0-9
 			if (!empty($p['label'])) {
-				$values[] = 'label:' . strtoupper((string) $p['label']);
+				$values[] = 'label:' . strtoupper((string)$p['label']);
 			}
 			if (!empty($p['size'])) {
 				$values[] = 'size:' . $p['size'];
@@ -1680,7 +1680,7 @@ function geocodeAddress(address) {
 				$values[] = 'shadow:' . $p['shadow'];
 			}
 			if (!empty($p['icon'])) {
-				$values[] = 'icon:' . urlencode((string) $p['icon']);
+				$values[] = 'icon:' . urlencode((string)$p['icon']);
 			}
 			$values[] = $p['address'];
 
@@ -1755,7 +1755,7 @@ function geocodeAddress(address) {
 	protected function _toObjectParams($array, $asString = true, $keyAsString = false) {
 		$pieces = [];
 		foreach ($array as $key => $value) {
-			$e = ($asString && !str_starts_with((string) $value, 'new ') ? '"' : '');
+			$e = ($asString && !str_starts_with((string)$value, 'new ') ? '"' : '');
 			$ke = ($keyAsString ? '"' : '');
 			$pieces[] = $ke . $key . $ke . ': ' . $e . $value . $e;
 		}
