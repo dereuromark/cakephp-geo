@@ -29,7 +29,7 @@ class GeoIpAddressTest extends TestCase {
 		$address = new GeoIpAddress('geo_ip_lookup', new AdminLevelCollection());
 		$address = $address->withHost('example.com');
 
-		$newAddress = $address->withHost(null);
+		$newAddress = $address->withHost();
 
 		$this->assertSame('example.com', $address->getHost());
 		$this->assertNull($newAddress->getHost());

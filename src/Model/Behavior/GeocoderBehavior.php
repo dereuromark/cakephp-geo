@@ -174,12 +174,10 @@ class GeocoderBehavior extends Behavior {
 	 * @return void
 	 */
 	public function afterMarshal(EventInterface $event, EntityInterface $entity): void {
-		if ($this->_config['on'] === 'afterMarshal') {
-			if (!$this->geocode($entity)) {
-				$event->setResult(false);
-				$event->stopPropagation();
-			}
-		}
+		if ($this->_config['on'] === 'afterMarshal' && !$this->geocode($entity)) {
+            $event->setResult(false);
+            $event->stopPropagation();
+        }
 	}
 
 	/**
@@ -189,12 +187,10 @@ class GeocoderBehavior extends Behavior {
 	 * @return void
 	 */
 	public function beforeRules(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
-		if ($this->_config['on'] === 'beforeRules') {
-			if (!$this->geocode($entity)) {
-				$event->setResult(false);
-				$event->stopPropagation();
-			}
-		}
+		if ($this->_config['on'] === 'beforeRules' && !$this->geocode($entity)) {
+            $event->setResult(false);
+            $event->stopPropagation();
+        }
 	}
 
 	/**
@@ -204,12 +200,10 @@ class GeocoderBehavior extends Behavior {
 	 * @return void
 	 */
 	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
-		if ($this->_config['on'] === 'beforeSave') {
-			if (!$this->geocode($entity)) {
-				$event->setResult(false);
-				$event->stopPropagation();
-			}
-		}
+		if ($this->_config['on'] === 'beforeSave' && !$this->geocode($entity)) {
+            $event->setResult(false);
+            $event->stopPropagation();
+        }
 	}
 
 	/**
@@ -236,11 +230,7 @@ class GeocoderBehavior extends Behavior {
 		$dirty = false;
 		foreach ($addressFields as $field) {
 			$isClosure = $field instanceof Closure;
-			if ($isClosure) {
-				$fieldData = $field($entity);
-			} else {
-				$fieldData = $entity->get($field);
-			}
+			$fieldData = $isClosure ? $field($entity) : $entity->get($field);
 			if ($fieldData) {
 				$addressData[] = $fieldData;
 			}
@@ -558,13 +548,13 @@ class GeocoderBehavior extends Behavior {
 		}
 
 		// Validate field and table names to prevent SQL injection
-		if (!preg_match('/^[a-zA-Z0-9_]+$/', $tableName)) {
+		if (!preg_match('/^\w+$/', (string) $tableName)) {
 			throw new InvalidArgumentException('Invalid table name');
 		}
-		if (!preg_match('/^[a-zA-Z0-9_]+$/', $fieldLat)) {
+		if (!preg_match('/^\w+$/', (string) $fieldLat)) {
 			throw new InvalidArgumentException('Invalid field name');
 		}
-		if (!preg_match('/^[a-zA-Z0-9_]+$/', $fieldLng)) {
+		if (!preg_match('/^\w+$/', (string) $fieldLng)) {
 			throw new InvalidArgumentException('Invalid field name');
 		}
 
@@ -572,10 +562,10 @@ class GeocoderBehavior extends Behavior {
 			$tableName . '.' . $fieldLat . ' <> 0',
 			$tableName . '.' . $fieldLng . ' <> 0',
 		];
-		$fieldName = !empty($fieldName) ? $fieldName : 'distance';
+		$fieldName = empty($fieldName) ? 'distance' : $fieldName;
 
 		// Validate distance field name
-		if (!preg_match('/^[a-zA-Z0-9_]+$/', $fieldName)) {
+		if (!preg_match('/^\w+$/', $fieldName)) {
 			throw new InvalidArgumentException('Invalid field name');
 		}
 
@@ -599,7 +589,7 @@ class GeocoderBehavior extends Behavior {
 		if ($tableName === null) {
 			$tableName = $this->_table->getAlias();
 		}
-		$fieldName = (!empty($fieldName) ? $fieldName : 'distance');
+		$fieldName = (empty($fieldName) ? 'distance' : $fieldName);
 
 		return [$tableName . '.' . $fieldName => $this->distanceExpr($lat, $lng, null, null, $tableName)];
 	}
@@ -664,9 +654,7 @@ class GeocoderBehavior extends Behavior {
 
 		try {
 			$addresses = $this->_Geocoder->geocode($address);
-		} catch (InconclusiveException $e) {
-			$addresses = null;
-		} catch (NotAccurateEnoughException $e) {
+		} catch (InconclusiveException|NotAccurateEnoughException) {
 			$addresses = null;
 		}
 		$result = null;
@@ -712,7 +700,7 @@ class GeocoderBehavior extends Behavior {
 	 * @return float Value
 	 */
 	protected function _calculationValue($unit) {
-		if (!isset($this->_Calculator)) {
+		if ($this->_Calculator === null) {
 			$this->_Calculator = new Calculator();
 		}
 
@@ -778,7 +766,7 @@ class GeocoderBehavior extends Behavior {
 				$entity->setError($field, $errorMessage);
 			}
 
-			$message = !empty($errorMessage[$field]) ? $errorMessage[$field] : null;
+			$message = empty($errorMessage[$field]) ? null : $errorMessage[$field];
 			if (!$message) {
 				continue;
 			}

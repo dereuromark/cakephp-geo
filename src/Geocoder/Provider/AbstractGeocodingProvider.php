@@ -89,7 +89,7 @@ abstract class AbstractGeocodingProvider implements GeocodingProviderInterface {
 	 * @return \Cake\Http\Client
 	 */
 	protected function getHttpClient(): Client {
-		if ($this->httpClient === null) {
+		if (!$this->httpClient instanceof \Cake\Http\Client) {
 			$this->httpClient = new Client();
 		}
 
@@ -102,7 +102,7 @@ abstract class AbstractGeocodingProvider implements GeocodingProviderInterface {
 	 * @return \Geocoder\StatefulGeocoder
 	 */
 	protected function getGeocoder(): StatefulGeocoder {
-		if ($this->geocoder === null) {
+		if (!$this->geocoder instanceof \Geocoder\StatefulGeocoder) {
 			$provider = $this->buildProvider();
 			$locale = $this->getConfig('locale') ?: 'en';
 			$this->geocoder = new StatefulGeocoder($provider, $locale);

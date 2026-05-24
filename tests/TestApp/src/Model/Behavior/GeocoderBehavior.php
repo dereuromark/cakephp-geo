@@ -42,9 +42,8 @@ class GeocoderBehavior extends GeoGeocoderBehavior {
 		}
 
 		$addresses = file_get_contents($testFile);
-		$addresses = unserialize($addresses);
 
-		return $addresses;
+		return unserialize($addresses);
 	}
 
 }

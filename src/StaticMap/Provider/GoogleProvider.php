@@ -50,7 +50,7 @@ class GoogleProvider extends AbstractStaticMapProvider {
 
 		// Auto-calculate center and zoom if not provided
 		$options = $this->autoCalculateBounds($options, $markers, $paths);
-		$options['zoom'] = $options['zoom'] ?? 12;
+		$options['zoom'] ??= 12;
 
 		$params = [
 			'key' => $config['apiKey'],
@@ -121,16 +121,16 @@ class GoogleProvider extends AbstractStaticMapProvider {
 			}
 
 			if (!empty($marker['label'])) {
-				$style[] = 'label:' . strtoupper(substr($marker['label'], 0, 1));
+				$style[] = 'label:' . strtoupper(substr((string) $marker['label'], 0, 1));
 			}
 
 			if (!empty($marker['size'])) {
 				$sizeMap = ['small' => 'small', 'medium' => 'mid', 'large' => 'small'];
-				$style[] = 'size:' . ($sizeMap[strtolower($marker['size'])] ?? 'mid');
+				$style[] = 'size:' . ($sizeMap[strtolower((string) $marker['size'])] ?? 'mid');
 			}
 
 			if (!empty($marker['icon'])) {
-				$style[] = 'icon:' . urlencode($marker['icon']);
+				$style[] = 'icon:' . urlencode((string) $marker['icon']);
 			}
 
 			$position = $marker['lat'] . ',' . $marker['lng'];

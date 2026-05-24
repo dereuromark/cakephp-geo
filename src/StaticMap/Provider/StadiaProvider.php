@@ -50,7 +50,7 @@ class StadiaProvider extends AbstractStaticMapProvider {
 
 		// Auto-calculate center and zoom if not provided
 		$options = $this->autoCalculateBounds($options, $markers, $paths);
-		$options['zoom'] = $options['zoom'] ?? 12;
+		$options['zoom'] ??= 12;
 
 		$size = $this->parseSize($options['size']);
 		$style = $options['style'];
@@ -140,7 +140,7 @@ class StadiaProvider extends AbstractStaticMapProvider {
 
 			if (!empty($marker['size'])) {
 				$sizeMap = ['small' => 'sm', 'medium' => 'md', 'large' => 'lg'];
-				$markerStyle .= '-' . ($sizeMap[strtolower($marker['size'])] ?? 'md');
+				$markerStyle .= '-' . ($sizeMap[strtolower((string) $marker['size'])] ?? 'md');
 			}
 
 			$parts[] = $markerStyle;

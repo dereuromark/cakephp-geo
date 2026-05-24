@@ -130,20 +130,12 @@ class GeoapifyProvider extends AbstractStaticMapProvider {
 				$parts[] = 'color:%23' . $this->formatColor($marker['color']);
 			}
 
-			if (!empty($marker['size'])) {
-				$parts[] = 'size:' . $marker['size'];
-			} else {
-				$parts[] = 'size:medium';
-			}
+			$parts[] = empty($marker['size']) ? 'size:medium' : 'size:' . $marker['size'];
 
-			if (!empty($marker['icon'])) {
-				$parts[] = 'type:' . $marker['icon'];
-			} else {
-				$parts[] = 'type:material';
-			}
+			$parts[] = empty($marker['icon']) ? 'type:material' : 'type:' . $marker['icon'];
 
 			if (!empty($marker['label'])) {
-				$parts[] = 'text:' . urlencode($marker['label']);
+				$parts[] = 'text:' . urlencode((string) $marker['label']);
 			}
 
 			$formatted[] = implode(';', $parts);

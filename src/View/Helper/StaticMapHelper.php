@@ -219,7 +219,7 @@ class StaticMapHelper extends Helper {
 	 * @return \Geo\StaticMap\Provider\StaticMapProviderInterface
 	 */
 	public function provider(?string $name = null): StaticMapProviderInterface {
-		$name = $name ?? $this->_config['provider'];
+		$name ??= $this->_config['provider'];
 
 		if (!isset($this->providerClasses[$name])) {
 			throw new InvalidArgumentException(sprintf('Unknown static map provider: %s', $name));
