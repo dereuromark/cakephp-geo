@@ -54,7 +54,7 @@ trait JsBaseEngineTrait {
 
 				break;
 			case (is_bool($val)):
-				$val = ($val === true) ? 'true' : 'false';
+				$val = ($val) ? 'true' : 'false';
 
 				break;
 			case (is_int($val)):

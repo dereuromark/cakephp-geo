@@ -54,7 +54,7 @@ class MapboxProvider extends AbstractStaticMapProvider {
 
 		// Auto-calculate center and zoom if not provided
 		$options = $this->autoCalculateBounds($options, $markers, $paths);
-		$options['zoom'] = $options['zoom'] ?? 12;
+		$options['zoom'] ??= 12;
 
 		$size = $this->parseSize($options['size']);
 		$username = $options['username'];
@@ -86,11 +86,9 @@ class MapboxProvider extends AbstractStaticMapProvider {
 			$sizeStr .= '@2x';
 		}
 
-		$url = static::BASE_URL . '/' . $username . '/' . $style . '/static/'
+		return static::BASE_URL . '/' . $username . '/' . $style . '/static/'
 			. $overlayStr . $center . '/' . $sizeStr
 			. '?access_token=' . $config['apiKey'];
-
-		return $url;
 	}
 
 	/**
@@ -130,13 +128,13 @@ class MapboxProvider extends AbstractStaticMapProvider {
 			$size = 's';
 			if (!empty($marker['size'])) {
 				$sizeMap = ['small' => 's', 'medium' => 'm', 'large' => 'l'];
-				$size = $sizeMap[strtolower($marker['size'])] ?? 's';
+				$size = $sizeMap[strtolower((string)$marker['size'])] ?? 's';
 			}
 
 			$pin = 'pin-' . $size;
 
 			if (!empty($marker['label'])) {
-				$pin .= '-' . strtolower(substr($marker['label'], 0, 1));
+				$pin .= '-' . strtolower(substr((string)$marker['label'], 0, 1));
 			}
 
 			if (!empty($marker['color'])) {

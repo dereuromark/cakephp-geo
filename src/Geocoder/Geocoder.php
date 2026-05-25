@@ -232,7 +232,7 @@ class Geocoder {
 	 * @return array<string, string>
 	 */
 	public function accuracyTypes() {
-		$array = [
+		return [
 			static::TYPE_COUNTRY => __d('geo', 'Country'),
 			static::TYPE_AAL1 => __d('geo', 'Province'),
 			static::TYPE_AAL3 => __d('geo', 'Sub Province'),
@@ -244,8 +244,6 @@ class Geocoder {
 			static::TYPE_ADDRESS => __d('geo', 'Street Address'),
 			static::TYPE_NUMBER => __d('geo', 'Street Number'),
 		];
-
-		return $array;
 	}
 
 	/**
@@ -319,7 +317,7 @@ class Geocoder {
 	 * @return \Geocoder\Model\AddressCollection
 	 */
 	protected function executeGeocode(string $address): AddressCollection {
-		if ($this->providerInstance !== null) {
+		if ($this->providerInstance instanceof GeocodingProviderInterface) {
 			return $this->providerInstance->geocode($address);
 		}
 
@@ -339,7 +337,7 @@ class Geocoder {
 	 * @return \Geocoder\Model\AddressCollection
 	 */
 	protected function executeReverse(float $lat, float $lng): AddressCollection {
-		if ($this->providerInstance !== null) {
+		if ($this->providerInstance instanceof GeocodingProviderInterface) {
 			return $this->providerInstance->reverse($lat, $lng);
 		}
 

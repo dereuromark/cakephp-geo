@@ -65,7 +65,7 @@ class SpatialAddressesTable extends Table {
 		// Go through each result and unpack() the binary data
 		$query->formatResults(function($results) use($columns) {
 			return $results->map(function($entity) use($columns) {
-				foreach ($columns as $column => $type) {
+				foreach (array_keys($columns) as $column) {
 					if (!isset($entity->{$column})) {
 						continue;
 					}
@@ -73,13 +73,7 @@ class SpatialAddressesTable extends Table {
 					if (!is_string($entity->{$column})) {
 						continue;
 					}
-					switch ($type) {
-						// TODO support other types, not only POINT
-						case 'point':
-							$entity->{$column} = unpack('x/x/x/x/corder/Ltype/dx/dy', $entity->{$column});
-
-							break;
-					}
+					$entity->{$column} = unpack('x/x/x/x/corder/Ltype/dx/dy', $entity->{$column});
 				}
 
 				return $entity;
@@ -113,13 +107,7 @@ class SpatialAddressesTable extends Table {
 			if (!is_array($data[$column])) {
 				continue;
 			}
-			switch ($type) {
-				// TODO support other types, not only POINT
-				case 'point':
-					$value = sprintf('\'%s(%s)\'', strtoupper($type), implode(' ', $data[$column]));
-
-					break;
-			}
+			$value = sprintf('\'%s(%s)\'', strtoupper($type), implode(' ', $data[$column]));
 			// Set $value on $entity using ST_GeomFromText()
 			$entity->{$column} = $this->query()->func()->ST_GeomFromText([
 				$value => 'literal',

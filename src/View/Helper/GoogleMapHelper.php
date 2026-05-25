@@ -326,10 +326,8 @@ class GoogleMapHelper extends Helper {
 		if (isset($config['staticLng'])) {
 			$config['staticMap']['lng'] = $config['staticLng'];
 		}
-		if (isset($config['localImages'])) {
-			if ($config['localImages'] === true) {
-				$config['localImages'] = Router::url('/img/google_map/', true);
-			}
+		if (isset($config['localImages']) && $config['localImages'] === true) {
+			$config['localImages'] = Router::url('/img/google_map/', true);
 		}
 
 		// BC
@@ -389,9 +387,8 @@ class GoogleMapHelper extends Helper {
 	 */
 	public function gearsUrl(): string {
 		$this->_gearsIncluded = true;
-		$url = $this->_protocol() . 'code.google.com/apis/gears/gears_init.js';
 
-		return $url;
+		return $this->_protocol() . 'code.google.com/apis/gears/gears_init.js';
 	}
 
 	/**
@@ -533,9 +530,8 @@ class GoogleMapHelper extends Helper {
 		unset($this->_runtimeConfig['div']['height']);
 
 		$defaultText = $this->_runtimeConfig['content'] ?? __d('geo', 'Map cannot be displayed!');
-		$result .= $this->Html->tag('div', $defaultText, $this->_runtimeConfig['div']);
 
-		return $result;
+		return $result . $this->Html->tag('div', $defaultText, $this->_runtimeConfig['div']);
 	}
 
 	/**
@@ -786,18 +782,10 @@ function geocodeAddress(address) {
 		}
 
 		if (!empty($char)) {
-			if ($color === 'red') {
-				$color = '';
-			} else {
-				$color = '_' . $color;
-			}
+			$color = $color === 'red' ? '' : '_' . $color;
 			$url = sprintf($this->setIcons['alpha'], $color, $char);
 		} else {
-			if ($color === 'red') {
-				$color = '';
-			} else {
-				$color = '_' . $color;
-			}
+			$color = $color === 'red' ? '' : '_' . $color;
 			$url = sprintf($this->setIcons['color'], $color);
 		}
 
@@ -821,13 +809,12 @@ function geocodeAddress(address) {
         */
 
 		$shadow = 'https://www.google.com/mapfiles/shadow50.png';
-		$res = [
+
+		return [
 			'url' => $url,
 			'icon' => $this->icon($url, ['size' => ['width' => 20, 'height' => 34]]),
 			'shadow' => $this->icon($shadow, ['size' => ['width' => 37, 'height' => 34], 'shadow' => ['width' => 10, 'height' => 34]]),
 		];
-
-		return $res;
 	}
 
 	/**
@@ -883,7 +870,7 @@ function geocodeAddress(address) {
 			if (!empty($options['imagePath'])) {
 				$path = realpath($options['imagePath']);
 				$allowedDir = realpath(WWW_ROOT . 'img' . DS);
-				if (!$path || !$allowedDir || strpos($path, $allowedDir) !== 0) {
+				if (!$path || !$allowedDir || !str_starts_with($path, $allowedDir)) {
 					throw new CakeException('Invalid image path');
 				}
 			} else {
@@ -1152,11 +1139,9 @@ function geocodeAddress(address) {
 	 * @return string
 	 */
 	public function script() {
-		$script = '<script>
+		return '<script>
 		' . $this->finalize(true) . '
 </script>';
-
-		return $script;
 	}
 
 	/**
@@ -1323,11 +1308,7 @@ function geocodeAddress(address) {
 			$res[] = 'scaleControlOptions: ' . $this->_controlOptions('scale', $options['scaleOptions']);
 		}
 
-		if (array_key_exists($options['type'], $this->types)) {
-			$type = $this->types[$options['type']];
-		} else {
-			$type = $options['type'];
-		}
+		$type = array_key_exists($options['type'], $this->types) ? $this->types[$options['type']] : $options['type'];
 		$res[] = 'mapTypeId: google.maps.MapTypeId.' . $type;
 
 		return '{' . implode(', ', $res) . '}';
@@ -1384,14 +1365,14 @@ function geocodeAddress(address) {
 	public function mapUrl(array $options = []) {
 		$url = $this->_protocol() . 'maps.google.com/maps?';
 
-		$urlArray = !empty($options['query']) ? $options['query'] : [];
+		$urlArray = empty($options['query']) ? [] : $options['query'];
 		if (!empty($options['from'])) {
 			$urlArray['saddr'] = $options['from'];
 		}
 
 		if (!empty($options['to']) && is_array($options['to'])) {
 			$to = array_shift($options['to']);
-			foreach ($options['to'] as $key => $value) {
+			foreach ($options['to'] as $value) {
 				$to .= '+to:' . $value;
 			}
 			$urlArray['daddr'] = $to;
@@ -1508,16 +1489,16 @@ function geocodeAddress(address) {
 
 		// a position on the map that is supposed to stay visible at all cost
 		if (!empty($mapOptions['visible'])) {
-			$params['visible'] = urlencode($mapOptions['visible']);
+			$params['visible'] = urlencode((string)$mapOptions['visible']);
 		}
 
 		// center and zoom are not necessary if path, visible or markers are given
 		if (!isset($options['center']) || $options['center'] === false) {
 			// dont use it
 		} elseif ($options['center'] === true && $mapOptions['lat'] !== null && $mapOptions['lng'] !== null) {
-			$params['center'] = urlencode((string)$mapOptions['lat'] . ',' . (string)$mapOptions['lng']);
+			$params['center'] = urlencode($mapOptions['lat'] . ',' . $mapOptions['lng']);
 		} elseif (!empty($options['center'])) {
-			$params['center'] = urlencode($options['center']);
+			$params['center'] = urlencode((string)$options['center']);
 		} /*else {
 			// try to read from markers array???
 			if (isset($options['markers']) && count($options['markers']) == 1) {
@@ -1527,16 +1508,14 @@ function geocodeAddress(address) {
 
 		if (!isset($options['zoom']) || $options['zoom'] === false) {
 			// dont use it
-		} else {
-			if ($options['zoom'] === 'auto') {
-				if (!empty($options['markers']) && strpos($options['zoom'], '|') !== false) {
+		} elseif ($options['zoom'] === 'auto') {
+			if (!empty($options['markers']) && str_contains($options['zoom'], '|')) {
 					// let google find the best zoom value itself
-				} else {
-					// do something here?
-				}
 			} else {
-				$params['zoom'] = $options['zoom'];
+				// do something here?
 			}
+		} else {
+				$params['zoom'] = $options['zoom'];
 		}
 
 		if (array_key_exists($mapOptions['type'], $this->types)) {
@@ -1544,7 +1523,7 @@ function geocodeAddress(address) {
 		} else {
 			$params['maptype'] = $mapOptions['type'];
 		}
-		$params['maptype'] = strtolower($params['maptype']);
+		$params['maptype'] = strtolower((string)$params['maptype']);
 
 		// old: {latitude},{longitude},{color}{alpha-character}
 		// new: @see staticMarkers()
@@ -1620,9 +1599,9 @@ function geocodeAddress(address) {
 
 			$path = [];
 			foreach ($options as $key => $value) {
-				$path[] = $key . ':' . urlencode($value);
+				$path[] = $key . ':' . urlencode((string)$value);
 			}
-			foreach ($markers as $key => $pos) {
+			foreach ($markers as $pos) {
 				if (is_array($pos)) {
 					// lat/lng?
 					$pos = $pos['lat'] . ',' . $pos['lng'];
@@ -1681,7 +1660,7 @@ function geocodeAddress(address) {
 			if (!empty($p['lat']) && !empty($p['lng'])) {
 				$p['address'] = $p['lat'] . ',' . $p['lng'];
 			}
-			$p['address'] = urlencode($p['address']);
+			$p['address'] = urlencode((string)$p['address']);
 
 			$values = [];
 
@@ -1692,7 +1671,7 @@ function geocodeAddress(address) {
 			}
 			// label? A-Z0-9
 			if (!empty($p['label'])) {
-				$values[] = 'label:' . strtoupper($p['label']);
+				$values[] = 'label:' . strtoupper((string)$p['label']);
 			}
 			if (!empty($p['size'])) {
 				$values[] = 'size:' . $p['size'];
@@ -1701,7 +1680,7 @@ function geocodeAddress(address) {
 				$values[] = 'shadow:' . $p['shadow'];
 			}
 			if (!empty($p['icon'])) {
-				$values[] = 'icon:' . urlencode($p['icon']);
+				$values[] = 'icon:' . urlencode((string)$p['icon']);
 			}
 			$values[] = $p['address'];
 
@@ -1743,7 +1722,7 @@ function geocodeAddress(address) {
 	 * @return string Color
 	 */
 	protected function _prepColor($color) {
-		if (strpos($color, '#') !== false) {
+		if (str_contains($color, '#')) {
 			return str_replace('#', '0x', $color);
 		}
 		if (is_numeric($color)) {
@@ -1763,9 +1742,8 @@ function geocodeAddress(address) {
 	protected function _arrayToObject($name, $array, $asString = true, $keyAsString = false) {
 		$res = 'var ' . $name . ' = {' . PHP_EOL;
 		$res .= $this->_toObjectParams($array, $asString, $keyAsString);
-		$res .= '};';
 
-		return $res;
+		return $res . '};';
 	}
 
 	/**
@@ -1777,7 +1755,7 @@ function geocodeAddress(address) {
 	protected function _toObjectParams($array, $asString = true, $keyAsString = false) {
 		$pieces = [];
 		foreach ($array as $key => $value) {
-			$e = ($asString && strpos($value, 'new ') !== 0 ? '"' : '');
+			$e = ($asString && !str_starts_with((string)$value, 'new ') ? '"' : '');
 			$ke = ($keyAsString ? '"' : '');
 			$pieces[] = $ke . $key . $ke . ': ' . $e . $value . $e;
 		}

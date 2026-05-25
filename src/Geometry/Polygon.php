@@ -7,13 +7,12 @@ class Polygon implements GeoJsonInterface {
 	/**
 	 * @var array<int, array<int, array{0: float, 1: float}>>
 	 */
-	protected array $rings;
+	protected array $rings = [];
 
 	/**
 	 * @param array<int, array<int, array{0: float|int, 1: float|int}>> $rings
 	 */
 	public function __construct(array $rings) {
-		$this->rings = [];
 		foreach ($rings as $ring) {
 			$this->rings[] = $this->normalizeRing($ring);
 		}

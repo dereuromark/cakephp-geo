@@ -350,9 +350,8 @@ class LeafletHelper extends Helper {
 		unset($divOptions['width'], $divOptions['height']);
 
 		$defaultText = $this->_runtimeConfig['content'] ?? __d('geo', 'Map cannot be displayed!');
-		$result .= $this->Html->tag('div', $defaultText, $divOptions);
 
-		return $result;
+		return $result . $this->Html->tag('div', $defaultText, $divOptions);
 	}
 
 	/**
@@ -656,11 +655,9 @@ class LeafletHelper extends Helper {
 	 * @return string
 	 */
 	public function script(): string {
-		$script = '<script>
+		return '<script>
 		' . $this->finalize(true) . '
 </script>';
-
-		return $script;
 	}
 
 	/**

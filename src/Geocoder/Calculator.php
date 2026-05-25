@@ -127,12 +127,12 @@ class Calculator {
 			$unit = array_keys($this->_units);
 			$unit = $unit[0];
 		}
-		$unit = strtoupper($unit);
+		$unit = strtoupper((string)$unit);
 		if (!isset($this->_units[$unit])) {
 			throw new CalculatorException(sprintf('Invalid Unit: %s', $unit));
 		}
 
-		$res = $this->calculateDistance($pointX, $pointY);
+		$res = static::calculateDistance($pointX, $pointY);
 		if (isset($this->_units[$unit])) {
 			$res *= $this->_units[$unit];
 		}
@@ -204,7 +204,7 @@ class Calculator {
 			return $coordinate;
 		}
 
-		$scrambleVal = 0.000001 * mt_rand(10, 200) * pow(2, $level) * (mt_rand(0, 1) === 0 ? 1 : -1);
+		$scrambleVal = 0.000001 * mt_rand(10, 200) * 2 ** $level * (mt_rand(0, 1) === 0 ? 1 : -1);
 
 		return $coordinate + $scrambleVal;
 	}

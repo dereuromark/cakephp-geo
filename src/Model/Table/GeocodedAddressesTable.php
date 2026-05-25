@@ -157,9 +157,7 @@ class GeocodedAddressesTable extends Table {
 		$this->_Geocoder = new Geocoder();
 		try {
 			$addresses = $this->_Geocoder->geocode($address);
-		} catch (InconclusiveException $e) {
-			return null;
-		} catch (NotAccurateEnoughException $e) {
+		} catch (InconclusiveException | NotAccurateEnoughException) {
 			return null;
 		}
 
