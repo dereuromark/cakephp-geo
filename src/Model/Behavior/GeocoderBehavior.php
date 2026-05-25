@@ -548,7 +548,7 @@ class GeocoderBehavior extends Behavior {
 		}
 
 		// Validate field and table names to prevent SQL injection
-		if (!is_string($tableName) || !preg_match('/^\w+$/', $tableName)) {
+		if (!preg_match('/^\w+$/', $tableName)) {
 			throw new InvalidArgumentException('Invalid table name');
 		}
 		if (!is_string($fieldLat) || !preg_match('/^\w+$/', $fieldLat)) {
