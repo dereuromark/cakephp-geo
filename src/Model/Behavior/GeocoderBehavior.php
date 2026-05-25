@@ -548,13 +548,13 @@ class GeocoderBehavior extends Behavior {
 		}
 
 		// Validate field and table names to prevent SQL injection
-		if (!preg_match('/^\w+$/', (string)$tableName)) {
+		if (!is_string($tableName) || !preg_match('/^\w+$/', $tableName)) {
 			throw new InvalidArgumentException('Invalid table name');
 		}
-		if (!preg_match('/^\w+$/', (string)$fieldLat)) {
+		if (!is_string($fieldLat) || !preg_match('/^\w+$/', $fieldLat)) {
 			throw new InvalidArgumentException('Invalid field name');
 		}
-		if (!preg_match('/^\w+$/', (string)$fieldLng)) {
+		if (!is_string($fieldLng) || !preg_match('/^\w+$/', $fieldLng)) {
 			throw new InvalidArgumentException('Invalid field name');
 		}
 
