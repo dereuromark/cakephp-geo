@@ -51,7 +51,7 @@ class GeoController extends AppController {
 			}
 		}
 
-		$this->set(['entity' => $entity]);
+		$this->set(compact('entity'));
 	}
 
 }

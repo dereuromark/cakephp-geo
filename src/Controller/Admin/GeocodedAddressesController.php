@@ -21,7 +21,7 @@ class GeocodedAddressesController extends AppController {
 	public function index() {
 		$geocodedAddresses = $this->paginate($this->GeocodedAddresses);
 
-		$this->set(['geocodedAddresses' => $geocodedAddresses]);
+		$this->set(compact('geocodedAddresses'));
 	}
 
 	/**
@@ -81,7 +81,7 @@ class GeocodedAddressesController extends AppController {
 			}
 			$this->Flash->error(__d('geo', 'The geocoded address could not be saved. Please, try again.'));
 		}
-		$this->set(['geocodedAddress' => $geocodedAddress]);
+		$this->set(compact('geocodedAddress'));
 	}
 
 	/**
