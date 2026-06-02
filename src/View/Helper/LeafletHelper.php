@@ -543,7 +543,7 @@ class LeafletHelper extends Helper {
 	 * @param array<string, mixed> $options
 	 * @return void
 	 */
-	public function addPolygon(array|Polygon $points, array $options = []): void {
+	public function addPolygon(Polygon|array $points, array $options = []): void {
 		$defaults = $this->_runtimeConfig['polygon'];
 		$options += $defaults;
 
@@ -603,7 +603,7 @@ class LeafletHelper extends Helper {
 	 * @param array<string, mixed> $options
 	 * @return void
 	 */
-	public function addGeoJson(array|string|GeoJsonInterface $data, array $options = []): void {
+	public function addGeoJson(GeoJsonInterface|array|string $data, array $options = []): void {
 		$geoJsonJs = $this->_geoJsonString($data);
 
 		$optionsJs = '';
@@ -799,7 +799,7 @@ jQuery(document).ready(function() {
 	 * @param \Geo\Geometry\Polygon|array<array<string, float>> $points
 	 * @return array<int, mixed>
 	 */
-	protected function _polygonJsPoints(array|Polygon $points): array {
+	protected function _polygonJsPoints(Polygon|array $points): array {
 		if ($points instanceof Polygon) {
 			$result = [];
 			foreach ($points->toLeafletRings() as $ring) {
@@ -825,7 +825,7 @@ jQuery(document).ready(function() {
 	 * @param \Geo\Geometry\GeoJsonInterface|array<string, mixed>|string $data
 	 * @return string
 	 */
-	protected function _geoJsonString(array|string|GeoJsonInterface $data): string {
+	protected function _geoJsonString(GeoJsonInterface|array|string $data): string {
 		if ($data instanceof GeoJsonInterface) {
 			$data = $data->toGeoJsonArray();
 		} elseif (is_string($data)) {
