@@ -880,10 +880,7 @@ function geocodeAddress(address) {
 					$path = WWW_ROOT . ltrim($url, '/');
 				}
 			}
-			$data = [];
-			if ($path) {
-				$data = getimagesize($path);
-			}
+			$data = getimagesize($path);
 			if ($data) {
 				$options['size']['width'] = $data[0];
 				$options['size']['height'] = $data[1];

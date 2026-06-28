@@ -182,7 +182,7 @@ class StaticMapHelper extends Helper {
 			}
 
 			if (!isset($marker['label']) && isset($style['autoLabel']) && $style['autoLabel']) {
-				$marker['label'] = chr(65 + $index);
+				$marker['label'] = chr(65 + ($index % 26));
 			}
 
 			$markers[] = $marker;
