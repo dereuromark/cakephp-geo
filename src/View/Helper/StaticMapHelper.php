@@ -53,7 +53,7 @@ class StaticMapHelper extends Helper {
 	public const PROVIDER_GOOGLE = 'google';
 
 	/**
-	 * @var array
+	 * @var array<int|string, array<string, mixed>|string>
 	 */
 	protected array $helpers = ['Html'];
 
