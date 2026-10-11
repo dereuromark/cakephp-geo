@@ -103,14 +103,10 @@ use Geo\Geocoder\Geocoder;
 'Geocoder' => [
     'providers' => [
         Geocoder::PROVIDER_GOOGLE,    // Try Google first
-        Geocoder::PROVIDER_NOMINATIM, // Fall back to Nominatim
         Geocoder::PROVIDER_GEOAPIFY,  // Then Geoapify
     ],
     'google' => [
         'apiKey' => env('GOOGLE_MAPS_API_KEY'),
-    ],
-    'nominatim' => [
-        'userAgent' => 'MyApp/1.0',
     ],
     'geoapify' => [
         'apiKey' => env('GEOAPIFY_API_KEY'),

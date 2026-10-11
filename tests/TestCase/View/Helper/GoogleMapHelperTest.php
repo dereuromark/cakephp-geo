@@ -166,6 +166,26 @@ class GoogleMapHelperTest extends TestCase {
 	/**
 	 * @return void
 	 */
+	public function testBlankCoordinatesUseMapCenterInInfoWindow(): void {
+		$this->GoogleMap->map(['lat' => 48, 'lng' => 11]);
+		$this->GoogleMap->addInfoWindow(['lat' => '', 'lng' => '', 'content' => 'Center']);
+
+		$this->assertStringContainsString('.getCenter()', $this->GoogleMap->script());
+		$this->assertStringNotContainsString('new google.maps.LatLng(, )', $this->GoogleMap->script());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testStaticMarkersKeepAddressWithBlankCoordinates(): void {
+		$markers = $this->GoogleMap->staticMarkers(['lat' => '', 'lng' => '', 'address' => 'Vienna, Austria']);
+
+		$this->assertStringContainsString('Vienna%2C+Austria', implode('&', $markers));
+	}
+
+	/**
+	 * @return void
+	 */
 	public function testStaticPaths() {
 		$m = [
 			[
