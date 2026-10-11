@@ -1,6 +1,6 @@
 # Leaflet Helper
 
-Using [Leaflet.js](https://leafletjs.com/); an open-source JavaScript library
+Using [Leaflet.js](https://leafletjs.com/), an open-source JavaScript library
 for interactive maps.
 
 ## Adding the helper
@@ -139,7 +139,7 @@ $this->Leaflet->addMarker([
 ## Tile providers
 
 The helper comes with built-in tile-provider presets. See
-[Leaflet tile providers](./leaflet-tile-providers) for a comprehensive list.
+[Leaflet tile providers](./leaflet-tile-providers) for supported presets.
 
 ```php
 // OpenStreetMap (default)
@@ -364,5 +364,5 @@ $map = $this->Leaflet->map($options);
 
 ## See also
 
-- [Leaflet tile providers](./leaflet-tile-providers); a catalog of tile sources.
+- [Leaflet tile providers](./leaflet-tile-providers); the supported tile presets and provider configuration.
 - [GeoJSON geometry](/geometry/); the value objects used above.

@@ -590,6 +590,39 @@ class GeocoderBehaviorTest extends TestCase {
 	}
 
 	/**
+	 * @return void
+	 */
+	public function testExistingZeroCoordinatesArePreserved(): void {
+		$this->Addresses->getBehavior('Geocoder')->setConfig(['overwrite' => false, 'allowEmpty' => false]);
+		$entity = $this->_getEntity(['street' => 'changed', 'lat' => 0, 'lng' => 0]);
+		$result = $this->Addresses->getBehavior('Geocoder')->geocode($entity);
+
+		$this->assertSame($entity, $result);
+		$this->assertSame(0, $entity->get('lat'));
+		$this->assertSame(0, $entity->get('lng'));
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testUnchangedZeroCoordinatesRemainValid(): void {
+		$this->Addresses->getBehavior('Geocoder')->setConfig('allowEmpty', false);
+		$entity = $this->_getEntity(['lat' => 0, 'lng' => 0]);
+		$entity->clean();
+
+		$this->assertSame($entity, $this->Addresses->getBehavior('Geocoder')->geocode($entity));
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testDistanceConditionsKeepZeroCoordinates(): void {
+		$conditions = $this->Addresses->getBehavior('Geocoder')->distanceConditions();
+
+		$this->assertSame(['Addresses.lat IS NOT NULL', 'Addresses.lng IS NOT NULL'], $conditions);
+	}
+
+	/**
 	 * Gets a new Entity
 	 *
 	 * @param array<string, mixed> $data

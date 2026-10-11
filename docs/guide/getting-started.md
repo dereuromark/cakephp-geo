@@ -7,7 +7,7 @@ Render a map with known coordinates first. This needs no geocoding credentials o
 In `src/View/AppView.php`, inside `initialize()` after `parent::initialize()`:
 
 ```php
-$this->loadHelper('Geo.Leaflet', ['autoScript' => true]);
+$this->addHelper('Geo.Leaflet', ['autoScript' => true]);
 ```
 
 `autoScript` includes the configured Leaflet CSS and JavaScript. The helper's initialization script also uses jQuery; it does not include jQuery for you.
@@ -51,7 +51,7 @@ Then output the helper's scripts:
 <?= $this->fetch('script') ?>
 ```
 
-Use the layout's existing script block once. Opening the page should display a map centered on Vienna, with a marker and popup. If it is blank, check the browser console for missing `jQuery` or `L`, check the map container height, and confirm that Leaflet assets and map tiles are allowed by your Content Security Policy.
+Use the layout's existing script block once. Opening the page should display a map centered on Vienna, with a marker. Click the marker to open its popup. If it is blank, check the browser console for missing `jQuery` or `L`, check the map container height, and confirm that Leaflet assets and map tiles are allowed by your Content Security Policy.
 
 The default tiles come from OpenStreetMap. Keep attribution visible and follow the [tile usage policy](https://operations.osmfoundation.org/policies/tiles/); public tiles are not an unrestricted hosting service for every workload.
 

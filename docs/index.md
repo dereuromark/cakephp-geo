@@ -4,7 +4,7 @@ layout: home
 hero:
   name: cakephp-geo
   text: Geocoding and Maps for CakePHP
-  tagline: Geocode and reverse-geocode your records, query data by distance, and render Google, Leaflet, and static maps; all the way down to GeoJSON value objects.
+  tagline: Geocode addresses, query records by distance, and render Google, Leaflet, and static maps with GeoJSON value objects.
   image:
     src: /logo.svg
     alt: cakephp-geo

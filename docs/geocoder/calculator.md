@@ -14,7 +14,7 @@ $kilometers = $calculator->distance($vienna, $berlin);
 $miles = $calculator->distance($vienna, $berlin, Calculator::UNIT_MILES);
 ```
 
-The result is rounded to an integer. The default unit is kilometers unless overridden in calculator configuration. Both points use `lat` and `lng` keys.
+The result is rounded up to an integer. The default unit is kilometers; pass another unit explicitly when needed. Both points use `lat` and `lng` keys.
 
 ## Blur coordinates
 

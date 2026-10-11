@@ -33,7 +33,6 @@ use RuntimeException;
  * Note that your lat/lng fields should be of type "float(10,6) DEFAULT NULL".
  * NULL as default is important as invalid or not found addresses should result in NULL
  * instead of 0.0, which is a valid latitude or longitude.
- * If you need 0.0, cast it in your beforeSave() callback.
  *
  * @author Mark Scherer
  * @license MIT
@@ -219,7 +218,7 @@ class GeocoderBehavior extends Behavior {
 
 		if (
 			!$this->_config['overwrite'] &&
-			$entity->{$latField} && $entity->{$lngField}
+			is_numeric($entity->{$latField}) && is_numeric($entity->{$lngField})
 		) {
 			return $entity;
 		}
@@ -250,7 +249,7 @@ class GeocoderBehavior extends Behavior {
 		if (!$dirty) {
 			if (
 				$this->_config['allowEmpty'] ||
-				($entity->{$latField} && $entity->{$lngField})
+				(is_numeric($entity->{$latField}) && is_numeric($entity->{$lngField}))
 			) {
 				return $entity;
 			}
@@ -559,8 +558,8 @@ class GeocoderBehavior extends Behavior {
 		}
 
 		$conditions = [
-			$tableName . '.' . $fieldLat . ' <> 0',
-			$tableName . '.' . $fieldLng . ' <> 0',
+			$tableName . '.' . $fieldLat . ' IS NOT NULL',
+			$tableName . '.' . $fieldLng . ' IS NOT NULL',
 		];
 		$fieldName = empty($fieldName) ? 'distance' : $fieldName;
 

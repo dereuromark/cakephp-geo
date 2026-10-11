@@ -26,7 +26,7 @@ The CARTO presets contain the existing CDN URL patterns without credentials. For
 
 ## Configure a custom base layer
 
-Set `tileLayer` in the helper configuration or the options passed to `map()`. This replaces the default base layer. For example, with a browser-visible CARTO key obtained for your application:
+Set `tileLayer` in the helper configuration or the options passed to `map()`. This configures the initial base layer. For example, with a browser-visible CARTO key obtained for your application:
 
 ```php
 $tileKey = 'YOUR_CARTO_KEY';

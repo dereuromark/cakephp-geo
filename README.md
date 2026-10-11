@@ -16,15 +16,15 @@ A CakePHP plugin to
 - display Leaflet maps (open-source alternative)
 - display static maps from multiple providers (Geoapify, Mapbox, Stadia, Google)
 
-[Composer](composer.json) defines supported PHP and CakePHP versions. Geocoding needs an optional provider package; map helpers and coordinate calculations can be used separately.
+[Composer](composer.json) defines supported PHP and CakePHP versions. For older CakePHP applications, see the [version map](https://github.com/dereuromark/cakephp-geo/wiki#cakephp-version-map). Geocoding needs an optional provider package; map helpers and coordinate calculations can be used separately.
 
 Also:
 - MySQL support
 - PostgreSQL support
-- SQLite support (for easy local testing)
+- SQLite support when built with SQL math functions enabled
 
 And also:
-- GeocodedAddresses Table class for caching of API requests to prevent rate limits and speed up lookups.
+- GeocodedAddresses table for reusing geocoding results and reducing repeated API requests.
 - NullProvider for testing without external API calls.
 
 

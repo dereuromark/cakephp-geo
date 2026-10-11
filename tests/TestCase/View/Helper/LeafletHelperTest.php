@@ -43,6 +43,16 @@ class LeafletHelperTest extends TestCase {
 	/**
 	 * @return void
 	 */
+	public function testSuccessfulMapRemovesFallbackContent(): void {
+		$html = $this->Leaflet->map();
+
+		$this->assertStringContainsString('Map cannot be displayed!', $html);
+		$this->assertStringContainsString('map0.getContainer().childNodes.forEach(function(node) { if (node.nodeType === 3) { node.remove(); } });', $this->Leaflet->script());
+	}
+
+	/**
+	 * @return void
+	 */
 	public function testConfigMergeDefaults(): void {
 		$config = [
 			'zoom' => 10,

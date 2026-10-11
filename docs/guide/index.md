@@ -27,7 +27,7 @@ The non-spatial distance finder supports:
 
 - MySQL
 - PostgreSQL
-- SQLite (handy for quick local testing)
+- SQLite built with its SQL math functions enabled (`ACOS`, `COS`, `SIN`, `RADIANS` and `PI`)
 
 ## The pieces
 
@@ -38,7 +38,7 @@ The non-spatial distance finder supports:
 | [Calculator](/geocoder/calculator) / [Geo calculator](/geocoder/geo-calculator) | Distance math, coordinate blurring, unit conversion, and central-point calculation. |
 | [GeoJSON value objects](/geometry/) | Lightweight `Point`, `Polygon`, `Feature`, and `FeatureCollection` types. |
 | [Map helpers](/helpers/google-map) | Google Maps, Leaflet, and static-map rendering for your views. |
-| [GeocodedAddresses cache](/model/) | Optional table that caches geocoding API calls to avoid rate limits. |
+| [GeocodedAddresses cache](/model/) | Optional table that reuses geocoding results to reduce repeated API calls. |
 
 ## Demo
 

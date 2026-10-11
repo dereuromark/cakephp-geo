@@ -48,7 +48,7 @@ using the built-in provider constants.
 |----------|---------|-------|
 | Google Maps | Required | Default |
 | Nominatim | No for the public OSM endpoint | Follow the [service usage policy](https://operations.osmfoundation.org/policies/nominatim/) |
-| Geoapify | Required | Good alternative |
+| Geoapify | Required | Configure your account credentials |
 | Null | No | For testing |
 
 ### Using provider constants
@@ -154,7 +154,7 @@ distances come first.
 
 ::: warning
 You need to geocode all your data first. On-the-fly geocoding is not an option
-for pagination and compatible datasets. The spatial finder reports kilometers regardless of the non-spatial `unit` setting. Its bounding box is an approximation and does not wrap the antimeridian; use another query strategy near that boundary.
+for pagination and larger datasets. This non-spatial finder uses the configured `unit`.
 :::
 
 ### Using the coordinates value object
@@ -282,7 +282,7 @@ $query = $this->Addresses->find('spatial', lat: 13.3, lng: 19.2, distance: 100);
 ```
 
 ::: info
-The current SQL uses MySQL/MariaDB spatial functions and a column named `coordinates`. It is not compatible with PostGIS: PostgreSQL uses different function names and signatures. Create the geometry column and its index yourself; the plugin migration does not add them.
+The current SQL uses MySQL/MariaDB spatial functions and a column named `coordinates`. It is not compatible with PostGIS: PostgreSQL uses different function names and signatures. Create the geometry column and its index yourself; the plugin migration does not add them. The generated points use SRID 0 with X as longitude and Y as latitude, so the column and stored points must use the same SRID.
 :::
 
 The finder uses a bounding-box pre-filter with `ST_Within()` to leverage spatial

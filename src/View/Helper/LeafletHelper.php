@@ -328,6 +328,7 @@ class LeafletHelper extends Helper {
 
 		$map .= '
 		var ' . $this->name() . ' = L.map("' . $this->_runtimeConfig['div']['id'] . '", ' . $this->_mapOptions() . ');
+		' . $this->name() . '.getContainer().childNodes.forEach(function(node) { if (node.nodeType === 3) { node.remove(); } });
 		' . $this->name() . '.setView([' . $this->_runtimeConfig['map']['lat'] . ', ' . $this->_runtimeConfig['map']['lng'] . '], ' . $this->_runtimeConfig['map']['zoom'] . ');
 		';
 
