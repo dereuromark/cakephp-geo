@@ -17,7 +17,7 @@ abstract class AbstractStaticMapProvider implements StaticMapProviderInterface {
 	/**
 	 * @var array<string, mixed>
 	 */
-	protected array $_defaultConfig = [
+	protected array $defaultConfig = [
 		'apiKey' => null,
 		'size' => '400x300',
 		'format' => 'png',

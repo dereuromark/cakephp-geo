@@ -58,7 +58,7 @@ class GeocoderBehavior extends Behavior {
 	/**
 	 * @var array<string, mixed>
 	 */
-	protected array $_defaultConfig = [
+	protected array $defaultConfig = [
 		'address' => null,
 		'allowEmpty' => true,
 		'expect' => [],
@@ -124,17 +124,17 @@ class GeocoderBehavior extends Behavior {
 		parent::__construct($table, $config + $defaults);
 
 		// BC shim, will be removed in next major
-		if (!empty($this->_config['formatted_address'])) {
-			$this->_config['formattedAddress'] = $this->_config['formatted_address'];
+		if (!empty($this->config['formatted_address'])) {
+			$this->config['formattedAddress'] = $this->config['formatted_address'];
 		}
 
 		// Bug in core about merging keys of array values
-		if ($this->_config['address'] === null) {
-			$this->_config['address'] = ['street', 'postal_code', 'city', 'country'];
+		if ($this->config['address'] === null) {
+			$this->config['address'] = ['street', 'postal_code', 'city', 'country'];
 		}
-		$this->_table = $table;
+		$this->table = $table;
 
-		$this->_Geocoder = new Geocoder($this->_config);
+		$this->_Geocoder = new Geocoder($this->config);
 	}
 
 	/**
@@ -149,8 +149,8 @@ class GeocoderBehavior extends Behavior {
 	 * @return void
 	 */
 	public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void {
-		if ($this->_config['on'] === 'beforeMarshal') {
-			$addressFields = (array)$this->_config['address'];
+		if ($this->config['on'] === 'beforeMarshal') {
+			$addressFields = (array)$this->config['address'];
 
 			$addressData = [];
 			foreach ($addressFields as $field) {
@@ -173,7 +173,7 @@ class GeocoderBehavior extends Behavior {
 	 * @return void
 	 */
 	public function afterMarshal(EventInterface $event, EntityInterface $entity): void {
-		if ($this->_config['on'] === 'afterMarshal' && !$this->geocode($entity)) {
+		if ($this->config['on'] === 'afterMarshal' && !$this->geocode($entity)) {
 			$event->setResult(false);
 			$event->stopPropagation();
 		}
@@ -186,7 +186,7 @@ class GeocoderBehavior extends Behavior {
 	 * @return void
 	 */
 	public function beforeRules(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
-		if ($this->_config['on'] === 'beforeRules' && !$this->geocode($entity)) {
+		if ($this->config['on'] === 'beforeRules' && !$this->geocode($entity)) {
 			$event->setResult(false);
 			$event->stopPropagation();
 		}
@@ -199,7 +199,7 @@ class GeocoderBehavior extends Behavior {
 	 * @return void
 	 */
 	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
-		if ($this->_config['on'] === 'beforeSave' && !$this->geocode($entity)) {
+		if ($this->config['on'] === 'beforeSave' && !$this->geocode($entity)) {
 			$event->setResult(false);
 			$event->stopPropagation();
 		}
@@ -213,17 +213,17 @@ class GeocoderBehavior extends Behavior {
 	 * @return \Geo\Model\Entity\GeocodedAddress|null
 	 */
 	public function geocode(EntityInterface $entity) {
-		$latField = $this->_config[static::OPTION_LAT];
-		$lngField = $this->_config[static::OPTION_LNG];
+		$latField = $this->config[static::OPTION_LAT];
+		$lngField = $this->config[static::OPTION_LNG];
 
 		if (
-			!$this->_config['overwrite'] &&
+			!$this->config['overwrite'] &&
 			is_numeric($entity->{$latField}) && is_numeric($entity->{$lngField})
 		) {
 			return $entity;
 		}
 
-		$addressFields = (array)$this->_config['address'];
+		$addressFields = (array)$this->config['address'];
 
 		$addressData = [];
 		$dirty = false;
@@ -248,7 +248,7 @@ class GeocoderBehavior extends Behavior {
 
 		if (!$dirty) {
 			if (
-				$this->_config['allowEmpty'] ||
+				$this->config['allowEmpty'] ||
 				(is_numeric($entity->{$latField}) && is_numeric($entity->{$lngField}))
 			) {
 				return $entity;
@@ -278,7 +278,7 @@ class GeocoderBehavior extends Behavior {
 
 		$search = implode(' ', $addressData);
 		if ($search === '') {
-			if (!$this->_config['allowEmpty']) {
+			if (!$this->config['allowEmpty']) {
 				return null;
 			}
 
@@ -287,7 +287,7 @@ class GeocoderBehavior extends Behavior {
 
 		$address = $this->_execute($search);
 		if (!$address) {
-			if ($this->_config['allowEmpty']) {
+			if ($this->config['allowEmpty']) {
 				return $entity;
 			}
 			if ($entity instanceof Entity) {
@@ -298,7 +298,7 @@ class GeocoderBehavior extends Behavior {
 		}
 
 		if (!$this->_Geocoder->isExpectedType($address)) {
-			if ($this->_config['allowEmpty']) {
+			if ($this->config['allowEmpty']) {
 				return $entity;
 			}
 			if ($entity instanceof Entity) {
@@ -311,22 +311,22 @@ class GeocoderBehavior extends Behavior {
 		$coordinates = $address->getCoordinates();
 		if ($coordinates) {
 			// Valid lat/lng found
-			$entityData[$this->_config['lat']] = $coordinates->getLatitude();
-			$entityData[$this->_config['lng']] = $coordinates->getLongitude();
+			$entityData[$this->config['lat']] = $coordinates->getLatitude();
+			$entityData[$this->config['lng']] = $coordinates->getLongitude();
 		}
 
-		if (!empty($this->_config['formattedAddress'])) {
+		if (!empty($this->config['formattedAddress'])) {
 			// Unfortunately, the formatted address of google is lost
 			$formatter = new StringFormatter();
-			$entityData[$this->_config['formattedAddress']] = $formatter->format($address, $this->_config['addressFormat']);
+			$entityData[$this->config['formattedAddress']] = $formatter->format($address, $this->config['addressFormat']);
 		}
 
 		$geocodedData = $address->toArray();
 		$entityData['geocoder_result'] = $geocodedData;
 		$entityData['geocoder_result']['address_data'] = implode(' ', $addressData);
 
-		if (!empty($this->_config['update'])) {
-			foreach ($this->_config['update'] as $key => $field) {
+		if (!empty($this->config['update'])) {
+			foreach ($this->config['update'] as $key => $field) {
 				if (!empty($geocodedData[$key])) {
 					$entityData[$field] = $geocodedData[$key];
 				}
@@ -483,16 +483,16 @@ class GeocoderBehavior extends Behavior {
 	 */
 	public function distanceExpr($lat, $lng, $fieldLat = null, $fieldLng = null, $tableName = null) {
 		if ($fieldLat === null) {
-			$fieldLat = $this->_config['lat'];
+			$fieldLat = $this->config['lat'];
 		}
 		if ($fieldLng === null) {
-			$fieldLng = $this->_config['lng'];
+			$fieldLng = $this->config['lng'];
 		}
 		if ($tableName === null) {
-			$tableName = $this->_table->getAlias();
+			$tableName = $this->table->getAlias();
 		}
 
-		$value = $this->_calculationValue($this->_config['unit']);
+		$value = $this->_calculationValue($this->config['unit']);
 
 		$op = function ($type, $params) {
 			return new QueryExpression($params, [], $type);
@@ -537,13 +537,13 @@ class GeocoderBehavior extends Behavior {
 	 */
 	public function distanceConditions($distance = null, $fieldName = null, $fieldLat = null, $fieldLng = null, $tableName = null) {
 		if ($fieldLat === null) {
-			$fieldLat = $this->_config['lat'];
+			$fieldLat = $this->config['lat'];
 		}
 		if ($fieldLng === null) {
-			$fieldLng = $this->_config['lng'];
+			$fieldLng = $this->config['lng'];
 		}
 		if ($tableName === null) {
-			$tableName = $this->_table->getAlias();
+			$tableName = $this->table->getAlias();
 		}
 
 		// Validate field and table names to prevent SQL injection
@@ -586,7 +586,7 @@ class GeocoderBehavior extends Behavior {
 	 */
 	public function distanceField($lat, $lng, $fieldName = null, $tableName = null) {
 		if ($tableName === null) {
-			$tableName = $this->_table->getAlias();
+			$tableName = $this->table->getAlias();
 		}
 		$fieldName = (empty($fieldName) ? 'distance' : $fieldName);
 
@@ -669,7 +669,7 @@ class GeocoderBehavior extends Behavior {
 
 			if ($result) {
 				$formatter = new StringFormatter();
-				$addressEntity->formatted_address = $formatter->format($result, $this->_config['addressFormat']);
+				$addressEntity->formatted_address = $formatter->format($result, $this->config['addressFormat']);
 				$coordinates = $result->getCoordinates();
 				if ($coordinates) {
 					$addressEntity->lat = $coordinates->getLatitude();
@@ -755,12 +755,12 @@ class GeocoderBehavior extends Behavior {
 	 * @return void
 	 */
 	protected function invalidate($entity) {
-		$errorMessage = $this->_config['validationError'] ?? __d('geo', 'Could not geocode this address. Please refine.');
+		$errorMessage = $this->config['validationError'] ?? __d('geo', 'Could not geocode this address. Please refine.');
 		if ($errorMessage === false) {
 			return;
 		}
 
-		$fields = (array)$this->_config['address'];
+		$fields = (array)$this->config['address'];
 		foreach ($fields as $field) {
 			if (!is_array($errorMessage)) {
 				$entity->setError($field, $errorMessage);

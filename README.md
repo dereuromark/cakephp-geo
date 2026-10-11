@@ -1,9 +1,9 @@
 # CakePHP Geo Plugin
 
-[![CI](https://github.com/dereuromark/cakephp-geo/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/dereuromark/cakephp-geo/actions/workflows/ci.yml?query=branch%3Amaster)
+[![CI](https://github.com/dereuromark/cakephp-geo/actions/workflows/ci.yml/badge.svg?branch=cake6)](https://github.com/dereuromark/cakephp-geo/actions/workflows/ci.yml?query=branch%3Acake6)
 [![codecov](https://codecov.io/gh/dereuromark/cakephp-geo/branch/master/graph/badge.svg)](https://codecov.io/gh/dereuromark/cakephp-geo/tree/master)
 [![Latest Stable Version](https://poser.pugx.org/dereuromark/cakephp-geo/v/stable.svg)](https://packagist.org/packages/dereuromark/cakephp-geo)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%208.2-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%208.5-8892BF.svg)](https://php.net/)
 [![License](https://poser.pugx.org/dereuromark/cakephp-geo/license.svg)](LICENSE)
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-purple.svg?style=flat-square)](https://github.com/php-fig-rectified/fig-rectified-standards)
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-geo/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-geo)
@@ -43,3 +43,5 @@ A few good entry points:
 * [Map helpers](https://dereuromark.github.io/cakephp-geo/helpers/google-map)
 
 The Markdown sources live in the [docs](docs/) directory of this repository.
+
+The `cake6` development branch targets CakePHP 6. Use `master` for CakePHP 5 applications.

@@ -139,7 +139,7 @@ class Geocoder {
 	/**
 	 * @var array<string, mixed>
 	 */
-	protected array $_defaultConfig = [
+	protected array $defaultConfig = [
 		'locale' => null, // For GoogleMaps provider
 		'region' => null, // For GoogleMaps provider
 		'ssl' => true, // For GoogleMaps provider
@@ -273,10 +273,10 @@ class Geocoder {
 			throw new RuntimeException(sprintf('Problem with API key %s: %s', $hint, $e->getMessage()), 0, $e);
 		}
 
-		if (!$this->_config['allowInconclusive'] && !$this->isConclusive($result)) {
+		if (!$this->config['allowInconclusive'] && !$this->isConclusive($result)) {
 			throw new InconclusiveException(sprintf('Inconclusive result (total of %s)', $result->count()));
 		}
-		if ($this->_config['minAccuracy'] && !$this->containsAccurateEnough($result)) {
+		if ($this->config['minAccuracy'] && !$this->containsAccurateEnough($result)) {
 			throw new NotAccurateEnoughException('Result is not accurate enough');
 		}
 
@@ -300,10 +300,10 @@ class Geocoder {
 
 		$result = $this->executeReverse($lat, $lng);
 
-		if (!$this->_config['allowInconclusive'] && !$this->isConclusive($result)) {
+		if (!$this->config['allowInconclusive'] && !$this->isConclusive($result)) {
 			throw new InconclusiveException(sprintf('Inconclusive result (total of %s)', $result->count()));
 		}
-		if ($this->_config['minAccuracy'] && !$this->containsAccurateEnough($result)) {
+		if ($this->config['minAccuracy'] && !$this->containsAccurateEnough($result)) {
 			throw new NotAccurateEnoughException('Result is not accurate enough');
 		}
 
@@ -366,7 +366,7 @@ class Geocoder {
 	 * @return bool
 	 */
 	public function isExpectedType(Location $address) {
-		$expected = $this->_config['expect'];
+		$expected = $this->config['expect'];
 		if (!$expected) {
 			return true;
 		}
@@ -453,7 +453,7 @@ class Geocoder {
 	 * @return bool
 	 */
 	public function isAccurateEnough(Location $address) {
-		$expected = $this->_config['minAccuracy'];
+		$expected = $this->config['minAccuracy'];
 		if (!$expected) {
 			return true;
 		}
