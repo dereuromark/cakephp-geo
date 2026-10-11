@@ -1,38 +1,35 @@
 # Calculator
 
-The `Calculator` class provides distance math and coordinate utilities.
+`Geo\Geocoder\Calculator` provides coordinate distance calculations and unit conversion. These operations do not make external requests.
 
-## Distance calculation
-
-```php
-$calculator = new \Geo\Geocoder\Calculator();
-$distance = $calculator->distance(array $pointX, array $pointY);
-```
-
-Distance in miles instead:
+## Distance
 
 ```php
-$calculator = new \Geo\Geocoder\Calculator();
-$distance = $calculator->distance(array $pointX, array $pointY, Calculator::UNIT_MILES);
+use Geo\Geocoder\Calculator;
+
+$calculator = new Calculator();
+$vienna = ['lat' => 48.2082, 'lng' => 16.3738];
+$berlin = ['lat' => 52.5200, 'lng' => 13.4050];
+$kilometers = $calculator->distance($vienna, $berlin);
+$miles = $calculator->distance($vienna, $berlin, Calculator::UNIT_MILES);
 ```
+
+The result is rounded to an integer. The default unit is kilometers unless overridden in calculator configuration. Both points use `lat` and `lng` keys.
 
 ## Blur coordinates
 
-The idea is to protect the user's exact coordinates by blurring them to a
-certain degree.
-
 ```php
-$calculator = new \Geo\Geocoder\Calculator();
-$blurred = $calculator->blur($float, 2);
+$blurredLatitude = Calculator::blur(48.2082, 2);
 ```
 
-## Convert distances
+Blurring adds random displacement according to the selected level. It does not establish anonymity or guarantee a particular privacy boundary. Check whether the displacement is suitable for your application.
+
+## Convert units
 
 ```php
-$calculator = new \Geo\Geocoder\Calculator();
-$newDistance = $calculator->convert($value, $fromUnit, $toUnit);
+$kilometers = $calculator->convert(10.0, Calculator::UNIT_MILES, Calculator::UNIT_KM);
 ```
 
-## See also
+Supported constants include kilometers, miles, nautical miles, feet, and inches. Unsupported units throw a calculator exception.
 
-- [Geo calculator](./geo-calculator) — central-point calculation across many coordinates.
+For the center of multiple coordinates, see [Geo Calculator](./geo-calculator).

@@ -15,22 +15,22 @@ $this->addBehavior('Geo.Geocoder', $config);
 
 Possible config options are:
 
-- `apiKey` — mandatory for some providers.
-- `locale` — for example `DE`.
-- `region` — for some providers.
-- `ssl` — for some providers.
-- `address` — (array|string, optional) the field name that contains the address
+- `apiKey`; mandatory for some providers.
+- `locale`; for example `DE`.
+- `region`; for some providers.
+- `ssl`; for some providers.
+- `address`; (array|string, optional) the field name that contains the address
   string, or a set of field names to concatenate.
-- `overwrite` — lat/lng overwrite existing coordinates; defaults to `true`.
-- `update` — which fields to update (key/value array pairs).
-- `on` — `beforeMarshal` / `afterMarshal` / `beforeSave` (defaults to
+- `overwrite`; lat/lng overwrite existing coordinates; defaults to `true`.
+- `update`; which fields to update (key/value array pairs).
+- `on`; `beforeMarshal` / `afterMarshal` / `beforeSave` (defaults to
   `beforeSave`). Set to `false` if you only want to use the validation rules.
-- `unit` — defaults to km.
-- `allowInconclusive` — `false` to throw an exception.
-- `minAccuracy` — one of the `Geocoder::TYPE_*` constants.
-- `expect` — (array) `postal_code`, `locality`, `sublocality`, ...
-- `addressFormat` — defaults to `'%S %n, %z %L'`.
-- `lat` / `lng` — to customize these field names.
+- `unit`; defaults to km.
+- `allowInconclusive`; `false` to throw an exception.
+- `minAccuracy`; one of the `Geocoder::TYPE_*` constants.
+- `expect`; (array) `postal_code`, `locality`, `sublocality`, ...
+- `addressFormat`; defaults to `'%S %n, %z %L'`.
+- `lat` / `lng`; to customize these field names.
 
 ::: tip
 It is usually better to set global configs in your `app.php` using the
@@ -46,9 +46,9 @@ using the built-in provider constants.
 
 | Provider | API Key | Notes |
 |----------|---------|-------|
-| Google Maps | Required | Default, most reliable |
+| Google Maps | Required | Default |
 | Nominatim | No | Free, OpenStreetMap-based |
-| Geoapify | Required (free tier) | Good alternative |
+| Geoapify | Required | Good alternative |
 | Null | No | For testing |
 
 ### Using provider constants
@@ -102,8 +102,8 @@ use Cake\Http\Client;
 See the [geocoder-php/Geocoder](https://github.com/geocoder-php/Geocoder)
 library for the other providers you can use. You can choose from:
 
-- 12+ address-based geocoder providers
-- 10+ IP-based geocoder providers
+- address-based geocoder providers
+- IP-based geocoder providers
 
 ::: warning
 Most providers need an API key to work.
@@ -128,7 +128,7 @@ You can always call `geocode()` manually as well:
 ```php
 $address = $this->Addresses->get($id);
 // $address contains an address with the value `Berlin`
-$this->Addresses->geocode($address);
+$this->Addresses->getBehavior('Geocoder')->geocode($address);
 
 // These should both be set now
 $lat = $address->lat;
@@ -154,7 +154,7 @@ distances come first.
 
 ::: warning
 You need to geocode all your data first. On-the-fly geocoding is not an option
-for pagination and larger datasets.
+for pagination and compatible datasets. The spatial finder reports kilometers regardless of the non-spatial `unit` setting. Its bounding box is an approximation and does not wrap the antimeridian; use another query strategy near that boundary.
 :::
 
 ### Using the coordinates value object
@@ -220,13 +220,13 @@ and wrap the following in a CakePHP console command:
 ```php
 // Geocoder behavior must already be added to the Table class object
 $addressTable->addBehavior('Tools.Reset', $config);
-$addressTable->resetRecords();
+$addressTable->getBehavior('Reset')->resetRecords();
 ```
 
 This loops over all records as a batch and updates all lat/lng values.
 
 ::: tip
-Set a scope for performance reasons — maybe update only records older than a few
+Set a scope for performance reasons; maybe update only records older than a few
 months, or those with `null` lat/lng to avoid re-geocoding. Throttle your batch
 runs too: most providers only allow a limited number of requests per minute.
 Don't over-request, to avoid penalties.
@@ -247,7 +247,7 @@ the stored geocoded addresses (cache):
 /admin/geo
 ```
 
-You can test the geocoding there and remove cache data where needed.
+The backend requires the cache migration and provider configuration. Protect the admin prefix through application authentication and authorization; the plugin does not supply these access rules.
 
 ## Testing
 
@@ -265,8 +265,7 @@ Configure::write('Geocoder.provider', fn () => new NullProvider());
 ```
 
 This ensures all tests use the `NullProvider` instead of making real API calls.
-The behavior handles empty results gracefully when `allowEmpty` is `true` (the
-default).
+The behavior handles empty results when `allowEmpty` is `true` (the default). Standalone geocoder calls with the default accuracy threshold can throw for an empty result; disable `minAccuracy` for an explicit empty-result test.
 
 ## Providers
 
@@ -279,24 +278,19 @@ You can also use the `spatial` finder, treating coordinates as a POINT instead
 of lat/lng:
 
 ```php
-$query = $this->Addresses->find('spatial', [
-    'lat' => 13.3,
-    'lng' => 19.2,
-    'distance' => 100,
-]);
+$query = $this->Addresses->find('spatial', lat: 13.3, lng: 19.2, distance: 100);
 ```
 
 ::: info
-This only works with PostGIS and MySQL 5.7+ (and MariaDB 10.4+) databases, as
-they support spatial data types.
+The current SQL uses MySQL/MariaDB spatial functions and a column named `coordinates`. It is not compatible with PostGIS: PostgreSQL uses different function names and signatures. Create the geometry column and its index yourself; the plugin migration does not add them.
 :::
 
 The finder uses a bounding-box pre-filter with `ST_Within()` to leverage spatial
 indexes, then refines results with `ST_Distance_Sphere()` for accurate distance
 calculations. This approach provides significant performance improvements on
-larger datasets.
+compatible datasets. The spatial finder reports kilometers regardless of the non-spatial `unit` setting. Its bounding box is an approximation and does not wrap the antimeridian; use another query strategy near that boundary.
 
 ## See also
 
-- [Search integration](./search) — wire distance searches into FriendsOfCake/search.
-- [GeocodedAddresses cache](/model/) — cache geocoding API calls.
+- [Search integration](./search); wire distance searches into FriendsOfCake/search.
+- [GeocodedAddresses cache](/model/); cache geocoding API calls.

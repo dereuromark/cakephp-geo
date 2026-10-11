@@ -11,25 +11,19 @@ for CakePHP. It lets you:
 - Render JavaScript-free static maps from multiple providers (Geoapify, Mapbox,
   Stadia, Google).
 
-::: info CakePHP version
-This documentation is for the branch that supports **CakePHP 5.1+**. See the
-[version map](https://github.com/dereuromark/cakephp-geo/wiki#cakephp-version-map)
-for older releases.
-:::
+[Installation](./installation) covers packages and plugin loading. [Getting started](./getting-started) renders a map without an API key or database migration. [Composer](https://github.com/dereuromark/cakephp-geo/blob/master/composer.json) defines supported runtime versions.
 
 ## How it works
 
-Under the hood the plugin uses the
-[willdurand/geocoder](https://github.com/geocoder-php/Geocoder) library, so it
-supports a wide range of providers:
+The geocoding features use the
+[willdurand/geocoder](https://github.com/geocoder-php/Geocoder) library, through optional provider packages:
 
-- 12+ address-based geocoder providers
-- 10+ IP-based geocoder providers
+- address-based geocoder providers
+- IP-based geocoder providers
 
-Most of them also support reverse geocoding, and you can always write your own
-provider on top.
+Reverse-geocoding support depends on the selected provider. Custom providers can implement the plugin interface.
 
-The plugin works across the common database engines:
+The non-spatial distance finder supports:
 
 - MySQL
 - PostgreSQL
@@ -53,6 +47,6 @@ for live demos of the map helpers and the Geocoder behavior.
 
 ## Next steps
 
-- [Installation](./installation) — install the plugin and load it.
-- [Geocoder behavior](/behavior/) — geocode your entity data automatically.
-- [Map helpers](/helpers/google-map) — render maps in your views.
+- [Installation](./installation); install the plugin and load it.
+- [Geocoder behavior](/behavior/); geocode your entity data automatically.
+- [Map helpers](/helpers/google-map); render maps in your views.

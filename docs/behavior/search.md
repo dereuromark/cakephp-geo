@@ -17,14 +17,14 @@ for it:
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\TableRegistry;
 
-->callback('locality_search', [
+$this->searchManager()->callback('locality_search', [
     'callback' => function (SelectQuery $query, array $args, $filter): bool {
         if (empty($args['locality_search'])) {
             return false;
         }
         $GeocodedAddresses = TableRegistry::getTableLocator()->get('Geo.GeocodedAddresses');
         $address = $GeocodedAddresses->retrieve($args['locality_search']);
-        if ($address && $address->lat && $address->lng) {
+        if ($address && $address->lat !== null && $address->lng !== null) {
             $query->find('distance', ...[
                 'lat' => $address->lat,
                 'lng' => $address->lng,
@@ -45,11 +45,11 @@ The `tableName` is only relevant if the geocoding fields live on a `belongsTo`
 relation (here `Participants belongsTo Event`).
 
 ::: tip
-Callback filters must return a `bool` — modify the query in place and return
+Callback filters must return a `bool`; modify the query in place and return
 `true` when the filter was applied, `false` otherwise.
 :::
 
 ## See also
 
-- [Geocoder behavior](/behavior/) — the distance finder used above.
-- [GeocodedAddresses cache](/model/) — the `retrieve()` lookup used here.
+- [Geocoder behavior](/behavior/); the distance finder used above.
+- [GeocodedAddresses cache](/model/); the `retrieve()` lookup used here.

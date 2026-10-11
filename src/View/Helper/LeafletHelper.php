@@ -94,7 +94,7 @@ class LeafletHelper extends Helper {
 	 */
 	protected array $tilePresets = [
 		'osm' => [
-			'url' => 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+			'url' => 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
 			'options' => [
 				'attribution' => '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
 				'maxZoom' => 19,
@@ -144,7 +144,7 @@ class LeafletHelper extends Helper {
 			'defaultZoom' => 5,
 		],
 		'tileLayer' => [
-			'url' => 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+			'url' => 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
 			'options' => [
 				'attribution' => '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
 				'maxZoom' => 19,

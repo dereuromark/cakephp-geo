@@ -96,7 +96,7 @@ class LeafletHelperTest extends TestCase {
 		$expected = 'map0.setView([48.2082, 16.3738], 10)';
 		$this->assertTextContains($expected, $result);
 
-		$expected = 'L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"';
+		$expected = 'L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png"';
 		$this->assertTextContains($expected, $result);
 	}
 

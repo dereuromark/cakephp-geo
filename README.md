@@ -16,13 +16,7 @@ A CakePHP plugin to
 - display Leaflet maps (open-source alternative)
 - display static maps from multiple providers (Geoapify, Mapbox, Stadia, Google)
 
-This branch is for **CakePHP 5.1+**. See [version map](https://github.com/dereuromark/cakephp-geo/wiki#cakephp-version-map) for details.
-
-Note that it uses the [willdurand/geocoder](https://github.com/geocoder-php/Geocoder) library and therefore supports
-- 12+ address-based Geocoder providers
-- 10+ IP-based Geocoder providers
-
-Most of them also support reverse geocoding. And of course you can write your own providers on top.
+[Composer](composer.json) defines supported PHP and CakePHP versions. Geocoding needs an optional provider package; map helpers and coordinate calculations can be used separately.
 
 Also:
 - MySQL support
@@ -43,8 +37,8 @@ Full documentation lives at **[dereuromark.github.io/cakephp-geo](https://dereur
 
 A few good entry points:
 
-* [Getting started](https://dereuromark.github.io/cakephp-geo/guide/)
 * [Installation](https://dereuromark.github.io/cakephp-geo/guide/installation)
+* [Getting started](https://dereuromark.github.io/cakephp-geo/guide/getting-started)
 * [Geocoder behavior](https://dereuromark.github.io/cakephp-geo/behavior/)
 * [Map helpers](https://dereuromark.github.io/cakephp-geo/helpers/google-map)
 

@@ -96,4 +96,4 @@ $this->Leaflet->addPolygon($polygon, [
 
 ## See also
 
-- [Leaflet helper](/helpers/leaflet) — render these objects on an interactive map.
+- [Leaflet helper](/helpers/leaflet); render these objects on an interactive map.

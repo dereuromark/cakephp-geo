@@ -32,7 +32,7 @@ use RuntimeException;
  *
  * Note that your lat/lng fields should be of type "float(10,6) DEFAULT NULL".
  * NULL as default is important as invalid or not found addresses should result in NULL
- * instead of 0.0 (which is a truthy value!).
+ * instead of 0.0, which is a valid latitude or longitude.
  * If you need 0.0, cast it in your beforeSave() callback.
  *
  * @author Mark Scherer
@@ -632,9 +632,10 @@ class GeocoderBehavior extends Behavior {
 	 * @return \Geocoder\Location|null
 	 */
 	protected function _execute(string $address) {
-		/** @var \Geo\Model\Table\GeocodedAddressesTable $GeocodedAddresses */
-		$GeocodedAddresses = TableRegistry::getTableLocator()->get('Geo.GeocodedAddresses');
+		$GeocodedAddresses = null;
 		if ($this->getConfig('cache')) {
+			/** @var \Geo\Model\Table\GeocodedAddressesTable $GeocodedAddresses */
+			$GeocodedAddresses = TableRegistry::getTableLocator()->get('Geo.GeocodedAddresses');
 			/** @var \Geo\Model\Entity\GeocodedAddress|null $result */
 			$result = $GeocodedAddresses->find()->where(['address' => $address])->first();
 			if ($result) {
@@ -662,7 +663,7 @@ class GeocoderBehavior extends Behavior {
 			$result = $addresses->first();
 		}
 
-		if ($this->getConfig('cache')) {
+		if ($GeocodedAddresses !== null) {
 			$addressEntity = $GeocodedAddresses->newEntity([
 				'address' => $address,
 			]);
@@ -787,10 +788,14 @@ class GeocoderBehavior extends Behavior {
 			$options[static::OPTION_LNG] = $coordinates->getLongitude();
 		}
 
-		if (empty($options[static::OPTION_LAT]) || empty($options[static::OPTION_LNG])) {
-			$error = sprintf('Fields %s or %s value object are missing.', static::OPTION_LNG . '/' . static::OPTION_LNG, static::OPTION_COORDINATES);
+		if (!isset($options[static::OPTION_LAT], $options[static::OPTION_LNG])) {
+			$error = sprintf('Fields %s or %s value object are missing.', static::OPTION_LAT . '/' . static::OPTION_LNG, static::OPTION_COORDINATES);
 
 			throw new InvalidArgumentException($error);
+		}
+
+		if (!is_finite($options[static::OPTION_LAT]) || !is_finite($options[static::OPTION_LNG])) {
+			throw new InvalidArgumentException('Latitude and longitude must be finite numbers.');
 		}
 
 		if ($options[static::OPTION_LAT] < -90 || $options[static::OPTION_LAT] > 90 || $options[static::OPTION_LNG] < -180 || $options[static::OPTION_LNG] > 180) {

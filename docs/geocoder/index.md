@@ -13,7 +13,7 @@ use Geo\Geocoder\Geocoder;
 $Geocoder = new Geocoder(['allowInconclusive' => true, 'minAccuracy' => Geocoder::TYPE_POSTAL]);
 $addresses = $Geocoder->geocode($address);
 
-if (!empty($addresses)) {
+if ($addresses->count() > 0) {
     $address = $addresses->first();
 }
 ```
@@ -40,10 +40,12 @@ constants to specify which one to use:
 
 | Provider | API Key | Notes |
 |----------|---------|-------|
-| Google Maps | Required | Default, most reliable |
-| Nominatim | No | Free, OpenStreetMap-based |
-| Geoapify | Required (free tier) | Good alternative |
+| Google Maps | Required | Default |
+| Nominatim | No for the public OSM endpoint | Identifying User-Agent and service policy required |
+| Geoapify | Required | Configure your Geoapify account credentials |
 | Null | No | For testing |
+
+The public Nominatim endpoint has a [usage policy](https://operations.osmfoundation.org/policies/nominatim/). Provider support does not grant unlimited requests or permission to use a public service as an automatic overflow backend.
 
 ### Using string provider names
 
@@ -53,6 +55,7 @@ use Geo\Geocoder\Geocoder;
 // Use Nominatim (OpenStreetMap)
 $geocoder = new Geocoder([
     'provider' => Geocoder::PROVIDER_NOMINATIM,
+    'nominatim' => ['userAgent' => 'MyApp/1.0 (https://example.com/contact)'],
 ]);
 
 // Use Geoapify
@@ -115,10 +118,10 @@ use Geo\Geocoder\Geocoder;
 
 The chain automatically handles:
 
-- `QuotaExceeded` — API rate limit reached.
-- `InvalidServerResponse` — server errors or timeouts.
+- `QuotaExceeded`; API rate limit reached.
+- `InvalidServerResponse`; server errors or timeouts.
 
-Other exceptions are thrown immediately without trying the next provider.
+Other exceptions are thrown immediately without trying the next provider. An empty result also ends the chain; fallback handles these exceptions, not missing matches.
 
 ### Using a callable (advanced)
 
@@ -196,5 +199,5 @@ Or use it directly via a callable:
 
 ## See also
 
-- [Geocoder behavior](/behavior/) — geocode entity data on save.
-- [Calculator](./calculator) — distance math and coordinate utilities.
+- [Geocoder behavior](/behavior/); geocode entity data on save.
+- [Calculator](./calculator); distance math and coordinate utilities.

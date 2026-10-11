@@ -1,56 +1,57 @@
 # Installation
 
-## Using Composer
+Install the plugin in your application:
 
-Installing the plugin via [Composer](https://getcomposer.org/) is as
-straightforward as with any other CakePHP plugin. Run this in your project
-folder:
-
-```bash
+```sh
 composer require dereuromark/cakephp-geo
 ```
 
-Details are on [Packagist](https://packagist.org/packages/dereuromark/cakephp-geo).
+[Composer](https://github.com/dereuromark/cakephp-geo/blob/master/composer.json) defines supported PHP and CakePHP versions.
 
 ## Load the plugin
 
-```bash
-bin/cake plugin load Geo
+In `src/Application.php`, inside `bootstrap()` after `parent::bootstrap()`:
+
+```php
+$this->addPlugin('Geo', ['routes' => false]);
 ```
 
-## Optional packages
+This loads plugin bootstrap configuration while leaving the admin backend disabled. Map helpers and coordinate calculations do not need admin routes or a database migration.
 
-Depending on which tools you use (for example geocoding), you might need
-additional packages.
+## Optional geocoding packages
 
-For using Google Maps as a concrete adapter, you might also need:
+Address lookup needs a provider package in addition to the plugin. Select a package matching your provider. For Google:
 
-```json
-"geocoder-php/provider-implementation": "^1.0",
-"geocoder-php/google-maps-provider": "^4.4.0",
+```sh
+composer require geocoder-php/google-maps-provider
 ```
 
-Alternative compatible packages can be found on
-[Packagist](https://packagist.org/providers/geocoder-php/provider-implementation).
+For Nominatim:
 
-::: tip
-Most providers need an API key to work. See the
-[Geocoder behavior](/behavior/) and [Geocoder class](/geocoder/) pages for how
-to select and configure a provider.
-:::
+```sh
+composer require geocoder-php/nominatim-provider
+```
 
-## Database setup
+These packages install their geocoder dependencies. `geocoder-php/provider-implementation` is a virtual package fulfilled by concrete providers; it is not an adapter you instantiate.
 
-Some features — such as the [GeocodedAddresses cache](/model/) — rely on a
-database table. Set it up with the
-[official migrations plugin for CakePHP](https://github.com/cakephp/migrations):
+The built-in Geoapify and Null providers use geocoder interfaces and address models. If using them without another provider package, install the core library:
 
-```bash
+```sh
+composer require willdurand/geocoder
+```
+
+Configure the chosen provider in the [Geocoder reference](/geocoder/). Google and Geoapify need credentials. For the public Nominatim service, use an identifying User-Agent and follow its [usage policy](https://operations.osmfoundation.org/policies/nominatim/).
+
+## Optional database cache
+
+Only caching and the admin cache interface need the plugin table. With CakePHP Migrations installed and loaded, run:
+
+```sh
 bin/cake migrations migrate -p Geo
 ```
 
-## Next steps
+The cache's `data` column uses JSON. Normal plugin bootstrap also registers the legacy `object` type, but the current cache does not require an additional manual type mapping.
 
-- [Geocoder behavior](/behavior/) — geocode entity data on save.
-- [Map helpers](/helpers/google-map) — render maps in your views.
-- [GeocodedAddresses cache](/model/) — cache geocoding API calls.
+## Next step
+
+[Getting started](./getting-started) renders a Leaflet map with fixed coordinates. Add geocoding or caching once that works.

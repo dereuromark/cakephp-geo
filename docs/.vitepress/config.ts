@@ -5,8 +5,9 @@ function guideSidebar() {
     {
       text: 'Guide',
       items: [
-        { text: 'Overview', link: '/guide/' },
         { text: 'Installation', link: '/guide/installation' },
+        { text: 'Getting started', link: '/guide/getting-started' },
+        { text: 'Overview', link: '/guide/' },
         { text: 'Contributing', link: '/guide/contributing' },
       ],
     },
@@ -51,7 +52,7 @@ function guideSidebar() {
 
 export default defineConfig({
   title: 'cakephp-geo',
-  description: 'Geocoding, distance queries, and map helpers for CakePHP — multiple geocoder providers, Google Maps, Leaflet, and static maps.',
+  description: 'Geocoding, distance queries, and map helpers for CakePHP; multiple geocoder providers, Google Maps, Leaflet, and static maps.',
   base: '/cakephp-geo/',
   lastUpdated: true,
   cleanUrls: true,
@@ -64,7 +65,8 @@ export default defineConfig({
   themeConfig: {
     logo: '/logo.svg',
     nav: [
-      { text: 'Guide', link: '/guide/', activeMatch: '/guide/' },
+      { text: 'Installation', link: '/guide/installation' },
+      { text: 'Getting started', link: '/guide/getting-started' },
       { text: 'Behavior', link: '/behavior/', activeMatch: '/behavior/' },
       { text: 'Geocoding', link: '/geocoder/', activeMatch: '/(geocoder|geometry|model)/' },
       { text: 'Helpers', link: '/helpers/google-map', activeMatch: '/helpers/' },

@@ -1,6 +1,6 @@
 # Leaflet Helper
 
-Using [Leaflet.js](https://leafletjs.com/) — an open-source JavaScript library
+Using [Leaflet.js](https://leafletjs.com/); an open-source JavaScript library
 for interactive maps.
 
 ## Adding the helper
@@ -26,20 +26,20 @@ You can configure this globally using Configure (for example `config/app.php`):
 
 Possible config options are:
 
-- `zoom` — uses the `defaultZoom` of 5 otherwise.
-- `lat` / `lng` — default center coordinates.
-- `block` — defaults to `true`, appending the generated JS to the `script`
+- `zoom`; uses the `defaultZoom` of 5 otherwise.
+- `lat` / `lng`; default center coordinates.
+- `block`; defaults to `true`, appending the generated JS to the `script`
   block.
-- `map` — multiple map options (`scrollWheelZoom`, `zoomControl`, `dragging`).
-- `tileLayer` — tile-layer URL and options.
-- `div` — multiple div options (`id`, `width`, `height`, `class`).
-- `marker` — multiple marker options.
-- `popup` — multiple popup options.
-- `polyline` — polyline styling options.
-- `circle` — circle styling options.
-- `polygon` — polygon styling options.
-- `autoCenter` — automatically fit bounds to all markers.
-- `autoScript` — auto-include Leaflet JS/CSS from a CDN.
+- `map`; multiple map options (`scrollWheelZoom`, `zoomControl`, `dragging`).
+- `tileLayer`; tile-layer URL and options.
+- `div`; multiple div options (`id`, `width`, `height`, `class`).
+- `marker`; multiple marker options.
+- `popup`; multiple popup options.
+- `polyline`; polyline styling options.
+- `circle`; circle styling options.
+- `polygon`; polygon styling options.
+- `autoCenter`; automatically fit bounds to all markers.
+- `autoScript`; auto-include Leaflet JS/CSS from a CDN.
 
 ## Display a basic dynamic map
 
@@ -190,7 +190,7 @@ $this->Leaflet->addTileLayer(
 ```
 
 ::: info
-This does not replace the default tile layer — it adds another one on top.
+This does not replace the default tile layer; it adds another one on top.
 :::
 
 ## Drawing shapes
@@ -364,5 +364,5 @@ $map = $this->Leaflet->map($options);
 
 ## See also
 
-- [Leaflet tile providers](./leaflet-tile-providers) — a catalog of tile sources.
-- [GeoJSON geometry](/geometry/) — the value objects used above.
+- [Leaflet tile providers](./leaflet-tile-providers); a catalog of tile sources.
+- [GeoJSON geometry](/geometry/); the value objects used above.

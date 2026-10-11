@@ -308,10 +308,8 @@ class GeocoderBehaviorTest extends TestCase {
 			->with('Missing Place')
 			->willReturn(new AddressCollection([]));
 		$behaviorReflection = new ReflectionMethod($behavior, '_execute');
-		$behaviorReflection->setAccessible(true);
 
 		$property = new ReflectionProperty($behavior, '_Geocoder');
-		$property->setAccessible(true);
 		$property->setValue($behavior, $geocoder);
 
 		$this->assertNull($behaviorReflection->invoke($behavior, 'Missing Place'));
@@ -599,6 +597,34 @@ class GeocoderBehaviorTest extends TestCase {
 	 */
 	protected function _getEntity($data) {
 		return new Entity($data);
+	}
+
+	public function testDistanceAcceptsEquatorAndPrimeMeridian(): void {
+		$query = $this->Addresses->find('distance', lat: 0.0, lng: 0.0, distance: 100);
+		$this->assertStringContainsString('distance', $query->sql());
+		$coordinates = new Coordinates(0.0, 0.0);
+		$this->assertStringContainsString('distance', $this->Addresses->find('distance', coordinates: $coordinates)->sql());
+	}
+
+	public function testDistanceRejectsNotANumber(): void {
+		$this->expectException(InvalidArgumentException::class);
+		$this->Addresses->find('distance', lat: NAN, lng: 1.0);
+	}
+
+	public function testDistanceRejectsInfinity(): void {
+		$this->expectException(InvalidArgumentException::class);
+		$this->expectExceptionMessage('Latitude and longitude must be finite numbers.');
+		$this->Addresses->find('distance', lat: 1.0, lng: INF);
+	}
+
+	public function testGeocodingWithoutCacheDoesNotLoadCacheTable(): void {
+		TableRegistry::getTableLocator()->remove('Geo.GeocodedAddresses');
+		$this->Addresses->removeBehavior('Geocoder');
+		$this->Addresses->addBehavior('Geo.Geocoder', ['provider' => Geocoder::PROVIDER_NULL, 'cache' => false]);
+		$behavior = $this->Addresses->getBehavior('Geocoder');
+		$entity = new Entity(['street' => 'Missing place']);
+		$this->assertSame($entity, $behavior->geocode($entity));
+		$this->assertFalse(TableRegistry::getTableLocator()->exists('Geo.GeocodedAddresses'));
 	}
 
 }
