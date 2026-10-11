@@ -38,7 +38,8 @@ jobs:
       - name: Setup Geography for PostgreSQL
         if: matrix.db-type == 'pgsql'
         run: |
-          sudo apt-get install postgis
+          sudo apt-get update
+          sudo apt-get install --yes postgis
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
