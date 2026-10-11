@@ -33,7 +33,7 @@ The default map container is 400 pixels tall. Coordinates passed to helpers are 
 
 ## Output the CSS and script blocks
 
-Inside the layout's `<head>`, use its existing CSS block or add:
+With the default `block => true` setting, Leaflet CSS goes into the `css` block and JavaScript goes into the `script` block. Inside the layout’s `<head>`, use its existing CSS block or add:
 
 ```php
 <?= $this->fetch('css') ?>

@@ -33,6 +33,8 @@ corresponding app config:
 $result = $Geocoder->reverse($lat, $lng);
 ```
 
+Configuration examples below are entries inside the array returned by `config/app_local.php`. Put any `use` declarations above that return statement.
+
 ## Providers
 
 The Geocoder supports multiple geocoding providers out of the box. Use provider

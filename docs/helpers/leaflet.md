@@ -44,7 +44,7 @@ Possible config options are:
 ## Display a basic dynamic map
 
 Make sure you either loaded your helper with `autoScript` enabled, or you
-manually include the Leaflet CSS and JS files.
+manually include the Leaflet CSS and JS files. Initialization also requires jQuery. See [Getting started](/guide/getting-started) for the complete layout and asset setup.
 
 ```php
 $options = [

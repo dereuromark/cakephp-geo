@@ -4,7 +4,7 @@ Geocode your entity data automatically on save.
 
 ## Adding the behavior
 
-For a quick start, see the [optional packages](/guide/installation#optional-packages)
+For a quick start, see the [optional packages](/guide/installation#optional-geocoding-packages)
 install tip.
 
 Either in your Table class or at runtime:
@@ -47,7 +47,7 @@ using the built-in provider constants.
 | Provider | API Key | Notes |
 |----------|---------|-------|
 | Google Maps | Required | Default |
-| Nominatim | No | Free, OpenStreetMap-based |
+| Nominatim | No for the public OSM endpoint | Follow the [service usage policy](https://operations.osmfoundation.org/policies/nominatim/) |
 | Geoapify | Required | Good alternative |
 | Null | No | For testing |
 
