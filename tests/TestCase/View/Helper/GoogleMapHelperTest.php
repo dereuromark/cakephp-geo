@@ -147,6 +147,25 @@ class GoogleMapHelperTest extends TestCase {
 	/**
 	 * @return void
 	 */
+	public function testZeroCoordinatesAreUsedInInfoWindow(): void {
+		$this->GoogleMap->map(['lat' => 48, 'lng' => 11]);
+		$this->GoogleMap->addInfoWindow(['lat' => 0, 'lng' => 0, 'content' => 'Origin']);
+
+		$this->assertStringContainsString('position: new google.maps.LatLng(0, 0)', $this->GoogleMap->script());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testStaticMarkersAcceptZeroCoordinates(): void {
+		$markers = $this->GoogleMap->staticMarkers(['lat' => 0, 'lng' => 0]);
+
+		$this->assertStringContainsString('0%2C0', implode('&', $markers));
+	}
+
+	/**
+	 * @return void
+	 */
 	public function testStaticPaths() {
 		$m = [
 			[

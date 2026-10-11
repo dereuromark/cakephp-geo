@@ -191,9 +191,13 @@ The helper supports Google Places Autocomplete for address input fields. This
 creates an autocomplete-enabled input with hidden fields to store the selected
 place's latitude and longitude.
 
+::: warning Legacy Places widget
+This method generates `google.maps.places.Autocomplete`. Google [restricts that widget to existing customers](https://developers.google.com/maps/documentation/javascript/reference/places-widget#Autocomplete) and recommends `PlaceAutocompleteElement` for new integrations. The helper does not wrap the new widget; follow Google’s [migration guide](https://developers.google.com/maps/documentation/javascript/places-migration-overview) when your project cannot use the legacy API.
+:::
+
 ### Basic usage
 
-First, load the helper with the `places` library:
+For a project with legacy Places access, load the helper with the `places` library:
 
 ```php
 $this->loadHelper('Geo.GoogleMap', [
