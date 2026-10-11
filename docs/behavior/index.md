@@ -235,8 +235,8 @@ Don't over-request, to avoid penalties.
 ## Validate lat/lng
 
 The methods `validateLatitude()` and `validateLongitude()` can be used to
-validate the range of those input values in your validation rules. Don't forget
-to set `'provider' => 'table'` in this case.
+validate the range of those input values. Register the behavior instance as a
+validation provider, as shown in [CakePHP 6 validation providers](#cakephp-6-validation-providers).
 
 ## Backend
 

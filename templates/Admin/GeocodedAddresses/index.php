@@ -49,10 +49,10 @@ $cspNonce = (string)$this->getRequest()->getAttribute('cspNonce', '');
                 <td><?= h($geocodedAddress->country) ?></td>
                 <td><?= $geocodedAddress->lat && $geocodedAddress->lng ? $this->Number->format($geocodedAddress->lat) . ' / ' . $this->Number->format($geocodedAddress->lng) : '-' ?></td>
                 <td class="actions">
-                <?= $this->Html->link(Plugin::isLoaded('Tools') ? $this->Icon->render('view') : __d('geo', 'View'), ['action' => 'view', $geocodedAddress->id], ['escapeTitle' => false]); ?>
-                <?= $this->Html->link(Plugin::isLoaded('Tools') ? $this->Icon->render('edit') : __d('geo', 'Edit'), ['action' => 'edit', $geocodedAddress->id], ['escapeTitle' => false]); ?>
+                <?= $this->Html->link(Plugin::isLoaded('Tools') ? $this->Icon->render('view') : __d('geo', 'View'), ['action' => 'view', $geocodedAddress->id], ['escape' => false]); ?>
+                <?= $this->Html->link(Plugin::isLoaded('Tools') ? $this->Icon->render('edit') : __d('geo', 'Edit'), ['action' => 'edit', $geocodedAddress->id], ['escape' => false]); ?>
                 <?= $this->Form->postButton(Plugin::isLoaded('Tools') ? $this->Icon->render('delete') : __d('geo', 'Delete'), ['action' => 'delete', $geocodedAddress->id], [
-                    'escapeTitle' => false,
+                    'escape' => false,
                     'class' => 'btn btn-link p-0 align-baseline',
                     'form' => [
                         'class' => 'd-inline',
