@@ -50,10 +50,10 @@ class ChainProviderTest extends TestCase {
 	 */
 	public function testRequiresApiKeyAllRequire(): void {
 		$provider1 = $this->createMock(GeocodingProviderInterface::class);
-		$provider1->method('requiresApiKey')->willReturn(true);
+		$provider1->expects($this->once())->method('requiresApiKey')->willReturn(true);
 
 		$provider2 = $this->createMock(GeocodingProviderInterface::class);
-		$provider2->method('requiresApiKey')->willReturn(true);
+		$provider2->expects($this->once())->method('requiresApiKey')->willReturn(true);
 
 		$chain = new ChainProvider([$provider1, $provider2]);
 
@@ -65,10 +65,10 @@ class ChainProviderTest extends TestCase {
 	 */
 	public function testRequiresApiKeyOneDoesNot(): void {
 		$provider1 = $this->createMock(GeocodingProviderInterface::class);
-		$provider1->method('requiresApiKey')->willReturn(true);
+		$provider1->expects($this->once())->method('requiresApiKey')->willReturn(true);
 
 		$provider2 = $this->createMock(GeocodingProviderInterface::class);
-		$provider2->method('requiresApiKey')->willReturn(false);
+		$provider2->expects($this->once())->method('requiresApiKey')->willReturn(false);
 
 		$chain = new ChainProvider([$provider1, $provider2]);
 
@@ -84,7 +84,7 @@ class ChainProviderTest extends TestCase {
 		]);
 
 		$provider1 = $this->createMock(GeocodingProviderInterface::class);
-		$provider1->method('geocode')->willReturn($expectedResult);
+		$provider1->expects($this->once())->method('geocode')->willReturn($expectedResult);
 
 		$provider2 = $this->createMock(GeocodingProviderInterface::class);
 		$provider2->expects($this->never())->method('geocode');
@@ -104,10 +104,10 @@ class ChainProviderTest extends TestCase {
 		]);
 
 		$provider1 = $this->createMock(GeocodingProviderInterface::class);
-		$provider1->method('geocode')->willThrowException(new QuotaExceeded('Rate limited'));
+		$provider1->expects($this->once())->method('geocode')->willThrowException(new QuotaExceeded('Rate limited'));
 
 		$provider2 = $this->createMock(GeocodingProviderInterface::class);
-		$provider2->method('geocode')->willReturn($expectedResult);
+		$provider2->expects($this->once())->method('geocode')->willReturn($expectedResult);
 
 		$chain = new ChainProvider([$provider1, $provider2]);
 		$result = $chain->geocode('Berlin, Germany');
@@ -124,10 +124,10 @@ class ChainProviderTest extends TestCase {
 		]);
 
 		$provider1 = $this->createMock(GeocodingProviderInterface::class);
-		$provider1->method('geocode')->willThrowException(new InvalidServerResponse('Server error'));
+		$provider1->expects($this->once())->method('geocode')->willThrowException(new InvalidServerResponse('Server error'));
 
 		$provider2 = $this->createMock(GeocodingProviderInterface::class);
-		$provider2->method('geocode')->willReturn($expectedResult);
+		$provider2->expects($this->once())->method('geocode')->willReturn($expectedResult);
 
 		$chain = new ChainProvider([$provider1, $provider2]);
 		$result = $chain->geocode('Berlin, Germany');
@@ -140,7 +140,7 @@ class ChainProviderTest extends TestCase {
 	 */
 	public function testGeocodeThrowsNonFallbackException(): void {
 		$provider1 = $this->createMock(GeocodingProviderInterface::class);
-		$provider1->method('geocode')->willThrowException(new InvalidArgumentException('Bad input'));
+		$provider1->expects($this->once())->method('geocode')->willThrowException(new InvalidArgumentException('Bad input'));
 
 		$provider2 = $this->createMock(GeocodingProviderInterface::class);
 		$provider2->expects($this->never())->method('geocode');
@@ -158,10 +158,10 @@ class ChainProviderTest extends TestCase {
 	 */
 	public function testGeocodeThrowsWhenAllProvidersFail(): void {
 		$provider1 = $this->createMock(GeocodingProviderInterface::class);
-		$provider1->method('geocode')->willThrowException(new QuotaExceeded('Rate limited'));
+		$provider1->expects($this->once())->method('geocode')->willThrowException(new QuotaExceeded('Rate limited'));
 
 		$provider2 = $this->createMock(GeocodingProviderInterface::class);
-		$provider2->method('geocode')->willThrowException(new QuotaExceeded('Also rate limited'));
+		$provider2->expects($this->once())->method('geocode')->willThrowException(new QuotaExceeded('Also rate limited'));
 
 		$chain = new ChainProvider([$provider1, $provider2]);
 
@@ -192,7 +192,7 @@ class ChainProviderTest extends TestCase {
 		]);
 
 		$provider1 = $this->createMock(GeocodingProviderInterface::class);
-		$provider1->method('reverse')->willReturn($expectedResult);
+		$provider1->expects($this->once())->method('reverse')->willReturn($expectedResult);
 
 		$chain = new ChainProvider([$provider1]);
 		$result = $chain->reverse(52.52, 13.405);
@@ -209,10 +209,10 @@ class ChainProviderTest extends TestCase {
 		]);
 
 		$provider1 = $this->createMock(GeocodingProviderInterface::class);
-		$provider1->method('reverse')->willThrowException(new QuotaExceeded('Rate limited'));
+		$provider1->expects($this->once())->method('reverse')->willThrowException(new QuotaExceeded('Rate limited'));
 
 		$provider2 = $this->createMock(GeocodingProviderInterface::class);
-		$provider2->method('reverse')->willReturn($expectedResult);
+		$provider2->expects($this->once())->method('reverse')->willReturn($expectedResult);
 
 		$chain = new ChainProvider([$provider1, $provider2]);
 		$result = $chain->reverse(52.52, 13.405);
@@ -260,13 +260,13 @@ class ChainProviderTest extends TestCase {
 		]);
 
 		$provider1 = $this->createMock(GeocodingProviderInterface::class);
-		$provider1->method('geocode')->willThrowException(new QuotaExceeded('Rate limited'));
+		$provider1->expects($this->once())->method('geocode')->willThrowException(new QuotaExceeded('Rate limited'));
 
 		$provider2 = $this->createMock(GeocodingProviderInterface::class);
-		$provider2->method('geocode')->willThrowException(new InvalidServerResponse('Server error'));
+		$provider2->expects($this->once())->method('geocode')->willThrowException(new InvalidServerResponse('Server error'));
 
 		$provider3 = $this->createMock(GeocodingProviderInterface::class);
-		$provider3->method('geocode')->willReturn($expectedResult);
+		$provider3->expects($this->once())->method('geocode')->willReturn($expectedResult);
 
 		$chain = new ChainProvider([$provider1, $provider2, $provider3]);
 		$result = $chain->geocode('Berlin, Germany');
@@ -281,7 +281,7 @@ class ChainProviderTest extends TestCase {
 		$emptyResult = new AddressCollection([]);
 
 		$provider = $this->createMock(GeocodingProviderInterface::class);
-		$provider->method('geocode')->willReturn($emptyResult);
+		$provider->expects($this->once())->method('geocode')->willReturn($emptyResult);
 
 		$chain = new ChainProvider([$provider]);
 		$result = $chain->geocode('Nonexistent Place');

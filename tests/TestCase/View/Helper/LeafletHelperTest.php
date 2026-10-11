@@ -43,6 +43,16 @@ class LeafletHelperTest extends TestCase {
 	/**
 	 * @return void
 	 */
+	public function testSuccessfulMapRemovesFallbackContent(): void {
+		$html = $this->Leaflet->map();
+
+		$this->assertStringContainsString('Map cannot be displayed!', $html);
+		$this->assertStringContainsString('map0.getContainer().childNodes.forEach(function(node) { if (node.nodeType === 3) { node.remove(); } });', $this->Leaflet->script());
+	}
+
+	/**
+	 * @return void
+	 */
 	public function testConfigMergeDefaults(): void {
 		$config = [
 			'zoom' => 10,
@@ -96,7 +106,7 @@ class LeafletHelperTest extends TestCase {
 		$expected = 'map0.setView([48.2082, 16.3738], 10)';
 		$this->assertTextContains($expected, $result);
 
-		$expected = 'L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"';
+		$expected = 'L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png"';
 		$this->assertTextContains($expected, $result);
 	}
 

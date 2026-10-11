@@ -38,7 +38,8 @@ jobs:
       - name: Setup Geography for PostgreSQL
         if: matrix.db-type == 'pgsql'
         run: |
-          sudo apt-get install postgis
+          sudo apt-get update
+          sudo apt-get install --yes postgis
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -120,3 +121,22 @@ jobs:
 
       - name: Run phpcs
         run: composer cs-check
+
+  docs:
+    name: Documentation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: docs/package-lock.json
+      - run: npm ci
+        working-directory: docs
+      - run: npm run docs:build
+        working-directory: docs

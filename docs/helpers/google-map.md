@@ -28,27 +28,27 @@ You can configure this globally using Configure (for example
 ```
 
 ::: tip
-Use a non-committed config file (hence the `_local` suffix) — keys and passwords
+Use a non-committed config file (hence the `_local` suffix); keys and passwords
 should not be version controlled.
 :::
 
 Possible config options are:
 
-- `api` — uses v3 currently.
-- `zoom` — uses the `defaultZoom` of 5 otherwise.
-- `type` — defaults to roadmap.
-- `block` — defaults to `true`, appending the generated JS to the `script`
+- `api`; uses v3 currently.
+- `zoom`; uses the `defaultZoom` of 5 otherwise.
+- `type`; defaults to roadmap.
+- `block`; defaults to `true`, appending the generated JS to the `script`
   block.
-- `https` — leave empty for auto-detect.
-- `map` — multiple map options.
-- `staticMap` — multiple static-map options.
-- `div` — multiple div options.
-- `marker` — multiple marker options.
-- `infoWindow` — multiple info-window options.
-- `directions` — multiple directions options.
+- `https`; leave empty for auto-detect.
+- `map`; multiple map options.
+- `staticMap`; multiple static-map options.
+- `div`; multiple div options.
+- `marker`; multiple marker options.
+- `infoWindow`; multiple info-window options.
+- `directions`; multiple directions options.
 - `language`
 - `geolocate`
-- `libraries` — Google Maps API libraries to load (for example `places` or
+- `libraries`; Google Maps API libraries to load (for example `places` or
   `['places', 'geometry']`).
 
 ## Display a basic link to a map
@@ -117,7 +117,7 @@ echo $this->Html->link(__('Map'), $url, ['title' => __('Map')]);
 ```
 
 ::: warning
-Set `'escape' => false` here to avoid double-encoding — the HtmlHelper already
+Set `'escape' => false` here to avoid double-encoding; the HtmlHelper already
 does the encoding.
 :::
 
@@ -191,9 +191,13 @@ The helper supports Google Places Autocomplete for address input fields. This
 creates an autocomplete-enabled input with hidden fields to store the selected
 place's latitude and longitude.
 
+::: warning Legacy Places widget
+This method generates `google.maps.places.Autocomplete`. Google [restricts that widget to existing customers](https://developers.google.com/maps/documentation/javascript/reference/places-widget#Autocomplete) and recommends `PlaceAutocompleteElement` for new integrations. The helper does not wrap the new widget; follow Google’s [migration guide](https://developers.google.com/maps/documentation/javascript/places-migration-overview) when your project cannot use the legacy API.
+:::
+
 ### Basic usage
 
-First, load the helper with the `places` library:
+For a project with legacy Places access, load the helper with the `places` library:
 
 ```php
 $this->loadHelper('Geo.GoogleMap', [
@@ -249,15 +253,15 @@ echo $this->GoogleMap->placesAutocomplete('location', [
 
 The callback has access to these variables:
 
-- `place` — the selected
+- `place`; the selected
   [PlaceResult](https://developers.google.com/maps/documentation/javascript/reference/places-service#PlaceResult)
   object.
-- `autocomplete` — the Autocomplete instance.
-- `inputElement` — the input DOM element.
-- `latField` — the latitude hidden field.
-- `lngField` — the longitude hidden field.
+- `autocomplete`; the Autocomplete instance.
+- `inputElement`; the input DOM element.
+- `latField`; the latitude hidden field.
+- `lngField`; the longitude hidden field.
 
 ## See also
 
-- [Leaflet helper](./leaflet) — an open-source map alternative.
-- [Static map helper](./static-map) — JavaScript-free static map images.
+- [Leaflet helper](./leaflet); an open-source map alternative.
+- [Static map helper](./static-map); JavaScript-free static map images.

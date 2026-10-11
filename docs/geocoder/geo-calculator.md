@@ -20,4 +20,4 @@ $centralCoordinate = $geo->getCentralGeoCoordinate($coordinates);
 
 ## See also
 
-- [Calculator](./calculator) — distance math and coordinate utilities.
+- [Calculator](./calculator); distance math and coordinate utilities.

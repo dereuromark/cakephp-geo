@@ -94,7 +94,7 @@ class LeafletHelper extends Helper {
 	 */
 	protected array $tilePresets = [
 		'osm' => [
-			'url' => 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+			'url' => 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
 			'options' => [
 				'attribution' => '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
 				'maxZoom' => 19,
@@ -144,7 +144,7 @@ class LeafletHelper extends Helper {
 			'defaultZoom' => 5,
 		],
 		'tileLayer' => [
-			'url' => 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+			'url' => 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
 			'options' => [
 				'attribution' => '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
 				'maxZoom' => 19,
@@ -328,6 +328,7 @@ class LeafletHelper extends Helper {
 
 		$map .= '
 		var ' . $this->name() . ' = L.map("' . $this->_runtimeConfig['div']['id'] . '", ' . $this->_mapOptions() . ');
+		' . $this->name() . '.getContainer().childNodes.forEach(function(node) { if (node.nodeType === 3) { node.remove(); } });
 		' . $this->name() . '.setView([' . $this->_runtimeConfig['map']['lat'] . ', ' . $this->_runtimeConfig['map']['lng'] . '], ' . $this->_runtimeConfig['map']['zoom'] . ');
 		';
 

@@ -309,7 +309,7 @@ When you provide markers but no center coordinates, some providers automatically
 center the map:
 
 ```php
-// No lat/lng specified — the map auto-centers on the markers
+// No lat/lng specified; the map auto-centers on the markers
 echo $this->StaticMap->image([
     'provider' => 'mapbox',
     'markers' => [
@@ -337,5 +337,5 @@ $providers = $this->StaticMap->availableProviders();
 
 ## See also
 
-- [Google Map helper](./google-map) — dynamic and static Google Maps.
-- [Leaflet helper](./leaflet) — interactive open-source maps.
+- [Google Map helper](./google-map); dynamic and static Google Maps.
+- [Leaflet helper](./leaflet); interactive open-source maps.

@@ -1,71 +1,31 @@
-# GeocodedAddresses Cache
+# GeocodedAddresses cache
 
-This is an optional part of the plugin that lets you internally cache the API
-calls to your geocoding provider.
+The optional `Geo.GeocodedAddresses` table stores a result for each address string. The current cache is keyed by that string, not by provider, locale, or accuracy settings. Clear affected records after changing those settings.
 
-The main benefits are:
+## Setup
 
-- Caching prevents reaching API rate limits too quickly.
-- Faster (because internal) results on follow-up searches.
-- A history of all calls.
-- Statistical operations on the collected data become possible.
+Run the migration from [Installation](/guide/installation#optional-database-cache), then configure a [Geocoder provider](/geocoder/). The `data` column stores JSON; it does not need a custom object type.
 
-## Basic usage
-
-You need to enable the `Geo.GeocodedAddresses` table. Make sure you added the
-table via the Migrations plugin:
-
-```bash
-bin/cake migrations migrate -p Geo
-```
-
-Then, instead of using the [Geocoder class](/geocoder/) directly, go through this
-table:
+## Retrieve an address
 
 ```php
-$GeocodedAddresses = TableRegistry::getTableLocator()->get('Geo.GeocodedAddresses');
-$address = $GeocodedAddresses->retrieve($args['locality_search']);
-if ($address && $address->lat && $address->lng) {
-    // Do something with it
+use Cake\ORM\TableRegistry;
+
+$addresses = TableRegistry::getTableLocator()->get('Geo.GeocodedAddresses');
+$address = $addresses->retrieve('Vienna, Austria');
+if ($address && $address->lat !== null && $address->lng !== null) {
+    $coordinates = ['lat' => $address->lat, 'lng' => $address->lng];
 }
 ```
 
-Remember to add the type mapping of `Geo\Database\Type\ObjectType` in your
-`bootstrap.php`:
+Zero is a valid coordinate. Test for `null` rather than a truthy latitude or longitude.
 
-```php
-TypeFactory::map('object', 'Geo\Database\Type\ObjectType');
-```
+`retrieve()` reuses a saved row, including an empty result. New successful lookups store coordinates, country code, formatted address, and provider result data. It returns the saved entity or `false` if saving fails. This cache has no automatic expiry or background refresh.
 
-See the
-[cookbook](https://book.cakephp.org/5/en/orm/database-basics.html#adding-custom-types)
-for details on custom types.
+## Behavior caching
 
-::: tip
-If you need a more complex solution, you can also manually combine the
-[Geocoder class](/geocoder/) and the `GeocodedAddresses` table.
-:::
+Set `cache` to `true` when adding `Geo.Geocoder` to your table. The behavior also stores misses as `['_miss' => true]` and avoids repeating those lookups. With caching disabled, the behavior does not load the cache table.
 
-## Search usage
+`clearEmpty()` deletes rows without a formatted address. `clearAll()` deletes every cache row. Protect these operations and the admin interface through your application access rules.
 
-If you use the [Search](https://github.com/FriendsOfCake/search) plugin, the
-following callback might be handy:
-
-```php
-->callback('distance', [
-    'callback' => function (Query $query, array $args, Callback $manager) {
-        if (!empty($args['location'])) {
-            $GeocodedAddresses = TableRegistry::getTableLocator()->get('Geo.GeocodedAddresses');
-            $address = $GeocodedAddresses->retrieve($args['location']);
-            if ($address && $address->lat && $address->lng) {
-                $query->find('distance', ...['lat' => $address->lat, 'lng' => $address->lng, 'tableName' => 'MyTableName', 'distance' => 100, 'sort' => false]);
-            }
-        }
-    },
-])
-```
-
-## See also
-
-- [Search integration](/behavior/search) — a fuller search example.
-- [Geocoder behavior](/behavior/) — the distance finder used above.
+For distance filtering with a cached lookup, see [Search integration](/behavior/search).

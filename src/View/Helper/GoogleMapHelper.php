@@ -921,7 +921,7 @@ function geocodeAddress(address) {
 		$defaults = $this->_runtimeConfig['infoWindow'];
 		$options += $defaults;
 
-		if (!empty($options['lat']) && !empty($options['lng'])) {
+		if (isset($options['lat'], $options['lng']) && $options['lat'] !== '' && $options['lng'] !== '') {
 			$position = 'new google.maps.LatLng(' . $options['lat'] . ', ' . $options['lng'] . ')';
 		} else {
 			$position = ' ' . $this->name() . ' .getCenter()';
@@ -1654,7 +1654,7 @@ function geocodeAddress(address) {
 			$p += $style + $defaults;
 
 			// adress or lat/lng?
-			if (!empty($p['lat']) && !empty($p['lng'])) {
+			if (isset($p['lat'], $p['lng']) && $p['lat'] !== '' && $p['lng'] !== '') {
 				$p['address'] = $p['lat'] . ',' . $p['lng'];
 			}
 			$p['address'] = urlencode((string)$p['address']);
