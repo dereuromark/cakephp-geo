@@ -287,8 +287,7 @@ The current SQL uses MySQL/MariaDB spatial functions and a column named `coordin
 
 The finder uses a bounding-box pre-filter with `ST_Within()` to leverage spatial
 indexes, then refines results with `ST_Distance_Sphere()` for accurate distance
-calculations. This approach provides significant performance improvements on
-compatible datasets. The spatial finder reports kilometers regardless of the non-spatial `unit` setting. Its bounding box is an approximation and does not wrap the antimeridian; use another query strategy near that boundary.
+calculations. Check the query plan for your data and indexes. The spatial finder reports kilometers regardless of the non-spatial `unit` setting. Its bounding box is an approximation and does not wrap the antimeridian; use another query strategy near that boundary.
 
 ## See also
 

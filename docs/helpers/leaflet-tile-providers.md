@@ -47,6 +47,8 @@ $this->Leaflet->finalize();
 
 Tile URLs and keys appear in the rendered page. Use the provider's browser key restrictions and the attribution it requires for the selected layer. Configure the URL and options from the provider's documentation rather than copying old pricing tables or discontinued endpoints.
 
+Per-map `tileLayer` configuration merges with the helper defaults. Unspecified options remain in place; override attribution, zoom limits and subdomains for your provider.
+
 `addTileLayer($url, $options)` adds another layer to an initialized map; it does not remove the base layer. Use it for overlays, or configure `tileLayer` above when replacing the map background.
 
 ## Other providers
