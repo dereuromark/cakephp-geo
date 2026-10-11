@@ -32,6 +32,7 @@
 		"cakephp/cakephp": "^5.1.1"
 	},
 	"require-dev": {
+		"dereuromark/cakephp-i18n-lint": "^0.1.1",
 		"ext-intl": "*",
 		"ext-json": "*",
 		"dereuromark/cakephp-tools": "^3.0.0",
@@ -78,6 +79,9 @@
 		"stan": "phpstan analyze",
 		"stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:^2.0.0 && mv composer.backup composer.json",
 		"test": "phpunit",
-		"test-coverage": "phpunit --log-junit webroot/coverage/unitreport.xml --coverage-html webroot/coverage --coverage-clover webroot/coverage/coverage.xml"
+		"test-coverage": "phpunit --log-junit webroot/coverage/unitreport.xml --coverage-html webroot/coverage --coverage-clover webroot/coverage/coverage.xml",
+		"i18n-check": "i18n-lint check",
+		"i18n-extract": "i18n-lint extract",
+		"i18n-lint": "i18n-lint lint"
 	}
 }
