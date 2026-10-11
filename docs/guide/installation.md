@@ -3,10 +3,10 @@
 Install the plugin in your application:
 
 ```sh
-composer require dereuromark/cakephp-geo
+composer require dereuromark/cakephp-geo:dev-cake6
 ```
 
-[Composer](https://github.com/dereuromark/cakephp-geo/blob/master/composer.json) defines supported PHP and CakePHP versions.
+[Composer](https://github.com/dereuromark/cakephp-geo/blob/cake6/composer.json) defines supported PHP and CakePHP versions.
 
 ## Load the plugin
 

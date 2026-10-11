@@ -152,7 +152,7 @@ use Geocoder\Provider\Provider;
 
 class MyCustomProvider extends AbstractGeocodingProvider {
 
-    protected array $_defaultConfig = [
+    protected array $defaultConfig = [
         'apiKey' => null,
         'locale' => 'en',
         'baseUrl' => 'https://api.myservice.com/geocode',

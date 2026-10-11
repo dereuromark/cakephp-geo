@@ -23,7 +23,7 @@ class GeocoderBehavior extends GeoGeocoderBehavior {
 	 * @return \Geocoder\Location|null
 	 */
 	protected function _execute($address) {
-		$this->_Geocoder = new Geocoder($this->_config);
+		$this->_Geocoder = new Geocoder($this->config);
 
 		$file = Text::slug($address) . '.txt';
 

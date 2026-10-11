@@ -293,3 +293,20 @@ calculations. Check the query plan for your data and indexes. The spatial finder
 
 - [Search integration](./search); wire distance searches into FriendsOfCake/search.
 - [GeocodedAddresses cache](/model/); cache geocoding API calls.
+
+## CakePHP 6 validation providers
+
+CakePHP 6 no longer delegates arbitrary table methods to behaviors. Call utility methods on `$table->getBehavior('Geocoder')`. Finder calls continue to use `$table->find('distance', ...)`.
+
+Register the behavior directly when using its coordinate validators:
+
+```php
+$behavior = $table->getBehavior('Geocoder');
+$validator->setProvider('geocoder', $behavior);
+$validator->add('lat', 'latitude', [
+    'rule' => 'validateLatitude',
+    'provider' => 'geocoder',
+]);
+```
+
+Provider and helper subclasses use `$defaultConfig` and `$config` for the inherited configuration properties. Behavior subclasses access their table through `$table`.

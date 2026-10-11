@@ -108,6 +108,7 @@ class GeocodedAddressesTable extends Table {
 	 * @return \Cake\Validation\Validator
 	 */
 	public function validationDefault(Validator $validator): Validator {
+		$validator->setProvider('table', $this);
 		$validator
 			->integer('id')
 			->allowEmptyString('id', 'create');

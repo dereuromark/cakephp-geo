@@ -172,7 +172,7 @@ class GoogleMapHelper extends Helper {
 	 *
 	 * @var array<string, mixed>
 	 */
-	protected array $_defaultConfig = [
+	protected array $defaultConfig = [
 		'zoom' => null, // global, both map and staticMap
 		'lat' => null, // global, both map and staticMap
 		'lng' => null, // global, both map and staticMap
@@ -291,7 +291,7 @@ class GoogleMapHelper extends Helper {
 	public function initialize(array $config): void {
 		parent::initialize($config);
 
-		$defaultConfig = Hash::merge($this->_defaultConfig, (array)Configure::read('GoogleMap'));
+		$defaultConfig = Hash::merge($this->defaultConfig, (array)Configure::read('GoogleMap'));
 		$config = Hash::merge($defaultConfig, $config);
 
 		if (isset($config['api']) && !isset($config['map']['api'])) {
@@ -336,8 +336,8 @@ class GoogleMapHelper extends Helper {
 			$config['block'] = null;
 		}
 
-		$this->_config = $config;
-		$this->_runtimeConfig = $this->_config;
+		$this->config = $config;
+		$this->_runtimeConfig = $this->config;
 	}
 
 	/**
@@ -416,7 +416,7 @@ class GoogleMapHelper extends Helper {
 		static::$markerCount = static::$infoWindowCount = 0;
 		$this->markers = $this->infoWindows = [];
 		if ($full) {
-			$this->_runtimeConfig = $this->_config;
+			$this->_runtimeConfig = $this->config;
 		}
 	}
 
@@ -1459,7 +1459,7 @@ function geocodeAddress(address) {
 		}
 		*/
 
-		$defaults = $this->_config['staticMap'] + $this->_config;
+		$defaults = $this->config['staticMap'] + $this->config;
 
 		$mapOptions = $options + $defaults;
 

@@ -21,7 +21,7 @@ class NominatimProvider extends AbstractGeocodingProvider {
 	/**
 	 * @var array<string, mixed>
 	 */
-	protected array $_defaultConfig = [
+	protected array $defaultConfig = [
 		'apiKey' => null,
 		'locale' => 'en',
 		'region' => null,

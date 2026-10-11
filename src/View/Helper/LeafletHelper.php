@@ -128,7 +128,7 @@ class LeafletHelper extends Helper {
 	 *
 	 * @var array<string, mixed>
 	 */
-	protected array $_defaultConfig = [
+	protected array $defaultConfig = [
 		'zoom' => null,
 		'lat' => null,
 		'lng' => null,
@@ -214,7 +214,7 @@ class LeafletHelper extends Helper {
 	public function initialize(array $config): void {
 		parent::initialize($config);
 
-		$defaultConfig = Hash::merge($this->_defaultConfig, (array)Configure::read('Leaflet'));
+		$defaultConfig = Hash::merge($this->defaultConfig, (array)Configure::read('Leaflet'));
 		$config = Hash::merge($defaultConfig, $config);
 
 		if (isset($config['zoom']) && !isset($config['map']['zoom'])) {
@@ -231,8 +231,8 @@ class LeafletHelper extends Helper {
 			$config['div']['height'] = $config['size']['height'];
 		}
 
-		$this->_config = $config;
-		$this->_runtimeConfig = $this->_config;
+		$this->config = $config;
+		$this->_runtimeConfig = $this->config;
 	}
 
 	/**
@@ -261,7 +261,7 @@ class LeafletHelper extends Helper {
 		$this->markers = $this->popups = [];
 		$this->_useCluster = false;
 		if ($full) {
-			$this->_runtimeConfig = $this->_config;
+			$this->_runtimeConfig = $this->config;
 		}
 	}
 
@@ -275,7 +275,7 @@ class LeafletHelper extends Helper {
 		if (!isset($this->tilePresets[$preset])) {
 			return;
 		}
-		$this->_config['tileLayer'] = $this->tilePresets[$preset];
+		$this->config['tileLayer'] = $this->tilePresets[$preset];
 		$this->_runtimeConfig['tileLayer'] = $this->tilePresets[$preset];
 	}
 

@@ -60,7 +60,7 @@ class StaticMapHelper extends Helper {
 	/**
 	 * @var array<string, mixed>
 	 */
-	protected array $_defaultConfig = [
+	protected array $defaultConfig = [
 		'provider' => self::PROVIDER_GEOAPIFY,
 		'size' => '400x300',
 		'format' => 'png',
@@ -106,10 +106,10 @@ class StaticMapHelper extends Helper {
 	public function initialize(array $config): void {
 		parent::initialize($config);
 
-		$defaultConfig = Hash::merge($this->_defaultConfig, (array)Configure::read('StaticMap'));
+		$defaultConfig = Hash::merge($this->defaultConfig, (array)Configure::read('StaticMap'));
 		$config = Hash::merge($defaultConfig, $config);
 
-		$this->_config = $config;
+		$this->config = $config;
 	}
 
 	/**
@@ -133,7 +133,7 @@ class StaticMapHelper extends Helper {
 	 * @return string
 	 */
 	public function url(array $options = []): string {
-		$providerName = $options['provider'] ?? $this->_config['provider'];
+		$providerName = $options['provider'] ?? $this->config['provider'];
 		unset($options['provider']);
 
 		$markers = $options['markers'] ?? [];
@@ -143,9 +143,9 @@ class StaticMapHelper extends Helper {
 		unset($options['paths']);
 
 		$options += [
-			'size' => $this->_config['size'],
-			'format' => $this->_config['format'],
-			'scale' => $this->_config['scale'],
+			'size' => $this->config['size'],
+			'format' => $this->config['format'],
+			'scale' => $this->config['scale'],
 		];
 
 		$provider = $this->provider($providerName);
@@ -219,18 +219,18 @@ class StaticMapHelper extends Helper {
 	 * @return \Geo\StaticMap\Provider\StaticMapProviderInterface
 	 */
 	public function provider(?string $name = null): StaticMapProviderInterface {
-		$name ??= $this->_config['provider'];
+		$name ??= $this->config['provider'];
 
 		if (!isset($this->providerClasses[$name])) {
 			throw new InvalidArgumentException(sprintf('Unknown static map provider: %s', $name));
 		}
 
 		if (!isset($this->providers[$name])) {
-			$providerConfig = $this->_config[$name] ?? [];
+			$providerConfig = $this->config[$name] ?? [];
 			$providerConfig += [
-				'size' => $this->_config['size'],
-				'format' => $this->_config['format'],
-				'scale' => $this->_config['scale'],
+				'size' => $this->config['size'],
+				'format' => $this->config['format'],
+				'scale' => $this->config['scale'],
 			];
 
 			$class = $this->providerClasses[$name];

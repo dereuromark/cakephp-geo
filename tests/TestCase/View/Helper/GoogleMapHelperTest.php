@@ -316,7 +316,7 @@ class GoogleMapHelperTest extends TestCase {
 			'title' => 'Yeah',
 		];
 		$image = $this->GoogleMap->staticMap($options, $attr);
-		$link = $this->GoogleMap->Html->link($image, $url, ['escapeTitle' => false, 'target' => '_blank']);
+		$link = $this->GoogleMap->Html->link($image, h($url), ['escape' => false, 'target' => '_blank']);
 		$this->assertTextContains('href="//maps.google.com/maps?daddr=Munich%2C+Germany&amp;z=10" target="_blank"', $link);
 		$this->assertTextContains('src="//maps.google.com/maps/api/staticmap?size=300x300&amp;format=png', $link);
 	}
