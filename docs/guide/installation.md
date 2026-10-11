@@ -1,5 +1,7 @@
 # Installation
 
+For this development branch, the application's root `composer.json` must allow development dependencies with `"minimum-stability": "dev"`. Set `"prefer-stable": true` to prefer stable packages when their constraints permit it.
+
 Install the plugin in your application:
 
 ```sh
@@ -56,4 +58,3 @@ The cache's `data` column uses JSON. Normal plugin bootstrap also registers the 
 
 [Getting started](./getting-started) renders a Leaflet map with fixed coordinates. Add geocoding or caching once that works.
 
-For this development branch, the application's root `composer.json` must allow development dependencies with `"minimum-stability": "dev"`. Set `"prefer-stable": true` to prefer stable packages when their constraints permit it.

@@ -11,7 +11,7 @@ for CakePHP. It lets you:
 - Render JavaScript-free static maps from multiple providers (Geoapify, Mapbox,
   Stadia, Google).
 
-[Installation](./installation) covers packages and plugin loading. [Getting started](./getting-started) renders a map without an API key or database migration. [Composer](https://github.com/dereuromark/cakephp-geo/blob/master/composer.json) defines supported runtime versions.
+[Installation](./installation) covers packages and plugin loading. [Getting started](./getting-started) renders a map without an API key or database migration. [Composer](https://github.com/dereuromark/cakephp-geo/blob/cake6/composer.json) defines supported runtime versions.
 
 ## How it works
 
