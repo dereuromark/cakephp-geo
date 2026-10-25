@@ -217,8 +217,8 @@ class GeocoderBehavior extends Behavior {
 		$lngField = $this->_config[static::OPTION_LNG];
 
 		if (
-			!$this->_config['overwrite'] &&
-			is_numeric($entity->{$latField}) && is_numeric($entity->{$lngField})
+			!$this->_config['overwrite']
+			&& is_numeric($entity->{$latField}) && is_numeric($entity->{$lngField})
 		) {
 			return $entity;
 		}
@@ -248,8 +248,8 @@ class GeocoderBehavior extends Behavior {
 
 		if (!$dirty) {
 			if (
-				$this->_config['allowEmpty'] ||
-				(is_numeric($entity->{$latField}) && is_numeric($entity->{$lngField}))
+				$this->_config['allowEmpty']
+				|| (is_numeric($entity->{$latField}) && is_numeric($entity->{$lngField}))
 			) {
 				return $entity;
 			}
@@ -654,7 +654,7 @@ class GeocoderBehavior extends Behavior {
 
 		try {
 			$addresses = $this->_Geocoder->geocode($address);
-		} catch (InconclusiveException | NotAccurateEnoughException) {
+		} catch (InconclusiveException|NotAccurateEnoughException) {
 			$addresses = null;
 		}
 		$result = null;
