@@ -177,6 +177,8 @@ $map .= $this->GoogleMap->script();
 echo $map;
 ```
 
+`script()` adds a `nonce` attribute when the request carries one: `cspScriptNonce` (set by CakePHP's `CspMiddleware`) is read first, `cspNonce` remains supported as a fallback.
+
 In general it is advised to defer JS execution by putting it at the end of the
 HTML (body tag), though.
 
