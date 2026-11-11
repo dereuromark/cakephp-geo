@@ -10,6 +10,32 @@ namespace Geo\View\Helper;
 trait JsBaseEngineTrait {
 
 	/**
+	 * Keeps encoded values safe inside an inline script block, including `</script>`.
+	 *
+	 * @var int
+	 */
+	protected int $jsonFlags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+
+	/**
+	 * @param mixed $value
+	 * @param int $flags Additional json_encode() flags
+	 * @return string|false
+	 */
+	protected function jsonEncode(mixed $value, int $flags = 0): string|false {
+		return json_encode($value, $this->jsonFlags | $flags);
+	}
+
+	/**
+	 * Strips everything but identifier characters, for values appended to a JS namespace like `google.maps.MapTypeId.`.
+	 *
+	 * @param string $value
+	 * @return string
+	 */
+	protected function jsIdentifier(string $value): string {
+		return (string)preg_replace('/[^A-Za-z0-9_]/', '', $value);
+	}
+
+	/**
 	 * Generates a JavaScript object in JavaScript Object Notation (JSON)
 	 * from an array. Will use native JSON encode method if available, and $useNative == true
 	 *
@@ -29,7 +55,7 @@ trait JsBaseEngineTrait {
 		];
 		$options += $defaultOptions;
 
-		return $options['prefix'] . json_encode($data) . $options['postfix'];
+		return $options['prefix'] . $this->jsonEncode($data) . $options['postfix'];
 	}
 
 	/**
@@ -82,7 +108,7 @@ trait JsBaseEngineTrait {
 	 * @return string Escaped string.
 	 */
 	public function escape($string) {
-		$encoded = json_encode($string, JSON_UNESCAPED_SLASHES);
+		$encoded = json_encode($string, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG);
 		if ($encoded === false) {
 			return '';
 		}

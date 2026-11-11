@@ -179,7 +179,7 @@ class LeafletHelperTest extends TestCase {
 
 		$result = $this->Leaflet->script();
 
-		$this->assertTextContains('x0.bindPopup("<b>Vienna<\\/b>")', $result);
+		$this->assertTextContains('x0.bindPopup("\\u003Cb\\u003EVienna\\u003C\\/b\\u003E")', $result);
 	}
 
 	/**
@@ -576,6 +576,41 @@ class LeafletHelperTest extends TestCase {
 		$result = $this->Leaflet->script();
 
 		$this->assertStringStartsWith('<script>', $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testCoordinatesAndStringsCannotInjectScript(): void {
+		$payload = '0,0);alert(1);//';
+		$this->Leaflet->map([
+			'map' => ['lat' => $payload, 'lng' => $payload, 'zoom' => $payload],
+			'div' => ['id' => 'map");alert(1);//'],
+		]);
+		$this->Leaflet->addMarker([
+			'lat' => $payload,
+			'lng' => $payload,
+			'title' => '</script><script>alert(1)</script>',
+			'content' => '</script><script>alert(1)</script>',
+		]);
+		$this->Leaflet->addPopup([
+			'lat' => $payload,
+			'lng' => $payload,
+			'content' => 'Popup',
+		]);
+		$this->Leaflet->addTileLayer('https://tiles.example/{z}/{x}/{y}.png");alert(1);//');
+
+		$result = $this->Leaflet->script();
+
+		$this->assertStringNotContainsString('0,0);alert(1)', $result);
+		$this->assertStringNotContainsString('");alert(1)', $result);
+		$this->assertStringNotContainsString('</script><script>', $result);
+		$this->assertTextContains('setView([0, 0], 0)', $result);
+		$this->assertTextContains('L.marker([0, 0]', $result);
+		$this->assertTextContains('.setLatLng([0, 0])', $result);
+		$this->assertTextContains('L.map("map\\u0022);alert(1);\\/\\/"', $result);
+		$this->assertTextContains('L.tileLayer("https://tiles.example/{z}/{x}/{y}.png\\u0022);alert(1);//")', $result);
+		$this->assertSame(1, substr_count($result, '</script>'));
 	}
 
 }

@@ -447,7 +447,7 @@ class GoogleMapHelperTest extends TestCase {
 		$result .= $this->GoogleMap->script();
 
 		$this->assertTextContains('new google.maps.MarkerImage("https://www.google.com/mapfiles/marker_greenE.png"', $result);
-		$this->assertTextContains('gWindowContents0.push("Some Html-<b>Content<\/b>");', $result);
+		$this->assertTextContains('gWindowContents0.push("Some Html-\u003Cb\u003EContent\u003C\/b\u003E");', $result);
 	}
 
 	/**
@@ -536,9 +536,9 @@ class GoogleMapHelperTest extends TestCase {
 
 		$scripts = $this->View->fetch('script');
 		$this->assertTextContains('google.maps.places.Autocomplete(inputElement', $scripts);
-		$this->assertTextContains("getElementById('location')", $scripts);
-		$this->assertTextContains("getElementById('location_lat')", $scripts);
-		$this->assertTextContains("getElementById('location_lng')", $scripts);
+		$this->assertTextContains('getElementById("location")', $scripts);
+		$this->assertTextContains('getElementById("location_lat")', $scripts);
+		$this->assertTextContains('getElementById("location_lng")', $scripts);
 	}
 
 	/**
@@ -605,6 +605,54 @@ class GoogleMapHelperTest extends TestCase {
 		$result = $this->GoogleMap->script();
 
 		$this->assertStringStartsWith('<script>', $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testCoordinatesAndStringsCannotInjectScript(): void {
+		$payload = '0,0);alert(1);//';
+		$this->GoogleMap->map([
+			'map' => ['lat' => $payload, 'lng' => $payload, 'zoom' => $payload, 'type' => 'R;alert(1)', 'typeOptions' => ['style' => 'X;alert(1)', 'pos' => 'Y;alert(1)']],
+			'div' => ['id' => 'map");alert(1);//'],
+		]);
+		$this->GoogleMap->addMarker([
+			'lat' => $payload,
+			'lng' => $payload,
+			'title' => '</script><script>alert(1)</script>',
+			'content' => '</script><script>alert(1)</script>',
+			'zIndex' => $payload,
+			'animation' => 'drop;alert(1)',
+			'id' => 'm");alert(1);//',
+		]);
+		$this->GoogleMap->addInfoWindow([
+			'lat' => $payload,
+			'lng' => $payload,
+			'content' => 'Info',
+			'maxWidth' => $payload,
+		]);
+		$this->GoogleMap->addPolyline(['lat' => 1, 'lng' => 2], ['lat' => 3, 'lng' => 4], [
+			'color' => "red');alert(1);//",
+			'opacity' => $payload,
+			'weight' => $payload,
+		]);
+		$this->GoogleMap->addDirections('Berlin");alert(1);//', 'Munich', [
+			'directionsDiv' => "panel');alert(1);//",
+			'unitSystem' => 'METRIC;alert(1)',
+		]);
+
+		$result = $this->GoogleMap->script();
+
+		$this->assertStringNotContainsString('0,0);alert(1)', $result);
+		$this->assertStringNotContainsString('");alert(1)', $result);
+		$this->assertStringNotContainsString("');alert(1)", $result);
+		$this->assertStringNotContainsString(';alert(1)', str_replace(['\\u0022);alert(1)', '\\u0027);alert(1)'], '', $result));
+		$this->assertStringNotContainsString('</script><script>', $result);
+		$this->assertSame(1, substr_count($result, '</script>'));
+		$this->assertTextContains('new google.maps.LatLng(0, 0)', $result);
+		$this->assertTextContains('google.maps.MapTypeId.Ralert1', $result);
+		$this->assertTextContains('google.maps.Animation.DROPALERT1', $result);
+		$this->assertTextContains('unitSystem: google.maps.UnitSystem.METRICalert1', $result);
 	}
 
 }

@@ -512,7 +512,7 @@ class GoogleMapHelper extends Helper {
 		$this->_mapIds[] = $this->_runtimeConfig['div']['id'];
 
 		$map .= "
-			var " . $this->name() . ' = new google.maps.Map(document.getElementById("' . $this->_runtimeConfig['div']['id'] . "\"), myOptions);
+			var " . $this->name() . ' = new google.maps.Map(document.getElementById(' . $this->escapeString((string)$this->_runtimeConfig['div']['id']) . "), myOptions);
 			";
 		$this->map = $map;
 
@@ -541,7 +541,7 @@ class GoogleMapHelper extends Helper {
 	 */
 	protected function _initialLocation() {
 		if ($this->_runtimeConfig['map']['lat'] && $this->_runtimeConfig['map']['lng']) {
-			return 'new google.maps.LatLng(' . $this->_runtimeConfig['map']['lat'] . ', ' . $this->_runtimeConfig['map']['lng'] . ')';
+			return 'new google.maps.LatLng(' . (float)$this->_runtimeConfig['map']['lat'] . ', ' . (float)$this->_runtimeConfig['map']['lng'] . ')';
 		}
 		$this->_runtimeConfig['autoCenter'] = true;
 
@@ -574,14 +574,14 @@ class GoogleMapHelper extends Helper {
 		$params['map'] = $this->name();
 
 		if (isset($options['title'])) {
-			$params['title'] = json_encode($options['title']);
+			$params['title'] = $this->escapeString($options['title']);
 		}
 		if (isset($options['icon'])) {
 			$params['icon'] = $options['icon'];
 			if (is_int($params['icon'])) {
 				$params['icon'] = 'gIcons' . static::$mapCount . '[' . $params['icon'] . ']';
 			} else {
-				$params['icon'] = json_encode($params['icon']);
+				$params['icon'] = $this->escapeString($params['icon']);
 			}
 		}
 		if (isset($options['shadow'])) {
@@ -589,17 +589,17 @@ class GoogleMapHelper extends Helper {
 			if (is_int($params['shadow'])) {
 				$params['shadow'] = 'gIcons' . static::$mapCount . '[' . $params['shadow'] . ']';
 			} else {
-				$params['shadow'] = json_encode($params['shadow']);
+				$params['shadow'] = $this->escapeString($params['shadow']);
 			}
 		}
 		if (isset($options['shape'])) {
 			$params['shape'] = $options['shape'];
 		}
 		if (isset($options['zIndex'])) {
-			$params['zIndex'] = $options['zIndex'];
+			$params['zIndex'] = (int)$options['zIndex'];
 		}
 		if (isset($options['animation'])) {
-			$params['animation'] = 'google.maps.Animation.' . strtoupper($options['animation']);
+			$params['animation'] = 'google.maps.Animation.' . $this->jsIdentifier(strtoupper((string)$options['animation']));
 		}
 
 		// geocode if necessary
@@ -628,7 +628,7 @@ function geocodeAddress(address) {
 			if (!isset($options['address'])) {
 				throw new CakeException('Either use lat/lng or address to add a marker');
 			}
-			$position = 'geocodeAddress(' . json_encode((string)$options['address']) . ')';
+			$position = 'geocodeAddress(' . $this->escapeString((string)$options['address']) . ')';
 		} else {
 			$position = 'new google.maps.LatLng(' . sprintf('%F', (float)$options['lat']) . ',' . sprintf('%F', (float)$options['lng']) . ')';
 		}
@@ -702,7 +702,7 @@ function geocodeAddress(address) {
 			'zoom' => null, // auto
 		];
 		if ($directions === true) {
-			$options['to'] = $markerOptions['lat'] . ',' . $markerOptions['lng'];
+			$options['to'] = (float)$markerOptions['lat'] . ',' . (float)$markerOptions['lng'];
 		} elseif (is_array($directions)) {
 			$options = $directions + $options;
 		}
@@ -899,10 +899,10 @@ function geocodeAddress(address) {
 			$options['anchor'] = $options['shadow'];
 		}
 
-		$icon = 'new google.maps.MarkerImage("' . $url . '",
-	new google.maps.Size(' . $options['size']['width'] . ', ' . $options['size']['height'] . '),
-	new google.maps.Point(' . $options['origin']['width'] . ', ' . $options['origin']['height'] . '),
-	new google.maps.Point(' . $options['anchor']['width'] . ', ' . $options['anchor']['height'] . ')
+		$icon = 'new google.maps.MarkerImage(' . $this->jsonEncode($url, JSON_UNESCAPED_SLASHES) . ',
+	new google.maps.Size(' . (float)$options['size']['width'] . ', ' . (float)$options['size']['height'] . '),
+	new google.maps.Point(' . (float)$options['origin']['width'] . ', ' . (float)$options['origin']['height'] . '),
+	new google.maps.Point(' . (float)$options['anchor']['width'] . ', ' . (float)$options['anchor']['height'] . ')
 )';
 		$this->icons[static::$iconCount] = $icon;
 		$this->_iconRemember[static::$iconCount] = ['url' => $url, 'options' => $options, 'id' => static::$iconCount];
@@ -922,7 +922,7 @@ function geocodeAddress(address) {
 		$options += $defaults;
 
 		if (isset($options['lat'], $options['lng']) && $options['lat'] !== '' && $options['lng'] !== '') {
-			$position = 'new google.maps.LatLng(' . $options['lat'] . ', ' . $options['lng'] . ')';
+			$position = 'new google.maps.LatLng(' . (float)$options['lat'] . ', ' . (float)$options['lng'] . ')';
 		} else {
 			$position = ' ' . $this->name() . ' .getCenter()';
 		}
@@ -931,9 +931,9 @@ function geocodeAddress(address) {
 			gInfoWindows" . static::$mapCount . ".push(new google.maps.InfoWindow({
 					position: {$position},
 					content: " . $this->escapeString($options['content']) . ",
-					maxWidth: {$options['maxWidth']},
-					pixelOffset: {$options['pixelOffset']}
-					/*zIndex: {$options['zIndex']},*/
+					maxWidth: " . (int)$options['maxWidth'] . ",
+					pixelOffset: " . (is_numeric($options['pixelOffset']) ? (int)$options['pixelOffset'] : $options['pixelOffset']) . "
+					/*zIndex: " . (int)$options['zIndex'] . ",*/
 			}));
 			";
 		$this->map .= $windows;
@@ -1020,25 +1020,25 @@ function geocodeAddress(address) {
 			";
 
 		if (!empty($options['directionsDiv'])) {
-			$directions .= "{$id}Display. setPanel(document.getElementById('" . $options['directionsDiv'] . "'));";
+			$directions .= "{$id}Display. setPanel(document.getElementById(" . $this->escapeString((string)$options['directionsDiv']) . '));';
 		}
 
 		if (is_array($from)) {
 			$from = 'new google.maps.LatLng(' . (float)$from['lat'] . ', ' . (float)$from['lng'] . ')';
 		} else {
-			$from = '"' . h($from) . '"';
+			$from = $this->escapeString($from);
 		}
 		if (is_array($to)) {
 			$to = 'new google.maps.LatLng(' . (float)$to['lat'] . ', ' . (float)$to['lng'] . ')';
 		} else {
-			$to = '"' . h($to) . '"';
+			$to = $this->escapeString($to);
 		}
 
 		$directions .= "
 			var request = {
 				origin: $from,
 				destination: $to,
-				unitSystem: google.maps.UnitSystem." . $options['unitSystem'] . ",
+				unitSystem: google.maps.UnitSystem." . $this->jsIdentifier((string)$options['unitSystem']) . ",
 				travelMode: google.maps.TravelMode. $travelMode
 			};
 			{$id}Service.route(request, function(result, status) {
@@ -1094,9 +1094,9 @@ function geocodeAddress(address) {
 				];
 				var {$id}Polyline = new google.maps.Polyline({
 					path: poly,
-					strokeColor: '" . $options['color'] . "',
-					strokeOpacity: " . $options['opacity'] . ",
-					strokeWeight: " . $options['weight'] . "
+					strokeColor: " . $this->escapeString((string)$options['color']) . ",
+					strokeOpacity: " . (float)$options['opacity'] . ",
+					strokeWeight: " . (float)$options['weight'] . "
 				});
 				{$id}Polyline.setMap(" . $this->name() . ");
 			";
@@ -1120,7 +1120,7 @@ function geocodeAddress(address) {
 	 * @return string JSON
 	 */
 	public function escapeString(mixed $content): string {
-		$result = json_encode($content);
+		$result = $this->jsonEncode($content);
 		if ($result === false) {
 			return '';
 		}
@@ -1292,6 +1292,9 @@ function geocodeAddress(address) {
 			'styles' => null,
 		]);
 		$res = [];
+		if (isset($mapOptions['zoom'])) {
+			$mapOptions['zoom'] = is_numeric($mapOptions['zoom']) ? $mapOptions['zoom'] + 0 : (int)$mapOptions['zoom'];
+		}
 		foreach ($mapOptions as $key => $mapOption) {
 			$res[] = $key . ': ' . $this->value($mapOption);
 		}
@@ -1309,7 +1312,7 @@ function geocodeAddress(address) {
 		}
 
 		$type = array_key_exists($options['type'], $this->types) ? $this->types[$options['type']] : $options['type'];
-		$res[] = 'mapTypeId: google.maps.MapTypeId.' . $type;
+		$res[] = 'mapTypeId: google.maps.MapTypeId.' . $this->jsIdentifier((string)$type);
 
 		return '{' . implode(', ', $res) . '}';
 	}
@@ -1328,10 +1331,10 @@ function geocodeAddress(address) {
 		$res = [];
 		if (!empty($options['style']) && !empty($mapping[$type])) {
 			$m = $mapping[$type];
-			$res[] = 'style: google.maps.' . $m . '.' . $options['style'];
+			$res[] = 'style: google.maps.' . $m . '.' . $this->jsIdentifier((string)$options['style']);
 		}
 		if (!empty($options['pos'])) {
-			$res[] = 'position: google.maps.ControlPosition.' . $options['pos'];
+			$res[] = 'position: google.maps.ControlPosition.' . $this->jsIdentifier((string)$options['pos']);
 		}
 
 		return '{' . implode(', ', $res) . '}';
@@ -1756,8 +1759,8 @@ function geocodeAddress(address) {
 		$pieces = [];
 		foreach ($array as $key => $value) {
 			$e = ($asString && !str_starts_with((string)$value, 'new ') ? '"' : '');
-			$ke = ($keyAsString ? '"' : '');
-			$pieces[] = $ke . $key . $ke . ': ' . $e . $value . $e;
+			$jsKey = $keyAsString ? $this->escapeString((string)$key) : $key;
+			$pieces[] = $jsKey . ': ' . $e . $value . $e;
 		}
 
 		return implode(',' . PHP_EOL, $pieces);
@@ -1812,14 +1815,17 @@ function geocodeAddress(address) {
 		$html .= $this->Form->hidden($latFieldName, ['id' => $latId]);
 		$html .= $this->Form->hidden($lngFieldName, ['id' => $lngId]);
 
-		$autocompleteOptions = json_encode($options['autocomplete']) ?: '{}';
+		$autocompleteOptions = $this->jsonEncode($options['autocomplete']) ?: '{}';
+		$idJs = $this->escapeString($id);
+		$latIdJs = $this->escapeString($latId);
+		$lngIdJs = $this->escapeString($lngId);
 		$placeChangedCallback = $options['callbacks']['placeChanged'] ?? '';
 
 		$js = <<<JS
 (function() {
-	var inputElement = document.getElementById('{$id}');
-	var latField = document.getElementById('{$latId}');
-	var lngField = document.getElementById('{$lngId}');
+	var inputElement = document.getElementById({$idJs});
+	var latField = document.getElementById({$latIdJs});
+	var lngField = document.getElementById({$lngIdJs});
 	var autocompleteOptions = {$autocompleteOptions};
 	var autocomplete = new google.maps.places.Autocomplete(inputElement, autocompleteOptions);
 
