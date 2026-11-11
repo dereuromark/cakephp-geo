@@ -1136,7 +1136,10 @@ function geocodeAddress(address) {
 	 * @return string
 	 */
 	public function script() {
-		return '<script>
+		$request = $this->getView()->getRequest();
+		$nonce = (string)($request->getAttribute('cspScriptNonce') ?? $request->getAttribute('cspNonce', ''));
+
+		return '<script' . ($nonce !== '' ? ' nonce="' . h($nonce) . '"' : '') . '>
 		' . $this->finalize(true) . '
 </script>';
 	}

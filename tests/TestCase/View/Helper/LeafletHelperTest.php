@@ -555,4 +555,27 @@ class LeafletHelperTest extends TestCase {
 		$this->assertTextContains('id="map-1"', $result2);
 	}
 
+	/**
+	 * @return void
+	 */
+	public function testScriptUsesCspScriptNonce(): void {
+		$this->View->setRequest($this->View->getRequest()->withAttribute('cspScriptNonce', 'core-nonce'));
+		$this->Leaflet->map();
+
+		$result = $this->Leaflet->script();
+
+		$this->assertStringStartsWith('<script nonce="core-nonce">', $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testScriptWithoutNonce(): void {
+		$this->Leaflet->map();
+
+		$result = $this->Leaflet->script();
+
+		$this->assertStringStartsWith('<script>', $result);
+	}
+
 }

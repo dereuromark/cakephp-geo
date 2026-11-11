@@ -656,7 +656,10 @@ class LeafletHelper extends Helper {
 	 * @return string
 	 */
 	public function script(): string {
-		return '<script>
+		$request = $this->getView()->getRequest();
+		$nonce = (string)($request->getAttribute('cspScriptNonce') ?? $request->getAttribute('cspNonce', ''));
+
+		return '<script' . ($nonce !== '' ? ' nonce="' . h($nonce) . '"' : '') . '>
 		' . $this->finalize(true) . '
 </script>';
 	}

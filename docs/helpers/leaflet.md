@@ -103,6 +103,8 @@ $map .= $this->Leaflet->script();
 echo $map;
 ```
 
+`script()` adds a `nonce` attribute when the request carries one: `cspScriptNonce` (set by CakePHP's `CspMiddleware`) is read first, `cspNonce` remains supported as a fallback.
+
 ## Adding markers with popups
 
 ```php

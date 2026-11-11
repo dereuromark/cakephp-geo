@@ -584,4 +584,27 @@ class GoogleMapHelperTest extends TestCase {
 		$this->assertTextContains('console.log(place.formatted_address);', $scripts);
 	}
 
+	/**
+	 * @return void
+	 */
+	public function testScriptUsesCspScriptNonce(): void {
+		$this->View->setRequest($this->View->getRequest()->withAttribute('cspScriptNonce', 'core-nonce'));
+		$this->GoogleMap->map();
+
+		$result = $this->GoogleMap->script();
+
+		$this->assertStringStartsWith('<script nonce="core-nonce">', $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testScriptWithoutNonce(): void {
+		$this->GoogleMap->map();
+
+		$result = $this->GoogleMap->script();
+
+		$this->assertStringStartsWith('<script>', $result);
+	}
+
 }
