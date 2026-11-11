@@ -327,9 +327,9 @@ class LeafletHelper extends Helper {
 		';
 
 		$map .= '
-		var ' . $this->name() . ' = L.map("' . $this->_runtimeConfig['div']['id'] . '", ' . $this->_mapOptions() . ');
+		var ' . $this->name() . ' = L.map(' . $this->jsonEncode((string)$this->_runtimeConfig['div']['id']) . ', ' . $this->_mapOptions() . ');
 		' . $this->name() . '.getContainer().childNodes.forEach(function(node) { if (node.nodeType === 3) { node.remove(); } });
-		' . $this->name() . '.setView([' . $this->_runtimeConfig['map']['lat'] . ', ' . $this->_runtimeConfig['map']['lng'] . '], ' . $this->_runtimeConfig['map']['zoom'] . ');
+		' . $this->name() . '.setView([' . (float)$this->_runtimeConfig['map']['lat'] . ', ' . (float)$this->_runtimeConfig['map']['lng'] . '], ' . (float)$this->_runtimeConfig['map']['zoom'] . ');
 		';
 
 		$map .= $this->_tileLayerJs();
@@ -380,7 +380,7 @@ class LeafletHelper extends Helper {
 			$markerOptions['icon'] = $options['icon'];
 		}
 
-		$position = '[' . $options['lat'] . ', ' . $options['lng'] . ']';
+		$position = '[' . (float)$options['lat'] . ', ' . (float)$options['lng'] . ']';
 
 		$markerOptionsJs = '';
 		if ($markerOptions) {
@@ -428,7 +428,7 @@ class LeafletHelper extends Helper {
 			$popupOptions['autoClose'] = $options['autoClose'];
 		}
 
-		$position = '[' . $options['lat'] . ', ' . $options['lng'] . ']';
+		$position = '[' . (float)$options['lat'] . ', ' . (float)$options['lng'] . ']';
 
 		$popupOptionsJs = '';
 		if ($popupOptions) {
@@ -633,7 +633,7 @@ class LeafletHelper extends Helper {
 		}
 
 		$tileLayer = '
-		L.tileLayer("' . $url . '"' . $optionsJs . ').addTo(' . $this->name() . ');
+		L.tileLayer(' . $this->jsonEncode($url, JSON_UNESCAPED_SLASHES) . $optionsJs . ').addTo(' . $this->name() . ');
 		';
 
 		$this->map .= $tileLayer;
@@ -727,7 +727,7 @@ jQuery(document).ready(function() {
 	 * @return string JSON
 	 */
 	public function escapeString(mixed $content): string {
-		$result = json_encode($content);
+		$result = $this->jsonEncode($content);
 		if ($result === false) {
 			return '';
 		}
@@ -780,7 +780,7 @@ jQuery(document).ready(function() {
 		$options = $tileConfig['options'] ?? [];
 
 		return '
-		L.tileLayer("' . $url . '", ' . $this->_buildJsObject($options) . ').addTo(' . $this->name() . ');
+		L.tileLayer(' . $this->jsonEncode((string)$url, JSON_UNESCAPED_SLASHES) . ', ' . $this->_buildJsObject($options) . ').addTo(' . $this->name() . ');
 		';
 	}
 
@@ -791,7 +791,7 @@ jQuery(document).ready(function() {
 	 * @return string
 	 */
 	protected function _buildJsObject(array $options): string {
-		$result = json_encode($options);
+		$result = $this->jsonEncode($options);
 		if ($result === false) {
 			return '{}';
 		}
@@ -840,7 +840,7 @@ jQuery(document).ready(function() {
 			$data = $decoded;
 		}
 
-		$result = json_encode($data);
+		$result = $this->jsonEncode($data);
 		if ($result === false) {
 			throw new InvalidArgumentException('GeoJSON data could not be encoded.');
 		}
@@ -853,7 +853,7 @@ jQuery(document).ready(function() {
 	 * @return string
 	 */
 	protected function _jsArray(array $value): string {
-		$result = json_encode($value);
+		$result = $this->jsonEncode($value);
 		if ($result === false) {
 			return '[]';
 		}
